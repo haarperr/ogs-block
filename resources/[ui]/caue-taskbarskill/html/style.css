@@ -1,0 +1,12 @@
+body {
+    /* background-color: #15181d; */
+    background-color: transparent;
+}
+
+#canvas {
+    display: none;
+    position: absolute;
+    top: 45%;
+    left: 45%;
+    width: 10%;
+}
