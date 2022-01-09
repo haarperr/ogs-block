@@ -28,17 +28,17 @@ local MenuData = {
     clothing_shop = {
         text = "To buy clothes",
         displayName = "Clothing Store",
-        basePrice = 200
+        basePrice = 5
     },
     barber_shop = {
         text = "Fix your ugly mug",
         displayName = "Barber Shop",
-        basePrice = 200
+        basePrice = 5
     },
     tattoo_shop = {
         text = "Become edgy",
         displayName = "Tattoo Parlor",
-        basePrice = 200
+        basePrice = 5
     }
 }
 

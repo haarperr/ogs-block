@@ -1,5 +1,5 @@
 Config = {
-    ["Spawn"] = vector4(-1100.11, -1702.67, 4.38, 305.96),
+    ["Spawn"] = vector4(159.29, -1724.64, 28.68, 233.58),
 
     ["Vehicles"] = {
         { name = "BMX", model = "bmx", price = 500, image = "https://i.imgur.com/4CcWCfs.png" },
@@ -15,12 +15,12 @@ Config = {
         id = "bicycle_shop",
         name = "Bicycle Shop",
         pedType = 4,
-        model = "a_f_y_beach_01",
+        model = "ig_claypain",
         networked = false,
         distance = 100.0,
         position = {
-            coords = vector3(-1109.56, -1694.07, 3.57),
-            heading = 302.82,
+            coords = vector3(156.17, -1724.81, 28.25),
+            heading = 239.01,
             random = false,
         },
         appearance = nil,
