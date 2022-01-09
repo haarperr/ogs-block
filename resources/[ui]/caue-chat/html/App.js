@@ -6,15 +6,16 @@ window.APP = {
       style: CONFIG.style,
       showInput: false,
       showWindow: false,
-      suggestions: [],
+      shouldHide: true,
+      backingSuggestions: [],
+      removedSuggestions: [],
       templates: CONFIG.templates,
       message: '',
       messages: [],
       oldMessages: [],
       oldMessagesIndex: -1,
-      currentSug: [],
-      currentSugIndex: 0,
-      tempSug: []
+      tplBackups: [],
+      msgTplBackups: []
     };
   },
   destroyed() {
@@ -44,24 +45,14 @@ window.APP = {
       });
     },
   },
+  computed: {
+    suggestions() {
+      return this.backingSuggestions.filter((el) => this.removedSuggestions.indexOf(el.name) <= -1);
+    },
+  },
   methods: {
-    HUD_CHANGE({ hudtype }) {
-      if ( hudtype == 2 ) {
-         $(".chat-messages").css("height", "115px");
-         $(".chat-messages").css("width", "700px");
-         $(".chat-input").css("top", "135px");
-         $(".chat-input").css("opacity", "1.0");
-      } else if ( hudtype == 1 ) {
-        $(".chat-messages").css("height", "340px");
-        $(".chat-messages").css("width", "480px");
-        $(".chat-input").css("top", "360px");
-        $(".chat-input").css("opacity", "1.0");
-      } else {
-        $(".chat-messages").css("height", "0px");
-        $(".chat-messages").css("width", "0px");
-        $(".chat-input").css("top", "130px");
-        $(".chat-input").css("opacity", "0.2");
-      }
+    ON_SCREEN_STATE_CHANGE({ shouldHide }) {
+      this.shouldHide = shouldHide;
     },
     ON_OPEN() {
       this.showInput = true;
@@ -86,16 +77,23 @@ window.APP = {
       this.oldMessagesIndex = -1;
     },
     ON_SUGGESTION_ADD({ suggestion }) {
+      const duplicateSuggestion = this.backingSuggestions.find(a => a.name == suggestion.name);
+      if (duplicateSuggestion) {
+        if(suggestion.help || suggestion.params) {
+          duplicateSuggestion.help = suggestion.help || "";
+          duplicateSuggestion.params = suggestion.params || [];
+        }
+        return;
+      }
       if (!suggestion.params) {
         suggestion.params = []; //TODO Move somewhere else
       }
-      this.suggestions.push(suggestion);
+      this.backingSuggestions.push(suggestion);
     },
     ON_SUGGESTION_REMOVE({ name }) {
-      this.suggestions = this.suggestions.filter((sug) => sug.name !== name)
-    },
-    ON_SUGGESTION_REMOVE_ALL({}) {
-      this.suggestions = [];
+      if(this.removedSuggestions.indexOf(name) <= -1) {
+        this.removedSuggestions.push(name);
+      }
     },
     ON_TEMPLATE_ADD({ template }) {
       if (this.templates[template.id]) {
@@ -104,8 +102,84 @@ window.APP = {
         this.templates[template.id] = template.html;
       }
     },
-    ON_CLOSE_CHAT() {
-      this.hideInput(true)
+    ON_UPDATE_THEMES({ themes }) {
+      this.removeThemes();
+
+      this.setThemes(themes);
+    },
+    removeThemes() {
+      for (let i = 0; i < document.styleSheets.length; i++) {
+        const styleSheet = document.styleSheets[i];
+        const node = styleSheet.ownerNode;
+
+        if (node.getAttribute('data-theme')) {
+          node.parentNode.removeChild(node);
+        }
+      }
+
+      this.tplBackups.reverse();
+
+      for (const [ elem, oldData ] of this.tplBackups) {
+        elem.innerText = oldData;
+      }
+
+      this.tplBackups = [];
+
+      this.msgTplBackups.reverse();
+
+      for (const [ id, oldData ] of this.msgTplBackups) {
+        this.templates[id] = oldData;
+      }
+
+      this.msgTplBackups = [];
+    },
+    setThemes(themes) {
+      for (const [ id, data ] of Object.entries(themes)) {
+        if (data.style) {
+          const style = document.createElement('style');
+          style.type = 'text/css';
+          style.setAttribute('data-theme', id);
+          style.appendChild(document.createTextNode(data.style));
+
+          document.head.appendChild(style);
+        }
+
+        if (data.styleSheet) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.type = 'text/css';
+          link.href = data.baseUrl + data.styleSheet;
+          link.setAttribute('data-theme', id);
+
+          document.head.appendChild(link);
+        }
+
+        if (data.templates) {
+          for (const [ tplId, tpl ] of Object.entries(data.templates)) {
+            const elem = document.getElementById(tplId);
+
+            if (elem) {
+              this.tplBackups.push([ elem, elem.innerText ]);
+              elem.innerText = tpl;
+            }
+          }
+        }
+
+        if (data.script) {
+          const script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = data.baseUrl + data.script;
+
+          document.head.appendChild(script);
+        }
+
+        if (data.msgTemplates) {
+          for (const [ tplId, tpl ] of Object.entries(data.msgTemplates)) {
+            this.msgTplBackups.push([ tplId, this.templates[tplId] ]);
+            this.templates[tplId] = tpl;
+          }
+        }
+      }
     },
     warn(msg) {
       this.messages.push({
@@ -131,26 +205,12 @@ window.APP = {
       if (e.which === 38 || e.which === 40) {
         e.preventDefault();
         this.moveOldMessageIndex(e.which === 38);
-        this.currentSug = this.currentSuggestions(true);
-        this.resize();
       } else if (e.which == 33) {
         var buf = document.getElementsByClassName('chat-messages')[0];
         buf.scrollTop = buf.scrollTop - 100;
       } else if (e.which == 34) {
         var buf = document.getElementsByClassName('chat-messages')[0];
         buf.scrollTop = buf.scrollTop + 100;
-      } else if (e.which == 27) {
-        this.resetShowWindowTimer();
-      } else if (e.which == 9) {
-
-        this.currentSug = this.currentSuggestions();
-        if (this.currentSugIndex > this.currentSug.length-1) {
-          this.currentSugIndex = 0;
-        }
-        if (this.currentSug.length > 0) {
-          this.message = this.currentSug[this.currentSugIndex].name
-          this.currentSugIndex++;
-        }
       }
     },
     moveOldMessageIndex(up) {
@@ -171,20 +231,15 @@ window.APP = {
       input.style.height = `${input.scrollHeight + 2}px`;
     },
     send(e) {
-      if (e.shiftKey) {
-        this.message += '\n';
-        this.resize();
+      if(this.message !== '') {
+        post('https://caue-chat/chatResult', JSON.stringify({
+          message: this.message,
+        }));
+        this.oldMessages.unshift(this.message);
+        this.oldMessagesIndex = -1;
+        this.hideInput();
       } else {
-        if(this.message !== '') {
-          post('https://caue-chat/chatResult', JSON.stringify({
-            message: this.message,
-          }));
-          this.oldMessages.unshift(this.message);
-          this.oldMessagesIndex = -1;
-          this.hideInput();
-        } else {
-          this.hideInput(true);
-        }
+        this.hideInput(true);
       }
     },
     hideInput(canceled = false) {
@@ -196,53 +251,5 @@ window.APP = {
       clearInterval(this.focusTimer);
       this.resetShowWindowTimer();
     },
-    currentSuggestions(clear=false) {
-      if (this.message === '') {
-        return [];
-      }
-      const currentSuggestions = this.suggestions.filter((s) => {
-        if (!s.name.startsWith(this.message)) {
-          const suggestionSplitted = s.name.split(' ');
-          const messageSplitted = this.message.split(' ');
-          for (let i = 0; i < messageSplitted.length; i += 1) {
-            if (i >= suggestionSplitted.length) {
-              return i < suggestionSplitted.length + s.params.length;
-            }
-            if (suggestionSplitted[i] !== messageSplitted[i]) {
-              return false;
-            }
-          }
-        }
-        return true;
-      }).slice(0, CONFIG.suggestionLimit);
-
-      currentSuggestions.forEach((s) => {
-        // eslint-disable-next-line no-param-reassign
-        s.disabled = !s.name.startsWith(this.message);
-
-        s.params.forEach((p, index) => {
-          const wType = (index === s.params.length - 1) ? '.' : '\\S';
-          const regex = new RegExp(`${s.name} (?:\\w+ ){${index}}(?:${wType}*)$`, 'g');
-
-          // eslint-disable-next-line no-param-reassign
-          p.disabled = this.message.match(regex) == null;
-        });
-      });
-      if (clear === true) {
-        this.currentSugIndex = 0;
-        this.tempSug = currentSuggestions;
-        return currentSuggestions;
-      }
-      if (currentSuggestions.length == 1) {
-        return this.tempSug
-      }
-      else {
-        if (currentSuggestions.length != this.tempSug.length) {
-          this.currentSugIndex = 0;
-        }
-        this.tempSug = currentSuggestions
-        return currentSuggestions;
-      }
-    }
   },
 };

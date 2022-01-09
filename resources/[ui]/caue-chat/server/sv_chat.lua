@@ -19,7 +19,11 @@ AddEventHandler("_chat:messageEntered", function(data)
     local src = source
 
     local isCmd = string.sub(data, 1, 1) == "/" and true or false
-    if not isCmd then return end
+    if not isCmd then
+        local name = exports["caue-base"]:getChar(source, "first_name") .. " " .. exports["caue-base"]:getChar(source, "last_name")
+        TriggerClientEvent("caue-chat:local", -1, source, name, data)
+        return
+    end
 
     local args = {}
     for word in string.gmatch(string.gsub(data, "/", ""), "%S+") do
@@ -40,7 +44,7 @@ AddEventHandler("_chat:messageEntered", function(data)
             Commands[cmd]["function"](src, args)
         end
     else
-        TriggerClientEvent("chatMessage", src, "SISTEMA", {255, 0, 0}, 'Comando invalido "' .. "/" .. cmd .. '"')
+        TriggerClientEvent("chatMessage", src, "SISTEMA ", {255, 0, 0}, 'Comando invalido "' .. "/" .. cmd .. '"')
     end
 end)
 

@@ -21,17 +21,16 @@ files {
     "html/vendor/fonts/LatoLight.woff2",
     "html/vendor/fonts/LatoBold.woff2",
     "html/vendor/fonts/LatoBold2.woff2",
-    "html/image/CID.png",
-    "html/image/F.png",
-    "html/image/M.png",
 }
 
 server_scripts {
     "@caue-lib/shared/sh_util.lua",
-    "server/*.*",
-    "server/commands/*.*",
+    "@caue-lib/server/sv_infinity.lua",
+    "server/*",
+    "server/commands/*",
 }
 
 client_scripts {
-    "client/*.*",
+    "@caue-lib/client/cl_infinity.lua",
+    "client/*",
 }

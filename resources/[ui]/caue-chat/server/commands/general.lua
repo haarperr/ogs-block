@@ -103,6 +103,46 @@ Commands["ooc"] = {
     },
 }
 
+Commands["me"] = {
+    ["function"] = function(source, args)
+        if args[1] ~= nil then
+	        local name = exports["caue-base"]:getChar(source, "first_name") .. " " .. exports["caue-base"]:getChar(source, "last_name")
+
+            TriggerClientEvent("caue-chat:me", -1, source, name, table.concat(args, " "))
+        else
+            TriggerClientEvent("DoLongHudText", source, "Use /me [message]", 2)
+        end
+    end,
+    ["suggestion"] = {
+        ["help"] = "",
+        ["params"] = {},
+    },
+    ["condition"] = {
+        ["type"] = "ALL",
+        ["params"] = {},
+    },
+}
+
+Commands["do"] = {
+    ["function"] = function(source, args)
+        if args[1] ~= nil then
+	        local name = exports["caue-base"]:getChar(source, "first_name") .. " " .. exports["caue-base"]:getChar(source, "last_name")
+
+            TriggerClientEvent("caue-chat:do", -1, source, name, table.concat(args, " "))
+        else
+            TriggerClientEvent("DoLongHudText", source, "Use /do [message]", 2)
+        end
+    end,
+    ["suggestion"] = {
+        ["help"] = "",
+        ["params"] = {},
+    },
+    ["condition"] = {
+        ["type"] = "ALL",
+        ["params"] = {},
+    },
+}
+
 Commands["drag"] = {
     ["function"] = function(source, args)
         TriggerClientEvent("caue-police:drag", source)
