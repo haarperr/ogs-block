@@ -129,43 +129,11 @@ Citizen.CreateThread(function()
     SetScenarioTypeEnabled("WORLD_VEHICLE_BUSINESSMEN", false)
     SetScenarioTypeEnabled("WORLD_VEHICLE_BIKE_OFF_ROAD_RACE", false)
 
-    -- MRPD
-    exports["caue-polytarget"]:AddBoxZone("job_sign_in", vector3(441.83, -982.05, 30.69), 0.5, 0.35, {
-        heading = 12,
-        minZ = 30.79,
-        maxZ = 30.84,
+    -- Davis PD
+    exports["caue-polytarget"]:AddCircleZone("job_sign_in", vector3(382.07, -1596.41, 30.05), 0.25, {
+        useZ = true,
         data = {
             job = "lspd_sign_in",
-        },
-    })
-
-    -- Sandy PD
-    exports["caue-polytarget"]:AddBoxZone("job_sign_in", vector3(1852.45, 3687.28, 34.27), 0.8, 0.4, {
-        heading = 300,
-        minZ = 34.32,
-        maxZ = 34.52,
-        data = {
-            job = "sasp_sign_in",
-        },
-    })
-
-    -- Paleto PD
-    exports["caue-polytarget"]:AddBoxZone("job_sign_in", vector3(-450.18, 6012.72, 31.72), 0.8, 0.4, {
-        heading = 318,
-        minZ = 31.52,
-        maxZ = 31.72,
-        data = {
-            job = "sheriff_sign_in",
-        },
-    })
-
-    -- Park Rangers PD
-    exports["caue-polytarget"]:AddBoxZone("job_sign_in", vector3(384.54, 800.24, 187.68), 0.5, 1.2, {
-        heading = 0,
-        minZ = 187.53,
-        maxZ = 187.63,
-        data = {
-            job = "park_rangers_sign_in",
         },
     })
 
@@ -187,11 +155,4 @@ Citizen.CreateThread(function()
         },
     })
 
-    -- City Hall
-    exports["caue-polytarget"]:AddCircleZone("job_sign_in", vector3(-553.09, -192.81, 38.22), 0.3, {
-        useZ = true,
-        data = {
-            job = "public_services_sign_in",
-        },
-    })
 end)

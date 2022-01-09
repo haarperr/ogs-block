@@ -36,9 +36,9 @@ local bennysLocations = {
         pos = vector3(727.74, -1088.95, 22.17),
         heading = 270.0
     },
-    ["bennysmrpd"] = {
-        pos = vector3(451.84, -975.96, 25.51),
-        heading = 90.0,
+    ["bennysdavispd"] = {
+        pos = vector3(380.35, -1626.7, 29.11),
+        heading = 320,
         access = "emergency"
     },
     ["bennyshospital"] = {
@@ -65,21 +65,6 @@ local bennysLocations = {
     ["bennyshub"] = {
         pos = vector3(-34.24, -1053.31, 28.4),
         heading = 36.52
-    },
-    ["bennysstatepolice"] = {
-        pos = vector3(1860.93, 3706.47, 33.39),
-        heading = 205.49,
-        access = "emergency"
-    },
-    ["bennyssheriff"] = {
-        pos = vector3(-473.39, 6012.37, 31.16),
-        heading = 227.3,
-        access = "emergency"
-    },
-    ["bennysparkrangers"] = {
-        pos = vector3(381.09, 803.11, 187.55),
-        heading = 90.38,
-        access = "emergency"
     },
 }
 
