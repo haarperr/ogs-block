@@ -8,7 +8,7 @@ function Apart.FindCurrentRoom(roomType)
     local name = ""
 
     if roomType == 1 then
-        name = "np_apartments_room"
+        name = "v_int_49"
     elseif roomType == 2 then
         name = "v_int_16_mid"
     elseif roomType == 3 then

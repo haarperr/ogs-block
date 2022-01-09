@@ -5,17 +5,14 @@
 ]]
 
 Spawn.defaultSpawns = {
-	[1] =  { ["pos"] = vector4(272.16, 185.44, 104.67, 320.57), ["info"] = " Vinewood Blvd Taxi Stand"},
-	[2] =  { ["pos"] = vector4(-1833.96, -1223.5, 13.02, 310.63), ["info"] = " The Boardwalk"},
-	[3] =  { ["pos"] = vector4(145.62, 6563.19, 32.0, 42.83), ["info"] = " Paleto Gas Station"},
-	[4] =  { ["pos"] = vector4(-214.24, 6178.87, 31.17, 40.11), ["info"] = " Paleto Bus Stop"},
-	[5] =  { ["pos"] = vector4(1122.11, 2667.24, 38.04, 180.39), ["info"] = " Harmony Motel"},
-	[6] =  { ["pos"] = vector4(453.29, -662.23, 28.01, 5.73), ["info"] = " LS Bus Station"},
-	[7] =  { ["pos"] = vector4(-1266.53, 273.86, 64.66, 28.52), ["info"] = " The Richman Hotel"},
+	[1] =  { ["pos"] = vector4(130.59, -1739.06, 30.11, 320.28), ["info"] = " Davis Train Station"},
+	[2] =  { ["pos"] = vector4(85.47, -1404.68, 29.41, 293.58), ["info"] = " Strawberry Avenue"},
+	[3] =  { ["pos"] = vector4(-232.95, -1490.77, 32.97, 269.63), ["info"] = " Chamberlain Hills"},
+	[4] =  { ["pos"] = vector4(1211.68, -1389.85, 35.38, 186.1), ["info"] = " El Burro Gas Station"},
 }
 
 Spawn.motel = {
-	[1] = { ["pos"] = vector4(-270.13,-957.28,31.23, 166.11), ["info"] = " Apartments 1"},
+	[1] = { ["pos"] = vector4(367.35, -1802.38, 29.08, 141.56), ["info"] = " Apartments 1"},
 	[2] = { ["pos"] = vector4(-1236.27,-860.84,12.91,213.56), ["info"] = " Apartments 2"},
 	[3] = { ["pos"] = vector4(173.96, -631.29, 47.08, 303.12), ["info"] = " Apartments 3"}
 }

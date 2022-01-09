@@ -35,8 +35,8 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"",""},
-				["housingSecondary"] = {"to swap char or /outfits.","apartments:Logout"},
+				["housingMain"] = {"to see outfits","raid_clothes:outfits"},
+				["housingSecondary"] = {"to swap char","apartments:Logout"},
 			},
 			[2] = {
 
