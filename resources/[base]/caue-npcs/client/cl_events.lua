@@ -63,6 +63,14 @@ end)
 
 RegisterNetEvent("caue-npcs:ped:keeper")
 AddEventHandler("caue-npcs:ped:keeper", function(pArgs, pEntity, pEntityFlags, pEntityCoords)
+    if pArgs[1] == "5" then
+        local hasLicense = RPC.execute("caue-licenses:hasLicense", "weapon")
+        if not hasLicense then
+            TriggerEvent("DoLongHudText", "Você não tem permissão para falar comigo.", 2)
+            return
+        end
+    end
+
     TriggerEvent("server-inventory-open", pArgs[1], "Shop")
 end)
 

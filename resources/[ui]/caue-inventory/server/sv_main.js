@@ -30,9 +30,12 @@ function makeid(length) {
 function GenerateInformation(player, itemid, itemdata) {
     let data = Object.assign({}, itemdata);
     let returnInfo = "{}"
+
     return new Promise((resolve, reject) => {
         if (itemid == "") return resolve(returninfo);
+
         let timeout = 0;
+
         if (!isNaN(itemid)) {
             var identifier = Math.floor((Math.random() * 99999) + 1)
             if (itemdata && itemdata.fakeWeaponData) {
@@ -178,6 +181,9 @@ function GenerateInformation(player, itemid, itemdata) {
                     }
                     break;
                 default:
+                    if (!itemdata) {
+                        itemdata = {}
+                    }
                     returnInfo = JSON.stringify(itemdata);
                     timeout = 1
                     clearTimeout(timeout)
@@ -362,7 +368,7 @@ onNet("server-inventory-open", async (coords, player, secondInventory, targetNam
                 item["slot"] = index + 1;
             });
 
-            emitNet("inventory-open-target", src, [invArray, arrayCount, playerinvname, JSON.stringify(shopArray), shopAmount, targetinvname, 500, false, secondInventory]);
+            emitNet("inventory-open-target", src, [invArray, arrayCount, playerinvname, JSON.stringify(shopArray), shopAmount, targetinvname, 500, false, false, false, secondInventory]);
         } else if (secondInventory == "7") {
             var targetinvname = targetName;
             var shopArray = DroppedItem(itemToDropArray);

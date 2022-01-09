@@ -223,7 +223,6 @@ function holster1h()
 
 	local ped = PlayerPedId()
 	prevupdate = 0
-	updateAmmo()
 	local animLength = GetAnimDuration(dict, anim) * 1000
     loadAnimDict(dict)
     TaskPlayAnim(ped, dict, anim, 1.0, 1.0, -1, 50, 0, 0, 0, 0)
@@ -247,7 +246,6 @@ function copholster()
 
 	local ped = PlayerPedId()
 	prevupdate = 0
-	updateAmmo()
 
 	TaskPlayAnim(ped, dic, anim, 10.0, 2.3, -1, 49, 1, 0, 0, 0)
 
@@ -366,17 +364,22 @@ AddEventHandler("equipWeaponID", function(hash, newInformation, sqlID)
 	if not exports["caue-propattach"]:canPullWeaponHoldingEntity() then return end
 	if cannotPullWeaponInAnimation  then return end
 
-	cannotPullWeaponInAnimation = true
-	currentInformation = json.decode(newInformation)
-
-	TriggerEvent("evidence:bulletInformation", true and currentInformation.cartridge or "Scratched off data")
-
 	local dead = exports["caue-base"]:getVar("dead")
 	if dead then return end
 
 	if UNARMED_HASH == GetSelectedPedWeapon(PlayerPedId()) then
 		armed = false
 	end
+
+	if armed then
+		updateAmmo(true)
+	end
+
+	cannotPullWeaponInAnimation = true
+	CurrentSqlID = sqlID
+	currentInformation = json.decode(newInformation)
+
+	TriggerEvent("evidence:bulletInformation", true and currentInformation.cartridge or "Scratched off data")
 
 	SetPlayerCanDoDriveBy(PlayerId(), false)
 
@@ -390,12 +393,17 @@ AddEventHandler("equipWeaponID", function(hash, newInformation, sqlID)
 		unholster1h(tonumber(hash), true)
 	end
 
-	CurrentSqlID = sqlID
+	if hash == "-72657034" then
+		RemoveAllPedWeaponsP(PlayerPedId(),hash)
+	end
 
-	SetPedAmmo(PlayerPedId(), `WEAPON_FIREEXTINGUISHER`, 10000)
-	SetPedAmmo(PlayerPedId(), `WEAPON_STICKYBOMB`, 1)
+	SetPedAmmo(PlayerPedId(),  `WEAPON_FIREEXTINGUISHER`, 10000)
+	SetPedAmmo(PlayerPedId(),  `WEAPON_STICKYBOMB`, 1)
+	SetPedAmmo(PlayerPedId(),  1233104067, 1)
+	SetPedAmmo(PlayerPedId(),  -37975472, 1)
 
 	SetPlayerCanDoDriveBy(PlayerId(), true)
+	SetWeaponsNoAutoswap(true)
 end)
 
 RegisterNetEvent("actionbar:setEmptyHanded")

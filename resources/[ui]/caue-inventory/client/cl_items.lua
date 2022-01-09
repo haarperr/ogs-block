@@ -346,7 +346,6 @@ AddEventHandler("RunUseItem", function(itemid, slot, inventoryName, isWeapon, pa
         return
     end
 
-
     if isWeapon then
         if tonumber(ItemInfo.quality) > 0 then
             TriggerEvent("equipWeaponID", itemid, ItemInfo.information, ItemInfo.id)
@@ -527,8 +526,12 @@ AddEventHandler("RunUseItem", function(itemid, slot, inventoryName, isWeapon, pa
     if (itemid == "weedq") then
         local finished = exports["caue-taskbar"]:taskBar(1000,"Rolling Joints",false,false,playerVeh)
         if (finished == 100) then
-            CreateCraftOption("joint", 80, true)
+            CreateCraftOption("joint", 2, true)
         end
+    end
+
+    if (itemid == "codein") then
+        CreateCraftOption("lean", 1, true)
     end
 
     if (itemid == "lighter") then
@@ -1080,4 +1083,11 @@ AddEventHandler("RunUseItem", function(itemid, slot, inventoryName, isWeapon, pa
     Wait(500)
     retardCounter = 0
     justUsed = false
+end)
+
+RegisterNetEvent('inventory:wepDropCheck')
+AddEventHandler('inventory:wepDropCheck', function()
+    if (not hasEnoughOfItem(GetSelectedPedWeapon(PlayerPedId()),1,false)) then
+        SetCurrentPedWeapon(PlayerPedId(), `WEAPON_UNARMED`, true)
+    end
 end)

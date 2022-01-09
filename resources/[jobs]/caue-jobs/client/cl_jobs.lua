@@ -41,7 +41,7 @@ end)
 
 Citizen.CreateThread(function()
 	while true do
-		Citizen.Wait(600000)
+		Citizen.Wait(1800000)
 
 		local job = exports["caue-base"]:getChar("job")
 		if job and JOBS[job] then

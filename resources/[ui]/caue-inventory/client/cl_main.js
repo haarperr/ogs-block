@@ -21,7 +21,6 @@ let openedInv = false;
 let cid = 0;
 let personalWeight = 0;
 let hadBrought = [];
-let taxLevel = 0;
 let enableBlur = true;
 
 let objectDumps = [
@@ -55,6 +54,11 @@ let debug = true;
 let timer = 0;
 let timeFunction = false;
 let TrapOwner = false;
+
+let storageNames = ['storage','stash','office','housing','warehouse','hidden','paynless','hotel','craft'];
+let inStashOrStorage = false;
+let watch = [];
+let maxPlayerWeight = 250;
 
 /*
 
@@ -90,6 +94,16 @@ let itemListWithTax = async () => {
 
     return itemList;
 };
+
+const getItemListWithTax = Cacheable(async () => [true, await itemListWithTax()], { timeToLive: 1000 * 60 * 120 });
+
+let hasWeaponsLicense = async () => {
+    const [fetchWeaponsLicense] = await RPC.execute("caue-licenses:hasLicense", "weapon");
+
+    return fetchWeaponsLicense["param"];
+};
+
+const getWeaponsLicense = Cacheable(async () => [true, await hasWeaponsLicense()], { timeToLive: 300000 * 12 });
 
 function UpdateSettings() {
     let holdInt = GetResourceKvpInt('inventorySettings-HoldToDrag');
@@ -196,11 +210,16 @@ function CacheBinds(sqlInventory) {
 
 function PopulateGuiSingle(playerinventory, itemCount, invName) {
     SendNuiMessage(
-        JSON.stringify({ response: 'PopulateSingle', playerinventory: playerinventory, itemCount: itemCount, invName: invName }),
+        JSON.stringify({
+            response: 'PopulateSingle',
+            playerinventory: playerinventory,
+            itemCount: itemCount,
+            invName: invName
+        }),
     );
 }
 
-function PopulateGui(playerinventory, itemCount, invName, targetinventory, targetitemCount, targetinvName, cash, shopId) {
+function PopulateGui(playerinventory, itemCount, invName, targetinventory, targetitemCount, targetinvName, cash, targetInvWeight, targetInvSlots, shopId) {
     let cid = exports["caue-base"].getChar("id");
     let StoreOwner = false;
 
@@ -217,6 +236,8 @@ function PopulateGui(playerinventory, itemCount, invName, targetinventory, targe
                     targetinvName: targetinvName,
                     cash: cash,
                     StoreOwner: TrapOwner,
+                    targetInvWeight: targetInvWeight,
+                    targetInvSlots: targetInvSlots,
                     shopId: shopId,
                 }),
             );
@@ -239,6 +260,8 @@ function PopulateGui(playerinventory, itemCount, invName, targetinventory, targe
                         targetinvName: targetinvName,
                         cash: cash,
                         StoreOwner: StoreOwner,
+                        targetInvWeight: targetInvWeight,
+                        targetInvSlots: targetInvSlots,
                         shopId: shopId,
                     }),
                 );
@@ -256,6 +279,8 @@ function PopulateGui(playerinventory, itemCount, invName, targetinventory, targe
                 targetinvName: targetinvName,
                 cash: cash,
                 StoreOwner: StoreOwner,
+                targetInvWeight: targetInvWeight,
+                targetInvSlots: targetInvSlots,
                 shopId: shopId,
             }),
         );
@@ -337,9 +362,6 @@ function ScanJailContainers() {
 }
 
 async function OpenGui() {
-    if (openedInv) {
-        return;
-    }
     openedInv = true;
     SendNuiMessage(JSON.stringify({ response: 'openGui' }));
     SetCustomNuiFocus(true, true);
@@ -349,29 +371,18 @@ async function OpenGui() {
 
     //Center cursor
     SetCursorLocation(0.5, 0.5);
-
-    const [fetchCash] = await RPC.execute("caue-financials:getCash");
-    cash = fetchCash["param"];
-
-    let [fetchWeaponsLicense] = await RPC.execute("caue-licenses:hasLicense", "weapon");
-    let = hasWeaponsLicense = fetchWeaponsLicense["param"];
-
-    let brought = hadBrought[cid];
-    let cop = false;
-    let job = exports["caue-base"].getChar("job")
-    if (exports["caue-jobs"].getJob(job, "is_police") == true || job == "doc") {
-       cop = true;
-       hasWeaponsLicense = true;
-    }
-    await Delay(250);
-
-    SendNuiMessage(JSON.stringify({ response: 'cashUpdate', amount: cash, weaponlicence: hasWeaponsLicense, brought: brought, cop: cop }));
 }
 
 async function CloseGui(pIsItemUsed = false) {
+    if (watch[0] !== undefined) {
+        emitNet("inventory-update-other",watch)
+        watch = []
+    }
+
     if (!pIsItemUsed) {
         emit('randPickupAnim');
     }
+
     SendNuiMessage(JSON.stringify({ response: 'closeGui' }));
     SetCustomNuiFocus(false, false);
 
@@ -383,6 +394,13 @@ async function CloseGui(pIsItemUsed = false) {
     }
     //Remove blur
     TriggerScreenblurFadeOut(400);
+
+    if (inStashOrStorage) {
+        ClearPedTasks(PlayerPedId());
+        inStashOrStorage = false
+    }
+
+    emit('inventory:wepDropCheck')
 }
 
 function GroundInventoryScan() {
@@ -505,7 +523,9 @@ function GiveItem(itemid, amount, generateInformation, nonStacking, itemdata, re
             openedInv,
             returnData,
         );
-        SendNuiMessage(JSON.stringify({ response: 'DisableMouse' }));
+        SendNuiMessage(JSON.stringify({
+            response: 'DisableMouse'
+        }));
     }
 }
 
@@ -570,7 +590,10 @@ function UpdateItem(id, slot, data) {
 }
 
 function CreateCraftOption(id, add, craft) {
-    let itemArray = [{ itemid: id, amount: add }];
+    let itemArray = [{
+        itemid: id,
+        amount: add
+    }];
     if (craft === true) {
         emitNet('server-inventory-open', GetEntityCoords(PlayerPedId()), cid, '7', 'Craft', JSON.stringify(itemArray));
     } else {
@@ -589,6 +612,31 @@ exports('getCurrentWeight', () => {
     return parseFloat(personalWeight);
 });
 
+exports('setPlayerWeight', (cid, weight) => {
+    maxPlayerWeight = weight;
+    emitNet('caue-inventory:server:weightChange', cid, weight);
+    SendNuiMessage(JSON.stringify({
+        response: 'playerWeight',
+        personalMaxWeight: weight
+    }));
+})
+
+exports('itemListInfo', (item_id) => {
+    return JSON.stringify(itemList[item_id]);
+});
+
+exports('getItemListNames', () => {
+    let itemListSend = []
+    for (const key in itemList) {
+        const item = itemList[key];
+        itemListSend.push({
+            id: key,
+            name: item.displayname
+        })
+    }
+
+    return itemListSend
+})
 
 /*
 
@@ -600,7 +648,10 @@ RegisterNetEvent('SpawnEventsClient');
 on('SpawnEventsClient', async () => {
     cid = exports["caue-base"].getChar("id");
     emitNet('server-request-update', cid);
-    SendNuiMessage(JSON.stringify({ response: 'SendItemList', list: await itemListWithTax() }));
+    SendNuiMessage(JSON.stringify({
+        response: 'SendItemList',
+        list: await itemListWithTax()
+    }));
     UpdateSettings();
 });
 
@@ -618,7 +669,6 @@ on('inventory-update-player', (information) => {
     let returnInv = BuildInventory(information[0]);
     let playerinventory = returnInv[0];
     let itemCount = returnInv[1];
-
     let invName = information[2];
 
     MyInventory = playerinventory;
@@ -627,7 +677,9 @@ on('inventory-update-player', (information) => {
     ResetCache(false);
     PopulateGuiSingle(playerinventory, itemCount, invName);
     if (openedInv) {
-        SendNuiMessage(JSON.stringify({ response: 'EnableMouse' }));
+        SendNuiMessage(JSON.stringify({
+            response: 'EnableMouse'
+        }));
     }
     emit('current-items', JSON.parse(MyInventory));
 });
@@ -640,25 +692,23 @@ on('server-inventory-open', (target, name) => {
 
 RegisterNetEvent('inventory-open-request');
 on('inventory-open-request', async () => {
-    if (isCuffed || openedInv) {
+    if (isCuffed) {
         return;
     }
-    SendNuiMessage(JSON.stringify({ response: 'SendItemList', list: await itemListWithTax() }));
+
+    setImmediate(async () => {
+        SendNuiMessage(JSON.stringify({ response: 'SendItemList', list: await getItemListWithTax() }));
+    });
 
     let player = PlayerPedId();
     let startPosition = GetOffsetFromEntityInWorldCoords(player, 0, 0.5, 0);
-
 
     let BinFound = ScanContainers();
     let JailBinFound = ScanJailContainers();
 
     cid = exports["caue-base"].getChar("id");
 
-    if (openedInv) {
-        CloseGui();
-    } else {
-        OpenGui();
-    }
+    OpenGui();
 
     emit('randPickupAnim');
 
@@ -667,9 +717,6 @@ on('inventory-open-request', async () => {
     let vehicleFound = IsModelAVehicle(GetEntityModel(currentTarget)) ? currentTarget : 0
 
     let jailDst = GetDistanceBetweenCoords(startPosition[0], startPosition[1], startPosition[2], 1700.2, 2536.8, 45.5);
-
-    let tacoShopDst = GetDistanceBetweenCoords(startPosition[0], startPosition[1], startPosition[2], 15.47, -1598.78, 29.38);
-    let tacoStorage = GetDistanceBetweenCoords(startPosition[0], startPosition[1], startPosition[2], 11.23, -1599.01, 29.38);
 
     let isInVehicle = IsPedInAnyVehicle(PlayerPedId(), false);
     if (isInVehicle) {
@@ -680,16 +727,12 @@ on('inventory-open-request', async () => {
             let gloveboxName = 'Glovebox-' + licensePlate;
             const vehId = exports['caue-vehicles'].GetVehicleIdentifier(vehicleFound)
             if (vehId) {
-            	gloveboxName = "Glovebox-" + vehId
+                gloveboxName = "Glovebox-" + vehId
             }
             emitNet('server-inventory-open', startPosition, cid, '1', gloveboxName);
         } else {
             GroundInventoryScan();
         }
-    } else if (tacoShopDst < 2.0) {
-        TriggerEvent('server-inventory-open', '18', 'Craft');
-    } else if (tacoStorage < 1.0) {
-        emitNet('server-inventory-open', startPosition, cid, '1', `hidden-container|${10}|${1599}`);
     } else if (JailBinFound && jailDst < 80.0) {
         let x = parseInt(JailBinFound[0]);
         let y = parseInt(JailBinFound[1]);
@@ -712,9 +755,10 @@ on('inventory-open-request', async () => {
             trunkCoords[2],
         );
 
-        if (GetVehicleDoorLockStatus(vehicleFound) == 2 && distanceRear < 1.5) {
-            CloseGui();
+        let lockStatus = GetVehicleDoorLockStatus(vehicleFound)
+        if (lockStatus != 1 && lockStatus != 0 && lockStatus != 4 && distanceRear < 1.5) {
             TriggerEvent('DoLongHudText', 'The vehicle is locked.', 2);
+            CloseGui();
         } else {
             if (distanceRear > 1.5) {
                 GroundInventoryScan();
@@ -728,7 +772,7 @@ on('inventory-open-request', async () => {
                             let carInvName = 'Trunk-' + licensePlate;
                             const vehId = exports['caue-vehicles'].GetVehicleIdentifier(vehicleFound)
                             if (vehId) {
-                            	carInvName = "Trunk-" + vehId
+                                carInvName = "Trunk-" + vehId
                             }
 
                             const vehClass = GetVehicleClass(vehicleFound);
@@ -745,7 +789,6 @@ on('inventory-open-request', async () => {
 
                             if (classBaseWeight === 0) {
                                 //do something
-                                CloseGui();
                                 return;
                             }
 
@@ -772,10 +815,12 @@ on('inventory-open-request', async () => {
                             });
 
                             emitNet('server-inventory-open', startPosition, cid, '1', carInvName, [], null, vehWeightCalc);
+                            SetVehicleDoorOpen(vehicleFound, front ? 4 : 5, 0, 0);
+                            TaskTurnPedToFaceEntity(player, vehicleFound, 1.0);
+                            emit('toggle-animation', true);
+                        }else {
+                            GroundInventoryScan();
                         }
-                        SetVehicleDoorOpen(vehicleFound, front ? 4 : 5, 0, 0);
-                        TaskTurnPedToFaceEntity(player, vehicleFound, 1.0);
-                        emit('toggle-animation', true);
                     }
                 }
             }
@@ -786,7 +831,7 @@ on('inventory-open-request', async () => {
 });
 
 RegisterNetEvent('inventory-open-target');
-on('inventory-open-target', (information) => {
+on('inventory-open-target', async (information) => {
     let returnInv = BuildInventory(information[0]);
 
     let playerinventory = returnInv[0];
@@ -809,19 +854,60 @@ on('inventory-open-target', (information) => {
         MyInventory = playerinventory;
         MyItemCount = information[0].length;
         if (!openedInv) OpenGui();
+        if(targetinvName.indexOf("Shop") > -1) {
+            const [fetchCash] = await RPC.execute("caue-financials:getCash");
+            cash = fetchCash["param"];
+            setImmediate(async () => {
+                let WeaponsLicense = await hasWeaponsLicense();
 
-        let shopId = information[8];
+                let brought = hadBrought[cid];
+                let cop = false;
+                let job = exports["caue-base"].getChar("job")
+                if (exports["caue-jobs"].getJob(job, "is_police") == true || job == "doc") {
+                    cop = true;
+                    WeaponsLicense = true;
+                }
+
+                await Delay(250);
+
+                SendNuiMessage(JSON.stringify({ response: 'cashUpdate', amount: cash, weaponlicence: WeaponsLicense, brought: brought, cop: cop }));
+            })
+        }
+
+        let targetInvWeight = information[8];
+        if (!targetInvWeight) targetInvWeight = 0;
+        let targetInvSlots = information[9];
+        if (!targetInvSlots) targetInvSlots = 40;
+
+        let shopId = information[10];
         if (!shopId) shopId = "0";
 
-        PopulateGui(playerinventory, returnInv[1], invName, targetinventory, targetitemCount, targetinvName, cash, shopId);
+        if (storageNames.some(v => targetinvName.toLowerCase().includes(v)) && !IsPedInAnyVehicle(PlayerPedId(), false)) {
+            inStashOrStorage = true;
+            TaskStartScenarioInPlace(PlayerPedId(), 'PROP_HUMAN_BUM_BIN', 0, true)
+        }
+
+        PopulateGui(playerinventory, returnInv[1], invName, targetinventory, targetitemCount, targetinvName, cash, targetInvWeight, targetInvSlots);
         SendNuiMessage(JSON.stringify({ response: 'EnableMouse' }));
         ResetCache(true);
     }
 });
 
+RegisterNetEvent('inventory-open-container');
+on('inventory-open-container', async (inventoryId, slots, weight) => {
+    const playerPos = GetEntityCoords(PlayerPedId());
+    const cid = exports["caue-base"].getChar("id");
+    emitNet('server-inventory-open', playerPos, cid, '1', inventoryId, [], null, weight, slots);
+});
+
 RegisterNetEvent('inventory:qualityUpdate');
 on('inventory:qualityUpdate', (originSlot, originInventory, creationDate) => {
-    SendNuiMessage(JSON.stringify({ response: 'updateQuality', slot: originSlot, inventory: originInventory, creationDate: creationDate }));
+    SendNuiMessage(JSON.stringify({
+        response: 'updateQuality',
+        slot: originSlot,
+        inventory: originInventory,
+        creationDate: creationDate
+    }));
 });
 
 RegisterNetEvent('Inventory-Dropped-Addition');
@@ -841,12 +927,22 @@ on('hud-display-item', (itemid, text, amount) => {
     if (openedInv) {
         return;
     }
-    SendNuiMessage(JSON.stringify({ response: 'UseBar', itemid: itemid, text: text, amount: amount }));
+    SendNuiMessage(JSON.stringify({
+        response: 'UseBar',
+        itemid: itemid,
+        text: text,
+        amount: amount
+    }));
 });
 
 RegisterNetEvent('inventory-bar');
 on('inventory-bar', (toggle) => {
-    SendNuiMessage(JSON.stringify({ response: 'DisplayBar', toggle: toggle, boundItems: boundItems, boundItemsAmmo: boundItemsAmmo }));
+    SendNuiMessage(JSON.stringify({
+        response: 'DisplayBar',
+        toggle: toggle,
+        boundItems: boundItems,
+        boundItemsAmmo: boundItemsAmmo
+    }));
 });
 
 RegisterNetEvent('inventory-bind');
@@ -865,7 +961,7 @@ on('inventory-bind', (slot) => {
 });
 
 RegisterNetEvent('player:receiveItem');
-on('player:receiveItem', (id, amount, generateInformation, itemdata, returnData = '{}') => {
+on('player:receiveItem', async (id, amount, generateInformation, itemdata, returnData = '{}', devItem = false) => {
     if (!(id in itemList)) {
         //Try to hash the ID
         let hashed = GetHashKey(id);
@@ -883,9 +979,20 @@ on('player:receiveItem', (id, amount, generateInformation, itemdata, returnData 
     }
 
     let combined = parseFloat(itemList[id].weight) * parseFloat(amount);
-    if (parseFloat(personalWeight) > 250 || parseFloat(personalWeight) + combined > 250) {
-        emit('DoLongHudText', 'Failed to give ' + id + ' because you were overweight!', 2);
-        //TODO: Drop item on ground?
+    if ((parseFloat(personalWeight) > maxPlayerWeight || parseFloat(personalWeight) + combined > maxPlayerWeight) && !devItem) {
+        emit('DoLongHudText', id + ' fell on the ground because you are overweight', 2);
+        let droppedItem = {
+            slot: 3,
+            itemid: id,
+            amount: amount,
+            generateInformation: generateInformation,
+            data: Object.assign({}, itemdata),
+            returnData: returnData
+        };
+        cid = exports.isPed.isPed("cid");
+        emitNet('server-inventory-open', GetEntityCoords(PlayerPedId()), cid, '42069', "Drop-Overweight", {
+            "items": [droppedItem]
+        });
         return;
     }
     SendNuiMessage(
@@ -932,12 +1039,14 @@ on('CreateCraftOption', (id, add, craft) => {
     CreateCraftOption(id, add, craft);
 });
 
-RegisterNetEvent('np-items:SetAmmo');
-on('np-items:SetAmmo', (sentammoTable) => {
+RegisterNetEvent('caue-items:SetAmmo');
+on('caue-items:SetAmmo', (sentammoTable) => {
     if (sentammoTable) {
         ammoTable = sentammoTable;
     }
-    CacheBinds(JSON.parse(MyInventory));
+    if (MyInventory) {
+        CacheBinds(JSON.parse(MyInventory));
+    }
 });
 
 RegisterNetEvent('toggle-animation');
@@ -967,6 +1076,17 @@ on('inventory-open-trap', (Owner) => {
     TrapOwner = Owner;
 });
 
+RegisterNetEvent('closeInventoryGui');
+on('closeInventoryGui', () => {
+    CloseGui();
+});
+
+RegisterNetEvent('watch-inventory');
+on('watch-inventory', (src,cash,name) => {
+    watch = [src,name]
+    emit('chatMessage', 'SEARCH ', 2, "Player had cash in the amount of: " + cash, 5000);
+});
+
 /*
 
     NUI
@@ -976,6 +1096,7 @@ on('inventory-open-trap', (Owner) => {
 RegisterNuiCallbackType('Weight');
 on('__cfx_nui:Weight', (data, cb) => {
     personalWeight = data.weight;
+    cb({});
 });
 
 RegisterNuiCallbackType('UpdateSettings');
@@ -990,25 +1111,29 @@ on('__cfx_nui:UpdateSettings', (data, cb) => {
     SetResourceKvpInt('inventorySettings-CtrlMovesHalf', ctrlMovesHalf ? 0 : 1);
     SetResourceKvpInt('inventorySettings-ShowTooltips', showTooltips ? 0 : 1);
     SetResourceKvpInt('inventorySettings-EnableBlur', enableBlur ? 0 : 1);
+    cb({});
 });
 
 RegisterNuiCallbackType('move');
 on('__cfx_nui:move', (data, cb) => {
     emitNet('server-inventory-move', cid, data, GetEntityCoords(PlayerPedId()));
+    cb({});
 });
 
 RegisterNuiCallbackType('stack');
 on('__cfx_nui:stack', (data, cb) => {
     emitNet('server-inventory-stack', cid, data, GetEntityCoords(PlayerPedId()));
+    cb({});
 });
 
 RegisterNuiCallbackType('swap');
 on('__cfx_nui:swap', (data, cb) => {
     emitNet('server-inventory-swap', cid, data, GetEntityCoords(PlayerPedId()));
+    cb({});
 });
 
 RegisterNuiCallbackType('invuse');
-on('__cfx_nui:invuse', (data) => {
+on('__cfx_nui:invuse', (data, cb) => {
     let inventoryUsedName = data[0];
     let itemid = data[1];
     let slotusing = data[2];
@@ -1016,6 +1141,7 @@ on('__cfx_nui:invuse', (data) => {
     let iteminfo = data[4];
 
     emit('RunUseItem', itemid, slotusing, inventoryUsedName, isWeapon, iteminfo);
+    cb({});
 });
 
 RegisterNuiCallbackType('SlotJustUsed');
@@ -1030,11 +1156,13 @@ on('__cfx_nui:SlotJustUsed', (data, cb) => {
     recentused.push(data.origin);
     recentused.push(data.targetslot);
     usedSlots = [];
+    cb({});
 });
 
 RegisterNuiCallbackType('Close');
 on('__cfx_nui:Close', (data, cb) => {
     CloseGui(data.isItemUsed);
+    cb({});
 });
 
 RegisterNuiCallbackType('ServerCloseInventory');
@@ -1042,7 +1170,9 @@ on('__cfx_nui:ServerCloseInventory', (data, cb) => {
     let cid = exports["caue-base"].getChar("id");
     if (data.name != 'none') {
         emitNet('server-inventory-close', cid, data.name);
+        emit('caue-inventory:closed', data.name);
     }
+    cb({});
 });
 
 RegisterNetEvent('Inventory-brought-update');
@@ -1058,6 +1188,8 @@ on('__cfx_nui:removeCraftItems', (data, cb) => {
     for (let xx = 0; xx < requirements.length; xx++) {
         RemoveItem(requirements[xx].itemid, Math.ceil(requirements[xx].amount * amountCrafted));
     }
+    //emitNet("server-inventory-removeCraftItems", cid, data, GetEntityCoords(PlayerPedId()),openedInv)
+    cb({});
 });
 
 RegisterNuiCallbackType('dropIncorrectItems');
@@ -1071,6 +1203,7 @@ on('__cfx_nui:dropIncorrectItems', (data, cb) => {
     setTimeout(() => {
         canOpen = true;
     }, 2000);
+    cb({});
 });
 
 RegisterNuiCallbackType('GiveItem');
@@ -1087,6 +1220,32 @@ on('__cfx_nui:GiveItem', (data, cb) => {
 
     emit('hud-display-item', id, 'Received', amount);
     GiveItem(id, amount, generateInformation, nonStacking, itemdata, data[6]);
+    cb({});
+});
+
+RegisterNuiCallbackType('craftProgression');
+on('__cfx_nui:craftProgression', (data, cb) => {
+    cb("ok");
+    emit("caue-inventory:craftProgression", data);
+    emitNet("caue-inventory:craftProgression", data);
+});
+
+RegisterNuiCallbackType('insert-item')
+on('__cfx_nui:insert-item', (data, cb) => {
+    const {
+        originInventory, targetInventory,
+        originSlot, targetSlot,
+        originItemId, targetItemId,
+        originItemInfo, targetItemInfo,
+    } = data
+    if (
+        (itemList[originItemId].insertTo && itemList[originItemId].insertTo.includes(targetItemId))
+        ||
+        (itemList[targetItemId].insertFrom && itemList[targetItemId].insertFrom.includes(originItemId))
+    ) {
+        emit(`${targetItemId}:insert`, originInventory, targetInventory, originSlot, targetSlot, originItemId, targetItemId, originItemInfo, targetItemInfo)
+    }
+    cb({});
 });
 
 /*

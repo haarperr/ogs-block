@@ -22,6 +22,7 @@ files {
 
 shared_scripts {
     "@caue-lib/shared/sh_util.lua",
+    "@caue-lib/shared/sh_cacheable.js",
     "shared/sh_*.*",
 }
 
