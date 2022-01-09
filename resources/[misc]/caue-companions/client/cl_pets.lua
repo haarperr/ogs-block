@@ -1285,10 +1285,6 @@ AddEventHandler("caue-pets:k9create", function(pCid, pType, pDept, pName, pVaria
     })
 end)
 
-Citizen.CreateThread(function()
-  TriggerEvent("caue-pets:petCreate", 1, 4)
-end)
-
 RegisterNetEvent("caue-pets:petCreate")
 AddEventHandler("caue-pets:petCreate", function(pCid, pType, pName, pVariation)
     -- local characterId = exports["caue-base"]:getChar("id")

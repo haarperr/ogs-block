@@ -53,6 +53,7 @@ Flags["PedFlags"] = {
     isBoatShop = prevPedFlag(),
     isEmsVehicleSeller = prevPedFlag(),
     isPoliceVehicleSeller = prevPedFlag(),
+    isPetshopSeller = prevPedFlag(),
 }
 
 Flags["ObjectFlags"] = {}
