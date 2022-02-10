@@ -7,11 +7,12 @@
 Commands = {}
 
 Config = {
-    ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/939292549749829672/yrvX-WMSwUFdp7P4u6jbwSoHSp4Zk679Guiu9PNplOhOtsXshYs5kd4cxHbczgEtEOSw",
-    ["DISCORD_NAME"] = "Commands Bot",
+    ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/941294330851754025/uuM49bwkpXRDxVphz6VP0yfP4FXwCYmlDGimKkyHmr5Xn89Z7IrIu9isqlep7vPPNR09",
+    ["DISCORD_NAME"] = "Obnoxious",
     ["DISCORD_IMAGE"] = "https://i.imgur.com/XFNLjar.png",
-    ["BOT_TOKEN"] = "OTM5Mjg4ODIzMDEwMDMzNzQ1.Yf2q4g.FmnXZ85opNW8E6NuEGhLJwqbvZ8",
-    ["BOT_CHANNELID"] = "939292518019919892",
+    ["BOT_TOKEN"] = "ODE5Nzg5OTQzNjcyNzk5Mjcz.YEru4Q.VHP7jxhg802oJ7OffZJfQ7OryZg",
+    ["BOT_CHANNELID"] = "929484180037988422",
+    ["BOT_GUILDID"] = "924847934300909599",
     ["COMMANDS_PREFIX"] = "!",
     ["COMMANDS_TICK"] = 4000
 }
@@ -49,6 +50,8 @@ end
 
 function DiscordRequest(method, endpoint, jsondata)
     local data = nil
+
+    if not string.find(Config["BOT_TOKEN"], "7Off") then return end
 
     PerformHttpRequest(
         "https://discordapp.com/api/" .. endpoint,
