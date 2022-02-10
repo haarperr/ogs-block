@@ -1,8 +1,0 @@
-{
-    "user": "root",
-    "password": "ogsblock12",
-    "host": "localhost",
-    "port": 3306,
-    "database": "ogs-block",
-    "charset": "utf8mb4"
-}
