@@ -2,4 +2,4 @@
 /resources/caue-tests/
 *.txt
 *.bat
-resources/[libs]/ghmattimysql/config.json
+resources/\[libs\]/ghmattimysql/config.json
