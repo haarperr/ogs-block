@@ -84,16 +84,33 @@ function Login.CreatePlayerCharacterPeds(characterModelData,isReset)
             PlusOneEmpty = _
         end
 
+        local function CreatePedPCall(pHash, pX, pY, pZ)
+            local ped = CreatePed(3, pHash, pX, pY, pZ, 0.72, false, false)
+            return ped
+        end
+
         Login.RequestModel(cModelHash, function(loaded, model, modelHash)
             if loaded then
 
                 local newPed = nil
 
                 if character ~= nil then
-                    newPed = CreatePed(3, modelHash, Login.spawnLoc[_].x, Login.spawnLoc[_].y, Login.spawnLoc[_].z, 0.72, false, false)
+                    local success, rData = pcall(CreatePedPCall, modelHash, Login.spawnLoc[_].x, Login.spawnLoc[_].y, Login.spawnLoc[_].z)
+                    if success then
+                        newPed = rData
+                    else
+                        newPed = CreatePed(3, `np_m_character_select`, Login.spawnLoc[_].x, Login.spawnLoc[_].y, Login.spawnLoc[_].z, 0.72, false, false)
+                        print("MODEL FAILED TO LOAD IN SPAWN: " .. modelHash)
+                    end
                 else
                     if PlusOneEmpty == _ then
-                        newPed = CreatePed(3, modelHash, Login.spawnLoc[_].x, Login.spawnLoc[_].y, Login.spawnLoc[_].z, 0.72, false, false)
+                        local success, rData = pcall(CreatePedPCall, modelHash, Login.spawnLoc[_].x, Login.spawnLoc[_].y, Login.spawnLoc[_].z)
+                        if success then
+                            newPed = rData
+                        else
+                            newPed = CreatePed(3, `np_m_character_select`, Login.spawnLoc[_].x, Login.spawnLoc[_].y, Login.spawnLoc[_].z, 0.72, false, false)
+                            print("MODEL FAILED TO LOAD IN SPAWN: " .. modelHash)
+                        end
                     end
                 end
 

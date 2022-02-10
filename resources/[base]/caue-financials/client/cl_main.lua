@@ -42,12 +42,12 @@ function financialAnimation(pIsATM, pIsOpening)
 
         if pIsOpening then
             TaskPlayAnim(playerId, "amb@prop_human_atm@male@idle_a", "idle_b", 1.0, 1.0, -1, 49, 0, 0, 0, 0)
-            local finished = exports["caue-taskbar"]:taskBar(3000, "Inserting card")
+            local finished = exports["caue-taskbar"]:taskBar(3000, "Inserindo cartão")
             ClearPedSecondaryTask(playerId)
         else
             ClearPedTasks(playerId)
             TaskPlayAnim(playerId, "amb@prop_human_atm@male@exit", "exit", 1.0, 1.0, -1, 49, 0, 0, 0, 0)
-            local finished = exports["caue-taskbar"]:taskBar(1000, "Retrieving Card")
+            local finished = exports["caue-taskbar"]:taskBar(1000, "Retirando cartão")
             ClearPedTasks(playerId)
         end
     else
@@ -56,11 +56,11 @@ function financialAnimation(pIsATM, pIsOpening)
         if pIsOpening then
             ClearPedTasks()
             TaskPlayAnim(playerId, "mp_common", "givetake1_a", 1.0, 1.0, -1, 49, 0, 0, 0, 0)
-            local finished = exports["caue-taskbar"]:taskBar(1000, "Showing bank documentation")
+            local finished = exports["caue-taskbar"]:taskBar(1000, "Mostrando Documentos")
             ClearPedTasks(playerId)
         else
             TaskPlayAnim(playerId, "mp_common", "givetake1_a", 1.0, 1.0, -1, 49, 0, 0, 0, 0)
-            local finished = exports["caue-taskbar"]:taskBar(1000, "Collecting documentation")
+            local finished = exports["caue-taskbar"]:taskBar(1000, "Coletando documentação")
             Citizen.Wait(1000)
             ClearPedTasks(playerId)
         end

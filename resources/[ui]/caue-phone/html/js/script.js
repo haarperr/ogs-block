@@ -286,11 +286,9 @@ $(document).ready(function () {
                 setWeather(item.weather);
                 break;
             case "deepweb":
-                openBrowser("http://www.nopixel.online/morbrowser/mor-browser-setup-1/");
+                openBrowser("https://ogsblock.com.br/");
                 break;
             case "keys":
-                $('.keys-entries').empty();
-                openContainer("keys");
                 addKeys(item.keys);
                 break;
             case "notifications":
@@ -341,9 +339,7 @@ $(document).ready(function () {
                 addOutstandingPayments(item.outstandingPayments);
                 break;
             case "manageKeys":
-                $('.manage-keys-entries').empty();
                 addManageKeys(item.sharedKeys);
-                openContainer('manage-keys')
                 break;
             case "settings":
                 addSettings(item);
@@ -420,87 +416,11 @@ function setBatteryLevel(serverTime) {
 
 
 
-function addManageKeys(keys) {
-    for (let key in keys) {
-        $('.manage-keys-house').text(keys[key].sharedHouseName);
-        let manageHouseKey = `
-            <li class="collection-item">
-                <div class="row no-padding">
-                    <div class="col s9" aria-label="${keys[key].sharedName}" data-balloon-pos="down">
-                        <span  class="truncate" style="font-weight:bold">${keys[key].sharedName + "Longernamehereoklolasdasd"}</span>
-                    </div>
-                    <div class="col s3 right-align">
-                        <span class="phone-button manage-keys-remove" data-target-id="${keys[key].sharedId}" aria-label="Remove Key" data-balloon-pos="left"><i class="fas red-text fa-user-times fa-2x"></i></span>
-                    </div>
-                </div>
-                <div class="row no-padding">
-                    <div class="col s12">
-                        <span>Citizen ID: ${keys[key].sharedId}</span>
-                    </div>
-                </div>
-            </li>
-        `
-
-        $('.manage-keys-entries').append(manageHouseKey);
-    }
-}
 
 
 
-function addKeys(keys) {
-    for (const [ keyType, value ] of Object.entries(keys)) {
-        for (const [ data, v ] of Object.entries(value)) {
-            let penis = keys[keyType][data][0]
-            var keyElement = `
-            <li data-key-type="${keyType}">
-                <div class="collapsible-header">
-                    <span class="left">
-                    <i class="fas ${keyType === "sharedKeys" ? "fa-handshake" : "fa-key"}"> </i>
-                    ${penis.house_name}</span>
-                    <div class="col s2 right-align">
-                        <i class="fas fa-map-marker-alt teal-text gps-location-click" data-house-type="${penis.house_model}" data-house-id="${penis.house_id}"></i>
-                    </div>
-                </div>
-                <div class="collapsible-body garage-body">
-                    <div class="row">
-                        <div class="col s12">
-                            <ul class="collection">`
-                keyElement += `
-                                </ul>
-                            </div>
-                        </div>
-                        `
-            if (keyType === "ownedKeys") {
-                keyElement += `
-                        <div class="row no-padding">
-                            <div class="col s12 center-align no-padding button-row" >
-                            <button class="waves-effect waves-light btn-small phone-button" data-action="btnGiveKey" aria-label="Give Keys" data-balloon-pos="up"><i class="fas fa-key"></i></button>
-                            <button class="waves-effect waves-light btn-small manage-keys" aria-label="Manage Keys" data-balloon-pos="up"><i class="fas fa-user-slash"></i></button>
-                            <button class="waves-effect waves-light btn-small phone-button" data-action="btnPayMortgage" aria-label="Pay Mortgage" data-balloon-pos="up-left"><i class="fas fa-dollar-sign"></i></button>
-                            <button class="waves-effect waves-light btn-small phone-button" data-action="btnFurniture" aria-label="Furniture" data-balloon-pos="up"><i class="fas fa-couch"></i></button>
-                            <button class="waves-effect waves-light btn-small phone-button" data-action="btnPropertyOutstanding" aria-label="Check Mortgage" data-balloon-pos="up-left"><i class="fas fa-check"></i></button>
-                            </div>
-                        </div>
-                        `
-            } else if (keyType == "sharedKeys") {
-                keyElement += `
-                <div class="row no-padding">
-                    <div class="col s12 center-align no-padding">
-                        <button class="waves-effect waves-light btn-small remove-shared-key" data-house-id="${penis.house_id}" data-house-model="${penis.house_model}" aria-label="Remove key" data-balloon-pos="up"><i class="fas fa-user-slash"></i></button>
-                    </div>
-                </div>
-                `
-            }
 
-            keyElement += `
-                </div>
-            </li>
-        `
-            $('.keys-entries').append(keyElement);
-        }
-    }
 
-}
 
 function openBrowser(url) {
     $("#browser object").attr("data", url);
@@ -575,19 +495,7 @@ function addGPSLocations(locations) {
     }
 }
 
-function KeysFilter() {
-    var filter = $('#keys-search').val();
-    $("ul.keys-entries li").each(function () {
-        if ($(this).text().search(new RegExp(filter, "i")) < 0) {
-            $(this).hide();
-        } else {
-            if (keyFilters.includes($(this).data('key-type')))
-                $(this).hide();
-            else
-                $(this).show()
-        }
-    });
-}
+
 
 function GPSFilter() {
     var filter = $('#gps-search').val();
@@ -603,16 +511,6 @@ function GPSFilter() {
     });
 }
 
-function ManageKeysFilter() {
-    var filter = $('#manage-keys-search').val();
-    $("ul.manage-keys-entries li").each(function () {
-        if ($(this).text().search(new RegExp(filter, "i")) < 0) {
-            $(this).hide();
-        } else {
-            $(this).show()
-        }
-    });
-}
 
 
 
@@ -641,13 +539,8 @@ function ManageKeysFilter() {
 
 
 
-$('#manage-keys-search').keyup(debounce(function () {
-    ManageKeysFilter();
-}, 500));
 
-$('#keys-search').keyup(debounce(function () {
-    KeysFilter();
-}, 500));
+
 
 $('#gps-search').keyup(debounce(function () {
     GPSFilter();
@@ -769,19 +662,7 @@ $('#real-estate-evict-modal-accept').click(function () {
 });
 
 
-$('.keys-toggle-filter').click(function () {
-    let filterData = $(this).data('filter');
 
-    if ($(this).hasClass("grey-text")) {
-        if (!keyFilters.includes(filterData))
-            keyFilters.push(filterData);
-    }
-    else
-        keyFilters = keyFilters.filter(filter => filter !== filterData);
-
-    KeysFilter();
-    $(this).toggleClass("grey-text white-text");
-});
 
 $('.gps-toggle-filter').click(function () {
     let filterData = $(this).data('filter');
@@ -814,24 +695,7 @@ $('.messages-add-new-contact').click(function () {
 
 
 
-$('.keys-entries').on('click', '.manage-keys', function () {
-    $.post('https://caue-phone/retrieveHouseKeys', JSON.stringify({}));
-});
 
-$('.keys-entries').on('click', '.remove-shared-key', function(e) {
-    $.post('https://caue-phone/removeSharedKey', JSON.stringify({
-        house_id: $(this).data('house-id'),
-        house_model: $(this).data('house-model')
-    }))
-    $(this).closest('li').remove()
-});
-
-$('.manage-keys-entries').on('click', '.manage-keys-remove', function () {
-    $.post('https://caue-phone/removeHouseKey', JSON.stringify({
-        targetId: $(this).data('target-id')
-    }))
-    $.post('https://caue-phone/retrieveHouseKeys', JSON.stringify({}));
-})
 
 $('.yellow-pages-entries').on('click', '.yellow-pages-call', function () {
     $.post('https://caue-phone/callContact', JSON.stringify({

@@ -173,7 +173,7 @@ local k9types = {
 
 local k9Depts = {
     [1] = {
-      key = "lspd",
+      key = "lssd",
     },
     [2] = {
       key = "bcso",
@@ -200,9 +200,9 @@ local k9Depts = {
 
 local function supportedAnimals()
     return {
-        ["chop_lspd"] = {
-            id = "chop_lspd",
-            name = "LSPD Chop",
+        ["chop_lssd"] = {
+            id = "chop_lssd",
+            name = "lssd Chop",
             appearance = {
                 model = "a_c_chop",
                 components = {
@@ -302,9 +302,9 @@ local function supportedAnimals()
         speedModifier = 1.2,
         maxHealth = 1000,
       },
-      ["husky_lspd"] = {
-        id = "husky_lspd",
-        name = "LSPD Husky",
+      ["husky_lssd"] = {
+        id = "husky_lssd",
+        name = "lssd Husky",
         appearance = {
           model = "a_c_husky_np",
           components = {
@@ -440,9 +440,9 @@ local function supportedAnimals()
         speedModifier = 1.2,
         maxHealth = 1000,
       },
-      ["retriever_lspd"] = {
-        id = "retriever_lspd",
-        name = "LSPD Retriever",
+      ["retriever_lssd"] = {
+        id = "retriever_lssd",
+        name = "lssd Retriever",
         appearance = {
           model = "a_c_retriever_np",
           components = {
@@ -578,9 +578,9 @@ local function supportedAnimals()
         speedModifier = 1.2,
         maxHealth = 1000,
       },
-      ["shepherd_lspd"] = {
-        id = "shepherd_lspd",
-        name = "LSPD Shepherd",
+      ["shepherd_lssd"] = {
+        id = "shepherd_lssd",
+        name = "lssd Shepherd",
         appearance = {
           model = "a_c_shepherd_np",
           components = {
@@ -716,9 +716,9 @@ local function supportedAnimals()
         speedModifier = 1.2,
         maxHealth = 1000,
       },
-      ["pit_lspd"] = {
-        id = "pit_lspd",
-        name = "LSPD Pit",
+      ["pit_lssd"] = {
+        id = "pit_lssd",
+        name = "lssd Pit",
         appearance = {
           model = "a_c_pit_np",
           components = {
@@ -984,23 +984,23 @@ local function showCompanionOptions(companionId)
     local items = {}
 
     items[#items + 1] = {
-        title = "Move",
-        description = "Have them move to your next target",
+        title = "Mover",
+        description = "Faz com que ele se mova ao próximo alvo",
         action = "caue-pets:companionAction",
         params = { companionId = companionId, action = "move" },
     }
 
     items[#items + 1] = {
-        title = "Follow",
-        description = "Have them follow you",
+        title = "Seguir",
+        description = "Faz ele seguir você",
         action = "caue-pets:companionAction",
         params = { companionId = companionId, action = "follow" },
     }
 
     if modelHasSkill(companionId, "sit") then
         items[#items + 1] = {
-            title = "Sit",
-            description = "Sit down!",
+            title = "Sentar",
+            description = "Faz ele sentar!",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "sit" },
         }
@@ -1008,8 +1008,8 @@ local function showCompanionOptions(companionId)
 
     if modelHasSkill(companionId, "laydown") then
         items[#items + 1] = {
-            title = "Lay Down",
-            description = "Take a break :)",
+            title = "Deitar",
+            description = "Descansar um pouco.",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "laydown" },
         }
@@ -1017,7 +1017,7 @@ local function showCompanionOptions(companionId)
 
     if modelHasSkill(companionId, "bark") then
         items[#items + 1] = {
-            title = "Bark",
+            title = "Latir",
             description = "Woof woof",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "bark" },
@@ -1025,16 +1025,16 @@ local function showCompanionOptions(companionId)
     end
 
     items[#items + 1] = {
-        title = "Wander",
-        description = "Keep themselves busy",
+        title = "Perambular",
+        description = "Deixa ele ocupado",
         action = "caue-pets:companionAction",
         params = { companionId = companionId, action = "wander" },
     }
 
     if spawnedK9Units[companionId] then
         items[#items + 1] = {
-            title = "Track",
-            description = "Start tracking for someone",
+            title = "Rastrear",
+            description = "Começa a rastrear por alguém",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "track" },
         }
@@ -1042,8 +1042,8 @@ local function showCompanionOptions(companionId)
 
     if modelHasSkill(companionId, "taunt") then
         items[#items + 1] = {
-            title = "Taunt",
-            description = "Show them boss",
+            title = "Provocar",
+            description = "Mostra quem é o chefe",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "taunt" },
         }
@@ -1051,8 +1051,8 @@ local function showCompanionOptions(companionId)
 
     if modelHasSkill(companionId, "stretch") then
         items[#items + 1] = {
-            title = "Warm Up",
-            description = "Get ready for a workout",
+            title = "Aquecer",
+            description = "Fica pronto para corridas",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "stretch" },
         }
@@ -1060,8 +1060,8 @@ local function showCompanionOptions(companionId)
 
     if modelHasSkill(companionId, "beg") then
         items[#items + 1] = {
-            title = "Beg",
-            description = "Who's a good boy?",
+            title = "Implorar",
+            description = "Quem é o bom garoto?",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "beg" },
         }
@@ -1069,8 +1069,8 @@ local function showCompanionOptions(companionId)
 
     if modelHasSkill(companionId, "paw") then
         items[#items + 1] = {
-            title = "Paw",
-            description = "A real crowd pleaser",
+            title = "Pata",
+            description = "Da a pata",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "paw" },
         }
@@ -1078,8 +1078,8 @@ local function showCompanionOptions(companionId)
 
     if modelHasSkill(companionId, "peck") then
         items[#items + 1] = {
-            title = "Peck",
-            description = "Look for crumbs to eat",
+            title = "Comer",
+            description = "Procurar coisas para mastigar",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "peck" },
         }
@@ -1087,7 +1087,7 @@ local function showCompanionOptions(companionId)
 
     if modelHasSkill(companionId, "graze") then
         items[#items + 1] = {
-            title = "Graze",
+            title = "Pastar",
             description = "Nom nom nom",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "graze" },
@@ -1096,7 +1096,7 @@ local function showCompanionOptions(companionId)
 
     if modelHasSkill(companionId, "howl") then
         items[#items + 1] = {
-            title = "Howl",
+            title = "Uivar",
             description = "Awooooooooo",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "howl" },
@@ -1105,8 +1105,8 @@ local function showCompanionOptions(companionId)
 
     if modelHasSkill(companionId, "playdead") then
         items[#items + 1] = {
-            title = "Play Dead",
-            description = "Pretend to be dead",
+            title = "Morto Vivo",
+            description = "Brinca de morrer",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "playdead" },
         }
@@ -1114,8 +1114,8 @@ local function showCompanionOptions(companionId)
 
     if modelHasSkill(companionId, "attack") then
         items[#items + 1] = {
-            title = "Attack",
-            description = "Attack your next target",
+            title = "Atacar",
+            description = "Ataca o alvo desejado",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "attack" },
         }
@@ -1136,14 +1136,14 @@ end
 local function showPlayerOptions(companionId, pedId)
     local items = {
         {
-            title = "Move",
-            description = "Move to this person",
+            title = "Mover",
+            description = "Se move a essa pessoa",
             action = "caue-pets:companionPlayerAction",
             params = { companionId = companionId, action = "move", pedId = pedId },
         },
         {
-            title = "Watch",
-            description = "Keep an 'eye out'",
+            title = "Observar",
+            description = "Fica de olho aberto'",
             action = "caue-pets:companionAction",
             params = { companionId = companionId, action = "watch", pedId = pedId },
         },
@@ -1151,8 +1151,8 @@ local function showPlayerOptions(companionId, pedId)
 
     if hasSpawnedK9Unit() then
         items[#items + 1] = {
-            title = "Sniff",
-            description = "Any contraband?",
+            title = "Rastrear",
+            description = "Algum contrabando?",
             action = "caue-pets:companionPlayerAction",
             params = { companionId = companionId, action = "sniff", pedId = pedId },
         }
@@ -1160,8 +1160,8 @@ local function showPlayerOptions(companionId, pedId)
 
     if hasSpawnedK9Unit() then
         items[#items + 1] = {
-            title = "Ignore Track",
-            description = "Don't track this person's scent",
+            title = "Ignorar",
+            description = "Não procura algo nessa pessoa",
             action = "caue-pets:companionPlayerAction",
             params = { companionId = companionId, action = "untrack", pedId = pedId },
         }
@@ -1169,8 +1169,8 @@ local function showPlayerOptions(companionId, pedId)
 
     if hasAnimalWithSkill("attack") then
         items[#items + 1] = {
-            title = "Attack",
-            description = "Attack!",
+            title = "Atacar",
+            description = "Atacar!",
             action = "caue-pets:companionPlayerAction",
             params = { companionId = companionId, action = "attack", pedId = pedId },
         }
@@ -1182,20 +1182,20 @@ end
 local function showVehicleOptions(vehicleId)
     local items = {
         {
-            title = "Move",
-            description = "Go to the vehicle",
+            title = "Mover",
+            description = "Vai para o veiculo",
             action = "caue-pets:companionVehicleAction",
             params = { vehicleId = vehicleId, action = "move" },
         },
         {
-            title = "Get in",
-            description = "Get to da chopper",
+            title = "Entrar",
+            description = "Entra no Veiculo",
             action = "caue-pets:companionVehicleAction",
             params = { vehicleId = vehicleId, action = "vehicle" },
         },
         {
-            title = "Watch",
-            description = "Keep an 'eye out'",
+            title = "Observar",
+            description = "Fica de olho aberto'",
             action = "caue-pets:companionVehicleAction",
             params = { vehicleId = vehicleId, action = "watch" },
         },
@@ -1203,8 +1203,8 @@ local function showVehicleOptions(vehicleId)
 
     if hasSpawnedK9Unit() then
         items[#items + 1] = {
-            title = "Sniff",
-            description = "Any contraband?",
+            title = "Rastrear",
+            description = "Algum contrabando?",
             action = "caue-pets:companionVehicleAction",
             params = { vehicleId = vehicleId, action = "sniff" },
         }
@@ -1219,7 +1219,7 @@ function trackPlayers(companionId)
     local closestCoords = RPC.execute("caue-pets:getClosestPlayer", GetEntityCoords(PlayerPedId()), ignoreServerIds)
     if not closestCoords then
         exports["caue-companions"]:perform("sit", companionId or "")
-        TriggerEvent("DoLongHudText", "They don't seem interested in any tracks")
+        TriggerEvent("DoLongHudText", "Ele não parece estar interessado")
         exports["caue-companions"]:deselect()
         return
     end
@@ -1249,12 +1249,12 @@ local function doSniffAction(pType, pCompanionId)
     exports["caue-companions"]:deselect()
 
     if hasContraband then
-        TriggerEvent("DoLongHudText", "Your animal found something!")
+        TriggerEvent("DoLongHudText", "Seu animal achou algo!")
         exports["caue-companions"]:perform("bark", pCompanionId)
         Wait(1000)
         exports["caue-companions"]:perform("sit", pCompanionId)
     else
-        TriggerEvent("DoLongHudText", "Your animal didn't seem to find anything.")
+        TriggerEvent("DoLongHudText", "Seu animal não achou nada.")
     end
 end
 
@@ -1313,7 +1313,7 @@ AddEventHandler("caue-inventory:itemUsed", function(item, info)
     local characterId = exports["caue-base"]:getChar("id")
 
     if tonumber(info.Owner) ~= tonumber(characterId) then
-        TriggerEvent("DoLongHudText", "They don't recognize you.", 2)
+        TriggerEvent("DoLongHudText", "Eles não reconhecem você.", 2)
         return
     end
 

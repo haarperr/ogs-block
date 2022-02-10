@@ -18,9 +18,17 @@ local fruits = {
     ["peach"] = "🍑",
     ["strawberry"] = "🍓",
     ["watermelon"] = "🍉",
+    ["orange"] = "🍊",
+    ["lime"] = "🍈 ",
+
 }
 
 local alcohols = {
+    ["absolut"] = {
+        prop = "vodka",
+        alcoholStrength = 100.0,
+        icon = "🥴",
+    },
     ["vodka"] = {
         prop = "vodka",
         alcoholStrength = 1.0,
@@ -312,6 +320,16 @@ local items = {
         remove = true,
         prop = "coffee",
     },
+    ["mshake"] = {
+        dictionary = "amb@world_human_drinking@coffee@male@idle_a",
+        animation = "idle_c",
+        typeAnim = 49,
+        timer = 6000,
+        message = "☕",
+        func = "coffee:drink",
+        remove = true,
+        prop = "coffee",
+    },
     ["latte"] = {
         dictionary = "amb@world_human_drinking@coffee@male@idle_a",
         animation = "idle_c",
@@ -469,6 +487,7 @@ function changeHunger(_value)
     if _hunger < 0 then _hunger = 0 end
 
     currentValues["hunger"] = _hunger
+    updateStatus("hunger", _hunger)
 end
 
 function changeThirst(_value)
@@ -483,6 +502,7 @@ function changeThirst(_value)
     if _thirst < 0 then _thirst = 0 end
 
     currentValues["thirst"] = _thirst
+    updateStatus("thirst", _thirst)
 end
 
 --[[
@@ -662,7 +682,7 @@ end)
 
 RegisterNetEvent("food:Fruit")
 AddEventHandler("food:Fruit", function()
-    changeHunger(13)
+    changeHunger(5)
 end)
 
 AddEventHandler("shops:vendingMachine", function (pParams, pEntity, pContext)
@@ -716,7 +736,7 @@ Citizen.CreateThread(function()
         Citizen.Wait(300000)
 
         local _hunger = currentValues["hunger"] - math.random(3)
-        local _thirst = currentValues["thirst"] - 1
+        local _thirst = currentValues["thirst"] - math.random(3)
 
         if _hunger < 1 then _hunger = 0 end
         if _thirst < 1 then _thirst = 0 end
@@ -728,6 +748,8 @@ Citizen.CreateThread(function()
 
         currentValues["hunger"] = _hunger
         currentValues["thirst"] = _thirst
+        updateStatus("hunger", _hunger)
+        updateStatus("thirst", _thirst)
 
         if currentValues["thirst"] < 20 or currentValues["hunger"] < 20 then
             local newhealth = GetEntityHealth(PlayerPedId()) - math.random(10)

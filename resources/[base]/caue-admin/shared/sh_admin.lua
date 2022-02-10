@@ -12,7 +12,7 @@ function Caue.Admin.Log(self, log, user)
     if not log or not tostring(log) then return else log = tostring(log) end
 
     if IsDuplicityVersion() then
-        -- exports["np-log"]:AddLog("Admin", user and user or false, log, false)
+        -- exports["caue-log"]:AddLog("Admin", user and user or false, log, false)
 
         local time = os.date("%x - %I:%M:%S")
         log = string.format("%s - ADMIN: %s", time, log)

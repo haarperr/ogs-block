@@ -4,16 +4,18 @@
 
 ]]
 
-local removedHatManually = false
-local removedMaskManually = false
+local antispam = GetGameTimer()
 
-local facialWear = {
-    [1] = { ["Prop"] = -1, ["Texture"] = -1 },
-    [2] = { ["Prop"] = -1, ["Texture"] = -1 },
-    [3] = { ["Prop"] = -1, ["Texture"] = -1 },
-    [4] = { ["Prop"] = -1, ["Palette"] = -1, ["Texture"] = -1 }, -- this is actually a pedtexture variations, not a prop
-    [5] = { ["Prop"] = -1, ["Palette"] = -1, ["Texture"] = -1 }, -- this is actually a pedtexture variations, not a prop
-    [6] = { ["Prop"] = -1, ["Palette"] = -1, ["Texture"] = -1 }, -- this is actually a pedtexture variations, not a prop
+local items = {
+    "hat",
+    "mask",
+    "googles",
+    "chain",
+    "vest",
+    "jacket",
+    "backpack",
+    "pants",
+    "shoes"
 }
 
 --[[
@@ -22,200 +24,226 @@ local facialWear = {
 
 ]]
 
-function toggleFaceWear(pWearType, pShouldRemove)
-    local AnimSet = "none"
-    local AnimationOn = "none"
-    local AnimationOff = "none"
+function toggleFaceWear(pType, pRemove, pInfo, pSteal)
+    local AnimSet = "clothingtie"
+    local Animation = "try_tie_neutral_c"
     local PropIndex = 0
+    local Wait = 1000
+    local ItemHandler = false
+    local ItemMeta = {}
+    local IsMale = GetSkin().name == "skin_male"
 
-    local AnimSet = "mp_masks@on_foot"
-    local AnimationOn = "put_on_mask"
-    local AnimationOff = "put_on_mask"
-
-    facialWear[6]["Prop"] = GetPedDrawableVariation(PlayerPedId(), 0)
-    facialWear[6]["Palette"] = GetPedPaletteVariation(PlayerPedId(), 0)
-    facialWear[6]["Texture"] = GetPedTextureVariation(PlayerPedId(), 0)
-
-    for i = 0, 3 do
-        if GetPedPropIndex(PlayerPedId(), i) ~= -1 then
-            facialWear[i+1]["Prop"] = GetPedPropIndex(PlayerPedId(), i)
-        end
-        if GetPedPropTextureIndex(PlayerPedId(), i) ~= -1 then
-            facialWear[i+1]["Texture"] = GetPedPropTextureIndex(PlayerPedId(), i)
+    if not pRemove then
+        if pInfo.gender == "male" and not IsMale then
+            TriggerEvent("DoLongHudText", "Esta roupa só serve no sexo oposto. ", 2)
+            return
         end
     end
 
-    if GetPedDrawableVariation(PlayerPedId(), 1) ~= -1 then
-        facialWear[4]["Prop"] = GetPedDrawableVariation(PlayerPedId(), 1)
-        facialWear[4]["Palette"] = GetPedPaletteVariation(PlayerPedId(), 1)
-        facialWear[4]["Texture"] = GetPedTextureVariation(PlayerPedId(), 1)
-    end
-
-    if GetPedDrawableVariation(PlayerPedId(), 9) ~= -1 then
-        facialWear[5]["Prop"] = GetPedDrawableVariation(PlayerPedId(), 9)
-        facialWear[5]["Palette"] = GetPedPaletteVariation(PlayerPedId(), 9)
-        facialWear[5]["Texture"] = GetPedTextureVariation(PlayerPedId(), 9)
-    end
-
-    if pWearType == 1 then
+    if pType == "hat" then
         PropIndex = 0
-    elseif pWearType == 2 then
+        AnimSet = "mp_masks@on_foot"
+        Animation = "put_on_mask"
+    elseif pType == "googles" then
         PropIndex = 1
-
         AnimSet = "clothingspecs"
-        AnimationOn = "take_off"
-        AnimationOff = "take_off"
-    elseif pWearType == 3 then
-        PropIndex = 2
-    elseif pWearType == 4 then
+        Animation = "take_off"
+        Wait = 1200
+    elseif pType == "chain" then
+        PropIndex = 7
+        AnimSet = "clothingspecs"
+        Animation = "take_off"
+        Wait = 1200
+    elseif pType == "mask" then
         PropIndex = 1
-
-        if pShouldRemove then
-            AnimSet = "missfbi4"
-            AnimationOn = "takeoff_mask"
-            AnimationOff = "takeoff_mask"
-        end
-    elseif pWearType == 5 then
+        AnimSet = "mp_masks@on_foot"
+        Animation = "put_on_mask"
+    elseif pType == "vest" then
         PropIndex = 9
-        AnimSet = "clothingtie"
-        AnimationOn = "try_tie_positive_a"
-        AnimationOff = "try_tie_positive_a"
-    elseif pWearType == 6 then
+    elseif pType == "jacket" then
+        PropIndex = 11
+    elseif pType == "backpack" then
+        PropIndex = 5
+    elseif pType == "pants" then
+        PropIndex = 4
+    elseif pType == "shoes" then
+        PropIndex = 6
+        AnimSet = "random@domestic"
+        Animation = "pickup_low"
+    elseif pType == "stolenshoes" then
         PropIndex = 6
     end
 
-    if pWearType == 6 then
-        local gender = exports["caue-base"]:getChar("gender")
+    if pSteal == false then
+        loadAnimDict(AnimSet)
+        TaskPlayAnim(PlayerPedId(), AnimSet, Animation, 4.0, 3.0, -1, 49, 1.0, 0, 0, 0)
+    else
+        Wait = 500
+    end
+
+    local currentDrawable = GetPedDrawableVariation(PlayerPedId(), PropIndex) or -1
+    local currentProp = GetPedPropIndex(PlayerPedId(), PropIndex) or -1
+
+    Citizen.Wait(Wait)
+
+    if pType == "hat" or pType == "googles" then
+        local texture = GetPedPropTextureIndex(PlayerPedId(), PropIndex) or 0
+
+        if pRemove then
+            if currentProp ~= -1 then
+                ClearPedProp(PlayerPedId(), PropIndex)
+
+                ItemHandler = true
+                ItemMeta = { prop = currentProp, txd = texture }
+            end
+        else
+            if currentProp ~= -1 then
+                local _itemMeta = { prop = currentProp, txd = texture }
+                TriggerEvent("player:receiveItem", pType, 1, false, _itemMeta)
+            end
+
+            SetPedPropIndex(PlayerPedId(), PropIndex, pInfo.prop, pInfo.txd, true)
+
+            ItemHandler = true
+        end
+    elseif pType == "mask" or pType == "vest" or pType == "backpack" or pType == "chain" then
+        local texture = GetPedTextureVariation(PlayerPedId(), PropIndex) or 0
+        local pal = GetPedPaletteVariation(PlayerPedId(), PropIndex) or -1
+
+        if pRemove then
+            if currentDrawable ~= -1 then
+                SetPedComponentVariation(PlayerPedId(), PropIndex, -1, -1, -1)
+
+                ItemHandler = true
+                ItemMeta = { prop = currentDrawable, txd = texture, palette = pal }
+            end
+        else
+            if currentDrawable ~= -1 then
+                local _itemMeta = { prop = currentDrawable, txd = texture, palette = pal }
+                TriggerEvent("player:receiveItem", pType, 1, false, _itemMeta)
+            end
+
+            SetPedComponentVariation(PlayerPedId(), PropIndex, pInfo.prop,  pInfo.txd,  pInfo.pallete)
+
+            ItemHandler = true
+        end
+    elseif pType == "jacket" then
+        local texture = GetPedTextureVariation(PlayerPedId(), PropIndex) or 0
+        local pal = GetPedPaletteVariation(PlayerPedId(), PropIndex) or -1
+        local arm = GetPedDrawableVariation(PlayerPedId(), 3) or 0
+
+        local bareTorsoIndex = 15
+        local bareArmsIndex = 15
+
+        if not IsMale then
+            bareTorsoIndex = 18
+        end
+
+        if pRemove then
+            if currentDrawable ~= -1 and currentDrawable ~= bareTorsoIndex then
+                SetPedComponentVariation(PlayerPedId(), PropIndex, bareTorsoIndex, 0, -1)
+                SetPedComponentVariation(PlayerPedId(), 3, bareArmsIndex, 0, -1)
+
+                ItemHandler = true
+                ItemMeta = { prop = currentDrawable, txd = texture, palette = pal, arms = arm }
+            end
+        else
+            if currentDrawable ~= -1 and currentDrawable ~= bareTorsoIndex then
+                local _itemMeta = { prop = currentDrawable, txd = texture, palette = pal, arms = arm }
+                TriggerEvent("player:receiveItem", pType, 1, false, _itemMeta)
+            end
+
+            SetPedComponentVariation(PlayerPedId(), PropIndex, pInfo.prop, pInfo.txd, pInfo.palette)
+            SetPedComponentVariation(PlayerPedId(), 3, pInfo.arms, 0, -1)
+
+            ItemHandler = true
+        end
+    elseif pType == "pants" then
+        local texture = GetPedTextureVariation(PlayerPedId(), PropIndex) or 0
+        local pal = GetPedPaletteVariation(PlayerPedId(), PropIndex) or -1
+
+        local bareLegsIndex = 61
+
+        if not IsMale then
+            bareLegsIndex = 17
+        end
+
+        if pRemove then
+            if currentDrawable ~= -1 and currentDrawable ~= bareLegsIndex then
+                SetPedComponentVariation(PlayerPedId(), PropIndex, bareLegsIndex, 0, -1)
+
+                ItemHandler = true
+                ItemMeta = { prop = currentDrawable, txd = texture, palette = pal }
+            end
+        else
+            if currentDrawable ~= -1 and currentDrawable ~= bareLegsIndex then
+                local _itemMeta = { prop = currentDrawable, txd = texture, palette = pal }
+                TriggerEvent("player:receiveItem", pType, 1, false, _itemMeta)
+            end
+
+            SetPedComponentVariation(PlayerPedId(), PropIndex, pInfo.prop, pInfo.txd, pInfo.palette)
+
+            ItemHandler = true
+        end
+    elseif pType == "shoes" then
+        local texture = GetPedTextureVariation(PlayerPedId(), PropIndex) or 0
+        local pal = GetPedPaletteVariation(PlayerPedId(), PropIndex) or -1
+
         local bareFootIndex = 34
 
-        if not IsPedMale(PlayerPedId()) or gender ~= 0 or GetEntityModel(PlayerPedId()) == `mp_f_freemode_01` then
+        if not IsMale then
             bareFootIndex = 35
         end
 
-        SetPedComponentVariation(PlayerPedId(), PropIndex, bareFootIndex, 0, -1)
+        if pRemove then
+            if currentDrawable ~= -1 and currentDrawable ~= bareFootIndex then
+                SetPedComponentVariation(PlayerPedId(), PropIndex, bareFootIndex, 0, -1)
 
-        return
-    end
-
-    loadAnimDict(AnimSet)
-
-    local currentDrawable = GetPedDrawableVariation(PlayerPedId(), tonumber(PropIndex))
-    local currentProp = GetPedPropIndex(PlayerPedId(), tonumber(PropIndex))
-
-    if pWearType == 1 and not pShouldRemove and removedHatManually then
-        local hasHat = exports["caue-inventory"]:hasEnoughOfItem("hat", 1, false, true, {hat = facialWear[PropIndex+1]["Prop"]})
-        if not hasHat then
-            TriggerEvent("DoLongHudText", "You don't have your current hat with you.")
-            return
-        end
-    end
-
-    if pWearType == 4 and not pShouldRemove and removedMaskManually then
-        local hasMask = exports["caue-inventory"]:hasEnoughOfItem("mask", 1, false, true, {mask = facialWear[pWearType]["Prop"]})
-        if not hasMask then
-            TriggerEvent("DoLongHudText", "You don't have your current mask with you.")
-            return
-        end
-    end
-
-    if pShouldRemove then
-        TaskPlayAnim( PlayerPedId(), AnimSet, AnimationOff, 4.0, 3.0, -1, 49, 1.0, 0, 0, 0 )
-
-        Citizen.Wait(500)
-
-        if pWearType ~= 5 then
-            if pWearType == 4 then
-                local texture = GetPedTextureVariation(PlayerPedId(), PropIndex)
-                local pal = GetPedPaletteVariation(PlayerPedId(), PropIndex)
-
-                SetPedComponentVariation(PlayerPedId(), PropIndex, -1, -1, -1)
-
-                if currentDrawable ~= -1 then
-                    local itemMeta = { mask = currentDrawable, txd = texture, palette = pal }
-                    local hasPropItem = exports["caue-inventory"]:hasEnoughOfItem("mask", 1, false, true, itemMeta)
-
-                    if not hasPropItem then
-                        TriggerEvent("player:receiveItem", "mask", 1, false, itemMeta)
-                        TriggerEvent("raid_clothes:saveCharacterClothes")
-                    end
-
-                    removedMaskManually = true
-                end
-            else
-                if pWearType ~= 2 then
-                    local txdIndex = GetPedPropTextureIndex(PlayerPedId(), tonumber(PropIndex))
-
-                    ClearPedProp(PlayerPedId(), tonumber(PropIndex))
-
-                    if pWearType == 1 and currentProp ~= -1 then
-                        local itemMeta = { hat = currentProp, txd = txdIndex }
-                        local hasPropItem = exports["caue-inventory"]:hasEnoughOfItem("hat", 1, false, true, itemMeta)
-
-                        if not hasPropItem then
-                            TriggerEvent("player:receiveItem", "hat", 1, false, itemMeta)
-                            TriggerEvent("raid_clothes:saveCharacterClothes")
-                        end
-
-                        removedHatManually = true
-                    end
-                end
+                ItemHandler = true
+                ItemMeta = { prop = currentDrawable, txd = texture, palette = pal }
             end
-        end
-    else
-        TaskPlayAnim( PlayerPedId(), AnimSet, AnimationOn, 4.0, 3.0, -1, 49, 1.0, 0, 0, 0 )
-
-        Citizen.Wait(500)
-
-        if pWearType ~= 5 and pWearType ~= 2 then
-            if pWearType == 4 then
-                SetPedComponentVariation(PlayerPedId(), PropIndex, facialWear[pWearType]["Prop"], facialWear[pWearType]["Texture"], facialWear[pWearType]["Palette"])
-
-                if (currentDrawable == -1 or currentDrawable ~= facialWear[pWearType]["Prop"]) and removedMaskManually then
-                    TriggerEvent("inventory:removeItemByMetaKV", "mask", 1, "mask", facialWear[pWearType]["Prop"])
-                    TriggerEvent("raid_clothes:saveCharacterClothes")
-                    removedMaskManually = false
-                end
-            else
-                SetPedPropIndex( PlayerPedId(), tonumber(PropIndex), tonumber(facialWear[PropIndex+1]["Prop"]), tonumber(facialWear[PropIndex+1]["Texture"]), false)
-
-                if pWearType == 1 and currentProp == -1 and removedHatManually then
-                    TriggerEvent("inventory:removeItemByMetaKV", "hat", 1, "hat", facialWear[PropIndex+1]["Prop"])
-                    TriggerEvent("raid_clothes:saveCharacterClothes")
-                    removedHatManually = false
-                end
-            end
-        end
-    end
-
-    if pWearType == 5 then
-        if not pShouldRemove then
-            SetPedComponentVariation(PlayerPedId(), PropIndex, facialWear[pWearType]["Prop"], facialWear[pWearType]["Texture"], facialWear[pWearType]["Palette"])
         else
-            SetPedComponentVariation(PlayerPedId(), PropIndex, -1, -1, -1)
+            if currentDrawable ~= -1 and currentDrawable ~= bareFootIndex then
+                local _itemMeta = { prop = currentDrawable, txd = texture, palette = pal }
+                TriggerEvent("player:receiveItem", pType, 1, false, _itemMeta)
+            end
+
+            SetPedComponentVariation(PlayerPedId(), PropIndex, pInfo.prop, pInfo.txd, pInfo.palette)
+
+            ItemHandler = true
+        end
+    elseif pType == "stolenshoes" then
+        local bareFootIndex = 34
+
+        if not IsMale then
+            bareFootIndex = 35
         end
 
-        Citizen.Wait(1800)
-    end
-
-
-    if pWearType == 2 then
-        Citizen.Wait(600)
-
-        if pShouldRemove then
-            ClearPedProp(PlayerPedId(), tonumber(PropIndex))
-        end
-
-        if not pShouldRemove then
-            Citizen.Wait(140)
-            SetPedPropIndex(PlayerPedId(), tonumber(PropIndex), tonumber(facialWear[PropIndex+1]["Prop"]), tonumber(facialWear[PropIndex+1]["Texture"]), false)
+        if currentDrawable ~= -1 and currentDrawable ~= bareFootIndex then
+            SetPedComponentVariation(PlayerPedId(), PropIndex, bareFootIndex, 0, -1)
+            TriggerServerEvent("caue-clothes:facewearSendItem", pSteal, pType, ItemMeta)
         end
     end
 
-    if pWearType == 4 and pShouldRemove then
-        Citizen.Wait(1200)
+    if ItemHandler then
+        ItemMeta.gender = IsMale and "male" or "female"
+
+        if pSteal ~= false then
+            TriggerServerEvent("caue-clothes:facewearSendItem", pSteal, pType, ItemMeta)
+        else
+            if pRemove then
+                TriggerEvent("player:receiveItem", pType, 1, false, ItemMeta)
+            else
+                TriggerEvent("inventory:removeItemByMetaKV", pType, 1, "prop", pInfo.prop)
+            end
+        end
     end
 
-    ClearPedTasks(PlayerPedId())
+    if pSteal == false then
+        ClearPedTasks(PlayerPedId())
+    end
+
+    TriggerEvent("caue-clothes:saveCurrentClothes")
 end
 
 --[[
@@ -224,58 +252,133 @@ end
 
 ]]
 
-RegisterNetEvent("facewear:update")
-AddEventHandler("facewear:update",function()
-    for i = 0, 3 do
-        if GetPedPropIndex(PlayerPedId(), i) ~= -1 then
-            facialWear[i+1]["Prop"] = GetPedPropIndex(PlayerPedId(), i)
-        end
-        if GetPedPropTextureIndex(PlayerPedId(), i) ~= -1 then
-            facialWear[i+1]["Texture"] = GetPedPropTextureIndex(PlayerPedId(), i)
-        end
+AddEventHandler("caue-inventory:itemUsed", function(item, info)
+    if has_value(items, item) == -1 then return end
+
+    if antispam >= GetGameTimer() then
+        TriggerEvent("DoLongHudText", "Mais devagar ok?", 2)
+        return
     end
 
-    if GetPedDrawableVariation(PlayerPedId(), 1) ~= -1 then
-        facialWear[4]["Prop"] = GetPedDrawableVariation(PlayerPedId(), 1)
-        facialWear[4]["Palette"] = GetPedPaletteVariation(PlayerPedId(), 1)
-        facialWear[4]["Texture"] = GetPedTextureVariation(PlayerPedId(), 1)
-    end
+    antispam = GetGameTimer() + 1000
 
-    if GetPedDrawableVariation(PlayerPedId(), 11) ~= -1 then
-        facialWear[5]["Prop"] = GetPedDrawableVariation(PlayerPedId(), 11)
-        facialWear[5]["Palette"] = GetPedPaletteVariation(PlayerPedId(), 11)
-        facialWear[5]["Texture"] = GetPedTextureVariation(PlayerPedId(), 11)
-    end
+    local info = json.decode(info)
 
-    removedHatManually = false
-    removedMaskManually = false
+    toggleFaceWear(item, false, info, false)
 end)
 
 RegisterNetEvent("facewear:adjust")
-AddEventHandler("facewear:adjust",function(pWearType, pShouldRemove, pIsPolice)
-    local isPolice = pIsPolice or false
-
-    if not (isHandcuffed and isHandcuffedAndWalking) or isPolice then
-        if type(pWearType) == "table" then
-            for _, wearType in pairs(pWearType) do
-                toggleFaceWear(wearType.id, wearType.shouldRemove)
-            end
-        else
-            toggleFaceWear(pWearType, pShouldRemove)
+AddEventHandler("facewear:adjust",function(pType, pRemove, pIsSteal)
+    if type(pType) == "table" then
+        for _, wearType in pairs(pType) do
+            toggleFaceWear(wearType.id, wearType.shouldRemove, wearType.info, wearType.isSteal)
         end
+    else
+        toggleFaceWear(pType, pRemove, {}, pIsSteal)
     end
 end)
 
-RegisterNetEvent("facewear:setWear")
-AddEventHandler("facewear:setWear",function(pWearType, pComponent, pTexture, pPalette)
-    if pWearType == 1 then
-        facialWear[1]["Prop"] = pComponent
-        facialWear[1]["Texture"] = pTexture
+AddEventHandler("caue-facewear:steal", function(pArgs, pEntity)
+    loadAnimDict("random@domestic")
+  	TaskTurnPedToFaceEntity(PlayerPedId(), pEntity, -1)
+  	TaskPlayAnim(PlayerPedId(),"random@domestic", "pickup_low",5.0, 1.0, 1.0, 48, 0.0, 0, 0, 0)
+  	Citizen.Wait(1600)
+  	ClearPedTasks(PlayerPedId())
+  	TriggerServerEvent("facewear:adjust", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pEntity)), pArgs, true, true)
+end)
+
+AddEventHandler("caue-facewear:radial", function(pArgs)
+    if antispam >= GetGameTimer() then
+        TriggerEvent("DoLongHudText", "Mais devagar ok?", 2)
+        return
     end
 
-    if pWearType == 4 then
-        facialWear[4]["Prop"] = pComponent
-        facialWear[4]["Palette"] = pPalette
-        facialWear[4]["Texture"] = pTexture
-    end
+    antispam = GetGameTimer() + 1000
+
+    toggleFaceWear(pArgs, true, {}, false)
+end)
+
+--[[
+
+    Threads
+
+]]
+
+Citizen.CreateThread(function()
+    local group = { 1 }
+
+    local data = {
+        {
+            id = "steal_shoes",
+            label = "Steal Shoes",
+            icon = "hand-paper",
+            event = "caue-facewear:steal",
+            parameters = "shoes",
+        },
+        {
+            id = "steal_pants",
+            label = "Steal Pants",
+            icon = "hand-paper",
+            event = "caue-facewear:steal",
+            parameters = "pants",
+        },
+        {
+            id = "steal_backpack",
+            label = "Steal Backpack",
+            icon = "hand-paper",
+            event = "caue-facewear:steal",
+            parameters = "backpack",
+        },
+        {
+            id = "steal_vest",
+            label = "Steal Vest",
+            icon = "hand-paper",
+            event = "caue-facewear:steal",
+            parameters = "vest",
+        },
+        {
+            id = "steal_jacket",
+            label = "Steal Jacket",
+            icon = "hand-paper",
+            event = "caue-facewear:steal",
+            parameters = "jacket",
+        },
+        {
+            id = "steal_mask",
+            label = "Steal Mask",
+            icon = "hand-paper",
+            event = "caue-facewear:steal",
+            parameters = "mask",
+        },
+        {
+            id = "steal_googles",
+            label = "Steal Googles",
+            icon = "hand-paper",
+            event = "caue-facewear:steal",
+            parameters = "googles",
+        },
+        {
+            id = "steal_hat",
+            label = "Steal Hat",
+            icon = "hand-paper",
+            event = "caue-facewear:steal",
+            parameters = "hat",
+        },
+        {
+            id = "steal_chain",
+            label = "Steal Chain",
+            icon = "hand-paper",
+            event = "caue-facewear:steal",
+            parameters = "chain",
+        },
+    }
+
+    local options = {
+        distance = { radius = 1.5 },
+        isEnabled = function(pEntity, pContext)
+            return not isDisabled() and pContext.flags["isPlayer"] and (pContext.flags["isCuffed"] or pContext.flags["isDead"] or isPersonBeingHeldUp(pEntity))
+        end
+    }
+
+    exports["caue-eye"]:AddPeekEntryByEntityType(group, data, options)
 end)

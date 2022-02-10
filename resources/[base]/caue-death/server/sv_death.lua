@@ -5,3 +5,19 @@ AddEventHandler("reviveGranted", function(_src)
 
     TriggerClientEvent("reviveFunction", src)
 end)
+
+RegisterNetEvent("caue-death:characterKill")
+AddEventHandler("caue-death:characterKill", function(_src)
+    local src = source
+    if _src then src = _src end
+
+    local cid = exports["caue-base"]:getChar(src, "id")
+    if not cid then return end
+
+    exports.ghmattimysql:execute([[
+        UPDATE characters
+        SET deleted = 1
+        WHERE id = ?
+    ]],
+    { cid })
+end)

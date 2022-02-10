@@ -122,7 +122,7 @@ AddEventHandler("caue-inventory:lockpick", function(isForced, inventoryName, slo
 
         if #(GetEntityCoords(targetVehicle) - GetEntityCoords(PlayerPedId())) < 10.0 and targetVehicle ~= 0 and GetEntitySpeed(targetVehicle) < 5.0 then
             SetVehicleDoorsLocked(targetVehicle, 1)
-            TriggerEvent("DoLongHudText", "Vehicle Unlocked.")
+            TriggerEvent("DoLongHudText", "Veículo destrancado.")
             TriggerEvent("InteractSound_CL:PlayOnOne", "unlock", 0.1)
         end
     else
@@ -157,7 +157,7 @@ AddEventHandler("caue-inventory:lockpick", function(isForced, inventoryName, slo
 
             if not result.success then
                 if result.stage >= 2 then
-                    TriggerEvent("DoLongHudText", "The lockpick bent out of shape.", 2)
+                    TriggerEvent("DoLongHudText", "A lockpick está um pouco torta.", 2)
                     TriggerEvent("inventory:removeItem", "lockpick", 1)
                     lockpicking = false
                     return
@@ -317,7 +317,7 @@ end
 
 RegisterNetEvent("evidence:addDnaSwab")
 AddEventHandler("evidence:addDnaSwab", function(dna)
-    TriggerEvent("DoLongHudText", "DNA Result: " .. dna,1)
+    TriggerEvent("DoLongHudText", "Resultado de DNA: " .. dna,1)
 end)
 
 RegisterNetEvent("CheckDNA")
@@ -332,7 +332,7 @@ end)
 
 RegisterNetEvent("evidence:swabNotify")
 AddEventHandler("evidence:swabNotify", function()
-    TriggerEvent("DoLongHudText", "DNA swab taken.",1)
+    TriggerEvent("DoLongHudText", "Cotonete de DNA utilizado.",1)
 end)
 
 

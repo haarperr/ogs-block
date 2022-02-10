@@ -11,30 +11,10 @@ AddEventHandler("caue-npcs:set:ped", function(pNPCs)
     end
 end)
 
-RegisterNetEvent("caue-npcs:ped:giveStolenItems")
-AddEventHandler("caue-npcs:ped:giveStolenItems", function(pArgs, pEntity, pEntityFlags, pEntityCoords)
-    local npcCoords = GetEntityCoords(pEntity)
-    local finished = exports["caue-taskbar"]:taskBar(15000, "Preparing to receive goods, don't move.")
-    if finished == 100 then
-        if #(GetEntityCoords(PlayerPedId()) - npcCoords) < 2.0 then
-            TriggerEvent("server-inventory-open", "1", "Stolen-Goods-1")
-        else
-            TriggerEvent("DoLongHudText", "You moved too far you idiot.", 105)
-        end
-    end
-end)
-
-RegisterNetEvent("caue-npcs:ped:exchangeRecycleMaterial")
-AddEventHandler("caue-npcs:ped:exchangeRecycleMaterial", function(pArgs, pEntity, pEntityFlags, pEntityCoords)
-    local npcCoords = GetEntityCoords(pEntity)
-    local finished = exports["caue-taskbar"]:taskBar(3000, "Preparing to exchange material, don't move.")
-    if finished == 100 then
-        if #(GetEntityCoords(PlayerPedId()) - npcCoords) < 2.0 then
-            TriggerEvent("server-inventory-open", "35", "Craft")
-        else
-            TriggerEvent("DoLongHudText", "You moved too far you idiot.", 105)
-        end
-    end
+RegisterNetEvent("caue-npcs:set:position")
+AddEventHandler("caue-npcs:set:position", function(pId, pVectors, pHeading)
+    local position = { coords = pVectors, heading = pHeading}
+    UpdateNPCData(pId, 'position', position)
 end)
 
 RegisterNetEvent("caue-npcs:ped:signInJob")
@@ -56,9 +36,9 @@ AddEventHandler("caue-npcs:ped:paycheckCollect", function(pArgs, pEntity, pEntit
     TriggerServerEvent("caue-jobs:paycheckPickup")
 end)
 
-RegisterNetEvent("caue-npcs:ped:sellStolenItems")
-AddEventHandler("caue-npcs:ped:sellStolenItems", function()
-    RPC.execute("caue-inventory:sellStolenItems")
+RegisterNetEvent("caue-npcs:ped:tijolo")
+AddEventHandler("caue-npcs:ped:tijolo", function(pArgs, pEntity, pEntityFlags, pEntityCoords)
+TriggerEvent("player:receiveItem", "1064738331", 1)
 end)
 
 RegisterNetEvent("caue-npcs:ped:keeper")

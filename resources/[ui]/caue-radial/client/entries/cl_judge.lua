@@ -24,7 +24,7 @@ local JudgeActions = {
     },
     {
         id ="judge-action:checkbank",
-        title = "Check Bank",
+        title = "Checar Banco",
         icon = "#police-check-bank",
         event = "police:checkBank"
     }

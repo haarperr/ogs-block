@@ -6,7 +6,6 @@
 
 local texting = {}
 local hidden = {}
-local playerSource = 0
 
 --[[
 
@@ -76,15 +75,6 @@ end)
 
 RegisterNetEvent("caue-chat:texting")
 AddEventHandler("caue-chat:texting", function(player, toggle)
-    if type(player) == "table" then
-        for k,v in pairs(player) do
-            if DoesPlayerExist(k) then
-                local id = GetPlayerFromServerId(k)
-                texting[id] = k
-            end
-        end
-        return
-    end
     if DoesPlayerExist(player) then
         local id = GetPlayerFromServerId(player)
         if toggle == true then
@@ -103,45 +93,35 @@ end)
 
 ]]
 
+local playerId = GetPlayerFromServerId(k)
+local ped = GetPlayerPed(playerId)
+
 Citizen.CreateThread(function()
     while true do
-        for i = 0, 255 do
-            N_0x31698aa80e0223f8(i)
-        end
-
         local playerped = PlayerPedId()
-        local HeadBone = 0x796e
+        local playerCoords = GetPedBoneCoords(playerped, 0x796e)
 
-        for id = 0, 255 do
-            if NetworkIsPlayerActive(id) then
+        for id, serverid in pairs(texting) do
+            if NetworkIsPlayerActive(id) and hidden[id] == nil then
                 local ped = GetPlayerPed(id)
 
-                local playerCoords = GetPedBoneCoords(playerped, HeadBone)
-
                 if ped ~= playerped then
-                    local pedCoords = GetPedBoneCoords(ped, HeadBone)
-
+                    local pedCoords = GetPedBoneCoords(ped, 0x796e)
                     local distance = math.floor(#(playerCoords - pedCoords))
-
                     local isDucking = IsPedDucking(ped)
-                    local cansee = HasEntityClearLosToEntity(playerped, ped, 17 )
-                    local isReadyToShoot = IsPedWeaponReadyToShoot(ped)
+                    local cansee = HasEntityClearLosToEntity(playerped, ped, 17)
                     local isStealth = GetPedStealthMovement(ped)
-                    local isDriveBy = IsPedDoingDriveby(ped)
-                    local isInCover = IsPedInCover(ped,true)
+                    local isInCover = IsPedInCover(ped, true)
 
                     if isStealth == nil then
                         isStealth = 0
                     end
 
-                    if isDucking or isStealth == 1 or isDriveBy or isInCover then
+                    if isDucking or isStealth == 1 or isInCover then
                         cansee = false
                     end
 
-                    if hidden[id] then cansee = false end
-                    if not texting[id] then cansee = false end
-
-                    if distance < 20 then
+                    if distance <= 20 then
                         if cansee then
                             DrawText3D(pedCoords.x, pedCoords.y, pedCoords.z + 0.5, "[...]", {243, 239, 5})
                         end
@@ -150,6 +130,6 @@ Citizen.CreateThread(function()
             end
         end
 
-        Citizen.Wait(1)
+        Citizen.Wait(5)
     end
 end)

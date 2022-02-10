@@ -97,7 +97,7 @@ AddEventHandler("caue-polyzone:enter", function(name)
 	if not Config["Zones"][name] then return end
 
 	if string.find(name, "catalog") then
-		exports["caue-interaction"]:showInteraction("[E] Catalog")
+		exports["caue-interaction"]:showInteraction("[E] Showroom")
 		listenForKeypress()
 	else
 		exports["caue-base"]:setVar("carshop", name)
@@ -134,18 +134,18 @@ AddEventHandler("caue-carshop:check", function(pParams, pEntity, pContext)
 	local finalprice = math.floor(baseprice + commissionprice + tax.tax)
 
 	local infos = {
-		{ title = "Vehicle", description = GetLabelText(GetDisplayNameFromVehicleModel(info.model)) },
+		{ title = "Veiculo", description = GetLabelText(GetDisplayNameFromVehicleModel(info.model)) },
 		{ title = "Tier", description = exports["caue-vehicles"]:GetVehicleTier(pEntity) },
-		{ title = "Price", description = "$" .. tax.total .. " Incl. " .. tax.porcentage .. "% tax" },
-		{ title = "Stock", description = info.stock },
+		{ title = "Preço", description = "$" .. tax.total .. " Incl. " .. tax.porcentage .. "% tax" },
+		{ title = "Estoque", description = info.stock },
 	}
 
 	if exports["caue-groups"]:GroupRank(shop) > 0 then
-		table.insert(infos, { title = "EMPLOYEE INFORMATIONS:", description = ""})
-		table.insert(infos, { title = "Commission", description = "%" .. info.commission} )
-		table.insert(infos, { title = "Base Price", description = "$" .. baseprice} )
-		table.insert(infos, { title = "Commission Price", description = "$" .. commissionprice} )
-		table.insert(infos, { title = "Tax Price", description = "$" .. tax.tax} )
+		table.insert(infos, { title = "INFORMAÇÕES:", description = ""})
+		table.insert(infos, { title = "Comissão", description = "%" .. info.commission} )
+		table.insert(infos, { title = "Preço Base", description = "$" .. baseprice} )
+		table.insert(infos, { title = "Preço de Comissão", description = "$" .. commissionprice} )
+		table.insert(infos, { title = "Taxas", description = "$" .. tax.tax} )
 	end
 
 	local data = {}
@@ -195,12 +195,12 @@ AddEventHandler("caue-carshop:commission", function(pParams, pEntity, pContext)
 	if input["commission"] then
 		local comission = tonumber(input["commission"])
 		if not comission then
-			TriggerEvent("DoLongHudText", "Commission must be between 1-100", 2)
+			TriggerEvent("DoLongHudText", "Comissão precisa ser de 1-30", 2)
 			return
 		end
 
-		if comission < 1 or comission > 100 then
-			TriggerEvent("DoLongHudText", "Commission must be between 1-100", 2)
+		if comission < 1 or comission > 30 then
+			TriggerEvent("DoLongHudText", "Comissão precisa ser de 1-30", 2)
 			return
 		end
 
@@ -263,16 +263,16 @@ AddEventHandler("caue-carshop:buy", function(pParams, pEntity, pContext)
 	local groupname = exports["caue-groups"]:GroupName(shop)
 
 	local document = {
-        headerTitle = "VEHICLE PURCHASE",
-        headerSubtitle = "Vehicle financing contract.",
+        headerTitle = "Compra de Veiculo",
+        headerSubtitle = "Contrato de financiamento de Veiculo.",
         elements = {
-            { label = "SELLER", type = "input", value = info.seller.name, can_be_emtpy = false, can_be_edited = false },
+            { label = "VENDEDOR", type = "input", value = info.seller.name, can_be_emtpy = false, can_be_edited = false },
 			{ label = "SHOP", type = "input", value = groupname, can_be_emtpy = false, can_be_edited = false },
-			{ label = "VEHICLE", type = "input", value = vehicle, can_be_emtpy = false, can_be_edited = false },
-			{ label = "TOTAL PRICE", type = "input", value = "$" .. finalprice, can_be_emtpy = false, can_be_edited = false },
-			{ label = "DOWN PAYMENT", type = "input", value = "$" .. downpayment .. " Incl. " .. tax.porcentage .. "% tax", can_be_emtpy = false, can_be_edited = false },
-			{ label = "FINANCING", type = "input", value = "10x $" .. financing, can_be_emtpy = false, can_be_edited = false },
-			{ label = "TERMS", type = "textarea", value = "By signing this contract you agree that you must make the financing payments on time, otherwise the " .. groupname .. " will retake the vehicle.", can_be_emtpy = false, can_be_edited = false },
+			{ label = "VEICULO", type = "input", value = vehicle, can_be_emtpy = false, can_be_edited = false },
+			{ label = "PREÇO TOTAL", type = "input", value = "$" .. finalprice, can_be_emtpy = false, can_be_edited = false },
+			{ label = "PAGAMENTO INICIAL", type = "input", value = "$" .. downpayment .. " Incl. " .. tax.porcentage .. "% tax", can_be_emtpy = false, can_be_edited = false },
+			{ label = "FINANCIAMENTO", type = "input", value = "10x $" .. financing, can_be_emtpy = false, can_be_edited = false },
+			{ label = "TERMOS", type = "textarea", value = "Ao assinar isso, você deve estar seguro que caso você não pague " .. groupname .. " irá confiscar o seu veiculo.", can_be_emtpy = false, can_be_edited = false },
         },
 		group = "pdm",
 		callback = {
@@ -324,7 +324,7 @@ Citizen.CreateThread(function()
 			data = {
 				{
 					id = "carshop_check",
-					label = "Vehicle Informations",
+					label = "Informações do Veiculo",
 					icon = "search-dollar",
 					event = "caue-carshop:check",
 					parameters = {}
@@ -339,7 +339,7 @@ Citizen.CreateThread(function()
 			data = {
 				{
 					id = "carshop_buy",
-					label = "Buy Vehicle",
+					label = "Comprar Veiculo",
 					icon = "dollar-sign",
 					event = "caue-carshop:buy",
 					parameters = {}
@@ -359,14 +359,14 @@ Citizen.CreateThread(function()
 			data = {
 				{
 					id = "carshop_change",
-					label = "Change Vehicle",
+					label = "Alterar Veiculo",
 					icon = "exchange-alt",
 					event = "caue-carshop:change",
 					parameters = {}
 				},
 				{
 					id = "carshop_commission",
-					label = "Change Commission",
+					label = "Alterar Comissão",
 					icon = "percentage",
 					event = "caue-carshop:commission",
 				},
@@ -386,7 +386,7 @@ Citizen.CreateThread(function()
 			data = {
 				{
 					id = "carshop_sell",
-					label = "Sell Vehicle",
+					label = "Vender Veiculo",
 					icon = "dollar-sign",
 					event = "caue-carshop:sell",
 					parameters = {}
@@ -429,7 +429,7 @@ Citizen.CreateThread(function()
 			data = {
 				{
 					id = "carshop_testdrivereturn",
-					label = "Return Vehicle",
+					label = "Retonar Veiculo",
 					icon = "car",
 					event = "caue-carshop:testdriveReturn",
 					parameters = {}

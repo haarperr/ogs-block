@@ -163,7 +163,7 @@ local function CloseNui()
     inTheShop = false
 
     if listening then
-        exports["caue-interaction"]:showInteraction("[E] Catalog")
+        exports["caue-interaction"]:showInteraction("[E] Catalogo")
     end
 end
 

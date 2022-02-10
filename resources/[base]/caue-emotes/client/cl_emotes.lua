@@ -3250,8 +3250,8 @@ anims = {
     end,
 
     ["facepalm"] = function(ped)
-        local animDict = "random@car_thief@agitated@idle_a"
-        local animation = "agitated_idle_a"
+        local animDict = "random@car_thief@Agitado@idle_a"
+        local animation = "Agitado_idle_a"
         if IsPedArmed(ped, 7) then
             SetCurrentPedWeapon(ped, 0xA2719263, true)
         end

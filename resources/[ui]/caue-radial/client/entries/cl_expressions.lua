@@ -136,22 +136,22 @@ local Expressions = {
     }
 }
 
-Citizen.CreateThread(function()
-    for index, data in ipairs(Expressions) do
-        SubMenu[index] = data.id
-        MenuItems[data.id] = {data = data}
-    end
+-- Citizen.CreateThread(function()
+--     for index, data in ipairs(Expressions) do
+--         SubMenu[index] = data.id
+--         MenuItems[data.id] = {data = data}
+--     end
 
-    GeneralEntries[#GeneralEntries+1] = {
-        data = {
-            id = "expressions",
-            icon = "#expressions",
-            title = "Expressions",
-        },
-        subMenus = SubMenu,
-        isEnabled = function ()
-            return not exports["caue-base"]:getVar("dead")
-        end,
-    }
-end)
+--     GeneralEntries[#GeneralEntries+1] = {
+--         data = {
+--             id = "expressions",
+--             icon = "#expressions",
+--             title = "Expressions",
+--         },
+--         subMenus = SubMenu,
+--         isEnabled = function ()
+--             return not exports["caue-base"]:getVar("dead")
+--         end,
+--     }
+-- end)
 

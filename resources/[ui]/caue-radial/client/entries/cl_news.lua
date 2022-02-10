@@ -3,7 +3,7 @@ local NewsEntries, SubMenu = MenuEntries["news"], {}
 local News = {
     {
         id = "newsMicrophoneBoom",
-        title = "Microphone",
+        title = "Microfone",
         icon = "#news-job-news-microphone",
         event = "camera:setMic"
     },

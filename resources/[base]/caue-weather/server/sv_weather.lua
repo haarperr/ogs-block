@@ -6,6 +6,23 @@
 
 local currentWeather = "CLEAR"
 local secondOfDay = 31800
+local synctime = {}
+local pawnshoptime = false
+
+--[[
+
+	Functions
+
+]]
+
+function SetTimeSync()
+	if synctime.h == 15 and not pawnshoptime then
+		pawnshoptime = true
+		TriggerEvent("caue-pawnshop:refreshLocation")
+	elseif synctime.h ~= 15 and pawnshoptime then
+		pawnshoptime = false
+	end
+end
 
 --[[
 
@@ -61,6 +78,12 @@ Citizen.CreateThread( function()
 				secondOfDay = secondOfDay % 86400
 			end
 		end
+
+		synctime.h = math.floor(secondOfDay / 3600)
+		synctime.m = math.floor((secondOfDay - (synctime.h * 3600)) / 60)
+		synctime.s = secondOfDay - (synctime.h * 3600) - (synctime.m * 60)
+
+		SetTimeSync()
 	end
 end)
 

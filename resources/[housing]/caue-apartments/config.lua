@@ -4,8 +4,8 @@ MenuData = {
             title = "Apartment",
             description = "Forclose Apartment",
             children = {
-                { title = "Yes", action = "np-apartments:handler", params = { forclose = true} },
-                { title = "No", action = "np-apartments:handler", params = { forclose = false } },
+                { title = "Yes", action = "caue-apartments:handler", params = { forclose = true} },
+                { title = "No", action = "caue-apartments:handler", params = { forclose = false } },
             }
         }
     }

@@ -1,7 +1,5 @@
 local Promises, PlayerCoords, EntityCoords = {}, {}, {}
 
-TriggerServerEvent("caue:infinity:player:ready")
-
 RegisterNetEvent("caue:infinity:player:coords")
 AddEventHandler("caue:infinity:player:coords", function (pCoords)
     PlayerCoords = pCoords
@@ -105,4 +103,9 @@ exports("GetLocalEntity", function (pType, pNetId)
     end
 
     return entity
+end)
+
+Citizen.CreateThread(function()
+    Citizen.Wait(2000)
+    TriggerServerEvent("caue:infinity:player:ready")
 end)

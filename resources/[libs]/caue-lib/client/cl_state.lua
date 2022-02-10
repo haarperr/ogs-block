@@ -262,7 +262,7 @@ end
 ]]
 
 AddEventHandler("caue-polyzone:enter", function(zone, data)
-    if zone == "np-jobs:impound:dropOff" then IsImpoundDropOff = true end
+    if zone == "caue-jobs:impound:dropOff" then IsImpoundDropOff = true end
     if zone == "vanilla_unicorn_stage" then polyChecks.vanillaUnicorn = { isInside = true, polyData = data } end
     if zone == "gas_station" then polyChecks.gasStation = { isInside = true, polyData = data } end
     if zone == "bennys" then

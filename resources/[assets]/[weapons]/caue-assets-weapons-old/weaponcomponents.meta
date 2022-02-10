@@ -73,8 +73,8 @@
     </Item>
 	
 	<Item type="CWeaponComponentClipInfo">
-      <Name>COMPONENT_UZI_CLIP_01</Name>
-      <Model>w_sb_uzi_mag1</Model>
+      <Name>COMPONENT_MICROSMG2_CLIP_01</Name>
+      <Model>w_sb_microsmg2_mag1</Model>
       <LocName>WCT_CLIP1</LocName>
       <LocDesc>WCDMSMG_CLIP1</LocDesc>
       <AttachBone>AAPClip</AttachBone>
@@ -91,8 +91,8 @@
       <ReloadData ref="RELOAD_DEFAULT" />
     </Item>
     <Item type="CWeaponComponentClipInfo">
-      <Name>COMPONENT_UZI_CLIP_02</Name>
-      <Model>w_sb_uzi_mag2</Model>
+      <Name>COMPONENT_MICROSMG2_CLIP_02</Name>
+      <Model>w_sb_microsmg2_mag2</Model>
       <LocName>WCT_CLIP2</LocName>
       <LocDesc>WCDMSMG_CLIP2</LocDesc>
       <AttachBone>AAPClip</AttachBone>
@@ -107,26 +107,6 @@
       <HudRange value="0" />
       <ClipSize value="30" />
       <ReloadData ref="RELOAD_LARGE" />
-    </Item>
-	<Item type="CWeaponComponentSuppressorInfo">
-      <Name>COMPONENT_AT_UZI_SUPP</Name>
-	  <Model>w_at_uzi_supp</Model>
-      <LocName>WCT_MUZZ</LocName>
-      <LocDesc>WCD_MUZZ</LocDesc>
-      <AttachBone>AAPSupp</AttachBone>
-      <AccuracyModifier type="NULL" />
-      <DamageModifier type="NULL" />
-      <bShownOnWheel value="true" />
-      <CreateObject value="true" />
-      <HudDamage value="0" />
-      <HudSpeed value="0" />
-      <HudCapacity value="0" />
-      <HudAccuracy value="5" />
-      <HudRange value="0" />
-      <MuzzleBone>Gun_SuMuzzle</MuzzleBone>
-	  <FlashFX />
-	  <ShouldSilence value="false" />
-      <RecoilShakeAmplitudeModifier value="0.650000" />
     </Item>
 	<Item type="CWeaponComponentClipInfo">
       <Name>COMPONENT_MICROSMG3_CLIP_01</Name>
@@ -3104,41 +3084,6 @@
       <HudRange value="0" />
       <ClipSize value="100" />
       <ReloadData ref="RELOAD_DEFAULT_WITH_EMPTIES" />
-    </Item>
-	
-	<Item type="CWeaponComponentVariantModelInfo">
-      <Name>COMPONENT_UZI_STOCK</Name>
-      <Model>w_sb_uzi_stock</Model>
-      <LocName>WCT_INVALID</LocName>
-      <LocDesc>WCD_INVALID</LocDesc>
-      <AttachBone />
-      <AccuracyModifier type="NULL" />
-      <DamageModifier type="NULL" />
-      <bShownOnWheel value="false" />
-      <CreateObject value="false" />
-      <HudDamage value="0" />
-      <HudSpeed value="0" />
-      <HudCapacity value="0" />
-      <HudAccuracy value="0" />
-      <HudRange value="0" />
-	  <TintIndexOverride value="2"/>
-    </Item>
-	<Item type="CWeaponComponentVariantModelInfo">
-      <Name>COMPONENT_UZI_WOOD</Name>
-      <Model>w_sb_uzi_wood</Model>
-      <LocName>WCT_INVALID</LocName>
-      <LocDesc>WCD_INVALID</LocDesc>
-      <AttachBone />
-      <AccuracyModifier type="NULL" />
-      <DamageModifier type="NULL" />
-      <bShownOnWheel value="false" />
-      <CreateObject value="false" />
-      <HudDamage value="0" />
-      <HudSpeed value="0" />
-      <HudCapacity value="0" />
-      <HudAccuracy value="0" />
-      <HudRange value="0" />
-	  <TintIndexOverride value="2"/>
     </Item>
 	
   </Infos>

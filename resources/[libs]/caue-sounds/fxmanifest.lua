@@ -13,7 +13,7 @@ shared_scripts {
 }
 
 server_scripts {
-    "@caue-lib/client/sv_infinity.lua",
+    "@caue-lib/server/sv_infinity.lua",
     "server/*",
 }
 

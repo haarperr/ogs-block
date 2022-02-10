@@ -13,43 +13,43 @@ vehicleCustomisationPrices =
 {
     cosmetics =
     {
-        price = 400
+        price = 70
     },
     respray =
     {
-        price = 500
+        price = 180
     },
     performance =
     {
         prices =
         {
             0,
-            3250,
-            5500,
-            10450,
-            15250,
-            20500
+            200,
+            500,
+            800,
+            1100,
+            1400
         }
     },
     turbo =
     {
-        price = 15000
+        price = 1800
     },
     wheels =
     {
-        price = 400
+        price = 200
     },
     customwheels =
     {
-        price = 600
+        price = 200
     },
     wheelsmoke =
     {
-        price = 400
+        price = 70
     },
     windowtint =
     {
-        price = 400
+        price = 60
     },
     neonside =
     {
@@ -57,23 +57,23 @@ vehicleCustomisationPrices =
     },
     neoncolours =
     {
-        price = 500
+        price = 100
     },
     headlights =
     {
-        price = 100
+        price = 60
     },
     xenoncolours =
     {
-        price = 500
+        price = 60
     },
     oldlivery =
     {
-        price = 100
+        price = 80
     },
     plateindex =
     {
-        price = 1000
+        price = 50
     }
 }
 

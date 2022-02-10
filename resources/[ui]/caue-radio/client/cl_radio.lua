@@ -64,12 +64,12 @@ function openRadio()
     local currentJob = exports["caue-base"]:getChar("job")
 
     if exports["caue-base"]:getVar("call") then
-        TriggerEvent("DoShortHudText", "You can not do that while in a call!", 2)
+        TriggerEvent("DoShortHudText", "Você não pode fazer isso em chamada!", 2)
         return
     end
 
     if not hasRadio() then
-        TriggerEvent("DoShortHudText", "You need a radio.", 2)
+        TriggerEvent("DoShortHudText", "Você precisa de um rádio.", 2)
         toggleRadioAnimation(false)
         return
     end

@@ -13,10 +13,14 @@ Commands["clear"] = {
 
 Commands["hud"] = {
     ["function"] = function(source, args)
-        TriggerClientEvent("caue-hud:toggle", source)
+        TriggerClientEvent("caue-hud:settings", source, args)
     end,
     ["suggestion"] = {
-        ["help"] = "Toggles HUD",
+        ["help"] = "HUD Settings",
+        ["params"] = {
+            { name="option", help="toggle | opacity | map"},
+            { name="value", help="Toggle: health, armor, hunger, thirst, voice, oxygen | Opacity: 1.0-0.0, default 0.5 | Map: rect, circle"},
+        },
     },
     ["condition"] = {
         ["type"] = "ALL",
@@ -51,64 +55,31 @@ Commands["cash"] = {
 --     },
 -- }
 
-Commands["emotes"] = {
-    ["function"] = function(source, args)
-        TriggerClientEvent("emotes:OpenMenu", source)
-    end,
-    ["suggestion"] = {
-        ["help"] = "",
-    },
-    ["condition"] = {
-        ["type"] = "ALL",
-        ["params"] = {},
-    },
-}
-
-Commands["e"] = {
-    ["function"] = function(source, args)
-        if args[1] ~= nil then
-            TriggerClientEvent("animation:runtextanim2", source, tostring(args[1]))
-        else
-            TriggerClientEvent("DoLongHudText", source, "Use /e [emote]", 2)
-        end
-    end,
-    ["suggestion"] = {
-        ["help"] = "",
-        ["params"] = {
-            { name="emote", help="Use /emotes to see all emotes"},
-        },
-    },
-    ["condition"] = {
-        ["type"] = "ALL",
-        ["params"] = {},
-    },
-}
-
-Commands["ooc"] = {
-    ["function"] = function(source, args)
-        if args[1] ~= nil then
-	        local name = exports["caue-base"]:getChar(source, "first_name") .. " " .. exports["caue-base"]:getChar(source, "last_name")
-            TriggerClientEvent("chatMessage", -1, "OOC " .. name, 2, table.concat(args, " "))
-        else
-            TriggerClientEvent("DoLongHudText", source, "Use /ooc [message]", 2)
-        end
-    end,
-    ["suggestion"] = {
-        ["help"] = "",
-        ["params"] = {},
-    },
-    ["condition"] = {
-        ["type"] = "ALL",
-        ["params"] = {},
-    },
-}
+-- Commands["ooc"] = {
+--     ["function"] = function(source, args)
+--         if args[1] ~= nil then
+-- 	        local name = exports["caue-base"]:getChar(source, "first_name") .. " " .. exports["caue-base"]:getChar(source, "last_name")
+--             TriggerClientEvent("chatMessage", -1, "OOC " .. name, 2, table.concat(args, " "))
+--         else
+--             TriggerClientEvent("DoLongHudText", source, "Use /ooc [message]", 2)
+--         end
+--     end,
+--     ["suggestion"] = {
+--         ["help"] = "",
+--         ["params"] = {},
+--     },
+--     ["condition"] = {
+--         ["type"] = "ALL",
+--         ["params"] = {},
+--     },
+-- }
 
 Commands["me"] = {
     ["function"] = function(source, args)
         if args[1] ~= nil then
 	        local name = exports["caue-base"]:getChar(source, "first_name") .. " " .. exports["caue-base"]:getChar(source, "last_name")
 
-            TriggerClientEvent("caue-chat:me", -1, source, name, table.concat(args, " "))
+            TriggerClientEvent("caue-chat:me", -1, source, name, table.concat(args, " "), GetEntityCoords(GetPlayerPed(source)))
         else
             TriggerClientEvent("DoLongHudText", source, "Use /me [message]", 2)
         end
@@ -128,7 +99,7 @@ Commands["do"] = {
         if args[1] ~= nil then
 	        local name = exports["caue-base"]:getChar(source, "first_name") .. " " .. exports["caue-base"]:getChar(source, "last_name")
 
-            TriggerClientEvent("caue-chat:do", -1, source, name, table.concat(args, " "))
+            TriggerClientEvent("caue-chat:do", -1, source, name, table.concat(args, " "), GetEntityCoords(GetPlayerPed(source)))
         else
             TriggerClientEvent("DoLongHudText", source, "Use /do [message]", 2)
         end
@@ -156,12 +127,17 @@ Commands["drag"] = {
     },
 }
 
-Commands["h1"] = {
+Commands["911"] = {
     ["function"] = function(source, args)
-        TriggerClientEvent("facewear:adjust", source, 1, false)
+        if args[1] ~= nil then
+	        TriggerClientEvent("caue-dispatch:911", source, table.concat(args, " "))
+        else
+            TriggerClientEvent("DoLongHudText", source, "Use /911 [message]", 2)
+        end
     end,
     ["suggestion"] = {
         ["help"] = "",
+        ["params"] = {},
     },
     ["condition"] = {
         ["type"] = "ALL",
@@ -169,12 +145,17 @@ Commands["h1"] = {
     },
 }
 
-Commands["h0"] = {
+Commands["311"] = {
     ["function"] = function(source, args)
-        TriggerClientEvent("facewear:adjust", source, 1, true)
+        if args[1] ~= nil then
+	        TriggerClientEvent("caue-dispatch:311", source, table.concat(args, " "))
+        else
+            TriggerClientEvent("DoLongHudText", source, "Use /311 [message]", 2)
+        end
     end,
     ["suggestion"] = {
         ["help"] = "",
+        ["params"] = {},
     },
     ["condition"] = {
         ["type"] = "ALL",
@@ -182,54 +163,22 @@ Commands["h0"] = {
     },
 }
 
-Commands["g1"] = {
+Commands["dispatch"] = {
     ["function"] = function(source, args)
-        TriggerClientEvent("facewear:adjust", source, 2, false)
+        if args[1] ~= nil then
+            TriggerClientEvent("caue-dispatch:manageNotifs", source, args[1])
+        else
+            TriggerClientEvent("DoLongHudText", source, 'Please choose to have dispatch as "on", "off" or "mute".', 2)
+        end
     end,
     ["suggestion"] = {
         ["help"] = "",
+        ["params"] = {
+            { name="mode", help="on | off | mute"},
+        },
     },
     ["condition"] = {
-        ["type"] = "ALL",
-        ["params"] = {},
-    },
-}
-
-Commands["g0"] = {
-    ["function"] = function(source, args)
-        TriggerClientEvent("facewear:adjust", source, 2, true)
-    end,
-    ["suggestion"] = {
-        ["help"] = "",
-    },
-    ["condition"] = {
-        ["type"] = "ALL",
-        ["params"] = {},
-    },
-}
-
-Commands["m1"] = {
-    ["function"] = function(source, args)
-        TriggerClientEvent("facewear:adjust", source, 4, false)
-    end,
-    ["suggestion"] = {
-        ["help"] = "",
-    },
-    ["condition"] = {
-        ["type"] = "ALL",
-        ["params"] = {},
-    },
-}
-
-Commands["m0"] = {
-    ["function"] = function(source, args)
-        TriggerClientEvent("facewear:adjust", source, 4, true)
-    end,
-    ["suggestion"] = {
-        ["help"] = "",
-    },
-    ["condition"] = {
-        ["type"] = "ALL",
-        ["params"] = {},
+        ["type"] = "JOB",
+        ["params"] = { "police", "ems" },
     },
 }

@@ -243,7 +243,7 @@ function startRaceCreation(options)
         local ped = PlayerPedId()
         while creating do
             local pos = GetEntityCoords(ped)
-            local instructions = "[E] Add | [Shift+E] Remove | ⬆ Radius ⬇ | ⬅ Rotation ➡"
+            local instructions = "[E] Adicionar | [Shift+E] Remover | ⬆ Raio ⬇ | ⬅ Rotação ➡"
 
             DrawText3Ds(pos.x, pos.y, pos.z + 1.5, instructions)
 
@@ -254,7 +254,7 @@ end
 
 function finishRaceCreation()
     if not creating then
-        print("You are not creating a race")
+        print("Você não esta criando uma corrida")
         return
     end
 
@@ -265,7 +265,7 @@ end
 
 function cancelRaceCreation()
     if not creating then
-        print("You are not creating a race")
+        print("Você não esta criando uma corrida")
         return
     end
 

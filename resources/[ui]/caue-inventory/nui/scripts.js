@@ -402,6 +402,7 @@ $(document).ready(function () {
                 display: "flex"
             }).slideDown(400).style;
             // $(".wrapsecondary").css({ height: "93%" });
+            $('#move-amount').val(0);
         } else if (item.response == 'closeGui') {
             $('#app').fadeOut(100);
             $('#containers-wrapper').fadeOut(10);
@@ -491,6 +492,8 @@ $(document).ready(function () {
             $('input[name="enableBlur"]').prop('checked', enableBlur);
         } else if (item.response === 'playerWeight') {
             personalMaxWeight = parseFloat(item.personalMaxWeight)
+        } else if (item.response === 'log') {
+            InventoryLog(item.log)
         }
     });
 });
@@ -551,15 +554,15 @@ function UpdateQuality(data, penis) {
     let qualityHeight = quality;
 
     if (quality == 0) {
-        qualityText = 'Destroyed';
+        qualityText = 'Quebrado';
         qualityHeight = 100;
         itemMaxed = "class='destroyed'";
     } else if (quality < 5) {
-        qualityText = 'Almost Destroyed';
+        qualityText = 'Quase quebrado';
         qualityHeight = 100;
         itemMaxed = "class='destroyed'";
     } else if (quality < 10) {
-        qualityText = 'Falling Apart';
+        qualityText = 'Deteriorando';
         qualityHeight = 100;
         itemMaxed = "class='destroyed'";
     }
@@ -1010,18 +1013,18 @@ function DisplayInventoryMultiple(playerinventory, itemCount, invName, targetinv
         if (splitName[2] && typeof parseInt(splitName[2]) === "number") {
             secondaryMaxWeight = parseInt(splitName[2]);
         }
-    } else if (targetinvName.indexOf('burgerjob_fridge') > -1) {
+    } else if (targetinvName.indexOf('tacoshop_fridge') > -1) {
         secondaryMaxWeight = 1000.0;
         slotLimitTarget = 40;
-        displayName = 'Ingredient Storage';
+        displayName = 'Geladeira de Ingredientes';
     } else if (targetinvName.indexOf('gallery_gemtrade') > -1) {
         secondaryMaxWeight = 10.0;
         slotLimitTarget = 10;
         displayName = 'Gem Table';
-    } else if (targetinvName.indexOf('casino bag') > -1) {
-        secondaryMaxWeight = 10.0;
-        slotLimitTarget = 10;
-        displayName = 'Casino Bag';
+    } else if (targetinvName.indexOf('vanilla_fridge') > -1) {
+        secondaryMaxWeight = 1000.0;
+        slotLimitTarget = 40;
+        displayName = 'Geladeira de Bebidas';
     } else if (targetinvName.startsWith('container')) {
         let invname = targetinvName.split("-");
         displayName = invname[2];
@@ -1315,15 +1318,15 @@ function DisplayInventory(sqlInventory, itemCount, invName, main) {
                 }
 
                 if (quality == 0) {
-                    qualityText = 'Destroyed';
+                    qualityText = 'Quebrado';
                     qualityWidth = 100;
                     itemMaxed = "class='destroyed'";
                 } else if (quality < 5) {
-                    qualityText = 'Almost Destroyed';
+                    qualityText = 'Quase quebrado';
                     qualityWidth = 100;
                     itemMaxed = "class='destroyed'";
                 } else if (quality < 10) {
-                    qualityText = 'Falling Apart';
+                    qualityText = 'Deteriorando';
                     qualityWidth = 100;
                     itemMaxed = "class='destroyed'";
                 }
@@ -1924,12 +1927,12 @@ function ErrorCheck(startingInventory, inventoryDropName, movementWeight) {
 
         if (startingInventory == 1) {
             if (movementWeight + secondaryWeight > secondaryMaxWeight) {
-                ErrorReason = 'Your target weight is too much.';
+                ErrorReason = 'Seu alvo é muito pesado.';
                 $('.weightcontainer').eq(1).shake();
             }
         } else {
             if (movementWeight + personalWeight > personalMaxWeight) {
-                ErrorReason = 'The personal weight is too much.';
+                ErrorReason = 'Está muito pesado.';
                 $('.weightcontainer').eq(0).shake();
             }
         }
@@ -2388,10 +2391,10 @@ function AttemptDropInFilledSlot(slot) {
             result2 = 'Success';
         } else {
             if (craftCheck) {
-                result = 'You dont have the required materials!';
+                result = 'Você não tem os materiais necessários!';
             }
             if (weightCheck) {
-                result2 = 'The personal weight is too much.';
+                result2 = 'Está muito pesado.';
                 $('.weightcontainer').eq(0).shake();
             }
 
@@ -2423,13 +2426,13 @@ function AttemptDropInFilledSlot(slot) {
         (!StoreOwner && PlayerStore && inventoryDropName === 'wrapsecondary') ||
         (TargetInventoryName === 'Shop' && inventoryReturnItemDropName === 'wrapsecondary' && inventoryDropName === 'wrapmain' && !stacking)
     ) {
-        result = 'You can not drop items into the shop!';
+        result = 'Você não pode deixar itens na loja!';
     }
     if (
         (inventoryDropName === 'craftContainer' && TargetInventoryName.indexOf('Craft') > -1) ||
         (inventoryDropName == 'wrapmain' && inventoryReturnItemDropName === 'wrapsecondary' && TargetInventoryName.indexOf('Craft') > -1 && !stacking)
     ) {
-        result = 'You can not drop items into the craft table!';
+        result = 'Você não pode deixar itens na mesa de criação!';
     }
 
     if ((TargetInventoryName.startsWith("container") || TargetInventoryName.startsWith("fisher-bucket")) && (
@@ -2449,7 +2452,7 @@ function AttemptDropInFilledSlot(slot) {
         }
 
         if (!TargetInventoryName.includes('dodo container') && (itemList[itemid1].weapon || itemList[itemid2].weapon)) {
-            result = "Can't fit inside container.";
+            result = "Não cabe no container.";
         }
 
         if (TargetInventoryName.split("-").length > 3) {
@@ -2467,13 +2470,13 @@ function AttemptDropInFilledSlot(slot) {
                 })
             }
             if (!hasItem1Key || !hasItem2Key) {
-                result = "Can't place this here.";
+                result = "Não é possível colocar isso aqui.";
             }
         }
     }
 
     if (TargetInventoryName.startsWith('mailbox') && ((inventoryDropName == 'wrapsecondary') || (inventoryReturnItemDropName == 'wrapsecondary') && !stacking)) {
-        result = 'Cannot place into mailboxes.'
+        result = 'Não é possível colocar em caixas de correio.'
     }
 
     if (result == 'Success' && result2 == 'Success') {
@@ -2521,23 +2524,23 @@ function AttemptDropInFilledSlot(slot) {
             if (TargetInventoryName == 'Shop' || (!StoreOwner && PlayerStore)) {
                 // InventoryLog("eh: PURCHASE")
                 if (purchaseCost > userCash && purchaseCost !== 0) {
-                    result = 'You cant afford this.!';
-                    result2 = 'You cant afford this.!';
+                    result = 'Você não pode pagar por isso.!';
+                    result2 = 'Você não pode pagar por isso.!';
                     InventoryLog('Error: ' + result);
                     EndDragError(slot);
                     return;
                 } else {
                     if (itemList[itemidsent].weapon && inventoryReturnItemDropName !== inventoryDropName) {
                         if (!exluded[itemidsent] && !userWeaponLicense) {
-                            result = 'You do not have a license.!';
-                            result2 = 'You do not have a license.!';
+                            result = 'Você não tem uma licença!';
+                            result2 = 'Você não tem uma licença!';
                             InventoryLog('Error: ' + result);
                             EndDragError(slot);
                             return;
                         }
 
                         if (!exluded[itemidsent] && brought && !isCop) {
-                            result = 'You can only buy one gun a day!';
+                            result = 'Você só pode comprar uma arma por dia!';
                             InventoryLog('Error: ' + result);
                             EndDragError(slot);
                             return;
@@ -2546,7 +2549,7 @@ function AttemptDropInFilledSlot(slot) {
 
                     if (currentInventory == 2 && inventoryDropName == 'wrapmain') {
                         userCash = userCash - purchaseCost;
-                        InventoryLog('Purchase Cost: $' + purchaseCost + ' you have $' + userCash + ' left.');
+                        InventoryLog('Preço de compra: $' + purchaseCost + ' você tem $' + userCash + ' faltando.');
                         purchase = true;
                     }
                 }
@@ -2613,7 +2616,7 @@ function AttemptDropInFilledSlot(slot) {
             }
         } else {
             if (inventoryDropName == 'Shop' || inventoryDropName.indexOf('Craft') > -1 || (!StoreOwner && PlayerStore)) {
-                result = 'You can not drop items into the shop!';
+                result = 'Você não pode deixar itens na loja!';
                 EndDragError(slot);
                 InventoryLog('Error: ' + result2 + ' | ' + result);
             } else if (
@@ -2880,10 +2883,10 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
         } else {
             let result2 = 'Success';
             if (craftCheck) {
-                result = 'You dont have the required materials!';
+                result = 'Você não tem os materiais necessários!';
             }
             if (weightCheck) {
-                result2 = 'The personal weight is too much.';
+                result2 = 'Está muito pesado.';
                 $('.weightcontainer').eq(0).shake();
             }
 
@@ -2896,23 +2899,23 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
     }
 
     if (isDropped && inventoryReturnItemDropName == 'wrapsecondary') {
-        result = 'Error: can not drop a dropped item';
+        result = 'Erro: não pode soltar um item descartado.';
     }
 
     if (
         (inventoryDropName == 'wrapsecondary' && TargetInventoryName == 'Shop') ||
         (inventoryDropName == 'wrapsecondary' && !StoreOwner && PlayerStore)
     ) {
-        result = 'You can not drop items into the shop!';
+        result = 'Você não pode deixar itens na loja!';
     }
     if (inventoryDropName === 'wrapsecondary' && TargetInventoryName.indexOf('Craft') > -1) {
-        result = 'You can not drop items into the craft shop!';
+        result = 'Você não pode deixar itens na loja de craft!';
     }
 
     if (inventoryDropName == 'wrapsecondary' && PlayerStore) {
         let isWeapon = itemList[itemidsent].weapon;
         if (isWeapon != undefined) {
-            result = 'You can not move weapons while in player stores!';
+            result = 'Você não pode mover armas enquanto estiver na loja!';
         }
     }
 
@@ -2931,7 +2934,7 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
         }
 
         if (!TargetInventoryName.includes('dodo container') && itemList[itemidsent].weapon) {
-            result = "Can't fit inside container.";
+            result = "Não cabe dentro.";
         }
 
         if (TargetInventoryName.split("-").length > 3) {
@@ -2947,13 +2950,13 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
                 })
             }
             if (!hasWhitelistedKey) {
-                result = "Can't place this here.";
+                result = "Não é possível colocar isso aqui.";
             }
         }
     }
 
     if (TargetInventoryName.startsWith('mailbox') && inventoryDropName == 'wrapsecondary') {
-        result = 'Cannot place into mailboxes.'
+        result = 'Não é possível colocar em caixas de correio.'
     }
 
     if (result == 'Success') {
@@ -2962,22 +2965,22 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
         if (TargetInventoryName == 'Shop' || (!StoreOwner && PlayerStore)) {
             //InventoryLog("eh: PURCHASE")
             if (purchaseCost > userCash && purchaseCost !== 0) {
-                result = 'You cant afford that!';
+                result = 'Você não pode pagar por isso!';
                 EndDragError(slot);
-                InventoryLog('Error: ' + result);
+                InventoryLog('Erro: ' + result);
                 //userCash = userCash - purchaseCost; unsure why we are taking money on not enough money taken
                 return;
             } else {
                 if (itemList[itemidsent].weapon && inventoryReturnItemDropName !== inventoryDropName) {
                     if (!exluded[itemidsent] && !userWeaponLicense) {
-                        result = 'You do not have a license!';
+                        result = 'Você não tem uma licença!';
                         InventoryLog('Error: ' + result);
                         EndDragError(slot);
                         return;
                     }
 
                     if (!exluded[itemidsent] && brought && !isCop) {
-                        result = 'You can only buy one gun a day!';
+                        result = 'Você só pode comprar uma arma por dia!';
                         InventoryLog('Error: ' + result);
                         EndDragError(slot);
                         return;
@@ -2986,7 +2989,7 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
 
                 if (currentInventory == 2 && inventoryDropName == 'wrapmain') {
                     userCash = userCash - purchaseCost;
-                    InventoryLog('Purchase Cost: $' + purchaseCost + ' you have $' + userCash + ' left.');
+                    InventoryLog('Preço de custo: $' + purchaseCost + ' você tem $' + userCash + ' restantes.');
                     purchase = true;
                 }
             }

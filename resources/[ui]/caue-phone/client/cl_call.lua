@@ -103,7 +103,7 @@ AddEventHandler("phone:call:dialing", function(pNumber, pCallId)
         if not isDialing then break end
 
         if hasPhone() then
-            phoneNotification("fas fa-phone-volume", "Call", "Calling to: " .. contact, 3000)
+            phoneNotification("fas fa-phone-volume", "Call", "Ligando para: " .. contact, 3000)
 
             if PayphoneCall and i < 7 then
                 TriggerEvent("InteractSound_CL:PlayOnOne", "payphoneringing", 0.5)
@@ -143,7 +143,7 @@ AddEventHandler("phone:call:receive", function(pNumber, pCallId)
         if not isRinging then break end
 
         if hasPhone() then
-            phoneNotification("fas fa-phone-volume", "Call", "Call from: " .. contact, 3000)
+            phoneNotification("fas fa-phone-volume", "Call", "Ligação de: " .. contact, 3000)
 
             if phoneNotifications then
                 TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 2.0, "cellcall", 0.5)
@@ -192,7 +192,7 @@ AddEventHandler("phone:call:in-progress", function(pNumber, pCallId)
 
         local time = minutesString .. ":" .. secondsString
 
-        phoneNotification("fas fa-phone-volume", "Call with " .. contact, time, 3000)
+        phoneNotification("fas fa-phone-volume", "Ligação com " .. contact, time, 3000)
         Citizen.Wait(1000)
     end
 end)

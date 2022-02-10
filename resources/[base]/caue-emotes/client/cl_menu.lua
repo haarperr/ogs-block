@@ -174,11 +174,11 @@ AddEventHandler("emotes:OpenMenu", function()
     WarMenu.OpenMenu("emotes")
 end)
 
-RegisterNetEvent("emote:setEmotesFromDB");
-AddEventHandler("emote:setEmotesFromDB", function(emotesResult)
-    if emotesResult == nil or emotesResult[1] == nil then return end
-    currentKeys = emotesResult
-end)
+-- RegisterNetEvent("emote:setEmotesFromDB");
+-- AddEventHandler("emote:setEmotesFromDB", function(emotesResult)
+--     if emotesResult == nil or emotesResult[1] == nil then return end
+--     currentKeys = emotesResult
+-- end)
 
 RegisterNetEvent("caue-admin:currentDevmode")
 AddEventHandler("caue-admin:currentDevmode", function(devmode)
@@ -296,34 +296,34 @@ Citizen.CreateThread(function()
     end
 end)
 
-Citizen.CreateThread(function()
-    local function _animation(pAnimation, pKey)
-        if pAnimation == "Cancel Emote" then
-            ClearPedTasks(PlayerPedId()) playing_emote = false
-        else
-            if not isDisabled() then
-                if GetEntityModel(PlayerPedId()) == GetHashKey("a_c_chop") then
-                    TriggerEvent("animation:PlayAnimation", dogEmote[pKey])
-                else
-                    TriggerEvent("animation:PlayAnimation", pAnimation)
-                end
-            end
-        end
-    end
-    while true do
-        Citizen.Wait(1)
-        if not dToggle then
-            for i,v in ipairs(currentKeys) do
-                if v.key[2] ~= nil then
-                    if IsControlPressed(0,21) and IsControlJustReleased(0, v.key[1]) then
-                        _animation(v.anim, v.key[1]+21)
-                    end
-                else
-                    if not IsControlPressed(0,21) and IsControlJustReleased(0, v.key[1]) then
-                        _animation(v.anim, v.key[1])
-                    end
-                end
-            end
-        end
-    end
-end)
+-- Citizen.CreateThread(function()
+--     local function _animation(pAnimation, pKey)
+--         if pAnimation == "Cancel Emote" then
+--             ClearPedTasks(PlayerPedId()) playing_emote = false
+--         else
+--             if not isDisabled() then
+--                 if GetEntityModel(PlayerPedId()) == GetHashKey("a_c_chop") then
+--                     TriggerEvent("animation:PlayAnimation", dogEmote[pKey])
+--                 else
+--                     TriggerEvent("animation:PlayAnimation", pAnimation)
+--                 end
+--             end
+--         end
+--     end
+--     while true do
+--         Citizen.Wait(1)
+--         if not dToggle then
+--             for i,v in ipairs(currentKeys) do
+--                 if v.key[2] ~= nil then
+--                     if IsControlPressed(0,21) and IsControlJustReleased(0, v.key[1]) then
+--                         _animation(v.anim, v.key[1]+21)
+--                     end
+--                 else
+--                     if not IsControlPressed(0,21) and IsControlJustReleased(0, v.key[1]) then
+--                         _animation(v.anim, v.key[1])
+--                     end
+--                 end
+--             end
+--         end
+--     end
+-- end)

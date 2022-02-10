@@ -48,7 +48,7 @@ function ShowDocument(aDocument)
         TriggerServerEvent("caue-documents:showDocument", v, aDocument)
     end
 
-    TriggerEvent("DoLongHudText", "Document showed to " .. #players .. " player(s)")
+    TriggerEvent("DoLongHudText", "Documento mostrado para " .. #players .. " player(s)")
 end
 
 function CopyDocument(aDocument)
@@ -58,7 +58,7 @@ function CopyDocument(aDocument)
         TriggerServerEvent("caue-documents:copyDocument", v, aDocument)
     end
 
-    TriggerEvent("DoLongHudText", "Document copied to " .. #players .. " player(s)")
+    TriggerEvent("DoLongHudText", "Documento copiado para " .. #players .. " player(s)")
 end
 
 function DeleteDocument(id)
@@ -91,7 +91,7 @@ AddEventHandler("caue-documents:openDocuments", function()
     end
 
     table.insert(data, {
-        title = "Public Documents",
+        title = "Documentos públicos",
         description = "",
         children = publicdocuments,
     })
@@ -109,7 +109,7 @@ AddEventHandler("caue-documents:openDocuments", function()
         end
 
         table.insert(data, {
-            title = "Job Documents",
+            title = "Documentos de Trabalho",
             description = "",
             children = jobdocuments,
         })
@@ -119,11 +119,11 @@ AddEventHandler("caue-documents:openDocuments", function()
     local _mydocuments = RPC.execute("caue-documents:getDocuments", "cid", exports["caue-base"]:getChar("id"))
     for i, v in ipairs(_mydocuments) do
         local actions = {
-            { title = "View", action = "caue-documents:ViewDocument", params = v.data },
-            { title = "Show", action = "caue-documents:ShowDocument", params = v.data },
-            { title = "Give Copy", action = "caue-documents:CopyDocument", params = v.data },
-            { title = "Delete", children = {
-                { title = "Yes Delete", action = "caue-documents:DeleteDocument", params = v.id },
+            { title = "Ver", action = "caue-documents:ViewDocument", params = v.data },
+            { title = "Mostrar", action = "caue-documents:ShowDocument", params = v.data },
+            { title = "Dar cópia", action = "caue-documents:CopyDocument", params = v.data },
+            { title = "Deletar", children = {
+                { title = "Confirmar exclusão", action = "caue-documents:DeleteDocument", params = v.id },
             } },
         }
 
@@ -135,7 +135,7 @@ AddEventHandler("caue-documents:openDocuments", function()
     end
 
     table.insert(data, {
-        title = "My Personal Documents",
+        title = "Meus documentos pessoais",
         description = "",
         children = mydocuments,
     })
@@ -148,15 +148,15 @@ AddEventHandler("caue-documents:openDocuments", function()
             local _groupdocuments = RPC.execute("caue-documents:getDocuments", "group", v.group)
             for i2, v2 in ipairs(_groupdocuments) do
                 local actions = {
-                    { title = "View", action = "caue-documents:ViewDocument", params = v2.data },
-                    { title = "Show", action = "caue-documents:ShowDocument", params = v2.data },
-                    { title = "Give Copy", action = "caue-documents:CopyDocument", params = v2.data },
+                    { title = "Ver", action = "caue-documents:ViewDocument", params = v2.data },
+                    { title = "Mostrar", action = "caue-documents:ShowDocument", params = v2.data },
+                    { title = "Dar cópia", action = "caue-documents:CopyDocument", params = v2.data },
                 }
 
                 if exports["caue-groups"]:GroupRankInfo(v.group, "documents") then
                     table.insert(actions, {
-                        title = "Delete", children = {
-                            { title = "Yes Delete", action = "caue-documents:DeleteDocument", params = v2.id },
+                        title = "Deletar", children = {
+                            { title = "Confirmar exclusão", action = "caue-documents:DeleteDocument", params = v2.id },
                         }
                     })
                 end
@@ -176,7 +176,7 @@ AddEventHandler("caue-documents:openDocuments", function()
         end
 
         table.insert(data, {
-            title = "My Groups Documents",
+            title = "Meu grupo de documentos",
             description = "",
             children = _groups,
         })

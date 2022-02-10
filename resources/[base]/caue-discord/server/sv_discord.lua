@@ -7,13 +7,13 @@
 Commands = {}
 
 Config = {
-    ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/823843753269657680/EZiMV7VT94jZm8svZ2W8wEEx1Q8NoEotRbRXDieyKB8OznrXs7Q7WcGUf48lAh9VgtbU",
+    ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/939292549749829672/yrvX-WMSwUFdp7P4u6jbwSoHSp4Zk679Guiu9PNplOhOtsXshYs5kd4cxHbczgEtEOSw",
     ["DISCORD_NAME"] = "Commands Bot",
-    ["DISCORD_IMAGE"] = "https://i.pinimg.com/736x/76/b5/9f/76b59f362b7f2d57bc6539b37cb54985.jpg",
-    ["BOT_TOKEN"] = "ODE5Nzg5OTQzNjcyNzk5Mjcz.YEru4Q.o2hVCFcABXSmy8xeLZqWpXYNAwU",
-    ["BOT_CHANNELID"] = "823842795705335809",
+    ["DISCORD_IMAGE"] = "https://i.imgur.com/XFNLjar.png",
+    ["BOT_TOKEN"] = "OTM5Mjg4ODIzMDEwMDMzNzQ1.Yf2q4g.FmnXZ85opNW8E6NuEGhLJwqbvZ8",
+    ["BOT_CHANNELID"] = "939292518019919892",
     ["COMMANDS_PREFIX"] = "!",
-    ["COMMANDS_TICK"] = 4000,
+    ["COMMANDS_TICK"] = 4000
 }
 
 --[[

@@ -40,7 +40,7 @@ AddEventHandler("police:remmask", function(t)
             ClearPedTasks(PlayerPedId())
 		end
 	else
-		TriggerEvent("DoLongHudText", "No player near you (maybe get closer)!",2)
+		TriggerEvent("DoLongHudText", "Não tem ninguem próximo (Tente chegar mais perto).",2)
 	end
 end)
 
@@ -48,28 +48,24 @@ RegisterNetEvent("police:remmaskAccepted")
 AddEventHandler("police:remmaskAccepted", function()
 	TriggerEvent("facewear:adjust", {
 		{
-			id = 1,
+			id = "hat",
 			shouldRemove = true
 		},
 		{
-			id = 2,
+			id = "googles",
 			shouldRemove = true
 		},
 		{
-			id = 3,
+			id = "mask",
 			shouldRemove = true
 		},
-		{
-			id = 4,
-			shouldRemove = true
-		}
-	}, 0, true)
+	}, true, true)
 end)
 
 RegisterNetEvent("police:checkInventory")
 AddEventHandler("police:checkInventory", function(pArgs, pEntity)
 	TriggerEvent("animation:PlayAnimation", "push")
-    local finished = exports["caue-taskbar"]:taskBar(15000, pArgs and "Frisking" or "Searching", false, true, nil, false, nil, 5)
+    local finished = exports["caue-taskbar"]:taskBar(15000, pArgs and "Revista Leve" or "Revistar", false, true, nil, false, nil, 5)
 	TriggerEvent("animation:PlayAnimation", "c")
 
     if finished == 100 then
@@ -87,10 +83,11 @@ AddEventHandler("police:rob", function(pArgs, pEntity)
     ClearPedTasksImmediately(PlayerPedId())
 
     TaskPlayAnim(PlayerPedId(), "random@shop_robbery", "robbery_action_b", 8.0, -8, -1, 16, 0, 0, 0, 0)
-    local finished = exports["caue-taskbar"]:taskBar(15000, "Robbing", false, true, nil, false, nil, 5)
+    local finished = exports["caue-taskbar"]:taskBar(60000, "Robbing", true, true, nil, false, nil, 5)
 
-    if finished == 100 then
-        ClearPedTasksImmediately(PlayerPedId())
+    ClearPedTasksImmediately(PlayerPedId())
+
+	if finished == 100 then
         TriggerServerEvent("police:rob", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pEntity)))
         TriggerServerEvent("police:targetCheckInventory", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pEntity)), false)
     end
@@ -103,16 +100,32 @@ AddEventHandler("shoes:steal", function(pArgs, pEntity)
   	TaskPlayAnim(PlayerPedId(),"random@domestic", "pickup_low",5.0, 1.0, 1.0, 48, 0.0, 0, 0, 0)
   	Citizen.Wait(1600)
   	ClearPedTasks(PlayerPedId())
-  	TriggerServerEvent("facewear:adjust", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pEntity)), 6, true)
-  	-- TriggerEvent("player:receiveItem", "-828058162", 2)
+  	TriggerServerEvent("facewear:adjust", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pEntity)), "stolenshoes", true, true)
 end)
 
 RegisterNetEvent("police:gsr")
 AddEventHandler("police:gsr", function(pArgs, pEntity)
-	TaskStartScenarioInPlace(PlayerPedId(), "WORLD_HUMAN_STAND_MOBILE", 0, 1)
-	local finished = exports["caue-taskbar"]:taskBar(15000, "GSR Testing")
+	
+	local finished = exports["caue-taskbar"]:taskBar(10000, "Teste de GSR")
 	if finished == 100 then
 		TriggerServerEvent("police:gsr", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pEntity)))
+	end
+end)
+
+RegisterNetEvent("police:fingerprint")
+AddEventHandler("police:fingerprint", function(pArgs, pEntity)
+
+	local finished = exports["caue-taskbar"]:taskBar(10000, "Examinando Digitais")
+	if finished == 100 then
+		TriggerServerEvent("police:fingerprint", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pEntity)))
+	end
+end)
+
+RegisterNetEvent("police:checkBank")
+AddEventHandler("police:checkBank", function(pArgs, pEntity)
+	local finished = exports["caue-taskbar"]:taskBar(10000, "Checando o Banco do Individuo")
+	if finished == 100 then
+		TriggerServerEvent("police:checkBank", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pEntity)))
 	end
 end)
 

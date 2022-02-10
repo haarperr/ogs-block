@@ -39,20 +39,20 @@ function addGroupManage(group) {
                             <div class="row no-padding">
                                 <div class="col s12">
                                     <span class="card-title group-manage-entry-title">${employee.name} [${employee.cid}]</span>
-                                    <span class="group-manage-entry-body">Promoted to ${employee.rankname} by ${employee.giver}</span>
+                                    <span class="group-manage-entry-body">Promovido para ${employee.rankname} por ${employee.giver}</span>
                                 </div>
                             </div>
                             <div class="row no-padding" style="padding-top:10px !important">
                                 <div class="col s12 center-align">`
                                 if (group.rank.hire) {
                                     employeeEntry += `
-                                    <button class="groups-button btn-small group-manage-rank" data-id="${employee.cid}" data-group="${group.groupId}" aria-label="Update Rank" data-balloon-pos="up">
+                                    <button class="groups-button btn-small group-manage-rank" data-id="${employee.cid}" data-group="${group.groupId}" aria-label="Promover" data-balloon-pos="up">
                                         <i class="fas fa-handshake" style="font-size: 1.5rem"></i>
                                     </button>`
 
                                     if (group.isEmergency) {
                                         employeeEntry += `
-                                        <button class="groups-button btn-small group-manage-callsign" data-id="${employee.cid}" data-group="${group.groupId}" aria-label="Change Callsign" data-balloon-pos="up">
+                                        <button class="groups-button btn-small group-manage-callsign" data-id="${employee.cid}" data-group="${group.groupId}" aria-label="Mudar Callsign" data-balloon-pos="up">
                                             <i class="fas fa-tag" style="font-size: 1.5rem"></i>
                                         </button>`
                                     }
@@ -73,7 +73,7 @@ function addGroupManage(group) {
     `
         if (group.rank.hire) {
             buttonsEntry += `
-            <button class="btn groups-button group-manage-rank" aria-label="Update Rank" data-balloon-pos="up">
+            <button class="btn groups-button group-manage-rank" aria-label="Promover" data-balloon-pos="up">
                 <i class="fas fa-handshake" style="font-size: 1.5rem"></i>
             </button>`
         }

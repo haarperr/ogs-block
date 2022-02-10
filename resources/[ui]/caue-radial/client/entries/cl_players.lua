@@ -3,7 +3,7 @@ local PedEntries = MenuEntries["peds"]
 PedEntries[#PedEntries+1] = {
     data = {
         id = "peds-escort",
-        title = "Escort",
+        title = "Escoltar",
         icon = "#general-escort",
         event = "caue-police:escort"
     },
@@ -15,7 +15,7 @@ PedEntries[#PedEntries+1] = {
 PedEntries[#PedEntries+1] = {
     data = {
         id = "peds-cuff",
-        title = "Cuff",
+        title = "Algemar",
         icon = "#cuffs-cuff",
         event = "caue-police:cuffPlayer"
     },
@@ -27,7 +27,7 @@ PedEntries[#PedEntries+1] = {
 PedEntries[#PedEntries+1] = {
     data = {
         id = "peds-ucuff",
-        title = "Uncuff",
+        title = "Desalgemar",
         icon = "#cuffs-uncuff",
         event = "caue-police:uncuffPlayer"
     },
@@ -39,7 +39,7 @@ PedEntries[#PedEntries+1] = {
 PedEntries[#PedEntries+1] = {
     data = {
         id = "peds-unblindfold",
-        title = "Remove Blindfold",
+        title = "Remover Venda",
         icon = "#blindfold",
         event = "blindfold:blindfold"
     },
@@ -51,7 +51,7 @@ PedEntries[#PedEntries+1] = {
 PedEntries[#PedEntries+1] = {
     data = {
         id = "peds-cuffActions",
-        title = "Cuff Actions",
+        title = "Ações de Algemar",
         icon = "#cuffs",
     },
     subMenus = {"cuffs:softcuff", "cuffs:remmask", "cuffs:beatmode", "cuffs:blindfold" }, --"cuffs:checkphone",
@@ -63,7 +63,7 @@ PedEntries[#PedEntries+1] = {
 PedEntries[#PedEntries+1] = {
     data = {
         id = "peds-revive",
-        title = "Revive",
+        title = "CPR",
         icon = "#medic-revive",
         event = "revive",
     },
@@ -75,7 +75,7 @@ PedEntries[#PedEntries+1] = {
 PedEntries[#PedEntries+1] = {
     data = {
         id = "peds-heal",
-        title = "Heal",
+        title = "Curar",
         icon = "#medic-heal",
         event = "ems:heal",
     },
@@ -87,7 +87,7 @@ PedEntries[#PedEntries+1] = {
 PedEntries[#PedEntries+1] = {
     data = {
         id = "peds-medicActions",
-        title = "Medical Actions",
+        title = "Ações Medicas",
         icon = "#medic",
     },
     subMenus = { "medic:checktargetstates", "medic:stomachpump" },
@@ -99,7 +99,7 @@ PedEntries[#PedEntries+1] = {
 PedEntries[#PedEntries+1] = {
     data = {
         id = "police-action",
-        title = "Police Actions",
+        title = "Ações Policiais",
         icon = "#police-action",
     },
     subMenus = {"police:frisk", "police:search", "police:fingerprint", "police:checkBank", "police:gsr", "medic:checktargetstates" },
@@ -111,7 +111,7 @@ PedEntries[#PedEntries+1] = {
 PedEntries[#PedEntries+1] = {
     data = {
         id = "steal",
-        title = "Steal",
+        title = "Roubar",
         icon = "#steal",
         event = "police:rob"
     },
@@ -123,7 +123,7 @@ PedEntries[#PedEntries+1] = {
 PedEntries[#PedEntries+1] = {
     data = {
       id = "steal-shoes",
-      title = "Steal shoes",
+      title = "Roubar Sapatos",
       icon = "#shoes",
       event = "shoes:steal"
     },
@@ -135,7 +135,7 @@ PedEntries[#PedEntries+1] = {
 MenuItems["police:frisk"] = {
     data = {
         id = "peds-frisk",
-        title = "Frisk",
+        title = "Revista leve",
         icon = "#police-action-frisk",
         event = "police:checkInventory",
         parameters = true
@@ -145,7 +145,7 @@ MenuItems["police:frisk"] = {
 MenuItems["police:search"] = {
     data = {
         id = "peds-search",
-        title = "Search",
+        title = "Revistar",
         icon = "#cuffs-check-inventory",
         event = "police:checkInventory",
         parameters = false
@@ -155,7 +155,7 @@ MenuItems["police:search"] = {
 MenuItems["cuffs:softcuff"] = {
     data = {
         id = "cuffs:softcuff",
-        title = "Softcuff Toggle",
+        title = "Algema leve",
         icon = "#walking",
         event = "caue-police:softcuffPlayer"
     }
@@ -182,7 +182,7 @@ MenuItems["cuffs:remmask"] = {
 MenuItems["cuffs:beatmode"] = {
     data = {
         id = "cuffs:beatmode",
-        title = "Beat Mode",
+        title = "Modo Bater",
         icon = "#cuffs-beatmode",
         event = "police:startPutInBeatMode"
     }
@@ -191,7 +191,7 @@ MenuItems["cuffs:beatmode"] = {
 MenuItems["cuffs:blindfold"] = {
     data = {
         id = "cuffs:blindfold",
-        title = "Blindfold",
+        title = "Venda",
         icon = "#blindfold",
         event = "blindfold:blindfold"
     },
@@ -212,20 +212,20 @@ MenuItems["medic:stomachpump"] = {
     end
 }
 
-MenuItems["medic:checktargetstates"] = {
-    data = {
-        id = "medic:checktargetstates",
-        title = "Examine Target",
-        icon = "#general-check-over-target",
-        event = "requestWounds"
-    }
-}
+-- MenuItems["medic:checktargetstates"] = {
+ --    data = {
+ --        id = "medic:checktargetstates",
+ --        title = "Examinar Alvo",
+ --        icon = "#general-check-over-target",
+  --       event = "requestWounds"
+--     }
+-- }
 
 MenuItems["police:fingerprint"] = {
     data = {
         id = "police:fingerprint",
         icon = "#police-action-fingerprint",
-        title = "Check Fingerprint",
+        title = "Checar Digitais",
         event = "police:fingerprint"
     },
     isEnabled = function(pEntity, pContext)
@@ -237,7 +237,7 @@ MenuItems["police:checkBank"] = {
     data = {
         id = "police:checkBank",
         icon = "#police-check-bank",
-        title = "Check Bank",
+        title = "Checar Banco",
         event = "police:checkBank"
     },
     isEnabled = function(pEntity, pContext)
@@ -249,7 +249,7 @@ MenuItems["police:gsr"] = {
     data = {
         id = "police:gsr",
         icon = "#police-action-gsr",
-        title = "Check GSR",
+        title = "Checar GSR",
         event = "police:gsr"
     },
     isEnabled = function(pEntity, pContext)

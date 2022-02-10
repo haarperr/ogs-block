@@ -2,69 +2,28 @@ local Entries = {}
 
 Entries[#Entries + 1] = {
     type = "flag",
-    group = { "isRecycleExchange" },
-    data = {
-        {
-            id = "recycle_exchange",
-            label = "Exchange recyclables",
-            icon = "recycle",
-            event = "caue-npcs:ped:exchangeRecycleMaterial",
-            parameters = {}
-        }
-    },
-    options = {
-        distance = { radius = 2.5 }
-    }
-}
-
-Entries[#Entries + 1] = {
-    type = "flag",
     group = { "isBankAccountManager" },
     data = {
         {
             id = "bank_paycheck_collect",
-            label = "Collect paycheck",
+            label = "Coletar salário",
             icon = "money-check-alt",
             event = "caue-npcs:ped:paycheckCollect",
             parameters = {}
         }
+
     },
     options = {
         distance = { radius = 2.5 }
     }
 }
-
-Entries[#Entries + 1] = {
-    type = "flag",
-    group = { "isCommonJobProvider" },
-    data = {
-        {
-            id = "common_job_signIn",
-            label = "Sign in",
-            icon = "sign-in-alt",
-            event = "caue-npcs:ped:signInJob",
-            parameters = {}
-        },
-        {
-            id = "common_job_signOut",
-            label = "Sign out",
-            icon = "sign-out-alt",
-            event = "caue-npcs:ped:signInJob",
-            parameters = { "unemployed" }
-        }
-    },
-    options = {
-        distance = { radius = 2.5 }
-    }
-}
-
 Entries[#Entries + 1] = {
     type = "flag",
     group = { "isJobEmployer" },
     data = {
         {
             id = "jobs_employer_checkIn",
-            label = "Sign in",
+            label = "Entrar em serviço",
             icon = "circle",
             event = "jobs:checkIn",
             parameters = {}
@@ -84,14 +43,14 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "jobs_employer_paycheck",
-            label = "Get paycheck",
+            label = "coletar salário",
             icon = "circle",
             event = "jobs:getPaycheck",
             parameters = {}
         },
         {
             id = "jobs_employer_checkOut",
-            label = "Sign Out",
+            label = "Sair de serviço",
             icon = "circle",
             event = "jobs:checkOut",
             parameters = {}
@@ -111,7 +70,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "shopkeeper",
-            label = "Purchase goods",
+            label = "Comprar",
             icon = "shopping-basket",
             event = "caue-npcs:ped:keeper",
             parameters = { "2" }
@@ -128,7 +87,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "weaponshop_keeper",
-            label = "Purchase weapons",
+            label = "Comprar",
             icon = "circle",
             event = "caue-npcs:ped:keeper",
             parameters = { "5" }
@@ -145,7 +104,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "toolshop_keeper",
-            label = "Purchase tools",
+            label = "Tenho Algo",
             icon = "toolbox",
             event = "caue-npcs:ped:keeper",
             parameters = { "4" }
@@ -162,7 +121,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "sportshop_keeper",
-            label = "Purchase gear",
+            label = "Comprar equipamento",
             icon = "circle",
             event = "caue-npcs:ped:keeper",
             parameters = { "34" }
@@ -175,29 +134,21 @@ Entries[#Entries + 1] = {
 
 Entries[#Entries + 1] = {
     type = "flag",
-    group = { "isCasinoChipSeller" },
+    group = { "isIllegalMedic" },
     data = {
-      {
-          id = "casino_purchase_chips",
-          label = "Purchase Chips",
-          icon = "circle",
-          event = "np-casino:purchaseChipsAction",
-          parameters = { "purchase" }
-      },
-      {
-          id = "casino_withdraw_cash",
-          label = "Withdraw (Cash)",
-          icon = "wallet",
-          event = "np-casino:purchaseChipsAction",
-          parameters = { "withdraw:cash" }
-      },
-      {
-          id = "casino_withdraw_bank",
-          label = "Withdraw (Bank)",
-          icon = "university",
-          event = "np-casino:purchaseChipsAction",
-          parameters = { "withdraw:bank" }
-      },
+        {
+            id = "illegal_medic_revive",
+            label = "Ser Reanimado ($200)",
+            icon = "cross",
+            event = "caue-death:illegal_revive"
+        },
+        {
+            id = "illegal_medic_heal",
+            label = "Curativos ($150)",
+            icon = "cross",
+            event = "caue-death:illegal_heal"
+        },
+
     },
     options = {
         distance = { radius = 2.5 }
@@ -210,16 +161,16 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "pawn_give_items",
-            label = "Give stolen items",
+            label = "Comprar",
             icon = "circle",
-            event = "caue-npcs:ped:giveStolenItems",
+            event = "caue-pawnshop:buy",
             parameters = {}
         },
         {
             id = "pawn_sell_items",
-            label = "Sell given items",
+            label = "Vender",
             icon = "circle",
-            event = "caue-npcs:ped:sellStolenItems",
+            event = "caue-pawnshop:sell",
             parameters = {}
         }
     },
@@ -242,7 +193,27 @@ Entries["purchasemethkey"] = {
   options = {
       distance = { radius = 2.5 }
   }
+
+
 }
+Entries[#Entries + 1] = {
+    type = "flag",
+    group = { "isSupplier" },
+    data = {
+        {
+            id = "supply",
+            label = "Entregas",
+            icon = "circle",
+            event = "caue-npcs:ped:keeper",
+            parameters = {}
+        },
+    },
+
+    options = {
+        distance = { radius = 2.5 }
+    }
+}
+
 
 Citizen.CreateThread(function()
     for _, entry in ipairs(Entries) do

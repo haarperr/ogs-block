@@ -22,7 +22,7 @@ AddEventHandler("caue-police:showVehicles", function(pArgs, pEntity, pContext)
             description = "$" .. vehicle.price,
             image = vehicle.image,
             children = {
-                { title = "Confirm Purchase", action = "caue-police:purchaseVehicle", params = vehicle },
+                { title = "Confirmar Compra", action = "caue-police:purchaseVehicle", params = vehicle },
             },
         })
     end
@@ -32,7 +32,7 @@ end)
 
 AddEventHandler("caue-police:purchaseVehicle", function(params)
     if IsAnyVehicleNearPoint(params.spawn.x, params.spawn.y, params.spawn.z, 3.0) then
-        TriggerEvent("DoLongHudText", "Vehicle in the way", 2)
+        TriggerEvent("DoLongHudText", "Veiculo a caminho", 2)
         return
     end
 

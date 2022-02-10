@@ -2,24 +2,6 @@ local Entries = {}
 
 Entries[#Entries + 1] = {
     type = "flag",
-    group = { "isTrash" },
-    data = {
-        {
-            id = "trash",
-            label = "Pickup trash",
-            icon = "trash",
-            event = "np-jobs:sanitationWorker:pickupTrash",
-            parameters = {}
-        }
-    },
-    options = {
-        distance = { radius = 1.7 },
-        job = { "sanitation_worker" }
-    }
-}
-
-Entries[#Entries + 1] = {
-    type = "flag",
     group = { "isYogaMat" },
     data = {
         {
@@ -44,7 +26,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "weights",
-            label = "Weights",
+            label = "Levantar Peso",
             icon = "dumbbell",
             event = "caue-healthcare:exercise",
             parameters = {}
@@ -61,7 +43,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "smoke_machine",
-            label = "Smoke Machine",
+            label = "Loja de cigarros",
             icon = "circle",
             event = "np-stripclub:smokemachine",
             parameters = {}
@@ -78,7 +60,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "jerrycan_refill",
-            label = "Refill Can",
+            label = "Encher Galão",
             icon = "gas-pump",
             event = "vehicle:refuel:showMenu",
             parameters = { isJerryCan = true }
@@ -98,7 +80,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vending_machine",
-            label = "Browse",
+            label = "Navegar",
             icon = "shopping-basket",
             event = "shops:vendingMachine",
             parameters = {}
@@ -115,7 +97,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "sit_on_chair",
-            label = "Sit",
+            label = "Sentar",
             icon = "chair",
             event = "caue-emotes:sitOnChair",
             parameters = {}
@@ -132,7 +114,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "use_atm",
-            label = "Use ATM",
+            label = "Usar ATM",
             icon = "credit-card",
             event = "financial:openUI",
             parameters = {}
@@ -140,6 +122,40 @@ Entries[#Entries + 1] = {
     },
     options = {
         distance = { radius = 1.5 }
+    }
+}
+
+Entries[#Entries + 1] = {
+    type = "flag",
+    group = { "isWeedPlant" },
+    data = {
+        {
+            id = "weed",
+            label = "Checar",
+            icon = "cannabis",
+            event = "caue-weed:checkPlant",
+            parameters = {}
+        }
+    },
+    options = {
+        distance = { radius = 7.0 }
+    }
+}
+
+Entries[#Entries + 1] = {
+    type = "flag",
+    group = { "isLrgWeedPlant" },
+    data = {
+        {
+            id = "weed2",
+            label = "Colher",
+            icon = "hand-paper",
+            event = "caue-weed:pickPlant",
+            parameters = {}
+        }
+    },
+    options = {
+        distance = { radius = 7.0 }
     }
 }
 

@@ -84,14 +84,14 @@ end
 function getInteractionMessage(apartmentLocNumber,apartmentNumber)
     if apartmentLocNumber == Apart.currentRoomType and apartmentNumber == Apart.currentRoomNumber then
         if Apart.currentRoomLocks[apartmentLocNumber][apartmentNumber] then
-            return "[H] to enter; [G] to more."
+            return "[H] para entrar; [G] para mais."
         else
-            return "[H] to enter; [G] to more."
+            return "[H] para entrar; [G] para mais."
         end
     end
 
     if Apart.currentRoomLocks[apartmentLocNumber][apartmentNumber] ~= nil and Apart.currentRoomLocks[apartmentLocNumber][apartmentNumber] == false then
-        return "[H] to enter"
+        return "[H] parar entrar"
     end
 end
 

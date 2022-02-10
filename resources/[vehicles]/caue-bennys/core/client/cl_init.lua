@@ -1,10 +1,8 @@
 Citizen.CreateThread(function()
-
-    -- Davis PD
-    exports["caue-polyzone"]:AddBoxZone("bennys", vector3(380.44, -1625.97, 29.29), 10.2, 6.4, {
-        minZ = 28.29,
-        maxZ = 32.29,
-        heading = 320,
+    -- MRPD
+    exports["caue-polyzone"]:AddBoxZone("bennys", vector3(452.12, -975.34, 25.7), 5.4, 13.2, {
+        minZ = 24.7,
+        maxZ = 27.7,
     })
 
     -- Pillbox Hospital

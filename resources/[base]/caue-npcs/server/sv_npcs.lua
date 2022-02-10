@@ -43,7 +43,7 @@ Citizen.CreateThread(function()
             },
         }
     end
-
+    
     for i, v in ipairs(Generic.WeaponShopLocations) do
         Generic.NPCS[#Generic.NPCS + 1] = {
             id = "ammunation_" .. i,
@@ -70,33 +70,5 @@ Citizen.CreateThread(function()
             scenario = "WORLD_HUMAN_GUARD_STAND",
         }
     end
-
-    for i, v in ipairs(Generic.ToolShopLocations) do
-        Generic.NPCS[#Generic.NPCS + 1] = {
-            id = "tools_" .. i,
-            name = "Tool Shop",
-            pedType = 4,
-            model = "s_m_m_lathandy_01",
-            networked = false,
-            distance = 150.0,
-            position = {
-                coords = v.xyz,
-                heading = v.w,
-                random = false,
-            },
-            appearance = nil,
-            settings = {
-                { mode = "invincible", active = true },
-                { mode = "ignore", active = true },
-                { mode = "freeze", active = true },
-            },
-            flags = {
-                ["isNPC"] = true,
-                ["isToolShopKeeper"] = true,
-            },
-            scenario = "WORLD_HUMAN_CLIPBOARD",
-        }
-    end
-
 
 end)

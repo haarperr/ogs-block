@@ -4,7 +4,48 @@
 
 ]]
 
-togglehud = true
+local HoldTime = 0
+local LastStroke = 0
+local HasNuiFocus = false
+local IsFocusThreadRunning = false
+
+local playerPed = PlayerPedId()
+local oldHealth
+local oldArmor
+local oldOxygen
+local wasUnderWater = false
+local wasInVehicle = false
+
+display = false
+isCircle = false
+mapPos = {
+    x = 0,
+    y = 0,
+    w = 0,
+    h = 0,
+    screenH = 1080,
+}
+
+hudSettings = {
+    opacity = 0.5,
+    hidden = {},
+    map = "rect"
+}
+
+local options = {
+    toggle  = true,
+    opacity = true,
+    map = true
+}
+
+local toggleOptions = {
+    health = true,
+    armor  = true,
+    hunger = true,
+    thirst = true,
+    voice = true,
+    oxygen = true,
+}
 
 currentValues = {
     ["health"] = 100,
@@ -12,19 +53,7 @@ currentValues = {
     ["hunger"] = 100,
     ["thirst"] = 100,
     ["oxy"] = 25.0,
-    ["stress"] = 0,
-    ["parachute"] = false,
-    ["harness"] = 0,
 }
-
-local lastValues = {}
-local lastDamageTrigger = 0
-local HoldTime = 0
-local LastStroke = 0
-local HasNuiFocus = false
-local IsFocusThreadRunning = false
-local nitrousActive = false
-local pauseActive = false
 
 --[[
 
@@ -32,9 +61,216 @@ local pauseActive = false
 
 ]]
 
+function setHudSettings()
+    local hidden = GetResourceKvpString("caue-hud:hidden")
+    if hidden then
+        hudSettings.hidden = json.decode(hidden)
+        setStatusHidden(hudSettings.hidden)
+    end
+    local opacity = GetResourceKvpString("caue-hud:opacity") -- float returns 0.0 if not found -_- -_-
+    if opacity and tonumber(opacity) then
+        hudSettings.opacity = tonumber(opacity)
+        setOpacity(hudSettings.opacity)
+    end
+    local map = GetResourceKvpString("caue-hud:map")
+    if map then
+        hudSettings.map = map
+        toggleMap()
+    end
+end
 
+function setHealthAndArmor()
+    local health = GetEntityHealth(playerPed) - 100
+    local armor = GetPedArmour(playerPed)
+    oldHealth = health
+    oldArmor = armor
+    updateStatus("health", health)
+    updateStatus("armor", armor)
+end
 
+function setDisplay(value)
+    display = value
+    SendNUIMessage({
+        component = "app",
+        payload = {
+            state = "visible",
+            value = value
+        }
+    })
+end
 
+function setVehicleDisplay(value)
+    inVehicle = value
+    DisplayRadar(value)
+    SendNUIMessage({
+        component = "vehicle",
+        payload = {
+            state = "visible",
+            value = value
+        }
+    })
+end
+
+function setSpeed(value)
+    SendNUIMessage({
+        component = "vehicle",
+        payload = {
+            state = "speed",
+            value = value
+        }
+    })
+end
+
+function setUnit(value)
+    SendNUIMessage({
+        component = "vehicle",
+        payload = {
+            state = "unit",
+            value = value
+        }
+    })
+end
+
+function updateStatus(name, value)
+    SendNUIMessage({
+        component = "player",
+        payload = {
+            state = name,
+            value = value
+        }
+    })
+end
+
+function setStatusHidden(hidden)
+    SendNUIMessage({
+        component = "player",
+        payload = {
+            state = "hidden",
+            value = hidden
+        }
+    })
+end
+
+function setOpacity(opacity)
+    SendNUIMessage({
+        component = "player",
+        payload = {
+            state = "opacity",
+            value = opacity
+        }
+    })
+end
+
+function setUnderWater(value)
+    SendNUIMessage({
+        component = "player",
+        payload = {
+            state = "underWater",
+            value = value
+        }
+    })
+end
+
+function setDirectionAndStreetName(direction, streetName)
+    SendNUIMessage({
+        component = "vehicle",
+        payload = {
+            state = "pos",
+            value = {
+                direction = direction,
+                streetName = streetName
+            }
+        }
+    })
+end
+
+function setAircraft(value)
+    SendNUIMessage({
+        component = "vehicle",
+        payload = {
+            state = "aircraft",
+            value = value
+        }
+    })
+end
+
+function setAltitude(value)
+    SendNUIMessage({
+        component = "vehicle",
+        payload = {
+            state = "altitude",
+            value = value
+        }
+    })
+end
+
+function setFuel(value)
+    SendNUIMessage({
+        component = "vehicle",
+        payload = {
+            state = "fuel",
+            value = value
+        }
+    })
+end
+
+function setSeatbelt(value)
+    SendNUIMessage({
+        component = "vehicle",
+        payload = {
+            state = "seatbelt",
+            value = value
+        }
+    })
+end
+
+function setNitro(value)
+    SendNUIMessage({
+        component = "vehicle",
+        payload = {
+            state = "hasNitro",
+            value = value
+        }
+    })
+end
+
+function setNitroCharges(value)
+    SendNUIMessage({
+        component = "vehicle",
+        payload = {
+            state = "nitroCharges",
+            value = value
+        }
+    })
+end
+
+function setNitroAmount(value)
+    SendNUIMessage({
+        component = "vehicle",
+        payload = {
+            state = "nitroAmount",
+            value = value
+        }
+    })
+end
+
+--[[
+
+    NUI
+
+]]
+
+RegisterNUICallback("ready", function(_, cb)
+    if exports["caue-base"]:getChar("id") ~= nil then
+        playerPed = PlayerPedId()
+        setDisplay(true)
+        setHealthAndArmor()
+        setHudSettings()
+    end
+    -- toggleMap()
+    mapChangeListener()
+    cb("ok")
+end)
 
 --[[
 
@@ -42,24 +278,27 @@ local pauseActive = false
 
 ]]
 
+RegisterNetEvent("caue-hud:toggle")
+AddEventHandler("caue-hud:toggle", function(toggle)
+    setDisplay(toggle)
+
+    if toggle == true then
+        setHealthAndArmor()
+        setHudSettings()
+    end
+end)
+
 RegisterNetEvent("hud:saveCurrentMeta")
 AddEventHandler("hud:saveCurrentMeta", function()
     TriggerServerEvent("caue-hud:updateData", GetEntityHealth(PlayerPedId()), GetPedArmour(PlayerPedId()), currentValues["thirst"], currentValues["hunger"])
-end)
-
-RegisterNetEvent("caue-hud:toggle")
-AddEventHandler("caue-hud:toggle", function(toggle)
-    togglehud = toggle
-
-    SendNUIMessage({
-        showUi = toggle,
-    })
 end)
 
 RegisterNetEvent("caue-hud:setData")
 AddEventHandler("caue-hud:setData", function(data)
     currentValues["hunger"] = data["hunger"]
     currentValues["thirst"] = data["thirst"]
+    updateStatus("hunger", data["hunger"])
+    updateStatus("thirst", data["thirst"])
 
     SetPedMaxHealth(PlayerPedId(), 200)
     if data["health"] < 10.0 then
@@ -72,8 +311,8 @@ AddEventHandler("caue-hud:setData", function(data)
     SetPedArmour(PlayerPedId(), data["armour"])
 end)
 
-RegisterNetEvent("np-voice:focus:set")
-AddEventHandler("np-voice:focus:set", function(hasFocus, hasKeyboard, hasMouse)
+RegisterNetEvent("caue-voice:focus:set")
+AddEventHandler("caue-voice:focus:set", function(hasFocus, hasKeyboard, hasMouse)
 	HasNuiFocus = hasFocus
 
 	if HasNuiFocus and not IsFocusThreadRunning then
@@ -98,20 +337,9 @@ AddEventHandler("np-voice:focus:set", function(hasFocus, hasKeyboard, hasMouse)
     end
 end)
 
-AddEventHandler("harness", function(toggle, harness)
-    if harness then
-        currentValues["harness"] = harness
-    else
-        currentValues["harness"] = 0
-    end
-
-    SendNUIMessage({
-        action = "harness",
-        harness = currentValues["harness"],
-    })
-end)
-
 AddEventHandler("noshud", function(_nitrous, active, _delay)
+    if true then return end
+
     if active then
         local level = 100
         nitrousActive = true
@@ -142,39 +370,90 @@ AddEventHandler("noshud", function(_nitrous, active, _delay)
 end)
 
 AddEventHandler("caue:voice:proximity", function(proximity)
-    SendNUIMessage({
-        action = "voice",
-        voice = proximity,
-    })
+    local voice = 33
+    if proximity == 2 then
+        voice = 66
+    elseif proximity == 3 then
+        voice = 100
+    end
+
+    updateStatus("voice", voice)
 end)
 
 AddEventHandler("caue:voice:transmissionStarted", function(data)
-    SendNUIMessage({
-        action = "talking",
-        talking = true,
-        radio = data.radio,
-    })
+    -- SendNUIMessage({
+    --     action = "talking",
+    --     talking = true,
+    --     radio = data.radio,
+    -- })
 end)
 
 AddEventHandler("caue:voice:transmissionFinished", function()
-    SendNUIMessage({
-        action = "talking",
-        talking = false,
-    })
+    -- SendNUIMessage({
+    --     action = "talking",
+    --     talking = false,
+    -- })
 end)
 
 AddEventHandler("caue-admin:currentDevmode", function(devmode)
-    SendNUIMessage({
-        action = "dev",
-        developer = devmode,
-    })
+    -- SendNUIMessage({
+    --     action = "dev",
+    --     developer = devmode,
+    -- })
 end)
 
 AddEventHandler("caue-admin:currentDebug", function(debugmode)
-    SendNUIMessage({
-        action = "debug",
-        debug = debugmode,
-    })
+    -- SendNUIMessage({
+    --     action = "debug",
+    --     debug = debugmode,
+    -- })
+end)
+
+RegisterNetEvent("caue-hud:settings")
+AddEventHandler("caue-hud:settings", function(args)
+    local option = args[1]
+    if not option or not options[option] then
+        TriggerEvent("DoLongHudText", option .. " is not an valid option", 2)
+        return
+    end
+
+    local value = args[2]
+    if (
+        not value or
+        (option == "toggle" and not toggleOptions[value]) or
+        (option == "opacity" and (not tonumber(value) or (tonumber(value) > 1.0 or tonumber(value) < 0.0))) or
+        (option == "map" and (not value == "rect" or not value == "circle"))
+    ) then
+        TriggerEvent("DoLongHudText", value .. " is not an valid value of " .. option, 2)
+        return
+    end
+
+    if option == "toggle" then
+        local found = nil
+        for i = 1, #hudSettings.hidden do
+            if hudSettings.hidden[i] == value then
+                found = i
+                break
+            end
+        end
+        if found then
+            table.remove(hudSettings.hidden, found)
+        else
+            table.insert(hudSettings.hidden, value)
+        end
+        SetResourceKvp("caue-hud:hidden", json.encode(hudSettings.hidden))
+        setStatusHidden(hudSettings.hidden)
+        TriggerEvent("DoLongHudText", "Set " .. value .. " to " .. (found and "visible" or "hidden"))
+    elseif option == "opacity" then
+        hudSettings.opacity = tonumber(value)
+        SetResourceKvp("caue-hud:opacity", tostring(hudSettings.opacity))
+        setOpacity(hudSettings.opacity)
+        TriggerEvent("DoLongHudText", "Set opacity to " .. hudSettings.opacity)
+    elseif option == "map" then
+        hudSettings.map = value
+        SetResourceKvp("caue-hud:map", hudSettings.map)
+        toggleMap()
+    end
 end)
 
 --[[
@@ -219,8 +498,8 @@ Citizen.CreateThread(function()
         HideHudComponentThisFrame(8)
         HideHudComponentThisFrame(9)
         HideHudComponentThisFrame(10)
-        HideHudComponentThisFrame(11)
-        HideHudComponentThisFrame(12)
+        -- HideHudComponentThisFrame(11)
+        -- HideHudComponentThisFrame(12)
         HideHudComponentThisFrame(13)
         HideHudComponentThisFrame(14)
         HideHudComponentThisFrame(15)
@@ -246,6 +525,91 @@ end)
 
 Citizen.CreateThread(function()
     while true do
+        if display then
+            playerPed = PlayerPedId()
+
+            SetPedSuffersCriticalHits(playerPed, true)
+
+            local health = GetEntityHealth(playerPed) - 100
+            local armor = GetPedArmour(playerPed)
+            if oldHealth ~= health then
+                oldHealth = health
+                updateStatus("health", health)
+            end
+            if oldArmor ~= armor then
+                oldArmor = armor
+                updateStatus("armor", armor)
+            end
+
+            local underWater = IsPedSwimmingUnderWater(playerPed)
+            if underWater and not wasUnderWater then
+                wasUnderWater = true
+                setUnderWater(true)
+            elseif not underWater and wasUnderWater then
+                wasUnderWater = false
+                setUnderWater(false)
+                collectgarbage("collect")
+            end
+
+            local oxygen = GetPlayerUnderwaterTimeRemaining(PlayerId())
+            if underWater and oxygen ~= oldOxygen then
+                updateStatus("oxygen", oxygen * 10)
+            end
+
+            local vehicle = GetVehiclePedIsIn(playerPed, false)
+            if vehicle ~= 0 and not wasInVehicle then
+                wasInVehicle = true
+                setVehicleDisplay(true)
+                vehicleLoop(vehicle)
+                local vehicleClass = GetVehicleClass(vehicle)
+                isAircraft = vehicleClass == 16 or vehicleClass == 15
+                setAircraft(isAircraft)
+                local useKnot = isAircraft or vehicleClass == 14
+                local useMetric = false
+                if useKnot then
+                    speedMultiplier = 1.94384449
+                    setUnit("kn")
+                else
+                    speedMultiplier = useMetric and 3.6 or 2.23693629
+                    setUnit(useMetric and "kmh" or "mph")
+                end
+                mapPos = getMapPos()
+                SendNUIMessage({
+                    component = "app",
+                    payload = {
+                        state = "mapPos",
+                        value = mapPos
+                    }
+                })
+                local isCar = isCar(vehicle)
+                if isCar then
+                    setSeatbelt(true)
+                end
+                currentVehicle = vehicle
+                currentModel = GetEntityModel(vehicle)
+            elseif vehicle == 0 and wasInVehicle then
+                wasInVehicle = false
+                setVehicleDisplay(false)
+                setSeatbelt(false)
+                currentVehicle = nil
+                currentModel = nil
+                lastNitroAmount = 0
+                lastNitroCharges = 0
+                hasNitro = false
+                setNitro(false)
+                setNitroCharges(0)
+                setNitroAmount(0)
+            end
+
+            Wait(100)
+        else
+            Wait(500)
+        end
+    end
+end)
+
+Citizen.CreateThread(function()
+    while true do
         if not IsPauseMenuActive() and IsDisabledControlJustReleased(0, 200) then
             local time  = GetGameTimer()
 
@@ -260,130 +624,5 @@ Citizen.CreateThread(function()
         end
 
         Citizen.Wait(0)
-    end
-end)
-
-Citizen.CreateThread(function()
-    while true do
-        if currentValues["oxy"] > 0 and IsPedSwimmingUnderWater(PlayerPedId()) then
-            if not hasChanged then
-                SetAudioSubmixEffectParamInt(0, 0, `enabled`, 1)
-                hasChanged = true
-            end
-
-            SetPedDiesInWater(PlayerPedId(), false)
-
-            if currentValues["oxy"] > 25.0 then
-                currentValues["oxy"] = currentValues["oxy"] - 0.003125
-            else
-                currentValues["oxy"] = currentValues["oxy"] - 1
-            end
-        else
-            if IsPedSwimmingUnderWater(PlayerPedId()) then
-                currentValues["oxy"] = currentValues["oxy"] - 0.01
-                SetPedDiesInWater(PlayerPedId(), true)
-            end
-        end
-
-        if not IsPedSwimmingUnderWater( PlayerPedId() ) and currentValues["oxy"] < 25.0 then
-            if hasChanged then
-                SetAudioSubmixEffectParamInt(0, 0, `enabled`, 0)
-                hasChanged = false
-            end
-
-            if GetGameTimer() - lastDamageTrigger > 3000 then
-                currentValues["oxy"] = currentValues["oxy"] + 1
-
-                if currentValues["oxy"] > 25.0 then
-                    currentValues["oxy"] = 25.0
-                end
-            else
-                if currentValues["oxy"] <= 0 then
-                    if exports["isPed"]:isPed("dead") then
-                        lastDamageTrigger = -7000
-                        currentValues["oxy"] = 25.0
-                    else
-                        SetEntityHealth(PlayerPedId(), GetEntityHealth(PlayerPedId()) - 20)
-                    end
-                end
-            end
-        end
-
-        if currentValues["oxy"] > 25.0 and not oxyOn then
-            oxyOn = true
-            attachProp("p_s_scuba_tank_s", 24818, -0.25, -0.25, 0.0, 180.0, 90.0, 0.0)
-            attachProp2("p_s_scuba_mask_s", 12844, 0.0, 0.0, 0.0, 180.0, 90.0, 0.0)
-        elseif oxyOn and currentValues["oxy"] <= 25.0 then
-            oxyOn = false
-            removeAttachedProp()
-            removeAttachedProp2()
-        end
-
-        if oxyOn then
-            Citizen.Wait(1)
-        else
-            Citizen.Wait(1000)
-        end
-    end
-end)
-
-Citizen.CreateThread(function()
-    while true do
-        local get_ped = PlayerPedId()
-        local get_ped_veh = GetVehiclePedIsIn(get_ped, false)
-
-        SetPedSuffersCriticalHits(get_ped, true)
-
-        currentValues["health"] = (GetEntityHealth(get_ped) - 100)
-        currentValues["armor"] = GetPedArmour(get_ped)
-        currentValues["stress"] = math.ceil(stresslevel / 10)
-        currentValues["parachute"] = HasPedGotWeapon(get_ped, `gadget_parachute`, false)
-
-        local valueChanged = false
-
-        for k, v in pairs(currentValues) do
-            if lastValues[k] == nil or lastValues[k] ~= v then
-                valueChanged = true
-                lastValues[k] = v
-            end
-        end
-
-        if valueChanged then
-            SendNUIMessage({
-                action = "hud",
-                health = currentValues["health"],
-                armor = currentValues["armor"],
-                hunger = currentValues["hunger"],
-                thirst = currentValues["thirst"],
-                oxygen = currentValues["oxy"],
-                oxygenShow = currentValues["oxy"] and math.ceil(currentValues["oxy"]) ~= 25,
-                stress = currentValues["stress"],
-                parachute = currentValues["parachute"],
-            })
-        end
-
-        Citizen.Wait(100)
-    end
-end)
-
-Citizen.CreateThread(function()
-    while true do
-        local isPMA = IsPauseMenuActive()
-
-        if isPMA and not pauseActive then
-            pauseActive = true
-
-            SendNUIMessage({
-                showUi = false,
-            })
-        elseif not isPMA and pauseActive then
-            pauseActive = false
-
-            SendNUIMessage({
-                showUi = true,
-            })
-        end
-
-        Citizen.Wait(250)
     end
 end)

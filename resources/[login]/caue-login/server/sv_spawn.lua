@@ -28,6 +28,9 @@ AddEventHandler("caue-login:spawnCharacter", function()
     ]],
     { "groups", cid })
 
+    spawnData["houses"] = exports["caue-housing"]:getCurrentOwned(src)
+    spawnData["keys"] = exports["caue-housing"]:currentKeys(src)
+
     for i, v in ipairs(groups) do
         if v.spawn then
             local spawn = json.decode(v.spawn)

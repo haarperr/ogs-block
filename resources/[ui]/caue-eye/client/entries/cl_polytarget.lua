@@ -6,7 +6,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "bar:grabDrink",
-            label = "Grab Drink",
+            label = "Pegar bebida",
             icon = "cocktail",
             event = "np-stripclub:peekAction",
             parameters = { action = "grabDrink" }
@@ -23,27 +23,10 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "bar:openFridge",
-            label = "Open Fridge",
+            label = "Abrir geladeira",
             icon = "circle",
             event = "np-stripclub:peekAction",
             parameters = { action = "openFridge" }
-        }
-    },
-    options = {
-        distance = { radius = 1.5 }
-    }
-}
-
-Entries[#Entries + 1] = {
-    type = "polytarget",
-    group = { "townhall:gavel" },
-    data = {
-        {
-            id = "townhall:gavel",
-            label = "Use Gavel",
-            icon = "circle",
-            event = "np-gov:gavel",
-            parameters = {}
         }
     },
     options = {
@@ -57,7 +40,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "job_sign_in",
-            label = "Duty Action",
+            label = "Entrar em serviço",
             icon = "circle",
             event = "caue-signin:peekAction",
             parameters = {}
@@ -68,22 +51,6 @@ Entries[#Entries + 1] = {
     }
 }
 
-Entries[#Entries + 1] = {
-    type = "polytarget",
-    group = { "prison_services" },
-    data = {
-        {
-            id = "prison_services",
-            label = "Prison Services",
-            icon = "circle",
-            event = "np-jailbreak:services",
-            parameters = {}
-        }
-    },
-    options = {
-        distance = { radius = 1.5 }
-    }
-}
 
 Citizen.CreateThread(function()
     for _, entry in ipairs(Entries) do

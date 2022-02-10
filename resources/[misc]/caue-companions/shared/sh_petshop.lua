@@ -20,8 +20,8 @@ PetshopConfig = {
             networked = false,
             distance = 50.0,
             position = {
-                coords = vector3(365.01, -1621.8, 28.33),
-                heading = 323.05,
+                coords = vector3(469.86, -980.98, 25.28),
+                heading = 175,
                 random = false,
             },
             appearance = nil,

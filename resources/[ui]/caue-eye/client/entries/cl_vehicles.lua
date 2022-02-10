@@ -6,7 +6,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_flip",
-            label = "Flip Vehicle",
+            label = "Desvirar veiculo",
             icon = "car-crash",
             event = "FlipVehicle",
             parameters = {}
@@ -25,8 +25,28 @@ Entries[#Entries + 1] = {
     group = { 2 },
     data = {
         {
+            id = "carry_bike",
+            label = "Carregar bicicleta",
+            icon = "spinner",
+            event = "carryEntity",
+            parameters = {}
+        }
+    },
+    options = {
+        distance = { radius = 3.0 },
+        isEnabled = function(pEntity, pContext)
+            return IsThisModelABicycle(pContext.model) and not IsEntityAttachedToAnyPed(pEntity) and not IsEntityAttachedToAnyPed(PlayerPedId())
+        end
+    }
+}
+
+Entries[#Entries + 1] = {
+    type = "entity",
+    group = { 2 },
+    data = {
+        {
             id = "vehicle_getintrunk",
-            label = "Enter trunk",
+            label = "Entrar malas",
             icon = "user-secret",
             event = "vehicle:getInTrunk",
             parameters = {}
@@ -46,7 +66,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_runplate",
-            label = "Run Plate",
+            label = "Checar placa",
             icon = "money-check",
             event = "clientcheckLicensePlate",
             parameters = {}
@@ -66,7 +86,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_inspectvin",
-            label = "Check VIN",
+            label = "Checar VIN",
             icon = "sim-card",
             event = "vehicle:checkVIN",
             parameters = {}
@@ -86,7 +106,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_add_fakeplate",
-            label = "Add Fakeplate",
+            label = "Adicionar Placa Falsa",
             icon = "screwdriver",
             event = "vehicle:addFakePlate",
             parameters = {}
@@ -108,7 +128,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_remove_fakeplate",
-            label = "Remove Fakeplate",
+            label = "Remover Placa Falsa",
             icon = "ban",
             event = "vehicle:removeFakePlate",
             parameters = {}
@@ -129,7 +149,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_examine",
-            label = "Examine Vehicle",
+            label = "Examinar Veiculo",
             icon = "wrench",
             event = "caue-vehicles:examineVehicle",
             parameters = {}
@@ -149,7 +169,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_refuel_station",
-            label = "Refuel Vehicle",
+            label = "Abastecer",
             icon = "gas-pump",
             event = "caue-vehicles:refuel",
             parameters = {}
@@ -169,7 +189,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_refuel_jerrycan",
-            label = "Refuel Vehicle",
+            label = "Abastecer",
             icon = "gas-pump",
             event = "vehicle:refuel:jerryCan",
             parameters = {}
@@ -189,14 +209,14 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_putinvehicle",
-            label = "seat in vehicle",
+            label = "Colocar Veiculo",
             icon = "chevron-circle-left",
             event = "police:forceEnter",
             parameters = {}
         },
         {
             id = "vehicle_unseatnearest",
-            label = "unseat from vehicle",
+            label = "Remover Veiculo",
             icon = "chevron-circle-right",
             event = "unseatPlayer",
             parameters = {}
@@ -216,7 +236,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_keysgive",
-            label = "give key",
+            label = "Dar chave",
             icon = "key",
             event = "vehicle:giveKey",
             parameters = {}
@@ -291,55 +311,12 @@ Entries[#Entries + 1] = {
 }
 
 Entries[#Entries + 1] = {
-    type = "model",
-    group = { GetHashKey("trash2") },
-    data = {
-        {
-            id = "sanitation_worker_throw_trash",
-            label = "throw in trash",
-            icon = "trash-restore-alt",
-            event = "np-jobs:sanitationWorker:vehicleTrash",
-            parameters = {}
-        }
-    },
-    options = {
-        job = { "sanitation_worker" },
-        distance = { radius = 3.8, boneId = "wheel_lr" },
-        isEnabled = function (pEntity, pContext)
-            return isCloseToTrunk(pEntity, PlayerPedId(), 1.1, true)
-        end
-    }
-}
-
-Entries[#Entries + 1] = {
-    type = "model",
-    group = { GetHashKey("benson") },
-    data = {
-        {
-            id = "247_deliveries_take_goods",
-            label = "Grab goods",
-            icon = "box",
-            event = "np-jobs:247delivery:takeGoods",
-            parameters = {}
-        }
-    },
-    options = {
-        job = { "247_deliveries" },
-        distance = { radius = 2.0, boneId = "boot" },
-        isEnabled = function (pEntity, pContext)
-            return isCloseToTrunk(pEntity, PlayerPedId())
-        end
-    }
-}
-
-
-Entries[#Entries + 1] = {
     type = "entity",
     group = { 2 },
     data = {
         {
             id = "vehicle_repair_brake",
-            label = "Repair Brake",
+            label = "Reparar freios",
             icon = "wrench",
             event = "caue-vehicles:repairVehicle",
             parameters = "brake"
@@ -359,7 +336,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_repair_axle",
-            label = "Repair Axle",
+            label = "Reparar eixo",
             icon = "wrench",
             event = "caue-vehicles:repairVehicle",
             parameters = "axle"
@@ -379,7 +356,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_repair_radiator",
-            label = "Repair Radiator",
+            label = "Reparar Radiador",
             icon = "wrench",
             event = "caue-vehicles:repairVehicle",
             parameters = "radiator"
@@ -399,7 +376,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_repair_clutch",
-            label = "Repair Clutch",
+            label = "Reparar Embreagem",
             icon = "wrench",
             event = "caue-vehicles:repairVehicle",
             parameters = "clutch"
@@ -419,7 +396,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_repair_transmission",
-            label = "Repair Transmission",
+            label = "Reparar Transmissão",
             icon = "wrench",
             event = "caue-vehicles:repairVehicle",
             parameters = "transmission"
@@ -439,7 +416,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_repair_electronics",
-            label = "Repair Electronics",
+            label = "Reparar Eletronicas",
             icon = "wrench",
             event = "caue-vehicles:repairVehicle",
             parameters = "electronics"
@@ -459,7 +436,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_repair_injector",
-            label = "Repair Injector",
+            label = "Reparar injeção",
             icon = "wrench",
             event = "caue-vehicles:repairVehicle",
             parameters = "injector"
@@ -479,7 +456,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_repair_tire",
-            label = "Repair Tire",
+            label = "Reparar pneus",
             icon = "wrench",
             event = "caue-vehicles:repairVehicle",
             parameters = "tire"
@@ -499,7 +476,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_repair_body",
-            label = "Repair Body",
+            label = "Reparar Lataria",
             icon = "wrench",
             event = "caue-vehicles:repairVehicle",
             parameters = "body"
@@ -519,7 +496,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_repair_engine",
-            label = "Repair Engine",
+            label = "Reparar motor",
             icon = "wrench",
             event = "caue-vehicles:repairVehicle",
             parameters = "engine"

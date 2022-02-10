@@ -17,38 +17,38 @@ local EVENTS = {
 }
 
 local zoneData = {
-    davispd_clothing_lockers = {
-        promptText = "[E] Lockers & Clothes",
+    mrpd_clothing_lockers = {
+        promptText = "[E] Armário & Roupas",
         menuData = {
             {
-                title = "Lockers",
-                description = "Access your personal locker",
+                title = "Armário",
+                description = "Acesse seu armário pessoal",
                 action = "caue-police:handler",
                 params = EVENTS.LOCKERS
             },
             {
-                title = "Clothing",
-                description = "Gotta look Sharp",
+                title = "Roupas",
+                description = "Escolha sua roupa",
                 action = "caue-police:handler",
                 params = EVENTS.CLOTHING
             }
         }
     },
-    davispd_armory = {
-        promptText = "[E] Armory"
+    mrpd_armory = {
+        promptText = "[E] Arsenal"
     },
-    davispd_evidence = {
-        promptText = "[E] Evidence"
+    mrpd_evidence = {
+        promptText = "[E] Evidencia"
     },
-    davispd_trash = {
-        promptText = "[E] Trash"
+    mrpd_trash = {
+        promptText = "[E] Lixo"
     },
-    davispd_character_switcher = {
-        promptText = "[E] Switch Character",
+    mrpd_character_switcher = {
+        promptText = "[E] Mudar de Personagem",
         menuData = {
             {
-                title = "Character switch",
-                description = "Go bowling with your cousin",
+                title = "Mudar de Personagem",
+                description = "Vai jogar boliche com seu tio",
                 action = "caue-police:handler",
                 params = EVENTS.SWITCHER
             }
@@ -56,35 +56,39 @@ local zoneData = {
     },
 
     doc_lockers = {
-        promptText = "[E] Lockers & Clothes",
+        promptText = "[E] Armário & Roupas",
         menuData = {
             {
-                title = "Lockers",
-                description = "Access your personal locker",
+                title = "Armário",
+                description = "Acesse seu armário pessoal",
                 action = "caue-police:handler",
                 params = EVENTS.LOCKERS
             },
             {
-                title = "Clothing",
-                description = "Gotta look Sharp",
+                title = "Roupas",
+                description = "Escolha sua roupa",
                 action = "caue-police:handler",
                 params = EVENTS.CLOTHING
             },
             {
-                title = "Character switch",
-                description = "Go bowling with your cousin",
+                title = "Mudar de Personagem",
+                description = "Vai jogar boliche com seu tio",
                 action = "caue-police:handler",
                 params = EVENTS.SWITCHER
             },
         }
     },
     doc_armory = {
-        promptText = "[E] Armory"
+        promptText = "[E] Arsenal"
     },
     doc_trash = {
-        promptText = "[E] Trash"
+        promptText = "[E] Lixo"
     },
 }
+
+local currentClassRoomBoardUrl = "https://cdn.discordapp.com/attachments/929484136572387339/936710819910156408/unknown.png"
+local currentMeetingRoomBoardUrl = "https://cdn.discordapp.com/attachments/929484136572387339/936710819910156408/unknown.png"
+local inClassRoom, inMeetingRoom = false, false
 
 --[[
 
@@ -128,6 +132,22 @@ AddEventHandler("caue-polyzone:enter", function(pZoneName, pZoneData)
             exports["caue-interaction"]:showInteraction(zoneData[pZoneData.zone].promptText)
             listenForKeypress(pZoneData.zone, pZoneData.action)
         end
+    elseif pZoneName == "mrpd_classroom" then
+        if not dui then
+            dui = exports["caue-lib"]:getDui(currentClassRoomBoardUrl)
+            AddReplaceTexture("prop_planning_b1", "prop_base_white_01b", dui.dictionary, dui.texture)
+        else
+            exports["caue-lib"]:changeDuiUrl(dui.id, currentClassRoomBoardUrl)
+        end
+        inClassRoom = true
+    elseif zone == "mrpd_meetingroom" then
+        if not dui then
+          dui = exports["caue-lib"]:getDui(currentMeetingRoomBoardUrl)
+          AddReplaceTexture("prop_planning_b1", "prop_base_white_01b", dui.dictionary, dui.texture)
+        else
+          exports["caue-lib"]:changeDuiUrl(dui.id, currentMeetingRoomBoardUrl)
+        end
+        inMeetingRoom = true
     end
 end)
 
@@ -136,6 +156,20 @@ AddEventHandler("caue-polyzone:exit", function(pZoneName, pZoneData)
         exports["caue-interaction"]:hideInteraction()
         listening = false
         currentPrompt = nil
+    elseif pZoneName == "mrpd_classroom" then
+        RemoveReplaceTexture("prop_planning_b1", "prop_base_white_01b")
+        if dui ~= nil then
+            exports["caue-lib"]:releaseDui(dui.id)
+            dui = nil
+        end
+        inClassRoom = false
+    elseif zone == "mrpd_meetingroom" then
+        RemoveReplaceTexture("prop_planning_b1", "prop_base_white_01b")
+        if dui ~= nil then
+            exports["caue-lib"]:releaseDui(dui.id)
+            dui = nil
+        end
+        inMeetingRoom = false
     end
 end)
 
@@ -161,6 +195,37 @@ AddEventHandler("caue-police:handler", function(eventData)
     end
 end)
 
+AddEventHandler("caue-polce:changewhiteboardurl", function(pParams)
+    local input = exports["caue-input"]:showInput({
+        {
+            icon = "link",
+            label = "URL",
+            name = "url",
+        },
+    })
+
+    if input["url"] then
+        TriggerServerEvent("police:changewhiteboard", input["url"], pParams.room)
+    end
+end)
+
+RegisterNetEvent("police:changewhiteboardcli")
+AddEventHandler("police:changewhiteboardcli", function(pUrl, pRoom)
+    if pRoom == "classroom" then
+        currentClassRoomBoardUrl = pUrl
+
+        if inClassRoom and dui then
+            exports["caue-lib"]:changeDuiUrl(dui.id, currentClassRoomBoardUrl)
+        end
+    elseif pRoom == "meetingroom" and inMeetingRoom and dui then
+        currentMeetingRoomBoardUrl = pUrl
+
+        if inMeetingRoom and dui then
+            exports["caue-lib"]:changeDuiUrl(dui.id, currentMeetingRoomBoardUrl)
+        end
+    end
+end)
+
 --[[
 
     Threads
@@ -168,43 +233,63 @@ end)
 ]]
 
 Citizen.CreateThread(function()
-    -- davispd Lockers
-    exports["caue-polyzone"]:AddBoxZone("caue-police:zone", vector3(361.28, -1592.54, 25.45), 4.4, 1.0, {
-        heading = 320,
-        minZ = 24.45,
-        maxZ = 26.45,
+    -- MRPD Classroom
+    exports["caue-polyzone"]:AddPolyZone("mrpd_classroom", {
+        vector2(448.41372680664, -990.47613525391),
+        vector2(439.50704956055, -990.55731201172),
+        vector2(439.43478393555, -981.08758544922),
+        vector2(448.419921875, -981.26306152344),
+        vector2(450.23190307617, -983.00885009766),
+        vector2(450.25042724609, -988.77667236328)
+    }, {
+        gridDivisions = 25,
+        minZ = 34.04,
+        maxZ = 37.69,
+    })
+
+    exports["caue-polyzone"]:AddBoxZone("mrpd_meetingroom", vector3(474.07, -995.08, 30.69), 10.2, 5.2, {
+        heading=0,
+        minZ=29.64,
+        maxZ=32.84
+    })
+
+    -- MRPD Lockers
+    exports["caue-polyzone"]:AddBoxZone("caue-police:zone", vector3(461.81, -997.79, 30.69), 4.4, 4.8, {
+        heading = 0,
+        minZ = 29.64,
+        maxZ = 32.84,
         data = {
             job = "police",
             action = "context",
-            zone = "davispd_clothing_lockers",
+            zone = "mrpd_clothing_lockers",
         },
     })
 
-    -- davispd Armory
-    exports["caue-polyzone"]:AddBoxZone("caue-police:zone", vector3(364.94, -1603.51, 25.45), 0.8, 4.0, {
-        heading = 50,
-        minZ = 24.45,
-        maxZ = 26.65,
+    -- MRPD Armory
+    exports["caue-polyzone"]:AddBoxZone("caue-police:zone", vector3(481.59, -995.35, 30.69), 3.2, 0.8, {
+        heading = 90,
+        minZ = 29.69,
+        maxZ = 32.49,
         data = {
             job = "police",
             action = "armory",
-            zone = "davispd_armory",
+            zone = "mrpd_armory",
         },
     })
 
-    -- davispd Evidence
-    exports["caue-polyzone"]:AddBoxZone("caue-police:zone", vector3(380.61, -1608.74, 30.2), 4.0, 2.0, {
-        heading = 320,
-        minZ = 29.2,
-        maxZ = 31.6,
+    -- MRPD Evidence
+    exports["caue-polyzone"]:AddBoxZone("caue-police:zone", vector3(474.84, -996.26, 26.27), 1.2, 3.0, {
+        heading = 90,
+        minZ = 25.27,
+        maxZ = 27.87,
         data = {
             job = "police",
             action = "evidence",
-            zone = "davispd_evidence",
+            zone = "mrpd_evidence",
         },
     })
 
-    -- davispd Trash
+    -- MRPD Trash
     exports["caue-polyzone"]:AddBoxZone("caue-police:zone", vector3(472.88, -996.28, 26.27), 1.2, 3.0, {
         heading = 90,
         minZ = 25.27,
@@ -212,30 +297,19 @@ Citizen.CreateThread(function()
         data = {
             job = "police",
             action = "trash",
-            zone = "davispd_trash",
+            zone = "mrpd_trash",
         },
     })
 
-    -- davispd Character Switcher
-    exports["caue-polyzone"]:AddBoxZone("caue-police:zone", vector3(358.28, -1598.11, 25.45), 1.0, 4.8, {
-        heading = 320,
-        minZ = 24.45,
-        maxZ = 26.85,
+    -- MRPD Character Switcher
+    exports["caue-polyzone"]:AddBoxZone("caue-police:zone", vector3(478.88, -983.49, 30.69), 1.35, 1.3, {
+        heading = 0,
+        minZ = 29.74,
+        maxZ = 32.74,
         data = {
             job = "police",
             action = "context",
-            zone = "davispd_character_switcher",
-        },
-    })
-
-    exports["caue-polyzone"]:AddBoxZone("caue-police:zone", vector3(366.34, -1588.5, 25.45), 1.0, 4.8, {
-        heading = 320,
-        minZ = 24.45,
-        maxZ = 26.85,
-        data = {
-            job = "police",
-            action = "context",
-            zone = "davispd_character_switcher",
+            zone = "mrpd_character_switcher",
         },
     })
 
@@ -272,4 +346,37 @@ Citizen.CreateThread(function()
             zone = "doc_trash",
         },
     })
+
+    -- MRPD Screen
+    exports["caue-polytarget"]:AddBoxZone("mrdp_change_picture", vector3(439.44, -985.89, 34.97), 1.0, 0.4, {
+        heading=0,
+        minZ=35.37,
+        maxZ=36.17
+    })
+
+    exports["caue-polytarget"]:AddBoxZone("mrpd_meetingroom_screen", vector3(474.02, -1001.79, 30.69), 3.6, 2.8, {
+        heading=1,
+        minZ=30.54,
+        maxZ=32.54
+    })
+
+    exports["caue-eye"]:AddPeekEntryByPolyTarget("mrdp_change_picture", {{
+        event = "caue-polce:changewhiteboardurl",
+        id = "polcechangewhiteboardurlc",
+        icon = "circle",
+        label = "Change URL",
+        parameters = {
+            room = "classroom"
+        }
+    }}, { distance = { radius = 2.5 } })
+
+    exports["caue-eye"]:AddPeekEntryByPolyTarget("mrpd_meetingroom_screen", {{
+        event = "caue-polce:changewhiteboardurl",
+        id = "polcechangewhiteboardurlm",
+        icon = "circle",
+        label = "Change URL",
+        parameters = {
+            room = "meetingroom"
+        }
+    }}, { distance = { radius = 2.5 } })
 end)

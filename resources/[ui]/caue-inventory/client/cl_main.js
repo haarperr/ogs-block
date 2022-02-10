@@ -76,9 +76,9 @@ function SetCustomNuiFocus(hasKeyboard, hasMouse) {
     // SetNuiFocusKeepInput(HasNuiFocus);
 
     //   if (HasNuiFocus === true) {
-    //   	emit("np-voice:focus:set", HasNuiFocus, hasKeyboard, hasMouse);
+    //   	emit("caue-voice:focus:set", HasNuiFocus, hasKeyboard, hasMouse);
     //   } else {
-    // 	  setTimeout(() => {if (HasNuiFocus !== true) emit("np-voice:focus:set", false, false, false);}, 1000)
+    // 	  setTimeout(() => {if (HasNuiFocus !== true) emit("caue-voice:focus:set", false, false, false);}, 1000)
     //   }
 }
 
@@ -400,7 +400,9 @@ async function CloseGui(pIsItemUsed = false) {
         inStashOrStorage = false
     }
 
-    emit('inventory:wepDropCheck')
+    setTimeout(() => {
+        emit('inventory:wepDropCheck')
+    }, 1000);
 }
 
 function GroundInventoryScan() {
@@ -559,7 +561,7 @@ function findSlot(ItemIdToCheck, amount, nonStacking) {
     }
 
     if (foundslot == 0) {
-        emit('DoLongHudText', 'Failed to give ' + ItemIdToCheck + ' because you were full!', 2);
+        emit('DoLongHudText', 'Falha ao entregar ' + ItemIdToCheck + ' porque você está cheio!', 2);
     }
 
     return foundslot;
@@ -757,7 +759,7 @@ on('inventory-open-request', async () => {
 
         let lockStatus = GetVehicleDoorLockStatus(vehicleFound)
         if (lockStatus != 1 && lockStatus != 0 && lockStatus != 4 && distanceRear < 1.5) {
-            TriggerEvent('DoLongHudText', 'The vehicle is locked.', 2);
+            TriggerEvent('DoLongHudText', 'O veículo está trancado.', 2);
             CloseGui();
         } else {
             if (distanceRear > 1.5) {
@@ -766,7 +768,7 @@ on('inventory-open-request', async () => {
                 let licensePlate = GetVehicleNumberPlateText(vehicleFound);
                 if (licensePlate != null) {
                     if (vehModel === GetHashKey('npwheelchair')) {
-                        TriggerEvent('DoLongHudText', 'This is a wheelchair, dummy.', 2);
+                        TriggerEvent('DoLongHudText', 'Isso é uma cadeira de rodas, burro.', 2);
                     } else {
                         if (!IsThisModelABicycle(vehModel) && vehModel !== GetHashKey('trash2')) {
                             let carInvName = 'Trunk-' + licensePlate;
@@ -980,7 +982,7 @@ on('player:receiveItem', async (id, amount, generateInformation, itemdata, retur
 
     let combined = parseFloat(itemList[id].weight) * parseFloat(amount);
     if ((parseFloat(personalWeight) > maxPlayerWeight || parseFloat(personalWeight) + combined > maxPlayerWeight) && !devItem) {
-        emit('DoLongHudText', id + ' fell on the ground because you are overweight', 2);
+        emit('DoLongHudText', id + ' caiu no chão porque você está com sobrepeso.', 2);
         let droppedItem = {
             slot: 3,
             itemid: id,
@@ -1084,7 +1086,17 @@ on('closeInventoryGui', () => {
 RegisterNetEvent('watch-inventory');
 on('watch-inventory', (src,cash,name) => {
     watch = [src,name]
-    emit('chatMessage', 'SEARCH ', 2, "Player had cash in the amount of: " + cash, 5000);
+    emit('chatMessage', 'SEARCH ', 2, "Jogador tem $ " + cash, 5000);
+});
+
+RegisterNetEvent('caue-inventory:log');
+on('caue-inventory:log', (pLog) => {
+    SendNuiMessage(
+        JSON.stringify({
+            response: 'log',
+            log: pLog,
+        }),
+    );
 });
 
 /*
@@ -1231,7 +1243,7 @@ on('__cfx_nui:craftProgression', (data, cb) => {
 });
 
 RegisterNuiCallbackType('insert-item')
-on('__cfx_nui:insert-item', (data, cb) => {
+on('__cfx_nui:insert-item', async (data, cb) => {
     const {
         originInventory, targetInventory,
         originSlot, targetSlot,
@@ -1243,7 +1255,16 @@ on('__cfx_nui:insert-item', (data, cb) => {
         ||
         (itemList[targetItemId].insertFrom && itemList[targetItemId].insertFrom.includes(originItemId))
     ) {
-        emit(`${targetItemId}:insert`, originInventory, targetInventory, originSlot, targetSlot, originItemId, targetItemId, originItemInfo, targetItemInfo)
+        if (isNaN(targetItemId)) {
+            emit(`${targetItemId}:insert`, originInventory, targetInventory, originSlot, targetSlot, originItemId, targetItemId, originItemInfo, targetItemInfo)
+        } else {
+            if (GetSelectedPedWeapon(PlayerPedId()) !== GetHashKey("WEAPON_UNARMED")) {
+                emit("actionbar:setEmptyHanded")
+                await Delay(500);
+            }
+
+            emitNet("caue-inventory:ammo", originInventory, targetInventory, originSlot, targetSlot, originItemId, targetItemId, originItemInfo, targetItemInfo)
+        }
     }
     cb({});
 });

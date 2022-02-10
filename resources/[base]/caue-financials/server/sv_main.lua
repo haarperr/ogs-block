@@ -42,7 +42,7 @@ end
 
 function transaction(pSenderAccount, pReceiverAccount, pAmount, pComment, pUser, pTransactionType)
     if not pSenderAccount or not pReceiverAccount or not pAmount or not pComment or not pUser or not pTransactionType then
-        return false, "Missing params"
+        return false, "Faltam informações"
     end
 
     local success = exports.ghmattimysql:transactionSync({
@@ -61,10 +61,10 @@ function transaction(pSenderAccount, pReceiverAccount, pAmount, pComment, pUser,
     })
 
     if not success then
-        return false, "Failed in transfering $" .. pAmount
+        return false, "Falha ao transferir $" .. pAmount
     end
 
-    return true, "Success in transfering $" .. pAmount
+    return true, "Sucesso ao transferir $" .. pAmount
 end
 
 function transactionLog(pSenderAccount, pReceiverAccount, pAmount, pComment, pUser, pTransactionType)
@@ -96,6 +96,6 @@ exports("transactionLog", transactionLog)
 
 ]]
 
-RPC.register("caue-financials:getBalance", function(src)
-    return getBalance(src)
+RPC.register("caue-financials:getBalance", function(src, pAccountId)
+    return getBalance(pAccountId)
 end)

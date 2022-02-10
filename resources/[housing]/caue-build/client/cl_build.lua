@@ -3,6 +3,7 @@ Build.StartingPos = nil
 Build.CurrentBuildingOrigin = nil
 
 Build.DefaultBuilding = nil
+Build.CurrentPeekModels = {}
 
 
 function Build.func.CleanUpPeds()
@@ -47,8 +48,6 @@ function Build.func.CleanUpArea()
         success, ObjectFound = FindNextObject(handle)
     until not success
     EndFindObject(handle)
-
-	TriggerEvent("inhotel",false)
 end
 
 
@@ -144,7 +143,7 @@ function Build.func.getGeneratorFromRoom(numMultiplier,currentPlan)
     return generator
 end
 
-function Build.func.buildRoom(planName,positionGen,isBackdoor,destroyedObjects,spawnOveride)
+function Build.func.buildRoom(planName,positionGen,isBackdoor,destroyedObjects,spawnOveride,returnObjects)
     local player = PlayerPedId()
     Build.StartingPos = GetEntityCoords(player)
     FreezeEntityPosition(player,true)
@@ -155,11 +154,12 @@ function Build.func.buildRoom(planName,positionGen,isBackdoor,destroyedObjects,s
     if plan.instance then
         FreezeEntityPosition(player,false)
         local instance = Build.func.enterInstancedBuilding(plan,positionGen)
-        return instance
+        return instance, false
     end
 
     SetEntityCoords(player,plan.origin)
 
+    local returnEntityList = {}
 
 
     local buildingObject = exports["caue-ytypparser"]:request(planName,plan.saveClient)
@@ -194,14 +194,18 @@ function Build.func.buildRoom(planName,positionGen,isBackdoor,destroyedObjects,s
 
     Build.func.CleanUpArea()
     Build.func.CleanUpPeds()
-    TriggerEvent("inhotel",true)
+    --TriggerEvent("inhotel",true)
 
     local building = CreateObject(GetHashKey(plan.shell),objectSpawnCoords.x+mainPos.x,objectSpawnCoords.y+mainPos.y,objectSpawnCoords.z,false,false,false)
     Build.func.placeObjectCorrectZ(building,(objectSpawnCoords.z+mainPos.z))
     FreezeEntityPosition(building,true)
 
-    local holdingobjects = {}
+    if returnObjects then
+        returnEntityList[building] = true
+    end
+
     for k,v in pairs(buildingObject) do
+        local holdingobjects = nil
         if v.name ~= plan.shell then
             local canCreate = true
             local wc = vector3(objectSpawnCoords.x+v.x,objectSpawnCoords.y+v.y,objectSpawnCoords.z+v.z)
@@ -214,11 +218,15 @@ function Build.func.buildRoom(planName,positionGen,isBackdoor,destroyedObjects,s
             end
 
             if canCreate then
-                holdingobjects[k] = CreateObject(GetHashKey(v.name),wc.x,wc.y,wc.z,false,false,false)
+                holdingobjects = CreateObject(GetHashKey(v.name),wc.x,wc.y,wc.z,false,false,false)
 
-                Build.func.placeObjectCorrectZ(holdingobjects[k],(objectSpawnCoords.z+v.z))
-                SetEntityQuaternion(holdingobjects[k], v.rx, v.ry, v.rz, v.rw*-1)
-                FreezeEntityPosition(holdingobjects[k],true)
+                Build.func.placeObjectCorrectZ(holdingobjects,(objectSpawnCoords.z+v.z))
+                SetEntityQuaternion(holdingobjects, v.rx, v.ry, v.rz, v.rw*-1)
+                FreezeEntityPosition(holdingobjects,true)
+
+                if returnObjects then
+                    returnEntityList[holdingobjects] = true
+                end
             end
 
         else
@@ -231,15 +239,27 @@ function Build.func.buildRoom(planName,positionGen,isBackdoor,destroyedObjects,s
     DoScreenFadeIn(1000)
     FreezeEntityPosition(player,false)
 
+
+    TriggerEvent("build:event:inside",true)
+    TriggerServerEvent("build:event:inside",true)
+    Build.func.buildPeeking(plan)
+    SetEntityInvincible(player,false)
+
     if safe then
-        return objectSpawnCoords
+        if returnObjects then
+            return objectSpawnCoords,returnEntityList
+        else
+            return objectSpawnCoords, false
+        end
     else
         TriggerEvent("inhotel",false)
         SetEntityCoords(player,Build.StartingPos)
         Build.CurrentRoomPlan = nil
         Build.StartingPos = nil
         Build.CurrentBuildingOrigin = nil
-        return false
+
+        Build.DefaultBuilding = nil
+        return false, false
     end
 
 end
@@ -256,6 +276,7 @@ function Build.func.exitCurrentRoom(overrideVector)
 
         Build.func.CleanUpPeds()
         Build.func.CleanUpArea()
+        TriggerEvent("inhotel", false)
 
 
         if overrideVector ~= nil then
@@ -269,6 +290,10 @@ function Build.func.exitCurrentRoom(overrideVector)
         Build.CurrentRoomPlan = nil
         Build.StartingPos = nil
         Build.CurrentBuildingOrigin = nil
+        Build.DefaultBuilding = nil
+
+        TriggerEvent("build:event:inside",false)
+        TriggerServerEvent("build:event:inside",false)
     end
 
 end

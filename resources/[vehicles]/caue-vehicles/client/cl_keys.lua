@@ -221,7 +221,7 @@ AddEventHandler("keys:toggleLock", function(_vehicle)
         Sync.SetVehicleDoorsLocked(vehicle, 2)
 
         TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 3.0, "lock", 0.4)
-        TriggerEvent("DoLongHudText", "Vehicle Locked")
+        TriggerEvent("DoLongHudText", "Veiculo Trancado")
 
         if currentVehicle == 0 then
             SetVehicleLights(vehicle, 2)
@@ -254,7 +254,7 @@ AddEventHandler("keys:toggleLock", function(_vehicle)
         Sync.SetVehicleDoorsLocked(vehicle, 1)
 
         TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 5.0, "unlock", 0.1)
-        TriggerEvent("DoLongHudText", "Vehicle Unlocked")
+        TriggerEvent("DoLongHudText", "Veiculo destrancado")
 
         if currentVehicle == 0 then
             SetVehicleLights(vehicle, 2)
@@ -285,6 +285,15 @@ AddEventHandler("keys:toggleLock", function(_vehicle)
             SetVehicleIndicatorLights(vehicle, 1, false)
         end
     end
+end)
+
+AddEventHandler("baseevents:enteringVehicle", function(pVehicle, pSeat, pClass)
+    if pSeat == -1 and pVehicle then
+        local hasDriver = IsVehicleSeatFree(pVehicle, -1) ~= 1
+        if hasDriver then return end
+    end
+
+    SetVehicleCanEngineOperateOnFire(pVehicle, false)
 end)
 
 AddEventHandler("baseevents:enteredVehicle", function(pCurrentVehicle, pCurrentSeat, vehicleDisplayName)
@@ -358,7 +367,7 @@ Citizen.CreateThread( function()
                     if IsEntityDead(pedDriver) then
                         TriggerEvent("civilian:alertPolice", 20.0, "lockpick", targetVehicle)
 
-                        local finished = exports["caue-taskbar"]:taskBar(3000, "Taking Keys", false)
+                        local finished = exports["caue-taskbar"]:taskBar(3000, "Pegando Chaves", false)
                         if finished == 100 then
                             TriggerEvent("keys:addNew", vehicle)
                             exports["caue-flags"]:SetVehicleFlag(vehicle, "isStolenVehicle", true)
@@ -369,7 +378,7 @@ Citizen.CreateThread( function()
                         if math.random(100) > 95 then
                             TriggerEvent("civilian:alertPolice",20.0,"lockpick",targetVehicle)
 
-                            local finished = exports["caue-taskbar"]:taskBar(3000, "Taking Keys")
+                            local finished = exports["caue-taskbar"]:taskBar(3000, "Pegando Chaves")
                             if finished == 100 then
                                 TriggerEvent("keys:addNew", vehicle)
                             else

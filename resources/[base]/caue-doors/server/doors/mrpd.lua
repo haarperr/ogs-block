@@ -308,3 +308,135 @@ DOORS[1025] = {
         ["job"] = { "police" },
     },
 }
+
+-- PRESIDIO PRINCIPAL
+DOORS[1026] = {
+    ["active"] = true,
+    ["model"] = -1033001619,
+    ["coords"] = vector3(1845.32, 2586.54, 46.06),
+    ["lock"] = 1,
+    ["automatic"] = {},
+    ["access"] = {
+        ["job"] = { "police" },
+    },
+}
+
+-- PRESIDIO PATIO
+DOORS[1027] = {
+    ["active"] = true,
+    ["model"] = 1457658556,
+    ["coords"] = vector3(1776.06, 2552.00, 47.51),
+    ["lock"] = 1,
+    ["automatic"] = {},
+    ["access"] = {
+        ["job"] = { "police" },
+    },
+}
+
+-- PRESIDIO SAIDA 1
+DOORS[1028] = {
+    ["active"] = true,
+    ["model"] = -1617892608,
+    ["coords"] = vector3(1719.57, 2483.46, 46.18),
+    ["lock"] = 1,
+    ["automatic"] = {},
+    ["access"] = {
+        ["job"] = { "police" },
+    },
+}
+
+-- PRESIDIO SAIDA 2
+DOORS[1029] = {
+    ["active"] = true,
+    ["model"] = -1033001619,
+    ["coords"] = vector3(1720.07, 2464.39, 46.01),
+    ["lock"] = 1,
+    ["automatic"] = {},
+    ["access"] = {
+        ["job"] = { "police" },
+    },
+}
+
+-- PRESIDIO SAIDA 3
+DOORS[1030] = {
+    ["active"] = true,
+    ["model"] = -1033001619,
+    ["coords"] = vector3(1720.07, 2442.25, 46.02),
+    ["lock"] = 1,
+    ["automatic"] = {},
+    ["access"] = {
+        ["job"] = { "police" },
+    },
+}
+
+-- PRESIDIO SAIDA 4
+DOORS[1031] = {
+    ["active"] = true,
+    ["model"] = 1964400974,
+    ["coords"] = vector3(1714.38, 2436.31, 47.75),
+    ["lock"] = 1,
+    ["automatic"] = {},
+    ["access"] = {
+        ["job"] = { "police" },
+    },
+}
+
+
+-- PRESIDIO SAIDA 5
+DOORS[1032] = {
+    ["active"] = true,
+    ["model"] = -1033001619,
+    ["coords"] = vector3(1694.30, 2435.81, 46.01),
+    ["lock"] = 1,
+    ["automatic"] = {},
+    ["access"] = {
+        ["job"] = { "police" },
+    },
+}
+-- PRESIDIO SAIDA 6
+DOORS[1033] = {
+    ["active"] = true,
+    ["model"] = -1033001619,
+    ["coords"] = vector3(1694.30, 2435.81, 46.01),
+    ["lock"] = 1,
+    ["automatic"] = {},
+    ["access"] = {
+        ["job"] = { "police" },
+    },
+}
+
+-- PRESIDIO SAIDA 7
+DOORS[1034] = {
+    ["active"] = true,
+    ["model"] = -1617892608,
+    ["coords"] = vector3(1670.99, 2464.52, 46.04),
+    ["lock"] = 1,
+    ["automatic"] = {},
+    ["access"] = {
+        ["job"] = { "police" },
+    },
+}
+
+-- PRESIDIO SAIDA 8
+DOORS[1035] = {
+    ["active"] = true,
+    ["model"] = -1617892608,
+    ["coords"] = vector3(1688.99, 2466.05, 50.95),
+    ["lock"] = 1,
+    ["automatic"] = {},
+    ["access"] = {
+        ["job"] = { "police" },
+    },
+}
+
+-- PRESIDIO SAIDA 9
+DOORS[1036] = {
+    ["active"] = true,
+    ["model"] = -1033001619,
+    ["coords"] = vector3(1696.63, 2466.38, 50.69),
+    ["lock"] = 1,
+    ["automatic"] = {},
+    ["access"] = {
+        ["job"] = { "police" },
+    },
+}

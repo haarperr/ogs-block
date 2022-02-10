@@ -61,7 +61,7 @@ AddEventHandler("hud:insidePrompt", function(bool)
     insidePrompt = bool
 end)
 
-AddEventHandler("np-voice:focus:set", function(pState)
+AddEventHandler("caue-voice:focus:set", function(pState)
     focusTaken = pState
 end)
 

@@ -4,10 +4,10 @@ AddEventHandler("onResourceStart", function(resName) -- Initialises the script, 
 	end
 
 	-- Set voice related convars
-	SetConvarReplicated("voice_useNativeAudio", true)
-	-- SetConvarReplicated("voice_use2dAudio", false)
-	SetConvarReplicated("voice_use3dAudio", true)
-	SetConvarReplicated("voice_useSendingRangeOnly", true)
+	SetConvarReplicated("voice_useNativeAudio", "true")
+	SetConvarReplicated("voice_use3dAudio", "false")
+	SetConvarReplicated("voice_use2dAudio", "false")
+	SetConvarReplicated("voice_useSendingRangeOnly", "true")
 
 	Debug("[caue:voice] Initialised Script")
 end)

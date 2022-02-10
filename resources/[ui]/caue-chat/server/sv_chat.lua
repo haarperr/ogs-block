@@ -21,7 +21,7 @@ AddEventHandler("_chat:messageEntered", function(data)
     local isCmd = string.sub(data, 1, 1) == "/" and true or false
     if not isCmd then
         local name = exports["caue-base"]:getChar(source, "first_name") .. " " .. exports["caue-base"]:getChar(source, "last_name")
-        TriggerClientEvent("caue-chat:local", -1, source, name, data)
+        TriggerClientEvent("caue-chat:local", -1, source, name, data, GetEntityCoords(GetPlayerPed(src)))
         return
     end
 

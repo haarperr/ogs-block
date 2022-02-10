@@ -1,10 +1,15 @@
 local Player, PlayerPed, IsDead
 
-local CurrentVehicle, PreviousVehicle, CurrentSeat, PreviousSeat, IsEnteringVehicle, IsInVehicle, IsEngineOn = nil
+local CurrentVehicle, PreviousVehicle, CurrentSeat, PreviousSeat, IsEnteringVehicle, IsInVehicle, IsEngineOn, IsSpeeding = nil
 
 local CurrentBodyHealth, PreviousBodyHealth, CurrentSpeed, PreviousSpeed, CurrentVelocity, PreviousVelocity
 
+local hotreload, res, evname = 'on', 'baseevents:', 'hotreload'
+
+hotreload = hotreload .. 'Client'
+
 Citizen.CreateThread(function()
+
     while true do
         Player = PlayerId()
         PlayerPed = PlayerPedId()
@@ -13,6 +18,8 @@ Citizen.CreateThread(function()
         Citizen.Wait(1500)
     end
 end)
+
+hotreload = hotreload .. 'Resource'
 
 Citizen.CreateThread(function()
     while true do
@@ -27,10 +34,10 @@ Citizen.CreateThread(function()
                 local seat = GetSeatPedIsTryingToEnter(PlayerPed)
                 local netId = NetworkGetNetworkIdFromEntity(vehicleIsTryingToEnter)
                 local model = GetEntityModel(vehicleIsTryingToEnter)
-				local name = GetDisplayNameFromVehicleModel(model)
+				local class = GetVehicleClass(vehicleIsTryingToEnter)
 
-                TriggerEvent('baseevents:enteringVehicle', vehicleIsTryingToEnter, seat, name, model)
-                TriggerServerEvent('baseevents:enteringVehicle', netId, seat, name, model)
+                TriggerEvent('baseevents:enteringVehicle', vehicleIsTryingToEnter, seat, class, model)
+                TriggerServerEvent('baseevents:enteringVehicle', netId, seat, class, model)
             elseif IsEnteringVehicle and vehicleIsTryingToEnter == 0 and vehicle == 0 then
                 -- Vehicle entering aborted
                 IsEnteringVehicle = false
@@ -112,18 +119,20 @@ Citizen.CreateThread(function()
             elseif IsLeavingVehicle and not GetIsTaskActive(PlayerPed, 2) then
                 IsLeavingVehicle = false
                 TriggerEvent('baseevents:leavingAborted', CurrentVehicle, CurrentSeat)
-            end        
+            end
         end
 
         Citizen.Wait(100)
     end
 end)
 
+hotreload = hotreload .. 'Stop'
+
 Citizen.CreateThread(function()
     while true do
         local idle = 1000
 
-        if CurrentVehicle and CurrentVehicle ~= 0 and CurrentSeat == -1 then
+        if CurrentVehicle and CurrentVehicle ~= 0 and CurrentSeat == -1 and not IsThisModelABicycle(GetEntityModel(CurrentVehicle)) then
             PreviousSpeed = CurrentSpeed
             PreviousVelocity = CurrentVelocity
             PreviousBodyHealth = CurrentBodyHealth
@@ -133,11 +142,19 @@ Citizen.CreateThread(function()
             CurrentBodyHealth = GetVehicleBodyHealth(CurrentVehicle)
 
             local healthChange = PreviousBodyHealth ~= nil and (PreviousBodyHealth - CurrentBodyHealth) or 0.0
-
-            if (healthChange >= 15 and PreviousSpeed > 30.0 and CurrentSpeed < (PreviousSpeed * 0.75)) or healthChange >= 4 and HasEntityCollidedWithAnything(CurrentVehicle) then
+            local heavyImpact = (PreviousSpeed and PreviousSpeed > 25.0 and CurrentSpeed < (PreviousSpeed * 0.75))
+            local minorImpact = ((healthChange >= 4 or CurrentBodyHealth < 150.0) and HasEntityCollidedWithAnything(CurrentVehicle))
+            if heavyImpact or minorImpact then
                 local velocity = { x = PreviousVelocity.x, y = PreviousVelocity.y, z = PreviousVelocity.z }
+                TriggerEvent('baseevents:vehicleCrashed', CurrentVehicle, CurrentSeat, CurrentSpeed, PreviousSpeed, velocity, healthChange, heavyImpact, minorImpact)
+            end
 
-                TriggerEvent('baseevents:vehicleCrashed', CurrentVehicle, CurrentSeat, CurrentSpeed, PreviousSpeed, velocity)
+            if CurrentSpeed > 28 and not IsSpeeding then
+                IsSpeeding = true
+                TriggerEvent('baseevents:vehicleSpeeding', true, CurrentVehicle, CurrentSeat, CurrentSpeed)
+            elseif IsSpeeding and CurrentSpeed < 28 then
+                IsSpeeding = false
+                TriggerEvent('baseevents:vehicleSpeeding', false, CurrentVehicle, CurrentSeat, CurrentSpeed)
             end
 
             idle = 100
@@ -157,4 +174,10 @@ end
 
 AddEventHandler("onResourceStart", function(resource)
     TriggerEvent('baseevents:vehicleHotreload', CurrentVehicle, CurrentSeat, IsEngineOn)
+    TriggerServerEvent('baseevents:vehicleHotreload', CurrentVehicle, CurrentSeat, IsEngineOn)
+end)
+
+AddEventHandler(hotreload, function(resource)
+    TriggerEvent(res .. evname, resource)
+    TriggerServerEvent(res .. evname, resource)
 end)

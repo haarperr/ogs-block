@@ -5,11 +5,11 @@ function addVehicles(vehicleData) {
         let paymentString = "";
         let paymentDue = Math.ceil(7 - parseFloat(vehicleData[vehicle].lastPayment));
         if (paymentDue == 0) {
-            paymentString = "Pay today";
+            paymentString = "Pague hoje";
         } else if (paymentDue < 0) {
-            paymentString = `Payment was due ${Math.abs(paymentDue)} days ago`
+            paymentString = `O pagamento foi a ${Math.abs(paymentDue)} dias atrás`
         } else {
-            paymentString = `${paymentDue} days until payment is due`
+            paymentString = `${paymentDue} dias até o pagamento.`
         }
 
         let carIconColor = "white";
@@ -40,11 +40,11 @@ function addVehicles(vehicleData) {
                             </li>
                             <li class="collection-item">
                                 <i class="fas fa-oil-can"></i>
-                                &nbsp;${vehicleData[vehicle].enginePercent}% Engine
+                                &nbsp;${vehicleData[vehicle].enginePercent}% Motor
                             </li>
                             <li class="collection-item">
                                 <i class="fas fa-car-crash"></i>
-                                &nbsp;${vehicleData[vehicle].bodyPercent}% Body
+                                &nbsp;${vehicleData[vehicle].bodyPercent}% Chassi
                             </li>`
                             if (vehicleData[vehicle].payments > 0) {
                                 vehicleElement += `
@@ -54,11 +54,11 @@ function addVehicles(vehicleData) {
                                 </li>
                                 <li class="collection-item">
                                     <i class="fas fa-credit-card"></i>
-                                    &nbsp;${vehicleData[vehicle].payments} payments left
+                                    &nbsp;${vehicleData[vehicle].payments} pagamentos restantes
                                 </li>
                                 <li class="collection-item">
                                     <i class="fas fa-dollar-sign"></i>
-                                    &nbsp;Remain to pay $${(vehicleData[vehicle].amountDue * vehicleData[vehicle].payments)} (Each payment $${vehicleData[vehicle].amountDue})
+                                    &nbsp;Saldo Devedor $${(vehicleData[vehicle].amountDue * vehicleData[vehicle].payments)} (Cada Parcela $${vehicleData[vehicle].amountDue})
                                 </li>`
                             }
                             vehicleElement += `<li class="collection-item"></li>

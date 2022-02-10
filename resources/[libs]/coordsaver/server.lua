@@ -27,4 +27,3 @@ AddEventHandler("SaveCoordsOffset", function(name, x, y, z, h, text)
 
     TriggerClientEvent("DoLongHudText", src, "Position saved")
 end)
-

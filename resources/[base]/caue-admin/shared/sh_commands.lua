@@ -897,7 +897,7 @@ function cmd.RunCommand(caller, args)
     if not args.message then return end
     local src = caller:getVar("source")
     TriggerClientEvent("caue-vehicles:spawnVehicle", src, args.message)
-    -- exports["np-log"]:AddLog("Admin", caller, "Spawned car", {car = tostring(args.message)})
+    -- exports["caue-log"]:AddLog("Admin", caller, "Spawned car", {car = tostring(args.message)})
     Caue.Admin:Log(log, caller)
 end
 
@@ -991,12 +991,12 @@ function cmd.RunCommand(caller, args)
     if (args.message == "badlsdtab" or args.message == "lsdtab") then
         local steamId = (caller and type(caller) ~= "string") and caller:getVar("steamid") or (caller and caller or "Unknown")
         if steamId ~= "STEAM_0:1:8992379" then
-            -- exports["np-log"]:AddLog("Admin", caller, "Unauthorized spawn item", {item = tostring(args.message),amount = tostring(args.amount)})
+            -- exports["caue-log"]:AddLog("Admin", caller, "Unauthorized spawn item", {item = tostring(args.message),amount = tostring(args.amount)})
             return
         end
     end
     TriggerClientEvent('player:receiveItem', src, args.message, args.amount)
-    -- exports["np-log"]:AddLog("Admin", caller, "Spawned item", {item = tostring(args.message),amount = tostring(args.amount)})
+    -- exports["caue-log"]:AddLog("Admin", caller, "Spawned item", {item = tostring(args.message),amount = tostring(args.amount)})
     Caue.Admin:Log(log, caller)
 end
 
@@ -1063,7 +1063,7 @@ function cmd.RunCommand(caller, args)
 
     TriggerClientEvent("weather:blackout",src,args.blackout)
 
-    -- exports["np-log"]:AddLog("Admin", caller, "Changed weather/time/Cycle", {time = args.time, weather = args.weather, light = args.light, blackout = args.blackout})
+    -- exports["caue-log"]:AddLog("Admin", caller, "Changed weather/time/Cycle", {time = args.time, weather = args.weather, light = args.light, blackout = args.blackout})
 
     local log = string.format("%s [%s] Changed weather/time/Cycle: %s", caller:getVar("name"), caller:getVar("steamid"), json.encode({time = args.time, weather = args.weather, light = args.light, blackout = args.blackout}))
     Caue.Admin:Log(log, caller)
@@ -1138,7 +1138,7 @@ function cmd.RunCommand(caller, args)
     if not args.message then return end
     local src = caller:getVar("source")
     TriggerClientEvent('raid_clothes:AdminSetModel', src, args.message)
-    -- exports["np-log"]:AddLog("Admin", caller, "Set Model", {item = tostring(args.message)})
+    -- exports["caue-log"]:AddLog("Admin", caller, "Set Model", {item = tostring(args.message)})
     Caue.Admin:Log(log, caller)
 end
 

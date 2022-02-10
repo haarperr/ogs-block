@@ -3,7 +3,7 @@ local VehicleEntries = MenuEntries["vehicles"]
 VehicleEntries[#VehicleEntries+1] = {
     data = {
         id = "vehicle-parkvehicle",
-        title = "Park Vehicle",
+        title = "Estacionar veiculo",
         icon = "#vehicle-parkvehicle",
         event = "caue-vehicles:storeVehicle"
     },
@@ -15,7 +15,7 @@ VehicleEntries[#VehicleEntries+1] = {
 VehicleEntries[#VehicleEntries+1] = {
     data = {
         id = "247goods",
-        title = "Grab goods",
+        title = "Pegar pertences",
         icon = "#obj-box",
         event = "np-jobs:247delivery:takeGoods"
     },
@@ -27,7 +27,7 @@ VehicleEntries[#VehicleEntries+1] = {
 VehicleEntries[#VehicleEntries+1] = {
     data = {
         id = "impound-vehicle",
-        title = "Impound Request",
+        title = "Pedir reboque",
         icon = "#vehicle-impound",
         event = "np-jobs:impound:openImpoundRequestMenu",
         parameters = {}
@@ -40,7 +40,7 @@ VehicleEntries[#VehicleEntries+1] = {
 VehicleEntries[#VehicleEntries+1] = {
     data = {
         id = "impound-vehicle",
-        title = "Impound Vehicle",
+        title = "Rebocar veiculo",
         icon = "#vehicle-impound",
         event = "np-jobs:impound:openImpoundMenu",
     },

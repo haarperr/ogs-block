@@ -47,7 +47,7 @@ function taskBarSkillCheck(_duration, _difficulty, cb)
 
     local result = success == true and 100 or 0
     if not success then
-        TriggerEvent("DoLongHudText", "Failed attempt", 2)
+        TriggerEvent("DoLongHudText", "Tentativa Fracassada!", 2)
     end
 
     if cb then cb(result) end

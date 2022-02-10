@@ -4,7 +4,7 @@
 
 ]]
 
-MenuTypes, MenuEntries, MenuItems = {"general", "peds", "vehicles", "objects", "news", "k9", "judge"}, {}, {}
+MenuTypes, MenuEntries, MenuItems = {"general", "peds", "vehicles", "objects", "news", "k9", "judge", "realestate"}, {}, {}
 local closedFromAction = false
 
 for _, menuType in ipairs(MenuTypes) do
@@ -46,7 +46,8 @@ function IsMenuWanted(pMenu, pEntity)
         (pMenu == "objects" and pEntity == 3) or
         (pMenu =="news" and CurrentJob == "news") or
         (pMenu == "k9" and exports["caue-jobs"]:getJob(false, "is_police")) or
-        (pMenu == "judge" and CurrentJob == "judge")
+        (pMenu == "judge" and CurrentJob == "judge") or
+        (pMenu == "realestate" and CurrentJob == "real_estate")
 end
 
 function GetSubMenuEntries(pItems, pEntity, pContext)

@@ -27,6 +27,8 @@ AddEventHandler("raid_clothes:set_outfit", function(slot, name, data)
     for i, v in ipairs(databaseFormat) do
         if v == "model" then
             data[v] = tostring(data[v])
+        elseif v == "fadeStyle" then
+            data[v] = tonumber(data[v])
         else
             if data[v] then
                 data[v] = json.encode(data[v])
@@ -45,17 +47,17 @@ AddEventHandler("raid_clothes:set_outfit", function(slot, name, data)
     function(result)
         if not result then
             exports.ghmattimysql:execute([[
-                INSERT INTO characters_outfits (cid, name, slot, model, drawables, props, drawtextures, proptextures, hairColor, headBlend, headStructure, headOverlay)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO characters_outfits (cid, name, slot, model, drawables, props, drawtextures, proptextures, hairColor, fadeStyle, headBlend, headStructure, headOverlay)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ]],
-            { cid, name, slot, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.headBlend, data.headStructure, data.headOverlay })
+            { cid, name, slot, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay })
         else
             exports.ghmattimysql:execute([[
                 UPDATE characters_outfits
-                SET name = ?, model = ?, drawables = ?, props = ?, drawtextures = ?, proptextures = ?, hairColor = ?, headBlend = ?, headStructure = ?, headOverlay = ?
+                SET name = ?, model = ?, drawables = ?, props = ?, drawtextures = ?, proptextures = ?, hairColor = ?, fadeStyle = ?, headBlend = ?, headStructure = ?, headOverlay = ?
                 WHERE cid = ? AND slot = ?
             ]],
-            { name, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.headBlend, data.headStructure, data.headOverlay, cid, slot })
+            { name, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay, cid, slot })
         end
 
         TriggerClientEvent("DoLongHudText", src, name .. " stored in slot " .. slot)
@@ -100,6 +102,7 @@ AddEventHandler("raid_clothes:get_outfit", function(slot)
                 drawtextures = json.decode(result[1].drawtextures),
                 proptextures = json.decode(result[1].proptextures),
                 hairColor = json.decode(result[1].hairColor),
+                fadeStyle = result[1].fadeStyle,
                 headBlend = json.decode(result[1].headBlend),
                 headStructure = json.decode(result[1].headStructure),
                 headOverlay = json.decode(result[1].headOverlay),

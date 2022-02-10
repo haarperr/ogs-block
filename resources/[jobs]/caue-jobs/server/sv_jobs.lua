@@ -30,7 +30,7 @@ AddEventHandler("caue-jobs:changeJob", function(job, _src)
     TriggerClientEvent("caue-jobs:jobChanged", src, job)
     TriggerEvent("caue-chat:buildCommands", src)
 
-    TriggerClientEvent("DoLongHudText", src, job ~= "unemployed" and "New Job: " .. jobName(job) or "You're now unemployed")
+    TriggerClientEvent("DoLongHudText", src, job ~= "unemployed" and "Você voltou para o trabalho: " .. jobName(job) or "Você saiu de serviço")
 end)
 
 RegisterNetEvent("caue-jobs:paycheck")
@@ -55,7 +55,7 @@ AddEventHandler("caue-jobs:paycheck", function(log, amount, _src)
     ]],
     { amount - tax["tax"], cid })
 
-    TriggerClientEvent("DoLongHudText", src, "A payslip of $" .. amount .. " with $" .. tax["tax"] .. " tax withheld on your last payment.")
+    TriggerClientEvent("DoLongHudText", src, "O Salário de $" .. amount .. " com $" .. tax["tax"] .. " de taxas foram depositados no banco.")
 end)
 
 RegisterNetEvent("caue-jobs:paycheckPickup")
@@ -90,9 +90,9 @@ AddEventHandler("caue-jobs:paycheckPickup", function()
         ]],
         { cid })
 
-        TriggerClientEvent("DoLongHudText", src, "Your payslip of $" .. paycheck .. " has been transferred to your bank account")
+        TriggerClientEvent("DoLongHudText", src, "Seu pagamento de $" .. paycheck .. " foi transferido para sua conta.")
     else
-        TriggerClientEvent("DoLongHudText", src, 'The cashier stares at you awkardly and says, "You have no payslip?"', 2)
+        TriggerClientEvent("DoLongHudText", src, "Você não tem salário cara!", 2)
     end
 end)
 

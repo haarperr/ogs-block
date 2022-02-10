@@ -100,7 +100,7 @@ AddEventHandler("caue-carshop:buy", function(pParams)
 
     local bank = exports["caue-financials"]:getBalance(accountId)
     if bank < pParams.downpayment then
-        TriggerClientEvent("DoLongHudText", src, "You dont have $" .. pParams.downpayment .. " in your bank account", 2)
+        TriggerClientEvent("DoLongHudText", src, "Você não tem $" .. pParams.downpayment .. "na sua conta do banco.", 2)
         return
     end
 

@@ -5,35 +5,39 @@
 ]]
 
 function attemptRevive()
+    if InVeh() then return end
+
     if imDead or IsDeadAnimPlaying() or IsDeadVehAnimPlaying() then
         imDead = false
-        thecount = 240
+        thecount = 300
 
-        TriggerEvent("Heal")
+        local ped = PlayerPedId()
+
         TriggerEvent("resurrect:relationships")
         TriggerEvent("Evidence:isAlive")
 
-        SetEntityInvincible(PlayerPedId(), false)
-        SetPedMaxHealth(PlayerPedId(), 200)
+        SetEntityInvincible(ped, false)
+        SetPedMaxHealth(ped, 200)
+        SetEntityHealth(ped, 120)
         SetPlayerMaxArmour(PlayerId(), 60)
-        ClearPedBloodDamage(PlayerPedId())
-        RemoveAllPedWeapons(PlayerPedId(), true)
+        ClearPedBloodDamage(ped)
+        RemoveAllPedWeapons(ped, true)
 
-        local plyPos = GetEntityCoords(PlayerPedId(),  true)
-        local heading = GetEntityHeading(PlayerPedId())
+        ClearPedTasksImmediately(ped)
 
-        ClearPedTasksImmediately(PlayerPedId())
+        local wasBeatdown = exports["caue-police"]:getBeatmodeDebuff()
+        if wasBeatdown then
+            TriggerEvent("police:startBeatdownDebuff")
+        end
 
-        -- TODO:
-        -- local wasBeatdown = exports["police"]:getBeatmodeDebuff()
-        -- if wasBeatdown then
-        --     TriggerEvent("police:startBeatdownDebuff")
-        -- end
-
+        local plyPos = GetEntityCoords(ped,  true)
+        local heading = GetEntityHeading(ped)
         NetworkResurrectLocalPlayer(plyPos, heading, false, false, false)
 
         Citizen.Wait(500)
 
+        SetPedMaxHealth(PlayerPedId(), 200)
+        SetEntityHealth(PlayerPedId(), 120)
         getup()
     end
 end
@@ -70,7 +74,7 @@ AddEventHandler("trycpr", function()
         local penis = 0
         while penis < 10 do
             penis = penis + 1
-            local finished = exports["np-ui"]:taskBarSkill(math.random(2000, 6000),math.random(5, 15))
+            local finished = exports["caue-taskbarskill"]:taskBarSkill(math.random(2000, 6000),math.random(5, 15))
             if finished ~= 100 then
                 return
             end
@@ -78,7 +82,7 @@ AddEventHandler("trycpr", function()
         end
         TriggerServerEvent("serverCPR")
     else
-        TriggerEvent("DoLongHudText","You are not near the rest house",2)
+        TriggerEvent("DoLongHudText","Você não esta próximo a casa de descanso",2)
     end
 end)
 

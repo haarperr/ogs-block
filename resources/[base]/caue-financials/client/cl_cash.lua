@@ -25,7 +25,7 @@ AddEventHandler("caue-financials:giveCash", function(pParams, pEntity, pContext)
     local input = exports["caue-input"]:showInput({
 		{
             icon = "hand-holding-usd",
-            label = "Amount",
+            label = "Quantidade",
             name = "amount",
         },
 	})
@@ -33,18 +33,18 @@ AddEventHandler("caue-financials:giveCash", function(pParams, pEntity, pContext)
 	if input["amount"] then
 		local amount = tonumber(input["amount"])
 		if not amount or amount < 1 then
-			TriggerEvent("DoLongHudText", "Not a valid number", 2)
+			TriggerEvent("DoLongHudText", "Número inválido", 2)
 			return
 		end
 
         if not IsNearPlayer(pEntity) then
-            TriggerEvent("DoLongHudText", "You are not near this player!", 2)
+            TriggerEvent("DoLongHudText", "Você não está próximo do player!", 2)
             return
         end
 
         local _cash = RPC.execute("caue-financials:getCash")
         if not _cash or _cash < amount then
-            TriggerEvent("DoLongHudText", "You dont have this amount with you", 2)
+            TriggerEvent("DoLongHudText", "Você não possui essa quantidade com você", 2)
             return
         end
 
@@ -65,7 +65,7 @@ Citizen.CreateThread(function()
     local data = {
         {
             id = "give_cash",
-            label = "Give Cash",
+            label = "Dar dinheiro",
             icon = "hand-holding-usd",
             event = "caue-financials:giveCash",
             parameters = {},

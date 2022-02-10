@@ -18,7 +18,7 @@ AddEventHandler("caue-bicycles:showBicycles", function()
             description = "$" .. tax.total .. " Incl. " .. tax.porcentage .. "% tax",
             image = bike.image,
             children = {
-                { title = "Confirm Purchase", action = "caue-bicycles:buyBicycle", params = bike },
+                { title = "Confirmar Compra", action = "caue-bicycles:buyBicycle", params = bike },
             },
         })
     end
@@ -28,7 +28,7 @@ end)
 
 AddEventHandler("caue-bicycles:buyBicycle", function(params)
     if IsAnyVehicleNearPoint(Config["Spawn"]["x"], Config["Spawn"]["y"], Config["Spawn"]["z"], 3.0) then
-        TriggerEvent("DoLongHudText", "Vehicle in the way", 2)
+        TriggerEvent("DoLongHudText", "Veiculo a caminho", 2)
         return
     end
 

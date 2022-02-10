@@ -4,32 +4,23 @@
 
 ]]
 
-local inVehicle = false
-local engineOn = false
-local minimapEnabled = true
-local wasMinimapEnabled = true
-local showCompassFromCar = false
-local compassRoadNamesEnabled = true
-local runningRoadNames = false
-local area = ""
-local street = ""
-local fuel = 0
-local speed = 0
-local compassRunning = false
-local showCompassFromWatch = false
-local compassEnabled = true
-local compassWaitTime = 32
-local speedometerWaitTime = 64
-local speedoRunning = false
-local seatbelt = false
+speedMultiplier = 1
+isAircraft = false
+currentVehicle = nil
+currentModel = nil
 
-local imageWidth = 100 -- leave this variable, related to pixel size of the directions
-local width =  0
-local south = (-imageWidth) + width
-local west = (-imageWidth * 2) + width
-local north = (-imageWidth * 3) + width
-local east = (-imageWidth * 4) + width
-local south2 = (-imageWidth * 5) + width
+local directions = {
+    N = 360,
+    NE = 315,
+    E = 270,
+    SE = 225,
+    S = 180,
+    SW = 135,
+    W = 90,
+    NW = 45
+}
+
+local appliedTextureChange = false
 
 --[[
 
@@ -37,183 +28,139 @@ local south2 = (-imageWidth * 5) + width
 
 ]]
 
-function getFuel(veh)
-    fuel = exports["caue-vehicles"]:GetVehicleFuel(veh) or 0
-end
+function toggleMap()
+    SetBlipAlpha(GetNorthRadarBlip(), 0.0)
 
-function calcHeading(direction)
-    if (direction < 90) then
-        return lerp(north, east, direction / 90)
-    elseif (direction < 180) then
-        return lerp(east, south2, rangePercent(90, 180, direction))
-    elseif (direction < 270) then
-        return lerp(south, west, rangePercent(180, 270, direction))
-    elseif (direction <= 360) then
-        return lerp(west, north, rangePercent(270, 360, direction))
-    end
-end
+    if hudSettings.map == "circle" then
+        if not appliedTextureChange then
+            RequestStreamedTextureDict("circlemap", false)
+            while not HasStreamedTextureDictLoaded("circlemap") do
+                Citizen.Wait(0)
+            end
+            AddReplaceTexture("platform:/textures/graphics", "radarmasksm", "circlemap", "radarmasksm")
 
-function rangePercent(min, max, amt)
-    return (((amt - min) * 100) / (max - min)) / 100
-end
-
-function lerp(min, max, amt)
-    return (1 - amt) * min + amt * max
-end
-
-function roundedRadar()
-    if not inVehicle then
-        DisplayRadar(0)
-        SetRadarBigmapEnabled(true, false)
-        Citizen.Wait(0)
-        SetRadarBigmapEnabled(false, false)
-        return
-    end
-
-    Citizen.CreateThread(function()
-        RequestStreamedTextureDict("circlemap", false)
-        while not HasStreamedTextureDictLoaded("circlemap") do
-            Citizen.Wait(0)
+            appliedTextureChange = true
         end
-        AddReplaceTexture("platform:/textures/graphics", "radarmasksm", "circlemap", "radarmasksm")
-
-        SetBlipAlpha(GetNorthRadarBlip(), 0.0)
-        SetBlipScale(GetMainPlayerBlipId(), 0.7)
 
         SetMinimapComponentPosition("minimap", "L", "B", -0.01, -0.050, 0.12, 0.19)
         SetMinimapComponentPosition("minimap_mask", "L", "B", -0.017, 0.014, 1.203, 0.305)
         SetMinimapComponentPosition("minimap_blur", "L", "B", -0.015, 0.020, 0.200, 0.295)
 
         SetMinimapClipType(1)
-        DisplayRadar(0)
-        SetRadarBigmapEnabled(true, false)
-        Citizen.Wait(0)
-        SetRadarBigmapEnabled(false, false)
-        DisplayRadar(1)
+        SetRadarZoom(1200)
+    else
+        if appliedTextureChange then
+            RemoveReplaceTexture("platform:/textures/graphics", "radarmasksm")
+
+            appliedTextureChange = false
+        end
+
+        SetMinimapComponentPosition("minimap", "L", "B", -0.0045, -0.0245, 0.150, 0.18888)
+        SetMinimapComponentPosition("minimap_mask", "L", "B", 0.020, 0.022, 0.111, 0.159)
+        SetMinimapComponentPosition("minimap_blur", "L", "B", -0.03, 0.002, 0.266, 0.237)
+
+        SetMinimapClipType(0)
+        SetRadarZoom(1000)
+    end
+
+    DisplayRadar(0)
+    SetRadarBigmapEnabled(true, false)
+    Citizen.Wait(0)
+    SetRadarBigmapEnabled(false, false)
+    DisplayRadar(1)
+end
+
+function getMapPos()
+    SetScriptGfxAlign(string.byte('L'), string.byte('B'))
+    local minimapTopX, minimapTopY = GetScriptGfxPosition(-0.0045, 0.002 + (-0.188888))
+    ResetScriptGfxAlign()
+    local w, h = GetActiveScreenResolution()
+    return {
+        x = w * minimapTopX,
+        y = h * minimapTopY,
+        w = 0.15 * w,
+        h = 0.188888 * h,
+        screenH = h,
+    }
+end
+
+function mapChangeListener()
+    Citizen.CreateThread(function()
+        while true do
+            local _mapPos = getMapPos()
+            if mapPos.x ~= _mapPos.x or mapPos.y ~= _mapPos.y then
+                mapPos = _mapPos
+                SendNUIMessage({
+                    component = "app",
+                    payload = {
+                        state = "mapPos",
+                        value = _mapPos
+                    }
+                })
+            end
+
+            Citizen.Wait(5000)
+        end
     end)
 end
 
-function generateRoadNames()
-    if not compassRoadNamesEnabled or runningRoadNames then return end
+function getDirection()
+    local heading = GetEntityHeading(playerPed)
+    for k, v in pairs(directions) do
+        if (math.abs(heading - v) < 22.5) then
+            return heading == 1 and "N" or k
+        end
+    end
+    return "N"
+end
+
+function vehicleLoop(vehicle)
+    local lastSpeed = -1
+    local lastDirection = ""
+    local lastStreetName = ""
+    local lastAltitude = -1
+    local lastFuel = -1
 
     Citizen.CreateThread(function()
-        runningRoadNames = true
-
-        while compassRoadNamesEnabled and inVehicle do
-            Citizen.Wait(500)
-
-            local playerCoords = GetEntityCoords(PlayerPedId(), true)
-            local currentStreetHash, intersectStreetHash = GetStreetNameAtCoord(playerCoords.x, playerCoords.y, playerCoords.z, currentStreetHash, intersectStreetHash)
-            currentStreetName = GetStreetNameFromHashKey(currentStreetHash)
-            intersectStreetName = GetStreetNameFromHashKey(intersectStreetHash)
-            zone = tostring(GetNameOfZone(playerCoords))
-            area = GetLabelText(zone)
-
-            if area == "Fort Zancudo" then
-                area = "Williamsburg"
+        while inVehicle do
+            local speed = GetEntitySpeed(vehicle)
+            if speed ~= lastSpeed then
+                lastSpeed = speed
+                setSpeed(math.floor(speed * speedMultiplier))
             end
 
-            if intersectStreetName ~= nil and intersectStreetName ~= "" then
-                playerStreetsLocation = currentStreetName .. " [" .. intersectStreetName .. "]"
-            elseif currentStreetName ~= nil and currentStreetName ~= "" then
-                playerStreetsLocation = currentStreetName
-            else
-                playerStreetsLocation = ""
+            local direction = getDirection()
+            local coords = GetEntityCoords(playerPed)
+            local streetName = GetStreetNameFromHashKey(GetStreetNameAtCoord(coords.x, coords.y, coords.z))
+            if direction ~= lastDirection or streetName ~= lastStreetName then
+                lastDirection = direction
+                lastStreetName = streetName
+                setDirectionAndStreetName(direction, streetName)
             end
 
-            street = playerStreetsLocation
+            if isAircraft then
+                local altitude = math.floor(GetEntityHeightAboveGround(playerPed) * 3.2808399)
+                if altitude ~= lastAltitude then
+                    lastAltitude = altitude
+                    setAltitude(altitude)
+                end
+            end
+
+            local fuel = exports["caue-vehicles"]:GetVehicleFuel(vehicle) or 0
+            if fuel ~= lastFuel then
+                lastFuel = fuel
+                setFuel(fuel)
+            end
+
+            Citizen.Wait(100)
         end
-
-        runningRoadNames = false
     end)
 end
 
-function generateCompass()
-    if compassRunning then return end
-
-    compassRunning = true
-
-    Citizen.CreateThread(function()
-        local function shouldShowCompass()
-            return showCompassFromWatch or (compassEnabled and showCompassFromCar)
-        end
-
-        local function shouldShowSpeed()
-            return inVehicle and minimapEnabled
-        end
-
-        while shouldShowCompass() or shouldShowSpeed() do
-            local cWait = shouldShowCompass() and compassWaitTime or 1000
-            local sWait = shouldShowSpeed() and speedometerWaitTime or 1000
-            Citizen.Wait(math.min(cWait, sWait))
-            local s = GetGameTimer()
-            local direction = math.floor(calcHeading(-GetGameplayCamRot().z % 360))
-
-            SendNUIMessage({
-                action = "vehicle",
-                street = street,
-                direction = direction,
-                district = area,
-                speed = speed,
-            })
-        end
-
-        compassRunning = false
-    end)
-end
-
-function generateSpeedo()
-    if speedoRunning then return end
-    speedoRunning = true
-
-    local veh = GetVehiclePedIsIn(PlayerPedId(), false)
-
-    getFuel(veh)
-
-    local altitude = false
-    local engineDamageShow = false
-    local gasDamageShow = false
-
-    Citizen.CreateThread(function()
-        while engineOn do
-            SendNUIMessage({
-                action = "vehiclemisc",
-                fuel = fuel,
-                seatbelt = seatbelt,
-            })
-
-            Citizen.Wait(500)
-        end
-
-        speedoRunning = false
-    end)
-
-    Citizen.CreateThread(function()
-        while engineOn do
-            if GetVehicleEngineHealth(veh) < 400.0 then
-                engineDamageShow = true
-            end
-
-            if GetVehiclePetrolTankHealth(veh) < 3002.0 then
-                gasDamageShow = true
-            end
-
-            if GetPedInVehicleSeat(veh, -1) == PlayerPedId() then
-                harnessDurability = exports["caue-vehicles"]:GetVehicleMetadata(veh, "harness")
-            end
-
-            getFuel(veh)
-
-            Citizen.Wait(10000)
-        end
-    end)
-
-    Citizen.CreateThread(function()
-        while engineOn do
-            speed = math.ceil(GetEntitySpeed(veh) * 2.236936)
-            Citizen.Wait(speedometerWaitTime)
-        end
-    end)
+function isCar(vehicle)
+    local class = GetVehicleClass(vehicle)
+    return IsThisModelACar(GetEntityModel(vehicle))
+    --return class >= 0 and class <= 7 or class >= 9 and class <= 12 or class >= 17 and class <= 20
 end
 
 --[[
@@ -223,7 +170,7 @@ end
 ]]
 
 AddEventHandler("seatbelt", function(toggle)
-	seatbelt = toggle
+    setSeatbelt(not toggle)
 end)
 
 --[[
@@ -233,46 +180,78 @@ end)
 ]]
 
 Citizen.CreateThread(function()
-    roundedRadar()
+    local scaleform = RequestScaleformMovie("minimap")
 
     while true do
-        local veh = GetVehiclePedIsIn(PlayerPedId(), false)
+        BeginScaleformMovieMethod(scaleform, "SETUP_HEALTH_ARMOUR")
+        ScaleformMovieMethodAddParamInt(3)
+        EndScaleformMovieMethod()
+        Wait(0)
+    end
+end)
 
-        if veh ~= 0 and not inVehicle then
-            inVehicle = true
-        elseif veh == 0 and inVehicle then
-            inVehicle = false
+Citizen.CreateThread(function()
+    Citizen.Wait(100)
+
+    while true do
+        local sleepThread = 500
+
+        local radarEnabled = IsRadarEnabled()
+
+        if not IsPedInAnyVehicle(PlayerPedId()) and radarEnabled then
+            DisplayRadar(false)
+        elseif IsPedInAnyVehicle(PlayerPedId()) and not radarEnabled then
+            DisplayRadar(true)
         end
 
-        local eon = IsVehicleEngineOn(veh)
-        if eon and not engineOn then
-            engineOn = true
-            showCompassFromCar = true
+        Citizen.Wait(sleepThread)
+    end
+end)
 
-            generateSpeedo()
-            generateCompass()
-            generateRoadNames()
 
-            roundedRadar()
 
-            SendNUIMessage({
-                vehicleUi = true,
-            })
-        elseif not eon and engineOn then
-            engineOn = false
-            showCompassFromCar = false
 
-            SendNUIMessage({
-                vehicleUi = false,
-            })
 
-            Citizen.Wait(32)
-            DisplayRadar(0)
-        elseif wasMinimapEnabled ~= minimapEnabled then
-            wasMinimapEnabled = minimapEnabled
-            roundedRadar()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+lastNitroAmount = 0
+lastNitroCharges = 0
+hasNitro = false
+
+exports("nitro", function(amount, recharges)
+    if recharges <= 0 then
+        if hasNitro then
+            hasNitro = false
+            setNitro(false)
         end
+        return
+    else
+        if not hasNitro then
+            hasNitro = true
+            setNitro(true)
+        end
+        if recharges ~= lastNitroCharges then
+            lastNitroCharges = recharges
+            setNitroCharges(recharges)
+        end
+    end
 
-        Citizen.Wait(250)
+    if amount ~= lastNitroAmount then
+        lastNitroAmount = amount
+        setNitroAmount(amount)
     end
 end)

@@ -2,5 +2,5 @@ RegisterNetEvent("CrashTackle")
 AddEventHandler("CrashTackle", function(target)
 	local src = source
 
-    TriggerClientEvent("playerTackled", target)
+    TriggerClientEvent("playerTackled", target, src)
 end)

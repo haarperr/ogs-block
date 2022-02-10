@@ -134,6 +134,7 @@ end
 ]]
 
 exports("getRank", getRank)
+exports("rankInfos", rankInfos)
 
 --[[
 
@@ -154,4 +155,8 @@ RPC.register("caue-groups:ranks", function(src, group)
     { "groups_ranks", "group", group })
 
     return ranks
+end)
+
+RPC.register("caue-groups:rankInfos", function(src, group, rank)
+    return rankInfos(group, rank)
 end)

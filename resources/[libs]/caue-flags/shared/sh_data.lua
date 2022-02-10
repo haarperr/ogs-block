@@ -37,8 +37,7 @@ Flags["PedFlags"] = {
     isSittingOnChair = prevPedFlag(),
     isPoledancing = prevPedFlag(),
     isPawnBuyer = prevPedFlag(),
-    isRecycleExchange = prevPedFlag(),
-    isCommonJobProvider = prevPedFlag(),
+    isIllegalMedic = prevPedFlag(),
     isVehicleSpawner = prevPedFlag(),
     isBoatRenter = prevPedFlag(),
     isMethDude = prevPedFlag(),
@@ -54,6 +53,9 @@ Flags["PedFlags"] = {
     isEmsVehicleSeller = prevPedFlag(),
     isPoliceVehicleSeller = prevPedFlag(),
     isPetshopSeller = prevPedFlag(),
+    isWeedShopKeeper = prevPedFlag(),
+    isSupplier = prevPedFlag(),
+    isTijoloGiver = prevPedFlag(),
 }
 
 Flags["ObjectFlags"] = {}

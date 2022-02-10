@@ -1,4 +1,4 @@
-IsOnPhoneCall, CurrentCall = false
+PhoneVolume, IsOnPhoneCall, CurrentCall = 1.0, false
 
 function StartPhoneCall(serverId, callId)
     if IsOnPhoneCall then return end
@@ -25,7 +25,7 @@ function StartPhoneCall(serverId, callId)
         end
     end)
 
-    Debug("[Phone] Call Started | Call ID %s | Player %s", callId, serverId)
+    Debug('[Phone] Call Started | Call ID %s | Player %s', callId, serverId)
 end
 
 function StopPhoneCall(serverId, callId)
@@ -37,7 +37,32 @@ function StopPhoneCall(serverId, callId)
 
     RemovePlayerFromTargetList(serverId, "phone", true, true)
 
-    Debug("[Phone] Call Ended | Call ID %s | Player %s", callId, serverId)
+    Debug('[Phone] Call Ended | Call ID %s | Player %s', callId, serverId)
+end
+
+function IncreasePhoneVolume()
+  local currentVolume = PhoneVolume * 10
+  SetPhoneVolume(currentVolume + 1)
+end
+
+function DecreasePhoneVolume()
+  local currentVolume = PhoneVolume * 10
+  SetPhoneVolume(currentVolume - 1)
+end
+
+function SetPhoneVolume(volume)
+  -- We prevent the usage of a volume lower than 1
+  if volume <= 0 then return end
+
+  -- If the specified volume is beyond the allowed limit then we set it to the maximum volume instead
+  PhoneVolume = _C(volume > 10, 1.0, volume * 0.1)
+
+  if almostEqual(0.0, volume, 0.01) then PhoneVolume = 0.0 end
+
+  -- If the radio is turned on then we update the volume of the current transmissions
+  UpdateContextVolume("phone", PhoneVolume)
+
+  Debug("[Phone] Volume Changed | Current: %s", PhoneVolume)
 end
 
 function LoadPhoneModule()
@@ -49,6 +74,10 @@ function LoadPhoneModule()
 
     RegisterNetEvent("caue:voice:phone:call:end")
     AddEventHandler("caue:voice:phone:call:end", StopPhoneCall)
+
+    exports("SetPhoneVolume", SetPhoneVolume)
+    exports("IncreasePhoneVolume", IncreasePhoneVolume)
+    exports("DecreasePhoneVolume", DecreasePhoneVolume)
 
     if Config.enableSubmixes and Config.enableFilters.phone then
         RegisterContextSubmix("phone")

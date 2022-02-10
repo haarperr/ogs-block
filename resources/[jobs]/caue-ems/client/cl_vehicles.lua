@@ -18,7 +18,7 @@ AddEventHandler("caue-ems:showVehicles", function()
             description = "$" .. vehicle.price,
             image = vehicle.image,
             children = {
-                { title = "Confirm Purchase", action = "caue-ems:purchaseVehicle", params = vehicle },
+                { title = "Confirmar Compra", action = "caue-ems:purchaseVehicle", params = vehicle },
             },
         })
     end
@@ -28,7 +28,7 @@ end)
 
 AddEventHandler("caue-ems:purchaseVehicle", function(params)
     if IsAnyVehicleNearPoint(Config["Spawn"]["x"], Config["Spawn"]["y"], Config["Spawn"]["z"], 3.0) then
-        TriggerEvent("DoLongHudText", "Vehicle in the way", 2)
+        TriggerEvent("DoLongHudText", "Veiculo no Caminho", 2)
         return
     end
 
@@ -51,7 +51,7 @@ Citizen.CreateThread(function()
     local data = {
         {
             id = "ems_vehicles",
-            label = "EMS Vehicles",
+            label = "Veiculos EMS",
             icon = "ambulance",
             event = "caue-ems:showVehicles",
             parameters = {},

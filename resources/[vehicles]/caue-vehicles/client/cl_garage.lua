@@ -23,11 +23,16 @@ local Garages = {}
 function IsOnParkingSpot(pEntity, pCheck, pRadius)
     local entityCoords = GetEntityCoords(pEntity)
 
+    local _distance = 300
     local garage = nil
     for k, v in pairs(Garages) do
-        if #(entityCoords - v["pos"]["xyz"]) < v["distance"] then
-            garage = k
-            break
+        local distance = #(entityCoords - v["pos"]["xyz"])
+
+        if distance < _distance then
+            if distance < v["distance"] then
+                _distance = distance
+                garage = k
+            end
         end
     end
 
@@ -91,9 +96,23 @@ AddEventHandler("caue-vehicles:garage", function(params)
         return
     end
 
+    print(json.encode(garage))
+
+    if garage["houseid"] and not exports["caue-housing"]:hasKey(garage["houseid"]) then
+        print(exports["caue-housing"]:hasKey(garage["houseid"]))
+        print(garage["houseid"])
+        TriggerEvent("DoLongHudText", "You can't use this garage", 2)
+        return
+    end
+
     local vehiclesGarage = RPC.execute("caue-vehicles:getGarage", nearGarage["garage"])
 
-    local data = {}
+    local data = {
+        {
+            title = "Garagem " .. nearGarage["garage"],
+        }
+    }
+
     for i, v in ipairs(vehiclesGarage) do
         table.insert(data,{
             title = GetLabelText(GetDisplayNameFromVehicleModel(v["model"])),
@@ -135,6 +154,15 @@ AddEventHandler("caue-vehicles:storeVehicle", function(params, vehicle)
             Sync.DeleteVehicle(vehicle)
             Sync.DeleteEntity(vehicle)
         end
+    end
+end)
+
+RegisterNetEvent("caue-vehicles:setGarage")
+AddEventHandler("caue-vehicles:setGarage", function(pGarage, pVar, pValue, pEdit)
+    if pEdit then
+        Garages[pGarage][pVar] = pValue
+    else
+        Garages[pGarage] = pVar
     end
 end)
 

@@ -1,14 +1,12 @@
 fx_version "cerulean"
 games { "gta5" }
 
-ui_page "html/index.html"
+ui_page "nui/dist/index.html"
 
 files {
-	"html/*.html",
-	"html/*.js",
-	"html/*.css",
-	"html/*.ttf",
-	"html/*.png",
+    "nui/dist/index.html",
+    "nui/dist/main.js",
+    "nui/src/assets/seatbelt.svg"
 }
 
 shared_scripts {

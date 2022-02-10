@@ -2,11 +2,11 @@ Build.InVisable = false
 
 -- Text Draw
 Citizen.CreateThread(function()
-	--Build.func.buildRoom("v_int_16_mid",1,false)
+	--Build.func.buildRoom("nopixel_trailer",vector3(100.0,100.0,0.0),false)
     while true do
     	if Build.CurrentRoomPlan ~= nil then
     		local plan = Build.CurrentRoomPlan
-
+			DisableOcclusionThisFrame()
     		if plan.interact ~= nil then
     			Build.InVisable = false
     			local pedCoords = GetEntityCoords(PlayerPedId())
@@ -29,8 +29,8 @@ Citizen.CreateThread(function()
     end
 end)
 
-RegisterNetEvent("caue-binds:keyEvent")
-AddEventHandler("caue-binds:keyEvent", function(name,onDown)
+RegisterNetEvent('caue-binds:keyEvent')
+AddEventHandler('caue-binds:keyEvent', function(name,onDown)
     if not onDown then return end
 
 	if Build.CurrentRoomPlan ~= nil then
@@ -151,6 +151,20 @@ function Build.func.getCurrentBed()
 
 end
 
+function Build.func.getAlarm()
+    local plan = Build.CurrentRoomPlan
+    if plan ~= nil then
+        local vec1 = Build.CurrentBuildingOrigin
+        local vec2 = plan.peek.pos
+
+        local vec3 = vec1 + vec2
+        return vec3
+    else
+        return false
+    end
+
+end
+
 
 -- do not look to close at this function and move on with life
 -- this is a mess just leave it as is :) *shoots self*
@@ -239,4 +253,34 @@ function Draw3DText(x,y,z, text)
         _in(0xCD015E5BB0D96A57, _x, _y) -- DrawText
         _in(0x3A618A217E5154F0, _x,_y+0.0125, 0.015 + factor, 0.03, 41, 11, 41, 68) -- DrawRect
     end
+end
+
+
+-- Peeking Functionality
+
+function Build.func.buildPeeking(plan)
+	local peek = plan.peek
+
+	if peek == nil then return end
+	local modelFound = false
+
+	for i=1,#Build.CurrentPeekModels do
+		if Build.CurrentPeekModels[i] == peek.model then modelFound = true break end
+	end
+	if modelFound then return end
+
+	exports["caue-eye"]:AddPeekEntryByModel({ peek.model }, {{
+		event = peek.event,
+		id = peek.id,
+		icon = peek.icon,
+		label = peek.label,
+		parameters = {},
+	}}, {
+		distance = {radius = 5.0},
+		isEnabled = function(pEntity)
+		  	return exports["caue-housing"]:isInRobbery()
+		end
+	})
+
+	Build.CurrentPeekModels[#Build.CurrentPeekModels+1] = peek.model
 end

@@ -66,7 +66,7 @@ function Spawn.createDefaultData(housing_id)
 	if Spawn.housingCoords[housing_id].assigned then return end
 
 	local housing = Spawn.housingCoords[housing_id]
-	defaultData = {["pos"] = vector4(housing[1]),["info"] = housing.Street}
+	defaultData = {["pos"] = housing["pos"], ["info"] = housing["street"] .. " House"}
 
 	return defaultData
 end
@@ -200,6 +200,8 @@ AddEventHandler("spawn:clientSpawnData", function(spawnData)
 		return
 	end
 
+	runGameplay()
+
 	TriggerServerEvent("SpawnEventsServer")
     TriggerEvent("SpawnEventsClient")
 
@@ -210,13 +212,17 @@ AddEventHandler("spawn:clientSpawnData", function(spawnData)
 			Spawn.isNew = true
 			Spawn.selectedSpawn(" Apartments 1")
 
-			SetPedMaxHealth(PlayerPedId(), 200)
-  			SetPlayerMaxArmour(PlayerId(), 60)
-			SetEntityHealth(PlayerPedId(), 200)
+			Citizen.CreateThread(function()
+				Citizen.Wait(5000)
 
-			if not exports["caue-inventory"]:hasEnoughOfItem("mobilephone", 1, false) then
+				SetEntityMaxHealth(PlayerPedId(), 200)
+				SetPedMaxHealth(PlayerPedId(), 200)
+  				SetPlayerMaxArmour(PlayerId(), 60)
+				SetEntityHealth(PlayerPedId(), 200)
+
+				TriggerEvent("player:receiveItem", "idcard", 1)
 				TriggerEvent("player:receiveItem", "mobilephone", 1)
-			end
+			end)
 		end
 
 		return
@@ -253,7 +259,9 @@ AddEventHandler("spawn:clientSpawnData", function(spawnData)
 
 	for k,v in pairs(spawnData.keys) do
 		if not currentCheckList[k] then
-			currentSpawns[#currentSpawns + 1] = Spawn.createDefaultData(k)
+			local data = Spawn.createDefaultData(k)
+			currentSpawns[#currentSpawns + 1] = data
+			table.insert(Spawn.tempHousing, data)
 		end
 	end
 

@@ -44,8 +44,10 @@ Citizen.CreateThread(function()
 		Citizen.Wait(1800000)
 
 		local job = exports["caue-base"]:getChar("job")
+		local paycheck = exports["caue-groups"]:GroupRankInfo(job, "paycheck") or JOBS[job]["paycheck"]
+
 		if job and JOBS[job] then
-			TriggerServerEvent("caue-jobs:paycheck", "Paycheck Job: " .. JOBS[job]["name"], JOBS[job]["paycheck"])
+			TriggerServerEvent("caue-jobs:paycheck", "Paycheck Job: " .. JOBS[job]["name"], paycheck)
 		end
 	end
 end)

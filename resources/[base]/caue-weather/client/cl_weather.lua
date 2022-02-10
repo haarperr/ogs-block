@@ -12,6 +12,7 @@ local primetime = false
 local lunchtime = false
 local cracktime = false
 local cocainetime = false
+local pawnshoptime = false
 local robbing = false
 local enableSync = true
 local insidebuilding = false
@@ -133,6 +134,14 @@ function SetTimeSync()
 		primetime = true
 		TriggerEvent("primetime",primetime)
   	end
+
+	if (synctime.h > 15 or synctime.h < 7) and not pawnshoptime then
+		pawnshoptime = true
+		TriggerEvent("pawnshoptime",pawnshoptime)
+	elseif (synctime.h <= 15 and synctime.h >= 7) and pawnshoptime then
+		pawnshoptime = false
+		TriggerEvent("pawnshoptime",pawnshoptime)
+	end
 
   	if synctime.m ~= lastminute then
     	lastminute = synctime.m

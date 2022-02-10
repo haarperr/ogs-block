@@ -4,7 +4,7 @@ AddEventHandler("caue-signin:duty", function(job)
 
     local currentJob = exports["caue-base"]:getChar(src, "job")
     if currentJob == job then
-        TriggerClientEvent("DoLongHudText", src, "You already in this job", 2)
+        TriggerClientEvent("DoLongHudText", src, "Você já esta em serviço", 2)
         return
     end
 
@@ -44,6 +44,6 @@ AddEventHandler("caue-signin:duty", function(job)
     if permission then
         TriggerEvent("caue-jobs:changeJob", job, src)
     else
-        TriggerClientEvent("DoLongHudText", src, "You cant do that", 2)
+        TriggerClientEvent("DoLongHudText", src, "Você não pode fazer isso", 2)
     end
 end)

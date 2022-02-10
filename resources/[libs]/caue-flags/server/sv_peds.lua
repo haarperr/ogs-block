@@ -21,7 +21,6 @@ defaultpedsFlags = {
     isPoledancing = false,
     isPawnBuyer = false,
     isRecycleExchange = false,
-    isCommonJobProvider = false,
     isVehicleSpawner = false,
     isBoatRenter = false,
     isMethDude = false,
@@ -31,6 +30,7 @@ defaultpedsFlags = {
     isToolShopKeeper = false,
     isSportShopKeeper = false,
     isCasinoChipSeller = false,
+    isSupplier = false,
 }
 
 --[[

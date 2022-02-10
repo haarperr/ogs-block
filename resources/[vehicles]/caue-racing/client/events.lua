@@ -203,4 +203,5 @@ AddEventHandler("onResourceStop", function (resourceName)
 
     cleanupProps()
     clearBlips()
+    ClearGpsMultiRoute()
 end)

@@ -64,10 +64,13 @@ end
 function addWaypointAndBlip(checkpoints, checkpointNum, lookahead, isLastLap)
     clearBlips()
     SetWaypointOff()
+    ClearGpsMultiRoute()
 
     local blip = addCheckpointBlip(checkpoints, checkpointNum)
-    SetBlipRoute(blip, true)
-    SetBlipRouteColour(blip, config.checkpointGPSRouteColor)
+    StartGpsMultiRoute(config.checkpointGPSRouteColor, true, false)
+    local pos = checkpoints[checkpointNum].pos
+    AddPointToGpsMultiRoute(pos.x, pos.y, pos.z)
+    SetBlipAsShortRange(blip, false)
 
     for i=1, math.min(lookahead, #checkpoints - 1) do
         checkpointNum = (checkpointNum % #checkpoints) + 1
@@ -76,10 +79,12 @@ function addWaypointAndBlip(checkpoints, checkpointNum, lookahead, isLastLap)
             break
         end
 
-        local _blip = addCheckpointBlip(checkpoints, checkpointNum)
-        SetBlipRoute(_blip, true)
-        SetBlipRouteColour(_blip, config.checkpointGPSRouteColor)
+        addCheckpointBlip(checkpoints, checkpointNum)
+        pos = checkpoints[checkpointNum].pos
+        AddPointToGpsMultiRoute(pos.x, pos.y, pos.z)
     end
+
+    SetGpsMultiRouteRender(true)
 end
 
 function currentlyJoinedPendingRace()

@@ -49,7 +49,7 @@ function GetClosestPlayer()
 		return closestPlayer, closestDistance, closestPed
 
 	else
-		TriggerEvent("DoLongHudText","Inside Vehicle.",2)
+		TriggerEvent("DoLongHudText","Dentro do Veiculo.",2)
 	end
 end
 

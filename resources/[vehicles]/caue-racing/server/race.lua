@@ -111,7 +111,7 @@ RPC.register("caue-racing:createPendingRace", function(src, id, options)
         local accountId = exports["caue-base"]:getChar(src, "bankid")
         local bank = exports["caue-financials"]:getBalance(accountId)
         if options["buyIn"] > bank then
-            TriggerClientEvent("DoLongHudText", src, "You dont have $" .. options["buyIn"] .. " in your bank account")
+            TriggerClientEvent("DoLongHudText", src, "Você não tem $" .. options["buyIn"] .. " na sua conta do banco")
             return
         end
 
@@ -262,13 +262,13 @@ end)
 RPC.register("caue-racing:finishedRace", function(src, curRaceid, bestLapTime, totalTime)
     local srcString = tostring(src)
 
-    if not ActiveRaces[curRaceid] then return end
+    if not ActiveRaces[curRaceid] then return true end
 
     local cid = exports["caue-base"]:getChar(src, "id")
     local alias = exports["caue-base"]:getChar(src, "aliases")
 
     if not cid or not alias then
-        return
+        return true
     end
 
     if not ActiveRaces[curRaceid]["positions"] then
@@ -337,5 +337,5 @@ RPC.register("caue-racing:finishedRace", function(src, curRaceid, bestLapTime, t
         TriggerClientEvent("caue-racing:removedActiveRace", -1, curRaceid)
     end
 
-    return
+    return true
 end)

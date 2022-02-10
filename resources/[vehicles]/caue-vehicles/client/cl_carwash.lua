@@ -78,7 +78,7 @@ AddEventHandler("caue-polyzone:enter", function(zone)
     if zone ~= "car_wash" then return end
     if not IsPedSittingInAnyVehicle(PlayerPedId()) then return end
 
-    exports["caue-interaction"]:showInteraction("[E] Clean Vehicle $100")
+    exports["caue-interaction"]:showInteraction("[E] Limpar o Veiculo $100")
     listenForKeypress()
 end)
 

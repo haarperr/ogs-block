@@ -12,6 +12,22 @@ itemList = {}
 
 ]]
 
+function getItem(pClass, pInfo)
+    local infoReturn = nil
+
+    if itemList[pClass] then
+        if pInfo then
+            if itemList[pClass][pInfo] then
+                infoReturn = itemList[pClass][pInfo]
+            end
+        else
+            infoReturn = itemList[pClass]
+        end
+    end
+
+    return infoReturn
+end
+
 function getInventory(pInventory)
     local inventory = exports.ghmattimysql:executeSync([[
         SELECT count(item_id) as amount, id, name, item_id, information, slot, dropped, creationDate
@@ -61,6 +77,7 @@ end
 
 ]]
 
+exports("getItem", getItem)
 exports("getInventory", getInventory)
 exports("K9Sniff", K9Sniff)
 exports("K9SniffVehicle", K9SniffVehicle)

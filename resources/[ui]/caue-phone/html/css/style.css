@@ -267,57 +267,6 @@ body {
     padding-top: 0px;
 }
 
-/* Manage Keys */
-
-.manage-keys-container {
-    height: 100%;
-    padding-top: 5px;
-}
-
-.manage-keys-entries-header {
-    padding-top: 10px;
-    height: 20%;
-}
-
-.manage-keys-entries-wrapper {
-    overflow-y: auto;
-    height: 80%;
-    position: relative;
-}
-
-.manage-keys-entries {
-    margin-bottom: 0px;
-    padding-bottom: 0px;
-    margin-top: 0px;
-    padding-top: 0px;
-}
-
-/* Keys */
-
-.keys-container {
-    height: 100%;
-    padding-top: 5px;
-}
-
-.keys-entries-header {
-    padding-top: 10px;
-    height: 25%;
-}
-
-.keys-entries-wrapper {
-    overflow-y: auto;
-    height: 75%;
-    position: relative;
-}
-
-.keys-entries {
-    margin-bottom: 0px;
-    padding-bottom: 0px;
-    margin-top: 0px;
-    padding-top: 0px;
-}
-
-
 /* Recent Apps */
 
 .recent-apps-container {

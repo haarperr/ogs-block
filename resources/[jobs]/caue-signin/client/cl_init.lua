@@ -23,13 +23,13 @@ MenuData = {
             }
         },
     },
-    lspd_sign_in = {
+    lssd_sign_in = {
         {
-            title = "Police Officer",
-            description = "Sign in or sign out",
+            title = "Los Santos County Sheriff",
+            description = "Entrar ou Sair de serviço",
             children = {
-                { title = "Sign In", action = "caue-signin:handler", params = { sign_in = true, job = "police" } },
-                { title = "Sign Out", action = "caue-signin:handler", params = { sign_off = true } }
+                { title = "Entrar", action = "caue-signin:handler", params = { sign_in = true, job = "police" } },
+                { title = "Sair", action = "caue-signin:handler", params = { sign_off = true } }
             }
         },
     },
@@ -107,6 +107,27 @@ MenuData = {
             }
         },
     },
+    taco_shop_sign_in = {
+        {
+            title = "Taco Shop",
+            description = "Entrar ou Sair de serviço",
+            children = {
+                { title = "Entrar", action = "caue-signin:handler", params = { sign_in = true, job = "taco_shop" } },
+                { title = "Sair", action = "caue-signin:handler", params = { sign_off = true } },
+            }
+        },
+    },
+
+    vanilla_unicorn_sign_in = {
+        {
+            title = "Vanilla Unicorn",
+            description = "Entrar ou Sair de serviço",
+            children = {
+                { title = "Entrar", action = "caue-signin:handler", params = { sign_in = true, job = "vanilla_unicorn" } },
+                { title = "Sair", action = "caue-signin:handler", params = { sign_off = true } },
+            }
+        },
+    },
 }
 
 --[[
@@ -129,11 +150,13 @@ Citizen.CreateThread(function()
     SetScenarioTypeEnabled("WORLD_VEHICLE_BUSINESSMEN", false)
     SetScenarioTypeEnabled("WORLD_VEHICLE_BIKE_OFF_ROAD_RACE", false)
 
-    -- Davis PD
-    exports["caue-polytarget"]:AddCircleZone("job_sign_in", vector3(382.07, -1596.41, 30.05), 0.25, {
-        useZ = true,
+    -- MRPD
+    exports["caue-polytarget"]:AddBoxZone("job_sign_in", vector3(441.83, -982.05, 30.69), 0.5, 0.35, {
+        heading = 12,
+        minZ = 30.79,
+        maxZ = 30.84,
         data = {
-            job = "lspd_sign_in",
+            job = "lssd_sign_in",
         },
     })
 
@@ -152,6 +175,22 @@ Citizen.CreateThread(function()
         maxZ = 43.33,
         data = {
             job = "ems_sign_in",
+        },
+    })
+
+    -- Taco Shop
+    exports["caue-polytarget"]:AddCircleZone("job_sign_in",vector3(429.19, -1913.8, 25.47), 0.3, {
+        useZ = true,
+        data = {
+            job = "taco_shop_sign_in",
+        },
+    })
+
+    -- Vanilla
+    exports["caue-polytarget"]:AddCircleZone("job_sign_in",vector3(95.85, -1292.75, 29.26), 0.3, {
+        useZ = true,
+        data = {
+            job = "vanilla_unicorn_sign_in",
         },
     })
 

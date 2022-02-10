@@ -10,11 +10,7 @@ local currentVehicle = 0
 local wearingSeatbelt = false
 local wearingHarness = false
 local isInsideVehicle = 0
-
-local currentVehicleSpeed = 0
-local lastCurrentVehicleBodyHealth = 0
-local lastCurrentVehicleSpeed = 0
-local velocity = GetEntityVelocity(GetVehiclePedIsIn(PlayerPedId()), false)
+local lastAlert = GetGameTimer()
 
 --[[
 
@@ -72,37 +68,15 @@ function toggleTurning(pVehicle, pToggle, pDefaultHandlingValue)
     end
 end
 
-local function sendServerEventForPassengers(velocity)
-    local player = PlayerPedId()
-
-    for i = -1, GetVehicleMaxNumberOfPassengers(currentVehicle) - 1 do
-        local ped = GetPedInVehicleSeat(currentVehicle, i)
-        if ped ~= player and ped ~= 0 then
-            TriggerServerEvent("caue-vehicles:eject", GetPlayerServerId(v), velocity)
-        end
-    end
-end
-
-function eject(percent, speed, trigger)
-    if math.random(math.ceil(speed)) > percent then
-        ejection()
-
-        if trigger then
-            TriggerEvent("civilian:alertPolice", 50.0, "carcrash", 0)
-        end
-    end
-end
-
-function ejection()
-    local veh = GetVehiclePedIsIn(PlayerPedId(), false)
-    local coords = GetOffsetFromEntityInWorldCoords(veh, 1.0, 0.0, 1.0)
+function EjectLUL(pVehicle, pVelocity)
+    local coords = GetOffsetFromEntityInWorldCoords(pVehicle, 1.0, 0.0, 1.0)
 
     SetEntityCoords(PlayerPedId(), coords)
 
     Citizen.Wait(1)
 
     SetPedToRagdoll(PlayerPedId(), 5511, 5511, 0, 0, 0, 0)
-    SetEntityVelocity(PlayerPedId(), velocity["x"] * 4, velocity["y"] * 4, velocity["z"] * 4)
+    SetEntityVelocity(PlayerPedId(), pVelocity["x"] * 4, pVelocity["y"] * 4, pVelocity["z"] * 4)
 
     local ejectspeed = math.ceil(GetEntitySpeed(PlayerPedId()) * 8)
     if IsPedWearingHelmet(PlayerPedId()) and IsThisModelABicycle(GetEntityModel(veh)) then
@@ -119,36 +93,11 @@ function ejection()
     SetEntityHealth(PlayerPedId(), (GetEntityHealth(PlayerPedId()) - ejectspeed) )
 end
 
-function vehicleCrash(_vehicle, hard)
-    if hard then
-        stopNitrous(_vehicle)
-        TriggerEvent("caue-vehicles:randomDegredation", _vehicle, 15, 10)
-    end
-
-    lastCurrentVehicleSpeed = 0.0
-    lastCurrentVehicleBodyHealth = 0.0
-end
-
 --[[
 
     Events
 
 ]]
-
-RegisterNetEvent("caue-vehicles:eject")
-AddEventHandler("caue-vehicles:eject", function(_velocity)
-    velocity = _velocity
-
-    if wearingSeatbelt then
-        if math.random(10) > 8 then
-            ejection()
-        end
-    else
-        if math.random(10) > 4 then
-            ejection()
-        end
-    end
-end)
 
 AddEventHandler("vehicle:addHarness", function(type)
     local vehicle = GetVehiclePedIsUsing(PlayerPedId())
@@ -190,6 +139,81 @@ AddEventHandler("baseevents:vehicleChangedSeat", function(pCurrentVehicle, pCurr
     TriggerEvent("seatbelt", wearingSeatbelt)
 end)
 
+AddEventHandler("baseevents:vehicleCrashed", function(pCurrentVehicle, pCurrentSeat, pCurrentSpeed, pPreviousSpeed, pVelocity, pImpactDamage, pHeavyImpact, pLightImpact)
+    local beltChange = 0.0
+    local engineDamage = 0.0
+
+    if pImpactDamage > 70 then
+        engineDamage = 150 + pImpactDamage
+
+        if pImpactDamage > 100 then
+            pImpactDamage = 100
+        end
+
+        beltChange = wearingSeatbelt and math.floor(pImpactDamage / 3) or pImpactDamage
+    end
+
+    local ejectLUL = false
+    if math.random(150) < beltChange then
+        ejectLUL = true
+    end
+
+    local wasJump = pVelocity.z <= -25
+
+    if ejectLUL and wearingHarness then
+        local harnessLevel = GetVehicleMetadata(pCurrentVehicle, "harness") or 0
+
+        local newLevel = harnessLevel - 10
+        if newLevel < 1 then
+            newLevel = 0
+
+            wearingHarness = false
+            wearingSeatbelt = false
+
+            TriggerEvent("seatbelt", wearingSeatbelt)
+
+            TriggerEvent("DoLongHudText", "Harness Broken!", 2)
+        end
+
+        Sync.DecorSetInt(pCurrentVehicle, "Vehicle-Harness", newLevel)
+        TriggerEvent("harness", wearingHarness, GetVehicleMetadata(pCurrentVehicle, "harness"))
+
+        local vid = GetVehicleIdentifier(currentVehicle)
+        if vid then
+            RPC.execute("caue-vehicles:updateVehicle", vid, "metadata", "harness", newLevel)
+        end
+    elseif ejectLUL and not wasJump then
+        EjectLUL(pCurrentVehicle, pVelocity)
+    end
+
+    if pCurrentSeat ~= -1 then return end
+
+    if ejectLUL and not wasJump and GetGameTimer() > lastAlert then
+        lastAlert = GetGameTimer() + 60000
+        TriggerEvent("civilian:alertPolice", 50.0, "carcrash", 0)
+    end
+
+    local engineHealth = GetVehicleEngineHealth(pCurrentVehicle)
+    local bodyHealth = GetVehicleBodyHealth(pCurrentVehicle)
+    local speedDamage = (pPreviousSpeed - pCurrentSpeed) * 4
+
+    local damage = engineHealth - engineDamage
+
+    if type(damage) ~= "number" then return end
+
+    if damage < 150 or bodyHealth < 100 then
+        damage = 150
+        SetVehicleUndriveable(pCurrentVehicle, true)
+        SetVehicleEngineOn(pCurrentVehicle, false, true, true)
+    end
+
+    SetVehicleEngineHealth(pCurrentVehicle, damage)
+
+    if speedDamage < 5 or (type(engineDamage) ~= "number" and math.random(0, 1) ~= 1) then return end
+
+    TriggerEvent("caue-vehicles:randomDegredation", pCurrentVehicle, 15, 10)
+end)
+
 --[[
 
     Threads
@@ -221,101 +245,6 @@ Citizen.CreateThread(function()
             end
         else
             Citizen.Wait(5000)
-        end
-    end
-end)
-
-Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(1)
-
-        if currentVehicle ~= nil and currentVehicle ~= false and currentVehicle ~= 0 then
-            if isDriver() then
-                local collision = HasEntityCollidedWithAnything(currentVehicle)
-                local currentEngineHealth = GetVehicleEngineHealth(currentVehicle)
-
-                if collision == false then
-                    lastCurrentVehicleSpeed = GetEntitySpeed(currentVehicle)
-                    lastCurrentVehicleBodyHealth = GetVehicleBodyHealth(currentVehicle)
-                    velocity = GetEntityVelocity(currentVehicle)
-
-                    if currentEngineHealth > 10.0 and (currentEngineHealth < 175.0 or lastCurrentVehicleBodyHealth < 50.0) then
-                        vehicleCrash(currentVehicle)
-                        -- Citizen.Wait(1000)
-                    end
-                else
-                    Citizen.Wait(100)
-
-                    local currentVehicleBodyHealth = GetVehicleBodyHealth(currentVehicle)
-                    local currentVehicleSpeed = GetEntitySpeed(currentVehicle)
-
-                    if currentEngineHealth > 0.0 and lastCurrentVehicleBodyHealth - currentVehicleBodyHealth > 15 then
-                        if lastCurrentVehicleSpeed > 30.5 and currentVehicleSpeed < (lastCurrentVehicleSpeed * 0.75) then
-                            if not IsThisModelABike(GetEntityModel(currentVehicle)) then
-                                sendServerEventForPassengers(velocity)
-
-                                local _vehicle = currentVehicle
-
-                                if wearingHarness then
-                                    local harnessLevel = GetVehicleMetadata(currentVehicle, "harness") or 0
-
-                                    local newLevel = harnessLevel - 10
-                                    if newLevel < 1 then
-                                        newLevel = 0
-
-                                        wearingHarness = false
-                                        wearingSeatbelt = false
-
-                                        TriggerEvent("seatbelt", wearingSeatbelt)
-
-                                        TriggerEvent("DoLongHudText", "Harness Broken!", 2)
-                                    end
-
-                                    Sync.DecorSetInt(currentVehicle, "Vehicle-Harness", newLevel)
-                                    TriggerEvent("harness", wearingHarness, GetVehicleMetadata(currentVehicle, "harness"))
-
-                                    local vid = GetVehicleIdentifier(currentVehicle)
-                                    if vid then
-                                        RPC.execute("caue-vehicles:updateVehicle", vid, "metadata", "harness", newLevel)
-                                    end
-                                elseif not wearingSeatbelt then
-                                    eject(30.5, lastCurrentVehicleSpeed, true)
-                                elseif wearingSeatbelt and lastCurrentVehicleSpeed > 41.6 then
-                                    eject(33.0, lastCurrentVehicleSpeed, false)
-                                end
-
-                                vehicleCrash(_vehicle, true)
-
-                                Citizen.Wait(1000)
-
-                                lastCurrentVehicleSpeed = 0.0
-                                lastCurrentVehicleBodyHealth = currentVehicleBodyHealth
-                            else
-                                vehicleCrash(currentVehicle)
-
-                                Citizen.Wait(1000)
-                            end
-                        end
-                    else
-                        if currentEngineHealth > 10.0 and (currentEngineHealth < 195.0 or currentVehicleBodyHealth < 50.0) then
-                            vehicleCrash(currentVehicle)
-
-                            Citizen.Wait(1000)
-                        end
-
-                        lastCurrentVehicleSpeed = currentVehicleSpeed
-                        lastCurrentVehicleBodyHealth = currentVehicleBodyHealth
-                    end
-                end
-            else
-                Citizen.Wait(1000)
-            end
-        else
-            currentVehicleSpeed = 0
-            lastCurrentVehicleSpeed = 0
-            lastCurrentVehicleBodyHealth = 0
-
-            Citizen.Wait(4000)
         end
     end
 end)

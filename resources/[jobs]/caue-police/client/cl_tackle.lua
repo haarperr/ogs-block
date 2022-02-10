@@ -26,10 +26,6 @@ function TryTackle()
         local t, distance = GetClosestPlayer()
 
         if distance ~= -1 and distance < 2 then
-            local maxheading = GetEntityHeading(PlayerPedId()) + 15.0
-            local minheading = GetEntityHeading(PlayerPedId()) - 15.0
-            local theading = GetEntityHeading(t)
-
             TriggerServerEvent("CrashTackle", GetPlayerServerId(t))
             TriggerEvent("animation:tacklelol")
 
@@ -51,34 +47,36 @@ end
 ]]
 
 RegisterNetEvent("playerTackled")
-AddEventHandler("playerTackled", function()
-	SetPedToRagdoll(PlayerPedId(), math.random(3500, 5000), math.random(3500, 5000), 0, 0, 0, 0)
+AddEventHandler("playerTackled", function(target)
 	TimerEnabled = true
+
+	local targetPed = GetPlayerPed(GetPlayerFromServerId(target))
+
+	RequestAnimDict("missmic2ig_11")
+	while not HasAnimDictLoaded("missmic2ig_11") do
+		Citizen.Wait(1)
+	end
+
+	AttachEntityToEntity(PlayerPedId(), targetPed, 11816, 0.25, 0.5, 0.0, 0.5, 0.5, 180.0, false, false, false, false, 2, false)
+	TaskPlayAnim(PlayerPedId(), "missmic2ig_11", "mic_2_ig_11_intro_p_one", 8.0, -8.0, 3000, 0, 0, false, false, false)
+
+	Citizen.Wait(3000)
+	DetachEntity(GetPlayerPed(-1), true, false)
+
+	SetPedToRagdoll(PlayerPedId(), math.random(3500,5000), math.random(3500,5000), 0, 0, 0, 0)
+
 	Citizen.Wait(6000)
 	TimerEnabled = false
 end)
 
 RegisterNetEvent("animation:tacklelol")
 AddEventHandler("animation:tacklelol", function()
-	if not exports["caue-base"]:getVar("handcuffed") and not IsPedRagdoll(PlayerPedId()) then
-		RequestAnimDict("swimming@first_person@diving")
-		while not HasAnimDictLoaded("swimming@first_person@diving") do
-			Citizen.Wait(1)
-		end
-
-		if IsEntityPlayingAnim(PlayerPedId(), "swimming@first_person@diving", "dive_run_fwd_-45_loop", 3) then
-			ClearPedSecondaryTask(PlayerPedId())
-		else
-			TaskPlayAnim(PlayerPedId(), "swimming@first_person@diving", "dive_run_fwd_-45_loop", 8.0, -8, -1, 49, 0, 0, 0, 0)
-			local seccount = 3
-			while seccount > 0 do
-				Citizen.Wait(100)
-				seccount = seccount - 1
-			end
-			ClearPedSecondaryTask(PlayerPedId())
-			SetPedToRagdoll(PlayerPedId(), 150, 150, 0, 0, 0, 0)
-		end
+	RequestAnimDict("missmic2ig_11")
+	while not HasAnimDictLoaded("missmic2ig_11") do
+		Citizen.Wait(1)
 	end
+
+	TaskPlayAnim(PlayerPedId(), "missmic2ig_11", "mic_2_ig_11_intro_goon", 8.0, -8.0, 3000, 0, 0, false, false, false)
 end)
 
 --[[
@@ -88,7 +86,7 @@ end)
 ]]
 
 Citizen.CreateThread(function()
-    exports["caue-keybinds"]:registerKeyMapping("", "Player", "Tackle", "+plyTackel", "-plyTackel")
+    exports["caue-keybinds"]:registerKeyMapping("", "Player", "Tackle", "+plyTackel", "-plyTackel", "G")
     RegisterCommand("+plyTackel", plyTackel, false)
     RegisterCommand("-plyTackel", function() end, false)
 end)

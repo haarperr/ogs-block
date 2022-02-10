@@ -72,6 +72,11 @@ function processVehicleHandling(pCurrentVehicle)
 
     if not vehicleIdentifier then
         vehicleIdentifier = GetVehiclePlate(pCurrentVehicle)
+
+        NetworkRegisterEntityAsNetworked(pCurrentVehicle)
+	    local netid = NetworkGetNetworkIdFromEntity(pCurrentVehicle)
+	    SetNetworkIdCanMigrate(pCurrentVehicle, true)
+	    SetNetworkIdExistsOnAllMachines(pCurrentVehicle, true)
     end
 
     if not vehicleIdentifier or vehicleIdentifier == "" then return end

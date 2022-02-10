@@ -118,7 +118,7 @@ function AddPlayerToTargetList(serverID, context, transmit)
     if not Targets:targetContextExist(serverID, context) then
 
         if transmit then
-            TriggerServerEvent("caue:voice:transmission:state", serverID, context, true, false)
+            TriggerServerEvent("caue:voice:transmission:state", serverID, context, true)
         end
 
         if not Targets:targetHasAnyActiveContext(serverID) and not IsPlayerInTargetChannel(serverID) then
@@ -136,7 +136,7 @@ function RemovePlayerFromTargetList(serverID, context, transmit, refresh)
         Targets:remove(serverID, context)
 
         if transmit then
-            TriggerServerEvent("caue:voice:transmission:state", serverID, context, false, false)
+            TriggerServerEvent("caue:voice:transmission:state", serverID, context, false)
         end
 
         if refresh then
@@ -147,7 +147,7 @@ function RemovePlayerFromTargetList(serverID, context, transmit, refresh)
     end
 end
 
-function AddGroupToTargetList(group, context)
+function AddGroupToTargetList(group, context, pIsInVehicle)
     if not Targets:contextExists(context) then return end
 
     for serverID, active in pairs(group) do
@@ -156,7 +156,7 @@ function AddGroupToTargetList(group, context)
         end
     end
 
-    TriggerServerEvent("caue:voice:transmission:state", group, context, true, true)
+    TriggerServerEvent("caue:voice:transmission:state", group, context, true, nil, pIsInVehicle)
 end
 
 function RemoveGroupFromTargetList(group, context)
@@ -170,7 +170,7 @@ function RemoveGroupFromTargetList(group, context)
 
     RefreshTargets()
 
-    TriggerServerEvent("caue:voice:transmission:state", group, context, false, true)
+    TriggerServerEvent("caue:voice:transmission:state", group, context, false)
 end
 
 function AddChannelToTargetList(channel, context)
@@ -304,7 +304,7 @@ function SetSettings(settings)
 end
 
 RegisterNetEvent("caue:voice:transmission:state")
-AddEventHandler("caue:voice:transmission:state", function(serverID, context, transmitting)
+AddEventHandler("caue:voice:transmission:state", function(serverID, context, transmitting, effect, isSourceInVehicle)
     if not Transmissions:contextExists(context) then
         return
     end
@@ -319,14 +319,14 @@ AddEventHandler("caue:voice:transmission:state", function(serverID, context, tra
 
     local data = GetPriorityContextData(serverID)
 
-    local overrideSubmix, overrideVolume = nil, nil
-    if context == "radio" and isCivRadio then
+    local overrideSubmix, overrideVolume, rangeMultiplier = nil, nil, isSourceInVehicle and Config.radioVehicleMultiplier or 1.0
+    if context == "radio" and isCivRadio and transmitting then
         local getSendingRange = #(GetEntityCoords(PlayerPedId()) - GetPlayerCoords(serverID))
-        if getSendingRange > 350.0 and getSendingRange <= 600.0 then
+        if getSendingRange > Config.radioVoiceRanges.radio_medium_distance.ranges.min * rangeMultiplier and getSendingRange <= Config.radioVoiceRanges.radio_medium_distance.ranges.max * rangeMultiplier then
             overrideSubmix = { submix = "radio_medium_distance" }
-        elseif getSendingRange > 600.0 and getSendingRange <= 1200.0 then
+        elseif getSendingRange > Config.radioVoiceRanges.radio_far_distance.ranges.min * rangeMultiplier and getSendingRange <= Config.radioVoiceRanges.radio_far_distance.ranges.max * rangeMultiplier then
             overrideSubmix = { submix = "radio_far_distance" }
-        elseif getSendingRange > 1200.0 then
+        elseif getSendingRange > Config.radioVoiceRanges.radio_far_distance.ranges.max * rangeMultiplier then
             overrideSubmix = { submix = "default" }
             overrideVolume = 0.0
         end
@@ -351,7 +351,7 @@ AddEventHandler("caue:voice:transmission:state", function(serverID, context, tra
         PlayRemoteRadioClick(transmitting, overrideVolume ~= nil)
     end
 
-    Debug("[Main] Transmission | Origin: %s | Vol: %s | Ctx: %s | Active: %s", serverID, data.volume, context, transmitting)
+    Debug("[Main] Transmission | Origin: %s | Vol: %s | Ctx: %s | Active: %s", serverID, overrideVolume or data.volume, context, transmitting)
 end)
 
 RegisterNetEvent("caue:voice:targets:player:add")
@@ -425,6 +425,10 @@ Citizen.CreateThread(function()
 
     if Config.enableGag then
         LoadGagModule()
+    end
+
+    if Config.enableRadio then
+        LoadATCModule()
     end
 
     if Config.environmentalEffects then

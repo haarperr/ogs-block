@@ -55,7 +55,7 @@ RegisterNUICallback("vehtrack", function(data)
     if not coords then return end
 
     SetNewWaypoint(coords["x"], coords["y"])
-    phoneNotification("fas fa-car", "Vehicles", "Vehicle location marked in your GPS", 3000)
+    phoneNotification("fas fa-car", "Vehicles", "Localização do veiculo marcada no GPS!", 3000)
 end)
 
 RegisterNUICallback("vehiclePay", function(data)
@@ -77,7 +77,7 @@ RegisterNUICallback("carshopOutstandings", function(data)
     local list = {}
     for i, v in ipairs(logs) do
         if v["payment_last"] > 7 then
-            table.insert(list, "<b>Vehicle -</b> " .. GetLabelText(GetDisplayNameFromVehicleModel(v["model"])) .. "<br><b>Plate -</b> " .. v["plate"] .. "<br><b>Owner -</b> " .. v["name"] .. "<br><b>Phone -</b> " .. v["phone"] .. "<br><b>Last Payment -</b> " .. v["payment_last"] .. "<br><b>Payment Price -</b> " .. v["payment_price"] .. "<br><b>Payments Left -</b> " .. v["payment_left"])
+            table.insert(list, "<b>Veiculo -</b> " .. GetLabelText(GetDisplayNameFromVehicleModel(v["model"])) .. "<br><b>Plate -</b> " .. v["plate"] .. "<br><b>Owner -</b> " .. v["name"] .. "<br><b>Phone -</b> " .. v["phone"] .. "<br><b>Last Payment -</b> " .. v["payment_last"] .. "<br><b>Payment Price -</b> " .. v["payment_price"] .. "<br><b>Payments Left -</b> " .. v["payment_left"])
         end
     end
 

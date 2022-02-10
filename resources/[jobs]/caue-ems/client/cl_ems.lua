@@ -15,10 +15,10 @@ local EVENTS = {
 
 local zoneData = {
 	pillbox_checkin = {
-		promptText = "[E] Checkin"
+		promptText = "[E] Consultar ($200)"
 	},
 	pillbox_armory = {
-		promptText = "[E] Armory"
+		promptText = "[E] Arsenal"
 	},
 	pillbox_clothing_lockers_staff = {
 		promptText = "[E] Lockers & Clothes",
@@ -145,13 +145,13 @@ function GetPlayers()
 end
 
 function emsRevive()
-	if not exports["caue-jobs"]:getJob(false, "is_meidc") then return end
+	if not exports["caue-jobs"]:getJob(false, "is_medic") then return end
 
 	TriggerEvent("revive")
 end
 
 function emsHeal()
-	if not exports["caue-jobs"]:getJob(false, "is_meidc") then return end
+	if not exports["caue-jobs"]:getJob(false, "is_medic") then return end
 
 	TriggerEvent("ems:heal")
 end

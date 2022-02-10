@@ -231,6 +231,7 @@ end
 
 function Spawn.obtainWorldSpawnPos(spawnInfo)
     local found = false
+
     for k,v in pairs(Spawn.defaultSpawns) do
         if v.info == spawnInfo then
             found = v.pos

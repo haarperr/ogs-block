@@ -197,42 +197,12 @@ local Config = {
             { ["pos"] = vector3(-1306.20, -394.00, 35.61) },
         },
     },
-    ["tool"] = {
-        ["text"] = "Loja de Ferramentas",
-        ["sprite"] = 402,
-        ["scale"] = 1.0,
-        ["colour"] = 29,
-
-        ["default"] = true,
-
-        ["blips"] = {
-            { ["pos"] = vector3(44.83, -1748.53, 29.54) },
-	        { ["pos"] = vector3(2749.23, 3472.33, 55.67) },
-        },
-    },
     ["garage"] = {
         ["default"] = true,
         ["custom"] = true,
 
         ["blips"] = {
-            { ["text"] = "Garage Pillbox Hill", ["sprite"] = 357, ["scale"] = 0.7, ["colour"] = 3, ["pos"] = vector3(-336.41, -948.83, 30.4) },
-            { ["text"] = "Garage Paleto", ["sprite"] = 357, ["scale"] = 0.7, ["colour"] = 3, ["pos"] = vector3(-85.3, 6346.27, 31.5) },
-            { ["text"] = "Garage Grand Senora", ["sprite"] = 357, ["scale"] = 0.7, ["colour"] = 3, ["pos"] = vector3(1121.64, 2658.18, 38.0) },
-            { ["text"] = "Garage Alta", ["sprite"] = 357, ["scale"] = 0.7, ["colour"] = 3, ["pos"] = vector3(281.52, -334.44, 44.92) },
-            { ["text"] = "Garage Vepucci Beach", ["sprite"] = 357, ["scale"] = 0.7, ["colour"] = 3, ["pos"] = vector3(-1190.95, -1484.11, 3.98) },
-            { ["text"] = "Garage Canals", ["sprite"] = 410, ["scale"] = 0.7, ["colour"] = 3, ["pos"] = vector3(-842.01, -1371.8, 0.41) },
-        },
-    },
-    ["train"] = {
-        ["text"] = "Estação de Trem",
-        ["sprite"] = 36,
-        ["scale"] = 0.75,
-        ["colour"] = 12,
-
-        ["default"] = true,
-
-        ["blips"] = {
-
+            { ["text"] = "Garagem Motel", ["sprite"] = 357, ["scale"] = 0.7, ["colour"] = 3, ["pos"] = vector3(370.36, -1814.68, 28.38) },
         },
     },
     ["misc"] = {
@@ -240,19 +210,13 @@ local Config = {
         ["custom"] = true,
 
         ["blips"] = {
-            { ["text"] = "Bicycle Shop", ["sprite"] = 226, ["scale"] = 0.7, ["colour"] = 7, ["pos"] = vector3(-1100.69, -1702.88, 4.38) },
-            { ["text"] = "Vehicle Rentals", ["sprite"] = 326, ["scale"] = 0.5, ["colour"] = 2, ["pos"] = vector3(108.77, -1088.88, 29.3) },
+            { ["text"] = "Bikes Store", ["sprite"] = 226, ["scale"] = 0.7, ["colour"] = 38, ["pos"] = vector3(156.17, -1724.81, 28.25) },
             { ["text"] = "Premium Deluxe Motorsport", ["sprite"] = 326, ["scale"] = 0.7, ["colour"] = 7, ["pos"] = vector3(-33.737, -1102.322, 26.422) },
-            { ["text"] = "Boat Shop", ["sprite"] = 427, ["scale"] = 0.7, ["colour"] = 2, ["pos"] = vector3(-876.42, -1324.7, 1.61) },
-            { ["text"] = "Benny's Original Motorworks", ["sprite"] = 446, ["scale"] = 0.7, ["colour"] = 5,  ["pos"] = vector3(-34.12, -1054.31, 28.4) },
-            { ["text"] = "Harmony Repairs", ["sprite"] = 478, ["scale"] = 0.7, ["colour"] = 12, ["pos"] = vector3(1183.18, 2651.66, 37.81) },
+            { ["text"] = "Benny's Original Motorworks", ["sprite"] = 446, ["scale"] = 0.7, ["colour"] = 5,  ["pos"] = vector3(-211.55, -1324.55, 30.90) },
             { ["text"] = "Prisão", ["sprite"] = 60, ["scale"] = 0.8, ["colour"] = 3, ["pos"] = vector3(1679.049, 2513.711, 45.565) },
-            { ["text"] = "City Hall", ["sprite"] = 438, ["scale"] = 0.7, ["colour"] = 7, ["pos"] = vector3(-547.36, -200.0, 38.22) },
-            { ["text"] = "Fish Sales", ["sprite"] = 304, ["scale"] = 0.7, ["colour"] = 3, ["pos"] = vector3(-1847.46, -1191.50, 14.14) },
-            { ["text"] = "Sporting & Survival", ["sprite"] = 141,  ["scale"] = 0.7, ["colour"] = 5,  ["pos"] = vector3(-675.31, 5836.14, 17.70) },
-            { ["text"] = "Hunting Sales", ["sprite"] = 442, ["scale"] = 0.7, ["colour"] = 59, ["pos"] = vector3(569.32, 2796.66, 14.14) },
-            { ["text"] = "Burger Shot", ["sprite"] = 106, ["scale"] = 0.7, ["colour"] = 8, ["pos"] = vector3(-1199.61, -899.79, 14.0) },
-            { ["text"] = "Resort & Casino", ["sprite"] = 207, ["scale"] = 1.0, ["colour"] = 5, ["pos"] = vector3(925.32, 46.15, 80.90) },
+            { ["text"] = "Smoke On The Water", ["sprite"] = 469, ["scale"] = 0.7, ["colour"] = 25, ["pos"] = vector3(-1171.17, -1571.09, 3.67) },
+            { ["text"] = "Taco Libre", ["sprite"] = 543, ["scale"] = 0.7, ["colour"] = 25, ["pos"] = vector3(409.89, -1915.49, 25.11) },
+            { ["text"] = "Supplier", ["sprite"] = 628, ["scale"] = 0.7, ["colour"] = 5, ["pos"] = vector3(-72.07, -1821.95, 26.94) },
         },
     },
 }

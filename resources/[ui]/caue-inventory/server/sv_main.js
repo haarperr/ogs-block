@@ -38,9 +38,15 @@ function GenerateInformation(player, itemid, itemdata) {
 
         if (!isNaN(itemid)) {
             var identifier = Math.floor((Math.random() * 99999) + 1)
+            var ammo = 0
+
             if (itemdata && itemdata.fakeWeaponData) {
                 identifier = Math.floor((Math.random() * 99999) + 1)
                 identifier = identifier.toString()
+            }
+
+            if (itemdata && itemdata.ammo) {
+                ammo = itemdata.ammo
             }
 
             // should I remove that?
@@ -48,8 +54,9 @@ function GenerateInformation(player, itemid, itemdata) {
             returnInfo = JSON.stringify({
                 cartridge: cartridgeCreated,
                 serial: identifier,
-                ammo: 0,
+                ammo: ammo,
             })
+
             timeout = 1;
             clearTimeout(timeout)
             return resolve(returnInfo);
@@ -71,12 +78,17 @@ function GenerateInformation(player, itemid, itemdata) {
                     } else {
                         let string = `SELECT first_name, last_name, gender, dob FROM characters WHERE id = '${player}'`;
                         exports.ghmattimysql.execute(string, {}, function (result) {
+                            let gender = "Male"
+                            if (result[0].gender === 1) {
+                                gender = "Female"
+                            }
+
                             returnInfo = JSON.stringify({
-                                identifier: player.toString(),
-                                Name: result[0].first_name.replace(/[^\w\s]/gi, ''),
-                                Surname: result[0].last_name.replace(/[^\w\s]/gi, ''),
-                                Sex: result[0].gender,
-                                DOB: result[0].dob
+                                ["State ID"]: player.toString(),
+                                ["Name"]: result[0].first_name.replace(/[^\w\s]/gi, ''),
+                                ["Surname"]: result[0].last_name.replace(/[^\w\s]/gi, ''),
+                                ["Sex"]: gender,
+                                ["DOB"]: result[0].dob
                             })
                             timeout = 1
                             clearTimeout(timeout)
@@ -84,6 +96,18 @@ function GenerateInformation(player, itemid, itemdata) {
                         });
                     }
                     break;
+                case "pdbadge":
+                    let string = `SELECT first_name, last_name FROM characters WHERE id = '${player}'`;
+                    exports.ghmattimysql.execute(string, {}, function (result) {
+                        returnInfo = JSON.stringify({
+                            ["Name"]: exports["caue-base"].getChar(src),
+                            ["Surname"]: result[0].last_name.replace(/[^\w\s]/gi, ''),
+                            ["Sex"]: gender,
+                        })
+                        timeout = 1
+                        clearTimeout(timeout)
+                        return resolve(returnInfo);
+                    });
                 case "casing":
                     returnInfo = JSON.stringify({
                         Identifier: itemdata.identifier,
@@ -217,16 +241,6 @@ function DroppedItem(itemArray) {
     return JSON.stringify(shopItems);
 };
 
-function functionRemoveAny(player, itemidsent, amount, openedInv) {
-    let src = source
-    let playerinvname = 'ply-' + player
-
-    let string = `DELETE FROM inventory WHERE name='${playerinvname}' and item_id='${itemidsent}' LIMIT ${amount}`
-    exports.ghmattimysql.execute(string, {}, function () {
-        emit("server-request-update-src", player, src)
-    });
-};
-
 /*
 
     Events
@@ -268,7 +282,7 @@ onNet("server-request-update-src", async (player, src) => {
 });
 
 RegisterServerEvent("server-inventory-open")
-onNet("server-inventory-open", async (coords, player, secondInventory, targetName, itemToDropArray, sauce) => {
+onNet("server-inventory-open", async (coords, player, secondInventory, targetName, itemToDropArray, sauce, pWeight, pSlots) => {
     let src = source
 
     if (!src) {
@@ -278,7 +292,6 @@ onNet("server-inventory-open", async (coords, player, secondInventory, targetNam
     let playerinvname = 'ply-' + player
 
     if (InUseInventories[targetName] || InUseInventories[playerinvname]) {
-
         if (InUseInventories[playerinvname]) {
             if ((InUseInventories[playerinvname] != player)) {
                 return
@@ -308,7 +321,7 @@ onNet("server-inventory-open", async (coords, player, secondInventory, targetNam
             var targetinvname = targetName
 
             exports.ghmattimysql.execute(`SELECT count(item_id) as amount, id, name, item_id, information, slot, dropped, creationDate FROM inventory WHERE name = '${targetinvname}' group by slot`, {}, function (inventory2) {
-                emitNet("inventory-open-target", src, [invArray, arrayCount, playerinvname, inventory2, 0, targetinvname, 500, true]);
+                emitNet("inventory-open-target", src, [invArray, arrayCount, playerinvname, inventory2, 0, targetinvname, 500, true, pWeight, pSlots]);
 
                 InUseInventories[targetinvname] = player
             });
@@ -678,17 +691,31 @@ onNet("server-inventory-give", async (player, itemid, slot, amount, generateInfo
 
 RegisterServerEvent("server-remove-item")
 onNet("server-remove-item", async (player, itemidsent, amount, openedInv) => {
-    functionRemoveAny(player, itemidsent, amount, openedInv)
+    var src = exports["caue-base"].getSidWithCid(player)
+    var playerinvname = 'ply-' + player
+
+    exports.ghmattimysql.execute(`DELETE FROM inventory WHERE name='${playerinvname}' and item_id='${itemidsent}' LIMIT ${amount}`, {}, function () {
+        if (src != 0) {
+            emit("server-request-update-src", player, src)
+        }
+    });
 });
 
 RegisterServerEvent("server-inventory-remove")
 onNet("server-inventory-remove-slot", async (player, itemidsent, amount, slot) => {
+    var src = exports["caue-base"].getSidWithCid(player)
     var playerinvname = 'ply-' + player
-    db(`DELETE FROM inventory WHERE name='${playerinvname}' and item_id='${itemidsent}' and slot='${slot}' LIMIT ${amount}`);
+
+    exports.ghmattimysql.execute(`DELETE FROM inventory WHERE name='${playerinvname}' and item_id='${itemidsent}' and slot='${slot}' LIMIT ${amount}`, {}, function () {
+        if (src != 0) {
+            emit("server-request-update-src", player, src)
+        }
+    });
 });
 
 RegisterServerEvent("server-remove-item-kv")
 onNet("server-remove-item-kv", async (player, itemidsent, amount, metaKey, metaValue) => {
+    var src = exports["caue-base"].getSidWithCid(player)
     var playerinvname = 'ply-' + player
 
     exports.ghmattimysql.execute(`SELECT id, information FROM inventory WHERE item_id='${itemidsent}' AND name='${playerinvname}'`, {}, function (startid) {
@@ -702,14 +729,23 @@ onNet("server-remove-item-kv", async (player, itemidsent, amount, metaKey, metaV
             }
         }
 
-        db(`DELETE FROM inventory WHERE id IN (${itemids}) LIMIT ${amount}`);
+        exports.ghmattimysql.execute(`DELETE FROM inventory WHERE id IN (${itemids}) LIMIT ${amount}`, {}, function () {
+            if (src != 0) {
+                emit("server-request-update-src", player, src)
+            }
+        });
     });
 });
 
-RegisterServerEvent("inventory-degItem")
-onNet("inventory-degItem", async (itemID) => {
-    let amount = mathrandom(500, 1500);
-    exports.ghmattimysql.execute(`UPDATE inventory set creationDate = creationDate - ${amount} WHERE id = ${itemID}`);
+RegisterServerEvent("inventory:degItem")
+onNet("inventory:degItem", async (pItemId, pPercent, pItemClass, pCid) => {
+    if (itemList[pItemClass.toString()] == null || itemList[pItemClass.toString()].decayrate <= 0.0) {
+        return
+    }
+
+    let percent = Math.round(((TimeAllowed * itemList[pItemClass.toString()].decayrate) / 100) * pPercent)
+
+    exports.ghmattimysql.execute(`UPDATE inventory set creationDate = creationDate - ${percent} WHERE id = ${pItemId}`);
 });
 
 RegisterServerEvent("caue-inventory:clear")

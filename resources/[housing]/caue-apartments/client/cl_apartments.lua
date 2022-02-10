@@ -440,14 +440,14 @@ AddEventHandler("apartment:attemptEntry", function(roomNumberSent)
         if Apart.currentRoomLocks[roomType][roomNumber] == false then
             Apart.enterMotel(roomNumber,roomType)
         else
-            TriggerEvent("DoLongHudText","Apartment is Locked",2)
+            TriggerEvent("DoLongHudText","Apartamento está trancado",2)
         end
     end
 
 end)
 
 
-AddEventHandler("np-apartments:handler", function(data, cb)
+AddEventHandler("caue-apartments:handler", function(data, cb)
     local eventData = data.key
     if eventData.forclose then
         Apart.func.getOwner(true)

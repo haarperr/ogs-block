@@ -49,3 +49,33 @@ RegisterNetEvent("updateHealLocation")
 AddEventHandler("updateHealLocation", function(bonestarget, targetid)
     TriggerClientEvent("updateHealLocation:client", targetid, bonestarget)
 end)
+
+RPC.register("caue-evidence:canHeal", function(src)
+    local cid = exports["caue-base"]:getChar(src, "id")
+    if not cid then return false end
+
+    local accountId = exports["caue-base"]:getChar(src, "bankid")
+    local bank = exports["caue-financials"]:getBalance(accountId)
+
+    if bank < 200 then
+        TriggerClientEvent("DoLongHudText", src, "Você não tem $" .. 200 .. " na sua conta do banco", 2)
+        return false
+    end
+
+    return true
+end)
+RegisterNetEvent("caue-evidence:hospitalHeal")
+AddEventHandler("caue-evidence:hospitalHeal", function()
+    local src = source
+
+    local cid = exports["caue-base"]:getChar(src, "id")
+    if not cid then return end
+
+    local accountId = exports["caue-base"]:getChar(src, "bankid")
+    local bank = exports["caue-financials"]:getBalance(accountId)
+
+    local groupBank = exports["caue-groups"]:groupBank("ems")
+
+    local comment = "Despesas com assistência médica"
+    exports["caue-financials"]:transaction(accountId, groupBank, 200, comment, cid, 1)
+end)

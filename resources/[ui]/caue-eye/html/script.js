@@ -18,7 +18,7 @@ window.addEventListener('message', function(event) {
         $.each(item.data, function (index, item) {
             $(".target-label").append("<div id='target-"+index+"'<li><span class='target-icon'><i class='fas fa-"+item.icon+"'></i></span>&nbsp"+item.label+"</li></div>");
             $("#target-"+index).hover((e)=> {
-                $("#target-"+index).css("color",e.type === "mouseenter"?"rgb(0, 248, 185)":"white")
+                $("#target-"+index).css("color",e.type === "mouseenter"?"rgb(207, 181, 59)":"white")
             })
 
             $("#target-"+index+"").css("padding-top", "7px");
@@ -26,7 +26,7 @@ window.addEventListener('message', function(event) {
             $("#target-"+index).data('TargetData', item);
         });
 
-        // $(".target-eye").css("color", "rgb(0, 248, 185)");
+        // $(".target-eye").css("color", "rgb(207, 181, 59)");
         $(".target-eye").attr("src", "peek-active-1.png");
     } else if (item.response == 'leftTarget') {
         $(".target-label").html("");

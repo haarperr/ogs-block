@@ -170,6 +170,7 @@ function cleanupRace()
 
     cleanupProps()
     SetWaypointOff()
+    ClearGpsMultiRoute()
     clearBlips()
 end
 

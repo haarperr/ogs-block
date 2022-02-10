@@ -1,6 +1,8 @@
 fx_version "cerulean"
 games { "gta5" }
 
+lua54 "yes"
+
 resource_type "gametype" { name = "Caue" }
 
 server_scripts {

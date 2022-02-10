@@ -19,7 +19,7 @@ div {
 }
 
 .scroll-container::-webkit-scrollbar-thumb {
-  background-color: #4a92ff;
+  background-color: #00000044;
   outline: 1px solid #313131;
   border-radius: 5px;
 }
@@ -39,19 +39,19 @@ input[type=number] {
     box-shadow: none !important;
 }
 input[type=number]:active {
-    border-bottom-color: #4182e2 !important;
+    border-bottom-color: #00000044 !important;
 }
 
 button {
-    background-color: #4182e2 !important;
-    border-color: #4182e2 !important;
-    color: #e7e7e7 !important;
+    background-color: #00000044 !important;
+    border-color: #00000044 !important;
+    color: #ffffff !important;
 }
 
 #clothes-container,
 #barber-container,
 #tats-container {
-    background-color: #2c3b53;
+    background-color: #292929e1;
     border-radius: 0px;
     overflow: hidden;
     transform: scale(1);
@@ -97,7 +97,7 @@ button {
 }
 
 h6 {
-    color: #e7e7e7 !important;
+    color: #00000044 !important;
 }
 
 .input-number {
@@ -114,10 +114,12 @@ h6 {
     width: calc(100% - 20px) !important;
     background-color: transparent;
     overflow: hidden;
+    border: rgba(60,60,60) solid
 }
 
 .panel-title {
-    background-color: #3b4e6c;
+    background-color: rgb(53, 53, 53);
+    border-bottom: rgba(60,60,60) solid
 }
 .panel-title > h6 {
     font-weight: bold !important;
@@ -128,45 +130,53 @@ h6 {
 }
 
 .panel-bottom {
-    background-color: #445a7c;
+    background-color: rgb(53, 53, 53);
     padding: 10px !important;
 }
 
 button.button-menu {
-    background-color: #445a7c !important;
+    background-color: #00000044 !important;
 }
 button.button-menu.active {
-    background-color: #4a92ff !important;
+    background-color: #00000044 !important;
 }
 
 
 .color_palette {
-    border-radius: 2px;
+    border-radius: 5px;
     border: 2px solid #e7e7e762;
     margin: 4px;
     width: 40px;
     height: 40px;
     display: inline-flex;
+    scale: 1;
+    -webkit-transition: scale 0.2s ease-in-out;
+    transition: scale 0.2s ease-in-out;
+    border-radius: 20px;
 }
 .color_palette:hover {
-    border: 2px solid #4a92ff !important;
+    scale: 0.95
 }
 .color_palette.active {
-    border: 2px solid #4a92ff !important;
+    scale:1.05
 }
 
 .collapsible {
-    background-color: #3b4e6c !important;
+    background-color: #272727 !important;
     color: #e7e7e7 !important;
-    border-color: #3b4e6c !important;
+    border: rgb(60,60,60) solid !important;
+    border-radius: 20px;
 }
 .collapsible-header {
-    background-color: #3b4e6c !important;
+    background-color: #00000044 !important;
     color: #e7e7e7 !important;
+    border: rgb(60,60,60) solid !important;
+    border-radius: 20px;
 }
 .collapsible-body {
-    border-color: #3b4e6c !important;
+    border-color: #272727 !important;
     padding: 15px !important;
+    border-radius: 20px;
 }
 
 
@@ -200,12 +210,12 @@ input[type="range" i] {
  */
 input:focus,
 input:active {
-    border-bottom-color: #4182e2 !important;
+    border-bottom-color: #00000044 !important;
 }
 input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    background: #4182e2 !important;
+    background: #00000044 !important;
     cursor: pointer;
     border-radius: 2px !important;
 }

@@ -3,5 +3,6 @@
     "password": "kappa123",
     "host": "localhost",
     "port": 3306,
-    "database": "ogs-block"
+    "database": "ogs-block",
+    "charset": "utf8mb4"
 }

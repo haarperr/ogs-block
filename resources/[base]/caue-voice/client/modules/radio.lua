@@ -2,50 +2,50 @@ RadioChannels, IsRadioOn, IsTalkingOnRadio, RadioVolume, CurrentChannel = {}, fa
 
 function SetRadioFrequency(pFrequency, pSendAppEvent)
     if CanUseFrequency(pFrequency, true) then
-        -- TODO: if pSendAppEvent then exports["np-ui"]:sendAppEvent("radio", { value = pFrequency }) end
+      -- if pSendAppEvent then exports["caue-ui"]:sendAppEvent("radio", { value = pFrequency }) end
 
-        if IsTalkingOnRadio then
-            Citizen.Await(StopTransmission(true))
-        end
+      if IsTalkingOnRadio then
+          Citizen.Await(StopTransmission(true))
+      end
 
-        TriggerServerEvent("AddPlayerToRadio", pFrequency, GetPlayerServerId(PlayerId()))
+      TriggerServerEvent("AddPlayerToRadio", pFrequency, GetPlayerServerId(PlayerId()))
 
-        Debug("[Radio] Connected | Radio ID: %s", pFrequency)
+      Debug("[Radio] Connected | Radio ID: %s", pFrequency)
     end
 end
 
 function CycleRadioChannels()
-    if not IsRadioOn then return end
+  if not IsRadioOn then return end
 
-    local firstEntry, lastEntry, nextChannel
+  local firstEntry, lastEntry, nextChannel
 
-    if IsTalkingOnRadio then
-        Citizen.Await(StopTransmission(true))
-    end
+  if IsTalkingOnRadio then
+      Citizen.Await(StopTransmission(true))
+  end
 
-    for radioID, _ in pairs(RadioChannels) do
-        if firstEntry == nil then
-            firstEntry = radioID
-        end
+  for radioID, _ in pairs(RadioChannels) do
+      if firstEntry == nil then
+          firstEntry = radioID
+      end
 
-        if CurrentChannel == nil then
-            nextChannel = radioID
-            break
-        elseif lastEntry == CurrentChannel.id then
-            nextChannel = radioID
-            break
-        end
+      if CurrentChannel == nil then
+          nextChannel = radioID
+          break
+      elseif lastEntry == CurrentChannel.id then
+          nextChannel = radioID
+          break
+      end
 
-        lastEntry = radioID
-    end
+      lastEntry = radioID
+  end
 
-    local radioID = _C(nextChannel ~= nil, nextChannel, firstEntry)
+  local radioID = _C(nextChannel ~= nil, nextChannel, firstEntry)
 
-    if radioID then
-        SetRadioChannel(radioID)
-    else
-        CurrentChannel = nil
-    end
+  if radioID then
+      SetRadioChannel(radioID)
+  else
+      CurrentChannel = nil
+  end
 end
 
 local function ConnectToRadio (radioID, subscribers)
@@ -120,9 +120,12 @@ function StartTransmission()
     if not IsTalkingOnRadio then
         IsTalkingOnRadio = true
 
-        AddGroupToTargetList(CurrentChannel.subscribers, "radio")
+        local currentCam = GetCamActiveViewModeContext()
+        local isInVehicle = currentCam == 1 or currentCam == 2
 
-        StartRadioTask()
+        AddGroupToTargetList(CurrentChannel.subscribers, "radio", isInVehicle)
+
+        StartRadioTask(isInVehicle)
 
         PlayLocalRadioClick(true)
 
@@ -159,16 +162,16 @@ function StopTransmission(forced)
 end
 
 function IncreaseRadioVolume()
-    local currentVolume = RadioVolume * 10
-    SetRadioVolume(currentVolume + 1)
+  local currentVolume = RadioVolume * 10
+  SetRadioVolume(currentVolume + 1)
 end
 
 function DecreaseRadioVolume()
-    local currentVolume = RadioVolume * 10
-    SetRadioVolume(currentVolume - 1)
+  local currentVolume = RadioVolume * 10
+  SetRadioVolume(currentVolume - 1)
 end
 
-function SetRadioVolume(volume)
+function SetRadioVolume(volume, pDisableNotification)
     if volume <= 0 then return end
 
     RadioVolume = _C(volume > 10, 1.0, volume * 0.1)
@@ -179,7 +182,9 @@ function SetRadioVolume(volume)
       UpdateContextVolume("radio", RadioVolume)
     end
 
-    TriggerEvent("DoLongHudText", ("New volume %s"):format(RadioVolume))
+    if not pDisableNotification then
+      TriggerEvent("DoLongHudText", ("New volume %s"):format(RadioVolume))
+    end
 
     Debug("[Radio] Volume Changed | Current: %s", RadioVolume)
 end
@@ -203,7 +208,7 @@ function SetRadioPowerState(state)
     Debug("[Radio] Power State | Powered On: %s", IsRadioOn)
 end
 
-function StartRadioTask()
+function StartRadioTask(pIsInVehicle)
     Citizen.CreateThread(function()
         local lib = "random@arrests"
         local anim = "generic_radio_chatter"
@@ -211,8 +216,11 @@ function StartRadioTask()
 
         LoadAnimDict("random@arrests")
 
+        local isInVehicleAndFirstPersonDriver = pIsInVehicle and GetCamViewModeForContext(isInVehicle) == 4 and GetPedInVehicleSeat(GetVehiclePedIsIn(PlayerPedId()), -1) == PlayerPedId()
+
+        -- Don"t play radio anim if driving in first person
         while IsTalkingOnRadio do
-            if not IsEntityPlayingAnim(playerPed, lib, anim, 3) then
+            if not isInVehicleAndFirstPersonDriver and not IsEntityPlayingAnim(playerPed, lib, anim, 3) then
                 TaskPlayAnim(playerPed, lib, anim, 8.0, 0.0, -1, 49, 0, false, false, false)
             end
 
@@ -227,59 +235,18 @@ end
 
 function increaseRadioChannel()
     if not IsRadioOn then return end
-
     local newChannel = CurrentChannel.id + 1
-
     SetRadioFrequency(newChannel, true)
     TriggerEvent("DoLongHudText", ("New channel %s"):format(newChannel))
 end
-
 function decreaseRadioChannel()
     if not IsRadioOn then return end
-
     local newChannel = CurrentChannel.id - 1
-
     if newChannel >= 1 then
         SetRadioFrequency(newChannel, true)
         TriggerEvent("DoLongHudText", ("New channel %s"):format(newChannel))
     end
 end
-
-local radioSubmixes = {
-    radio = {
-        filters = {
-            { name = "freq_low", value = 100.0 },
-            { name = "freq_hi", value = 5000.0 },
-            { name = "rm_mod_freq", value = 300.0 },
-            { name = "rm_mix", value = 0.1 },
-            { name = "fudge", value = 4.0 },
-            { name = "o_freq_lo", value = 300.0 },
-            { name = "o_freq_hi", value = 5000.0 },
-        }
-    },
-    radio_medium_distance = {
-        filters = {
-            { name = "freq_low", value = 100.0 },
-            { name = "freq_hi", value = 5000.0 },
-            { name = "rm_mod_freq", value = 300.0 },
-            { name = "rm_mix", value = 0.5 },
-            { name = "fudge", value = 10.0 },
-            { name = "o_freq_lo", value = 300.0 },
-            { name = "o_freq_hi", value = 5000.0 },
-        }
-    },
-    radio_far_distance = {
-        filters = {
-            { name = "freq_low", value = 100.0 },
-            { name = "freq_hi", value = 5000.0 },
-            { name = "rm_mod_freq", value = 300.0 },
-            { name = "rm_mix", value = 0.8 },
-            { name = "fudge", value = 16.0 },
-            { name = "o_freq_lo", value = 300.0 },
-            { name = "o_freq_hi", value = 5000.0 },
-        }
-    }
-}
 
 function LoadRadioModule()
     RegisterModuleContext("radio", 2)
@@ -338,7 +305,7 @@ function LoadRadioModule()
     exports("DecreaseRadioVolume", DecreaseRadioVolume)
 
     if Config.enableSubmixes and Config.enableFilters.radio then
-        for submixName, submix in pairs(radioSubmixes) do
+        for submixName, submix in pairs(Config.radioVoiceRanges) do
             RegisterContextSubmix(submixName)
             SetFilterParameters(submixName, submix.filters)
         end

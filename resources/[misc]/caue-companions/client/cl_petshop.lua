@@ -9,7 +9,7 @@ AddEventHandler("caue-companions:showPetshop", function(pArgs, pEntity, pContext
             title = pet.name,
             description = "$" .. pet.price,
             children = {
-                { title = "Confirm Purchase", action = "caue-pets:purchasePet", params = pet },
+                { title = "Confirmar Compra", action = "caue-pets:purchasePet", params = pet },
             },
         })
     end
@@ -21,7 +21,7 @@ AddEventHandler("caue-pets:purchasePet", function(params)
     local input = exports["caue-input"]:showInput({
         {
             icon = "paw",
-            label = "Pet Name",
+            label = "Nome do Animal",
             name = "name",
         }
     })

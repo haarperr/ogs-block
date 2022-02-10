@@ -19,12 +19,23 @@ local lastShot = 0
 
 local throwableWeapons = {
 	["741814745"] = true,
+	["-1600701090"] = true,
 	["615608432"] = true,
 	["1233104067"] = true,
 	["2874559379"] = true,
 	["126349499"] = true,
 	["-73270376"] = true,
 	["-1169823560"] = true,
+	["2481070269"] = true,
+	["-1813897027"] = true,
+	["600439132"] = true,
+	["1064738331"] = true,
+	["-691061592"] = true,
+	["600439132"] = true,
+	["-828058162"] = true,
+	["571920712"] = true,
+	["-1569615261"] = true,
+	["-37975472"] = true,
 }
 
 local ammoTypes = {
@@ -48,8 +59,6 @@ function actionBarDown()
 	if focusTaken or reDelayed then return end
 
 	TriggerEvent("inventory-bar", true)
-
-  	-- TODO: TriggerServerEvent("np-financials:cash:get", GetPlayerServerId(PlayerId()))
 end
 
 function actionBarUp()
@@ -64,52 +73,41 @@ function actionBarUp()
 end
 
 function AttachmentCheck(weaponhash)
-	if hasEnoughOfItem("silencer_l", 1, false) then
-		GiveWeaponComponentToPed( PlayerPedId(), weaponhash, `COMPONENT_AT_AR_SUPP`)
+	if exports["caue-inventory"]:hasEnoughOfItem("weapon_silencer_assault", 1, false, true) then
+		GiveWeaponComponentToPed( PlayerPedId(), weaponhash, `COMPONENT_AT_AR_SUPP` )
+		GiveWeaponComponentToPed( PlayerPedId(), weaponhash, `COMPONENT_AT_AR_SUPP_02` )
+		GiveWeaponComponentToPed( PlayerPedId(), weaponhash, 0x3164BAB )
 	end
 
-	if hasEnoughOfItem("silencer_l2", 1, false) then
-		GiveWeaponComponentToPed(PlayerPedId(), weaponhash, `COMPONENT_AT_AR_SUPP_02`)
+	if exports["caue-inventory"]:hasEnoughOfItem("weapon_silencer_pistol", 1, false, true) then
+		GiveWeaponComponentToPed( PlayerPedId(), weaponhash, `COMPONENT_AT_PI_SUPP_02` )
+		GiveWeaponComponentToPed( PlayerPedId(), weaponhash, `COMPONENT_AT_PI_SUPP` )
 	end
 
-	if hasEnoughOfItem("silencer_s", 1, false) then
-		GiveWeaponComponentToPed(PlayerPedId(), weaponhash, `COMPONENT_AT_PI_SUPP`)
+	if exports["caue-inventory"]:hasEnoughOfItem("weapon_oil_silencer", 1, false, true) then
+		GiveWeaponComponentToPed( PlayerPedId(), weaponhash, 1532150734 )
 	end
 
-	if hasEnoughOfItem("silencer_s2", 1, false) then
-		GiveWeaponComponentToPed(PlayerPedId(), weaponhash, `COMPONENT_AT_PI_SUPP_02`)
+	if exports["caue-inventory"]:hasEnoughOfItem("weapon_scope", 1, false, true) then
+		GiveWeaponComponentToPed( PlayerPedId(), weaponhash, `COMPONENT_AT_SCOPE_MEDIUM` )
+		GiveWeaponComponentToPed( PlayerPedId(), weaponhash, `COMPONENT_AT_SCOPE_MACRO` )
+		GiveWeaponComponentToPed( PlayerPedId(), weaponhash, `COMPONENT_AT_SCOPE_SMALL` )
 	end
 
-	if hasEnoughOfItem("extended_ap", 1, false) then
-		GiveWeaponComponentToPed(PlayerPedId(), weaponhash, `COMPONENT_APPISTOL_CLIP_02`)
+	if exports["caue-inventory"]:hasEnoughOfItem("weapon_uzi_extended", 1, false, true) then
+		GiveWeaponComponentToPed( PlayerPedId(), weaponhash, 0xE40F1CD2 )
 	end
 
-	if hasEnoughOfItem("extended_sns", 1, false) then
-		GiveWeaponComponentToPed(PlayerPedId(), weaponhash, `COMPONENT_SNSPISTOL_CLIP_02`)
+	if exports["caue-inventory"]:hasEnoughOfItem("weapon_uzi_foldstock", 1, false, true) then
+		GiveWeaponComponentToPed( PlayerPedId(), weaponhash, 0x8FBBD54C )
 	end
 
-	if hasEnoughOfItem("extended_micro", 1, false) then
-		GiveWeaponComponentToPed(PlayerPedId(), weaponhash, `COMPONENT_MICROSMG_CLIP_02`)
-	end
-
-	if hasEnoughOfItem("MediumScope", 1, false) then
-		GiveWeaponComponentToPed(PlayerPedId(), weaponhash, `COMPONENT_AT_SCOPE_MEDIUM`)
-	end
-
-	if hasEnoughOfItem("SmallScope", 1, false) then
-		GiveWeaponComponentToPed(PlayerPedId(), weaponhash, `COMPONENT_AT_SCOPE_SMALL`)
-	end
-
-	if hasEnoughOfItem("TinyScope", 1, false) then
-		GiveWeaponComponentToPed(PlayerPedId(), weaponhash, `COMPONENT_AT_SCOPE_MACRO`)
-	end
-
-	if hasEnoughOfItem("extended_tec9", 1, false) then
-		GiveWeaponComponentToPed(PlayerPedId(), weaponhash, `COMPONENT_MACHINEPISTOL_CLIP_02`)
+	if exports["caue-inventory"]:hasEnoughOfItem("weapon_uzi_woodstock", 1, false, true) then
+		GiveWeaponComponentToPed( PlayerPedId(), weaponhash, 0x722C6CA6 )
 	end
 end
 
-function unholster1h(weaponHash)
+function unholster1h(weaponHash, a, info)
 	unholsteringactive = true
 
 	local dict = "reaction@intimidation@1h"
@@ -119,41 +117,64 @@ function unholster1h(weaponHash)
 	if exports["caue-jobs"]:getJob(false, "is_police") then
 		copunholster(weaponHash)
 
+	    if weaponHash == 218362403 then
+			SetPedWeaponTintIndex(ped, weaponHash, 6)
+		end
+
 	    if weaponHash == 3219281620 then
-			GiveWeaponComponentToPed(PlayerPedId(), 3219281620, `COMPONENT_AT_PI_FLSH_02`)
+			GiveWeaponComponentToPed(PlayerPedId(), 3219281620, `COMPONENT_AT_PI_FLSH_02` )
 	    end
 
 	    if weaponHash == 736523883 then
-			GiveWeaponComponentToPed(ped, 736523883, `COMPONENT_AT_AR_FLSH`)
-			GiveWeaponComponentToPed(ped, 736523883, `COMPONENT_AT_SCOPE_MACRO_02`)
+        	GiveWeaponComponentToPed( ped, 736523883, `COMPONENT_AT_AR_FLSH` )
+        	GiveWeaponComponentToPed( ped, 736523883, `COMPONENT_AT_SCOPE_MACRO_02` )
 	    end
 
 	    if weaponHash == -2084633992 then
-			GiveWeaponComponentToPed(ped, -2084633992, `COMPONENT_AT_AR_FLSH`)
-			GiveWeaponComponentToPed(ped, -2084633992, `COMPONENT_AT_AR_AFGRIP`)
-			GiveWeaponComponentToPed(ped, -2084633992, `COMPONENT_AT_SCOPE_MEDIUM`)
-	    end
-
-	    if weaponHash == 1432025498 then
-			GiveWeaponComponentToPed(ped, 1432025498, `COMPONENT_AT_SCOPE_MACRO_MK2`)
-			GiveWeaponComponentToPed(ped, 1432025498, `COMPONENT_AT_AR_FLSH`)
-	    end
+        	GiveWeaponComponentToPed( ped, -2084633992, `COMPONENT_AT_AR_FLSH` )
+        	GiveWeaponComponentToPed( ped, -2084633992, `COMPONENT_AT_AR_AFGRIP` )
+        	GiveWeaponComponentToPed( ped, -2084633992, `COMPONENT_AT_SCOPE_MEDIUM` )
+		end
 
 	    if weaponHash == 2024373456 then
-			GiveWeaponComponentToPed(ped, 2024373456, `COMPONENT_AT_AR_FLSH`)
-			GiveWeaponComponentToPed(ped, 2024373456, `COMPONENT_AT_SIGHTS_SMG`)
-			GiveWeaponComponentToPed(ped, 2024373456, `COMPONENT_AT_MUZZLE_01`)
-			GiveWeaponComponentToPed(ped, 2024373456, `COMPONENT_AT_SB_BARREL_02`)
+        	GiveWeaponComponentToPed( ped, 2024373456, `COMPONENT_AT_AR_FLSH` )
+        	GiveWeaponComponentToPed( ped, 2024373456, `COMPONENT_AT_SIGHTS_SMG` )
+        	GiveWeaponComponentToPed( ped, 2024373456, `COMPONENT_AT_MUZZLE_01` )
+        	GiveWeaponComponentToPed( ped, 2024373456, `COMPONENT_AT_SB_BARREL_02` )
 	    end
 
 	    if weaponHash == -86904375 then
-	    	GiveWeaponComponentToPed(ped, -86904375, `COMPONENT_AT_AR_FLSH`)
-	    	GiveWeaponComponentToPed(ped, -86904375, `COMPONENT_AT_SIGHTS`)
+	    	GiveWeaponComponentToPed( ped, -86904375, `COMPONENT_AT_AR_FLSH` )
+	    	GiveWeaponComponentToPed( ped, -86904375, `COMPONENT_AT_SIGHTS` )
 	    end
 
 	    if weaponHash == -1075685676 then
-	    	GiveWeaponComponentToPed(ped, -1075685676, `COMPONENT_AT_PI_FLSH_02`)
+	    	GiveWeaponComponentToPed( ped, -1075685676, `COMPONENT_AT_PI_FLSH_02` )
 	    end
+
+		if weaponHash == 1649403952 and info and info.componentVariant then
+			local variants = {
+			  	["1"] = 0xF605986F,
+			}
+			if variants[info.componentVariant] then
+			  	GiveWeaponComponentToPed(ped, weaponHash, variants[info.componentVariant])
+			end
+		end
+
+		if weaponHash == -1024456158 and info and info.componentVariant then
+			local variants = {
+				["1"] = 0xDF427E88,
+				["2"] = 0x84276AFF,
+				["3"] = 0x1122A82,
+				["4"] = 0x12788BB7,
+				["5"] = 0x475ECA83,
+				["6"] = 0x2B65CEAD,
+				["7"] = 0xFE52F3D7,
+			}
+			if variants[info.componentVariant] then
+			  	GiveWeaponComponentToPed(ped, weaponHash, variants[info.componentVariant])
+			end
+		end
 
 		AttachmentCheck(weaponHash)
 
@@ -176,6 +197,78 @@ function unholster1h(weaponHash)
 	else
 		GiveWeaponToPed(ped, weaponHash, getAmmo(), 1, 0)
 		SetCurrentPedWeapon(ped, weaponHash, 0)
+	end
+
+	if weaponHash == 218362403 then
+		SetPedWeaponTintIndex(ped, weaponHash, 6)
+	end
+
+	if info and info.weaponTint then
+		SetPedWeaponTintIndex(ped, weaponHash, info.weaponTint)
+	end
+
+	if weaponHash == 1692590063 and info and info.componentVariant then
+	  	local variants = {
+			["1"] = 0x6218EEB8,
+			["2"] = 0xA4BF7400,
+			["3"] = 0x3F2DA8E2, -- cursed katana, never use this one
+			["4"] = 0x849233A6,
+			["5"] = 0x83648BFB, -- Talon sword, don't use this
+	  	}
+	  	if variants[info.componentVariant] then
+			GiveWeaponComponentToPed(ped, weaponHash, variants[info.componentVariant])
+	  	end
+	end
+
+	if weaponHash == 1649403952 and info and info.componentVariant then
+	  	local variants = {
+			["1"] = 0xF605986F,
+	  	}
+	  	if variants[info.componentVariant] then
+			GiveWeaponComponentToPed(ped, weaponHash, variants[info.componentVariant])
+	  	end
+	end
+
+	if weaponHash == -1024456158 and info and info.componentVariant then
+	  	local variants = {
+			["1"] = 0xDF427E88,
+			["2"] = 0x84276AFF,
+			["3"] = 0x1122A82,
+			["4"] = 0x12788BB7,
+			["5"] = 0x475ECA83,
+			["6"] = 0x2B65CEAD,
+			["7"] = 0xFE52F3D7,
+	  	}
+	  	if variants[info.componentVariant] then
+			GiveWeaponComponentToPed(ped, weaponHash, variants[info.componentVariant])
+	  	end
+	end
+
+	if weaponHash == 3638508604 and info and info.componentVariant then
+	  	local variants = {
+			["1"] = 0xF3462F33,
+			["2"] = 0xC613F685,
+			["3"] = 0xEED9FD63,
+			["4"] = 0x50910C31,
+			["5"] = 0x9761D9DC,
+			["6"] = 0x7DECFE30,
+			["7"] = 0x3F4E8AA6,
+			["8"] = 0x8B808BB,
+			["9"] = 0xE28BABEF,
+			["10"] = 0x7AF3F785,
+	  	}
+	  	if variants[info.componentVariant] then
+			GiveWeaponComponentToPed(ped, weaponHash, variants[info.componentVariant])
+	  	end
+	end
+
+	if weaponHash == 1317494643 and info and info.componentVariant then
+	  	local variants = {
+			["1"] = 0x904467BA,
+	  	}
+	  	if variants[info.componentVariant] then
+			GiveWeaponComponentToPed(ped, weaponHash, variants[info.componentVariant])
+	  	end
 	end
 
     AttachmentCheck(weaponHash)
@@ -299,7 +392,7 @@ function actionBarAmmo(hash, amount, addition)
 	local weapons = GetSelectedPedWeapon(ped)
 
 	if weapons == UNARMED_HASH then
-		TriggerEvent("DoLongHudText", "where is your weapon dude?", 2)
+		TriggerEvent("DoLongHudText", "Cade tua arma, cara?", 2)
 		return
 	end
 
@@ -307,7 +400,7 @@ function actionBarAmmo(hash, amount, addition)
 	if not curAmmo then curAmmo = 0 end
 
 	if curAmmo >= ammoTypes[tostring(hash)] then
-		TriggerEvent("DoLongHudText", "this weapon is already full", 2)
+		TriggerEvent("DoLongHudText", "Essa arma já está carregada.", 2)
 		return
 	end
 
@@ -342,9 +435,13 @@ function attemptToDegWeapon()
 		local hasTimer = 99999
 		hasTimer = (GetGameTimer() - lastWeaponDeg)
 
-		if  hasTimer >= 2000 then
+		if hasTimer >= 2000 then
 			lastWeaponDeg = GetGameTimer()
-			TriggerServerEvent("inventory-degItem", CurrentSqlID)
+
+			local cid = exports["caue-base"]:getChar("id")
+			local weapon = GetSelectedPedWeapon(PlayerPedId())
+
+    		TriggerServerEvent("inventory:degItem", CurrentSqlID, math.random(3, 5), tostring(weapon), cid)
 		end
 	end
 end
@@ -355,7 +452,7 @@ end
 
 ]]
 
-AddEventHandler("np-voice:focus:set", function(pState)
+AddEventHandler("caue-voice:focus:set", function(pState)
 	focusTaken = pState
 end)
 
@@ -390,7 +487,7 @@ AddEventHandler("equipWeaponID", function(hash, newInformation, sqlID)
 	else
 		armed = true
 		TriggerEvent("hud-display-item", tonumber(hash), "Equip")
-		unholster1h(tonumber(hash), true)
+		unholster1h(tonumber(hash), true, currentInformation)
 	end
 
 	if hash == "-72657034" then
@@ -401,6 +498,10 @@ AddEventHandler("equipWeaponID", function(hash, newInformation, sqlID)
 	SetPedAmmo(PlayerPedId(),  `WEAPON_STICKYBOMB`, 1)
 	SetPedAmmo(PlayerPedId(),  1233104067, 1)
 	SetPedAmmo(PlayerPedId(),  -37975472, 1)
+
+	if throwableWeapons[hash] then
+		SetPedAmmo(PlayerPedId(),  tonumber(hash), 1)
+	end
 
 	SetPlayerCanDoDriveBy(PlayerId(), true)
 	SetWeaponsNoAutoswap(true)
@@ -467,6 +568,11 @@ Citizen.CreateThread(function()
 			attemptToDegWeapon()
 
 			local weapon = tostring(hash)
+
+			if weapon == "-37975472" then
+				TriggerEvent("caue-weapons:threwSmokeGrenade")
+			end
+
 			if throwableWeapons[weapon] then
 				if hasEnoughOfItem(weapon,1,false) then
 					TriggerEvent("inventory:removeItem", weapon, 1)
@@ -486,7 +592,6 @@ Citizen.CreateThread(function()
 					if rnd > 40 then TriggerServerEvent('fire:serverStopFire',pos.x,pos.y,pos.z,4.0) end
 				end
 			end
-
 		end
 
 		if unholsteringactive then

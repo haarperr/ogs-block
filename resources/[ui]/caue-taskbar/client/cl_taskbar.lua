@@ -118,6 +118,12 @@ function taskBar(length, name, runCheck, keepWeapon, vehicle, vehCheck, cb, move
 
         updateGui(fuck,taskIdentifier,name)
 
+        if not keepWeapon and GetSelectedPedWeapon(PlayerPedId()) ~= GetHashKey("WEAPON_UNARMED") then
+            local totaldone = taskBarFail(maxcount,curTime,length)
+            if cb then cb(totaldone) end
+            return totaldone
+        end
+
         if runCheck then
             if IsPedClimbing(playerPed) or IsPedJumping(playerPed) or IsPedSwimming(playerPed) or IsPedRagdoll(playerPed) then
                 SetPlayerControl(PlayerId(), 0, 0)

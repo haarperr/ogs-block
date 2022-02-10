@@ -18,25 +18,7 @@ function getCallsign(pSrc, pJob)
     return callSign
 end
 
---[[
-
-    Exports
-
-]]
-
-exports("getCallsign", getCallsign)
-
---[[
-
-    RPC
-
-]]
-
-RPC.register("caue-jobs:getCallsign", function(src, job)
-    return getCallsign(src, job)
-end)
-
-RPC.register("caue-jobs:setCallsign", function(src, cid, job, callsign)
+function setCallsign(cid, job, callsign)
     local exist = exports.ghmattimysql:scalarSync([[
         SELECT id
         FROM jobs_callsigns
@@ -70,4 +52,27 @@ RPC.register("caue-jobs:setCallsign", function(src, cid, job, callsign)
 
         return true, "Callsign updated"
     end
+end
+
+--[[
+
+    Exports
+
+]]
+
+exports("getCallsign", getCallsign)
+exports("setCallsign", setCallsign)
+
+--[[
+
+    RPC
+
+]]
+
+RPC.register("caue-jobs:getCallsign", function(src, job)
+    return getCallsign(src, job)
+end)
+
+RPC.register("caue-jobs:setCallsign", function(src, cid, job, callsign)
+    return setCallsign(cid, job, callsign)
 end)

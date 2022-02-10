@@ -170,4 +170,11 @@ ModelFlags = {
     [`prop_vintage_pump`] = { "isFuelPump" },
     [`prop_gas_pump_old2`] = { "isFuelPump" },
     [`prop_gas_pump_old3`] = { "isFuelPump" },
+    [`bkr_prop_weed_01_small_01c`] = { "isWeedPlant" },
+    [`bkr_prop_weed_01_small_01a`] = { "isWeedPlant" },
+    [`bkr_prop_weed_01_small_01b`] = { "isWeedPlant" },
+    [`bkr_prop_weed_med_01a`] = { "isWeedPlant" },
+    [`bkr_prop_weed_med_01b`] = { "isWeedPlant" },
+    [`bkr_prop_weed_lrg_01a`] = { "isWeedPlant" },
+    [`bkr_prop_weed_lrg_01b`] = { "isLrgWeedPlant", "isWeedPlant" },
 }

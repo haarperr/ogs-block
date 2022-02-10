@@ -13,14 +13,18 @@ local currentSeat = 0
 
 ]]
 
-function VehicleAiming(pIsInVehicle, pCurrentVehicle, pCurrentSeat)
+function VehicleAiming(pIsInVehicle, pCurrentVehicle, pCurrentSeat, pVehicleType)
     isInVehicle = pIsInVehicle
     if not isInVehicle then return end
 
     Citizen.CreateThread(function()
         while isInVehicle do
+            if pVehicleType == 8 or pVehicleType == 13 then
+                DisableControlAction(0, 345, true)
+            end
+
             if IsPedArmed(PlayerPedId(), 6) then
-                if currentSeat == -1 then
+                if pCurrentSeat == -1 and pVehicleType ~= 8 and pVehicleType ~= 13 then
                     DisableControlAction(0, 25, true)
                     DisableControlAction(0, 68, true)
                     DisableControlAction(0, 91, true)
@@ -64,11 +68,9 @@ end
 ]]
 
 AddEventHandler("baseevents:enteredVehicle", function(pCurrentVehicle, pCurrentSeat, _, _, pModel)
-    if IsThisModelABike(pModel) then return end
-
     currentSeat = pCurrentSeat
 
-    VehicleAiming(true, pCurrentVehicle, pCurrentSeat)
+    VehicleAiming(true, pCurrentVehicle, pCurrentSeat, GetVehicleClass(pCurrentVehicle))
 end)
 
 AddEventHandler("baseevents:leftVehicle", function(pCurrentVehicle, pCurrentSeat)

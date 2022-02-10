@@ -46,6 +46,10 @@ function getUser(src, var)
     end
 end
 
+function getUsers()
+    return ServerUsers
+end
+
 function setChar(src, var, data)
     if not ServerUsers[src]["char"] then return end
 
@@ -111,6 +115,7 @@ exports("setServerVar", setServerVar)
 exports("getServerVar", getServerVar)
 exports("setUser", setUser)
 exports("getUser", getUser)
+exports("getUsers", getUsers)
 exports("setChar", setChar)
 exports("getChar", getChar)
 exports("getSidWithCid", getSidWithCid)

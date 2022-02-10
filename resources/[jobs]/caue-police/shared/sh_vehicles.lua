@@ -1,24 +1,25 @@
 VehiclesConfig = {
     {
         ["Job"] = "police",
-        ["Label"] = "Police Vehicles",
-        ["Spawn"] = vector4(380.48, -1626.24, 28.59, 320.41),
-        ["Garage"] = "DavisPD",
+        ["Label"] = "Veiculos Policiais",
+        ["Spawn"] = vector4(437.87, -986.39, 25.7, 80.48),
+        ["Garage"] = "MRPD",
 
         ["Vehicles"] = {
-            { name = "Crown Victoria", model = "npolvic", price = 5000, first_free = true },
+            { name = "Crown Victoria", model = "npolvic", price = 1, first_free = true },
+            { name = "Charger", model = "npolchar", price = 1, first_free = false },
+            { name = "Explorer", model = "npolexp", price = 1, first_free = false },
         },
 
         ["NPC"] = {
             id = "police_vehicles",
-            name = "Police Vehicles",
-            pedType = 4,
-            model = "s_f_y_cop_01",
+            name = "Veiculos Policiais",
+            model = "s_m_y_sheriff_01",
             networked = false,
             distance = 50.0,
             position = {
-                coords = vector3(376.8, -1622.71, 28.25),
-                heading = 142.47,
+                coords = vector3(441.43, -974.95, 24.7),
+                heading = 180.62,
                 random = false,
             },
             appearance = nil,
@@ -31,7 +32,7 @@ VehiclesConfig = {
                 ["isNPC"] = true,
                 ["isPoliceVehicleSeller"] = true,
             },
-            scenario = "WORLD_HUMAN_AA_COFFEE",
+            scenario = "WORLD_HUMAN_COP_IDLES",
         },
-    }
+    },
 }

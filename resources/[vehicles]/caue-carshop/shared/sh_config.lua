@@ -63,7 +63,7 @@ Config["pdm"] = {
         AddEventHandler("caue-polyzone:enter", function(name)
             if name ~= "pdmbackdoor" then return end
 
-            exports["caue-interaction"]:showInteraction("[E] Open/Close")
+            exports["caue-interaction"]:showInteraction("[E] Abrir/Fechar")
             listenForKeypress()
         end)
 

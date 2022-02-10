@@ -5,31 +5,37 @@
 ]]
 
 local garagesConfig = {
-    ["DavisPD"] = {
+    ["MRPD"] = {
         ["type"] = "police",
         ["jobGarage"] = true,
-        ["pos"] = vector4(400.72, -1618.84, 28.62, 49.54),
+        ["pos"] = vector4(437.31, -996.93, 25.3, 90.1),
         ["distance"] = 150,
         ["spaces"] = {
-            vector4(384.91, -1634.26, 28.62, 321.59),
-            vector4(387.33, -1636.71, 28.62, 320.16),
-            vector4(392.65, -1628.39, 28.62, 50.06),
-            vector4(395.04, -1626.04, 28.62, 50.98),
-            vector4(397.19, -1623.89, 28.62, 50.76),
-            vector4(398.79, -1621.2, 28.62, 50.03),
-            vector4(400.72, -1618.84, 28.62, 49.54),
-            vector4(402.74, -1616.54, 28.62, 48.83),
-            vector4(387.34, -1615.45, 28.62, 230.74),
-            vector4(389.17, -1613.09, 28.62, 230.91),
-            vector4(391.12, -1610.66, 28.62, 230.3),
-            vector4(393.02, -1608.28, 28.62, 230.71),
+            vector4(445.74, -996.94, 25.3, 269.16),
+            vector4(445.57, -994.23, 25.3, 269.26),
+            vector4(445.8, -991.49, 25.3, 268.82),
+            vector4(445.73, -988.86, 25.3, 269.45),
+            vector4(445.73, -986.11, 25.3, 269.32),
+            vector4(437.27, -986.16, 25.3, 89.2),
+            vector4(437.28, -988.87, 25.3, 91.25),
+            vector4(437.41, -991.59, 25.3, 89.96),
+            vector4(437.3, -994.28, 25.3, 90.01),
+            vector4(437.31, -996.93, 25.3, 90.1),
+            vector4(425.71, -997.08, 25.3, 270.01),
+            vector4(425.74, -994.41, 25.3, 269.55),
+            vector4(425.76, -991.65, 25.3, 270.83),
+            vector4(425.82, -988.97, 25.3, 269.8),
+            vector4(425.75, -984.27, 25.3, 270.67),
+            vector4(425.78, -981.54, 25.3, 269.55),
+            vector4(425.88, -978.81, 25.3, 270.18),
+            vector4(425.77, -976.13, 25.3, 270.51),
         },
     },
     ["Hospital"] = {
         ["type"] = "ems",
         ["jobGarage"] = true,
         ["pos"] = vector4(316.52, -578.24, 28.4, 250.64),
-        ["distance"] = 250,
+        ["distance"] = 100,
         ["spaces"] = {
             vector4(332.97, -590.6, 28.4, 339.91),
             vector4(329.62, -589.53, 28.4, 341.87),
@@ -42,27 +48,10 @@ local garagesConfig = {
             vector4(321.05, -565.23, 28.4, 248.56),
         },
     },
-    ["Canals"] = {
-        ["type"] = "boat",
-        ["pos"] = vector4(-857.58, -1327.78, -0.47, 107.76),
-        ["distance"] = 150,
-        ["spaces"] = {
-            vector4(-857.58, -1327.78, -0.47, 107.76),
-            vector4(-855.26, -1336.42, -0.47, 108.41),
-            vector4(-851.03, -1344.45, 0.41, 109.07),
-            vector4(-848.12, -1352.86, 0.41, 108.52),
-            vector4(-845.14, -1361.77, 0.41, 107.34),
-            vector4(-842.01, -1371.8, 0.41, 108.99),
-            vector4(-839.15, -1380.12, 0.41, 108.83),
-            vector4(-836.15, -1388.92, 0.41, 108.28),
-            vector4(-833.57, -1397.34, 0.41, 107.18),
-            vector4(-830.86, -1406.13, 0.41, 107.18),
-        },
-    },
     ["Motel"] = {
         ["type"] = "car",
         ["pos"] = vector4(370.36, -1814.68, 28.38, 355.37),
-        ["distance"] = 150,
+        ["distance"] = 100,
         ["spaces"] = {
             vector4(364.75, -1810.0, 28.37, 354.07),
             vector4(367.55, -1812.43, 28.37, 353.71),
@@ -72,7 +61,6 @@ local garagesConfig = {
             vector4(379.05, -1822.3, 28.38, 353.87),
         },
     },
-
 }
 
 --[[
@@ -80,6 +68,20 @@ local garagesConfig = {
     Exports
 
 ]]
+
+exports("setGarage", function(pGarage, pVar, pValue, pEdit)
+    if not garagesConfig[pGarage] then
+        garagesConfig[pGarage] = {}
+    end
+
+    if pEdit then
+        garagesConfig[pGarage][pVar] = pValue
+    else
+        garagesConfig[pGarage] = pVar
+    end
+
+    TriggerClientEvent("caue-vehicles:setGarage", -1, pGarage, pVar, pValue, pEdit)
+end)
 
 exports("getGarage", function(pGarage, pVar)
     return garagesConfig[pGarage][pVar]

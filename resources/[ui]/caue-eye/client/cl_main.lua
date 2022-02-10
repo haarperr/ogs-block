@@ -199,7 +199,7 @@ function AddPeekEntry(pType, pGroup, pData, pOptions)
     local entries = PeekEntries[pType]
 
     if not entries then
-        print(pType .. " Is not a valid Peek Type")
+        print(pType .. " Não é um tipo valido")
         return
     end
 
@@ -209,7 +209,7 @@ function AddPeekEntry(pType, pGroup, pData, pOptions)
         local groupEntries = entries[group]
 
         for _, entry in ipairs(data) do
-            if not entry.id then print("Missing ID in entry for " .. group) end
+            if not entry.id then print("Faltando um ID para " .. group) end
 
             groupEntries[entry.id] = { data = entry, options = options }
         end

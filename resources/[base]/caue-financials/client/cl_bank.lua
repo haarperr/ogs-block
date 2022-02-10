@@ -48,7 +48,7 @@ AddEventHandler("caue-polyzone:enter", function(zone)
     if zone ~= "bank_zone" then return end
 
     nearBank = true
-    exports["caue-interaction"]:showInteraction("[E] Use Bank")
+    exports["caue-interaction"]:showInteraction("[E] Usar Banco")
     listenForKeypress()
 end)
 
@@ -68,7 +68,7 @@ AddEventHandler("caue-bank:closed", function()
     isBankInterfaceOpen = false
 
     if nearBank then
-        exports["caue-interaction"]:showInteraction("[E] Use Bank")
+        exports["caue-interaction"]:showInteraction("[E] Usar Banco")
         listenForKeypress()
     end
 end)

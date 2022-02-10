@@ -2,6 +2,13 @@
 <SInteriorOrderData>
   <startFrom value="2000" />
   <proxies>
-    <Item>test31_milo_</Item>
+    <Item>prison_visit_milo_</Item>
+    <Item>prison_cells_milo_</Item>
+    <Item>prison_cafeteria_milo_</Item>
+    <Item>gabz_pillbox_milo_</Item>
+    <Item>gabz_pillbox_dlc_milo_</Item>
+    <Item>gabz_pillbox_2_milo_</Item>
+    <Item>vu_fight_club_milo_</Item>
+    <Item>taco_milo_</Item>
 	</proxies>
 </SInteriorOrderData>

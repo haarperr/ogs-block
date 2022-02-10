@@ -1,26 +1,32 @@
-local Evidences = {}
+local DroppedEvidences = {}
 
-RegisterNetEvent("evidence:pooled")
-AddEventHandler("evidence:pooled", function(drops)
-    for k, v in pairs(drops) do
-        Evidences[k] = v
-    end
-
-    TriggerClientEvent("evidence:pooled", -1, drops)
+RPC.register("caue-evidence:fetchEvidence", function(src)
+    return true, DroppedEvidences
 end)
 
-RegisterNetEvent("evidence:removal")
-AddEventHandler("evidence:removal", function(eid)
-    Evidences[eid] = nil
-
-    TriggerClientEvent("evidence:remove:done", -1, eid)
-end)
-
-RegisterNetEvent("evidence:clear")
-AddEventHandler("evidence:clear", function(eids)
-    for i = 1, #eids do
-        Evidences[eids[i]] = nil
+RPC.register("caue-evidence:addEvidence", function(src, pDropped)
+    for k, v in pairs(pDropped) do
+        DroppedEvidences[k] = v
     end
 
-    TriggerClientEvent("evidence:clear:done", -1, eids)
+    return true
+end)
+
+RPC.register("caue-evidence:clearEvidence", function(src, pCoords, pEvidence)
+    for i, v in ipairs(pEvidence) do
+        if DroppedEvidences[v] then
+            DroppedEvidences[v] = nil
+        end
+    end
+
+    local players = GetPlayers()
+    for i, v in ipairs(players) do
+        local coords = GetEntityCoords(GetPlayerPed(v))
+
+        if #(pCoords - coords) < 50.0 then
+            TriggerClientEvent("caue-evidence:clearCache", v)
+        end
+    end
+
+    return true
 end)

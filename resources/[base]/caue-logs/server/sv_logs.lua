@@ -6,7 +6,7 @@ LOGS = {
     ]]
 
     ["connect"] = {
-        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/819685309893705788/ve9Fv1LPgGIBTmAIwY5RCc4MrcsmhHyj708UUlFpJcLV5X-M6BcUy-Ay-B54ULT5mvpk",
+        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/941014929778016269/4_2tA8A-0ZlptOHpRDdP4hG9KNJOreasiE6fq4Vj3KGswvWfFvuvU6xjiAyOoB4w9dK2",
         ["DISCORD_NAME"] = "Connect And Disconnect Logs",
         ["DISCORD_IMAGE"] = "https://i.pinimg.com/736x/76/b5/9f/76b59f362b7f2d57bc6539b37cb54985.jpg",
         ["DISCORD_TITLE"] = "Connect",
@@ -40,7 +40,7 @@ LOGS = {
         end,
     },
     ["disconnect"] = {
-        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/819685309893705788/ve9Fv1LPgGIBTmAIwY5RCc4MrcsmhHyj708UUlFpJcLV5X-M6BcUy-Ay-B54ULT5mvpk",
+        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/941014929778016269/4_2tA8A-0ZlptOHpRDdP4hG9KNJOreasiE6fq4Vj3KGswvWfFvuvU6xjiAyOoB4w9dK2",
         ["DISCORD_NAME"] = "Connect And Disconnect Logs",
         ["DISCORD_IMAGE"] = "https://i.pinimg.com/736x/76/b5/9f/76b59f362b7f2d57bc6539b37cb54985.jpg",
         ["DISCORD_TITLE"] = "Disconnect",
@@ -81,7 +81,7 @@ LOGS = {
     ]]
 
     ["character-create"] = {
-        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/819732601392201739/o0amE0LBnrywmlSQC-drA5B9avkmcgpg4kEDc-0eA__4lD845vARlMm98IyiNTYZTjIq",
+        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/941015536224047104/iMP21mFmAaF64hv7laRBn2NDgpv3WsNzpPgcscW2tu4B8En3SSUnYHYZBtEji3Je0uv_",
         ["DISCORD_NAME"] = "Characters Logs",
         ["DISCORD_IMAGE"] = "https://i.pinimg.com/736x/76/b5/9f/76b59f362b7f2d57bc6539b37cb54985.jpg",
         ["DISCORD_TITLE"] = "Created",
@@ -97,9 +97,9 @@ LOGS = {
             ]],
             { dbid })[1]
 
-            local gender = "Male"
+            local gender = "Homem"
             if char["gender"] == 1 then
-                gender = "Female"
+                gender = "Mulher"
             end
 
             local embed = {
@@ -127,7 +127,7 @@ LOGS = {
         end,
     },
     ["character-delete"] = {
-        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/819732601392201739/o0amE0LBnrywmlSQC-drA5B9avkmcgpg4kEDc-0eA__4lD845vARlMm98IyiNTYZTjIq",
+        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/941015536224047104/iMP21mFmAaF64hv7laRBn2NDgpv3WsNzpPgcscW2tu4B8En3SSUnYHYZBtEji3Je0uv_",
         ["DISCORD_NAME"] = "Characters Logs",
         ["DISCORD_IMAGE"] = "https://i.pinimg.com/736x/76/b5/9f/76b59f362b7f2d57bc6539b37cb54985.jpg",
         ["DISCORD_TITLE"] = "Deleted",
@@ -175,13 +175,13 @@ LOGS = {
     ]]
 
     ["deposit"] = {
-        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/819704587002708048/oWac3UoA1Dm7sYQYyNpaX5Vt7AHMmPTCQwiF_B5BlI_t1rjiDro-lOcJWznNuWSqtoyb",
+        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/941016081806540870/y5DHXWssDg34eWywBkcdpKuhFkJf2VI67hMV0PTLk_WYScydt0noIFoh0lhsYFp2oOfm",
         ["DISCORD_NAME"] = "Bank Logs",
         ["DISCORD_IMAGE"] = "https://i.pinimg.com/736x/76/b5/9f/76b59f362b7f2d57bc6539b37cb54985.jpg",
         ["DISCORD_TITLE"] = "Deposit",
         ["DISCORD_COLOR"] = 65280,
 
-        ["FUNCTION"] = function(type, src, amount, cash, bank, comment, uid)
+        ["FUNCTION"] = function(type, src, amount, cash, bank, comment, uid, accountid)
             local char = exports["caue-base"]:getChar(src)
             if not char then return end
 
@@ -190,7 +190,7 @@ LOGS = {
             local embed = {
                 {
                     ["color"] = LOGS[type]["DISCORD_COLOR"],
-                    ["title"] = "**" .. char["first_name"] .. " " .. char["last_name"] .. "** deposit **$" .. amount .. "**",
+                    ["title"] = "**" .. char["first_name"] .. " " .. char["last_name"] .. "** deposit **$" .. amount .. "** to account **" .. accountid .. "**",
                     ["description"] = "**Transaction ID:** " .. uid .. "\n**Comment:** " .. comment .. "\n\n**Server ID:** " .. src .. "\n**Steam HEX:** " .. ids["hex"] .. "\n**Char ID:** " .. char["id"] .. "\n**Cash:** $" .. (cash - amount) .. "\n**Bank:** $" .. (bank + amount),
                     ["footer"] = {
                         ["text"] = os.date('%d/%m/%Y %H:%M:%S', os.time())
@@ -212,13 +212,13 @@ LOGS = {
         end,
     },
     ["withdraw"] = {
-        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/819704587002708048/oWac3UoA1Dm7sYQYyNpaX5Vt7AHMmPTCQwiF_B5BlI_t1rjiDro-lOcJWznNuWSqtoyb",
+        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/941016187490402325/SqRRyWu6xma197-Pp4ChddLVsb9CxqtFflv9z82dibt9tBKk2KtqgPNmKs40kgJBOHxi",
         ["DISCORD_NAME"] = "Bank Logs",
         ["DISCORD_IMAGE"] = "https://i.pinimg.com/736x/76/b5/9f/76b59f362b7f2d57bc6539b37cb54985.jpg",
         ["DISCORD_TITLE"] = "Withdraw",
         ["DISCORD_COLOR"] = 16711680,
 
-        ["FUNCTION"] = function(type, src, amount, cash, bank, comment, uid)
+        ["FUNCTION"] = function(type, src, amount, cash, bank, comment, uid, accountid)
             local char = exports["caue-base"]:getChar(src)
             if not char then return end
 
@@ -227,7 +227,7 @@ LOGS = {
             local embed = {
                 {
                     ["color"] = LOGS[type]["DISCORD_COLOR"],
-                    ["title"] = "**" .. char["first_name"] .. " " .. char["last_name"] .. "** withdraw **$" .. amount .. "**",
+                    ["title"] = "**" .. char["first_name"] .. " " .. char["last_name"] .. "** withdraw **$" .. amount .. "** from account **" .. accountid .. "**",
                     ["description"] = "**Transaction ID:** " .. uid .. "\n**Comment:** " .. comment .. "\n\n**Server ID:** " .. src .. "\n**Steam HEX:** " .. ids["hex"] .. "\n**Char ID:** " .. char["id"] .. "\n**Cash:** $" .. (cash + amount) .. "\n**Bank:** $" .. (bank - amount),
                     ["footer"] = {
                         ["text"] = os.date('%d/%m/%Y %H:%M:%S', os.time())
@@ -249,30 +249,23 @@ LOGS = {
         end,
     },
     ["transfer"] = {
-        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/819704587002708048/oWac3UoA1Dm7sYQYyNpaX5Vt7AHMmPTCQwiF_B5BlI_t1rjiDro-lOcJWznNuWSqtoyb",
+        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/941016280658497576/N-Gw7-o6HK61N_grYrx6j6aUW1MGXrZYRA9CpZtAQAd4yqCaoZpH1Il28LYQ3pMzTpPO",
         ["DISCORD_NAME"] = "Bank Logs",
         ["DISCORD_IMAGE"] = "https://i.pinimg.com/736x/76/b5/9f/76b59f362b7f2d57bc6539b37cb54985.jpg",
         ["DISCORD_TITLE"] = "Transfer",
         ["DISCORD_COLOR"] = 36095,
 
-        ["FUNCTION"] = function(type, src, to, tosid, amount, bank, comment, uid)
+        ["FUNCTION"] = function(type, src, amount, senderbank, receiverbank, comment, uid, sender, receiver)
             local char = exports["caue-base"]:getChar(src)
             if not char then return end
 
             local ids = GetIds(src)
 
-            local tochar = exports.ghmattimysql:executeSync([[
-                SELECT hex, first_name, last_name, bank
-                FROM characters
-                WHERE id = ?
-            ]],
-            { to })[1]
-
             local embed = {
                 {
                     ["color"] = LOGS[type]["DISCORD_COLOR"],
-                    ["title"] = "**" .. char["first_name"] .. " " .. char["last_name"] .. "** transfer **$" .. amount .. "** to **" .. tochar["first_name"] .. " " .. tochar["last_name"] .. "**",
-                    ["description"] = "**Transaction ID:** " .. uid .. "\n**Comment:** " .. comment .. "\n\n**Server ID:** " .. src .. "\n**Steam HEX:** " .. ids["hex"] .. "\n**Char ID:** " .. char["id"] .. "\n**Bank:** $" .. (bank - amount) .. "\n\n**Server ID:** " .. tosid .. "\n**Steam HEX:** " .. tochar["hex"] .. "\n**Char ID:** " .. to .. "\n**Bank:** $" .. tochar["bank"],
+                    ["title"] = "**" .. char["first_name"] .. " " .. char["last_name"] .. "** transfer **$" .. amount .. "** from account **" .. sender .. "** to account **" .. receiver .. "**",
+                    ["description"] = "**Transaction ID:** " .. uid .. "\n**Comment:** " .. comment .. "\n\n**Server ID:** " .. src .. "\n**Steam HEX:** " .. ids["hex"] .. "\n**Char ID:** " .. char["id"] .. "\n**Sender Bank:** $" .. (senderbank - amount) .. "\n**Receiver Bank:** $" .. (receiverbank + amount),
                     ["footer"] = {
                         ["text"] = os.date('%d/%m/%Y %H:%M:%S', os.time())
                     },
@@ -298,89 +291,8 @@ LOGS = {
         Groups
 
     ]]
-    ["groupDeposit"] = {
-        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/822493189901647884/In1JdCMBi7__7JsjBK90Y4exvyfvKdy7-rL8E0ojfirSk00NeuwXU6OBwO1UCtRb22tP",
-        ["DISCORD_NAME"] = "Groups Logs",
-        ["DISCORD_IMAGE"] = "https://i.pinimg.com/736x/76/b5/9f/76b59f362b7f2d57bc6539b37cb54985.jpg",
-        ["DISCORD_TITLE"] = "Group Deposit",
-        ["DISCORD_COLOR"] = 65280,
-
-        ["FUNCTION"] = function(type, src, group, amount, uid)
-            local char = exports["caue-base"]:getChar(src)
-            if not char then return end
-
-            local ids = GetIds(src)
-            local bank = exports["caue-financials"]:getBalance(char["id"])
-            local groupName = exports["caue-groups"]:groupName(group)
-            local groupBank = exports["caue-groups"]:groupBank(group)
-
-            local embed = {
-                {
-                    ["color"] = LOGS[type]["DISCORD_COLOR"],
-                    ["title"] = "**" .. char["first_name"] .. " " .. char["last_name"] .. "** deposit **$" .. amount .. "** to **" .. groupName .. "**",
-                    ["description"] = "**Transaction ID:** " .. uid .. "\n**Group Bank:** $" .. groupBank .. "\n\n**Server ID:** " .. src .. "\n**Steam HEX:** " .. ids["hex"] .. "\n**Char ID:** " .. char["id"] .. "\n**Bank:** $" .. bank,
-                    ["footer"] = {
-                        ["text"] = os.date('%d/%m/%Y %H:%M:%S', os.time())
-                    },
-                }
-            }
-
-            PerformHttpRequest(
-                LOGS[type]["DISCORD_WEBHOOK"],
-                function(err, text, headers) end,
-                "POST",
-                json.encode({
-                    username = LOGS[type]["DISCORD_NAME"],
-                    embeds = embed,
-                    avatar_url = LOGS[type]["DISCORD_IMAGE"],
-                }),
-                {["Content-Type"] = "application/json"}
-            )
-        end,
-    },
-    ["groupWithdraw"] = {
-        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/822493189901647884/In1JdCMBi7__7JsjBK90Y4exvyfvKdy7-rL8E0ojfirSk00NeuwXU6OBwO1UCtRb22tP",
-        ["DISCORD_NAME"] = "Groups Logs",
-        ["DISCORD_IMAGE"] = "https://i.pinimg.com/736x/76/b5/9f/76b59f362b7f2d57bc6539b37cb54985.jpg",
-        ["DISCORD_TITLE"] = "Group Withdraw",
-        ["DISCORD_COLOR"] = 16711680,
-
-        ["FUNCTION"] = function(type, src, group, amount, uid)
-            local char = exports["caue-base"]:getChar(src)
-            if not char then return end
-
-            local ids = GetIds(src)
-            local accountId = exports["caue-base"]:getChar(src, "bankid")
-            local bank = exports["caue-financials"]:getBalance(accountId)
-            local groupName = exports["caue-groups"]:groupName(group)
-            local groupBank = exports["caue-groups"]:groupBank(group)
-
-            local embed = {
-                {
-                    ["color"] = LOGS[type]["DISCORD_COLOR"],
-                    ["title"] = "**" .. char["first_name"] .. " " .. char["last_name"] .. "** withdraw **$" .. amount .. "** from **" .. groupName .. "**",
-                    ["description"] = "**Transaction ID:** " .. uid .. "\n**Group Bank:** $" .. groupBank .. "\n\n**Server ID:** " .. src .. "\n**Steam HEX:** " .. ids["hex"] .. "\n**Char ID:** " .. char["id"] .. "\n**Bank:** $" .. bank,
-                    ["footer"] = {
-                        ["text"] = os.date('%d/%m/%Y %H:%M:%S', os.time())
-                    },
-                }
-            }
-
-            PerformHttpRequest(
-                LOGS[type]["DISCORD_WEBHOOK"],
-                function(err, text, headers) end,
-                "POST",
-                json.encode({
-                    username = LOGS[type]["DISCORD_NAME"],
-                    embeds = embed,
-                    avatar_url = LOGS[type]["DISCORD_IMAGE"],
-                }),
-                {["Content-Type"] = "application/json"}
-            )
-        end,
-    },
     ["groupRank"] = {
-        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/822493189901647884/In1JdCMBi7__7JsjBK90Y4exvyfvKdy7-rL8E0ojfirSk00NeuwXU6OBwO1UCtRb22tP",
+        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/941024642146131998/kZrKXJk_R-ZapOBhnGNiCijsUFXhjHXWW4o8duqWrBrPir_Eror-gb__Tk7ykIqTzmpq",
         ["DISCORD_NAME"] = "Groups Logs",
         ["DISCORD_IMAGE"] = "https://i.pinimg.com/736x/76/b5/9f/76b59f362b7f2d57bc6539b37cb54985.jpg",
         ["DISCORD_TITLE"] = "Changed Rank",
@@ -432,7 +344,7 @@ LOGS = {
 
     ]]
     ["vehicleShop"] = {
-        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/829478015628869682/sDg3rvgXc3HVQOfvTIO8UHEoieW33YceoHyYLoSbZuKpU2uVzpsnoPDIvIf-osemWdDM",
+        ["DISCORD_WEBHOOK"] = "https://discord.com/api/webhooks/941024940101091378/PrZNVZzjN2t3mHZ7l2e6rpJdVcVUDXuB-QGGQhgLK8zjom4b4Yi78m7o5znxb61oXF_e",
         ["DISCORD_NAME"] = "Vehicle Shop Logs",
         ["DISCORD_IMAGE"] = "https://i.pinimg.com/736x/76/b5/9f/76b59f362b7f2d57bc6539b37cb54985.jpg",
         ["DISCORD_TITLE"] = "Vehicle Shop",

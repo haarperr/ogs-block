@@ -11,6 +11,7 @@ local cam = false
 local customCam = false
 local oldPed = false
 local startingMenu = false
+local currentFadeStyle = 255
 
 local drawable_names = {"face", "masks", "hair", "torsos", "legs", "bags", "shoes", "neck", "undershirts", "vest", "decals", "jackets"}
 local prop_names = {"hats", "glasses", "earrings", "mouth", "lhand", "rhand", "watches", "braclets"}
@@ -26,17 +27,17 @@ local currentTax = 0
 
 local MenuData = {
     clothing_shop = {
-        text = "To buy clothes",
+        text = "Para Comprar Roupas",
         displayName = "Clothing Store",
         basePrice = 5
     },
     barber_shop = {
-        text = "Fix your ugly mug",
+        text = "Cortar o Cabelo",
         displayName = "Barber Shop",
         basePrice = 5
     },
     tattoo_shop = {
-        text = "Become edgy",
+        text = "Rabiscar você mesmo",
         displayName = "Tattoo Parlor",
         basePrice = 5
     }
@@ -91,7 +92,8 @@ function RefreshUI()
         propDrawTotal = GetPropDrawablesTotal(),
         textureTotal = GetTextureTotals(),
         headoverlayTotal = GetHeadOverlayTotals(),
-        skinTotal = GetSkinTotal()
+        skinTotal = GetSkinTotal(),
+        fadeTotal = GetFadeTotal(),
     })
     SendNUIMessage({
         type = "barber_shop",
@@ -106,6 +108,7 @@ function RefreshUI()
         drawtextures = GetDrawTextures(),
         proptextures = GetPropTextures(),
         skin = GetSkin(),
+        currentFade = currentFadeStyle,
         oldPed = oldPed,
     })
     SendNUIMessage({
@@ -328,6 +331,7 @@ function LoadPed(data)
     SetPedHeadBlend(data.headBlend)
     SetHeadStructure(data.headStructure)
     SetHeadOverlayData(data.headOverlay)
+    setFacialDecoration(data.fadeStyle)
     return
 end
 
@@ -344,6 +348,7 @@ function GetCurrentPed()
         props = GetProps(),
         drawtextures = GetDrawTextures(),
         proptextures = GetPropTextures(),
+        fadeStyle = currentFadeStyle
     }
 end
 
@@ -547,13 +552,16 @@ function OpenMenu(name, pPriceText, pPrice)
         EnableGUI(true, name, pPriceText, pPrice)
         TriggerEvent("inmenu", true)
     else
-        TriggerEvent("DoLongHudText", "You are not welcome here!");
+        TriggerEvent("DoLongHudText", "Você não é bem vindo aqui!");
     end
 end
 
-function Save(save, close)
+function Save(save, close, newFadeStyle)
     if save then
         data = GetCurrentPed()
+        data.fadeStyle = newFadeStyle
+
+        currentFadeStyle = newFadeStyle
 
         if (GetCurrentPed().model == GetHashKey("mp_f_freemode_01") or GetCurrentPed().model == GetHashKey("mp_m_freemode_01")) and startingMenu then
             -- nothing
@@ -565,9 +573,10 @@ function Save(save, close)
             TriggerServerEvent("caue-clothes:updateClothes", data, currentTats)
             TriggerEvent("caue-login:finishedClothing","Finished")
         elseif not passedClothing then
+            EnableGUI(false, false)
             passedClothing = true
-            Wait(2000)
-            OpenMenu("barber_shop")
+            Wait(1000)
+            OpenMenu("clothing_shop")
             return
         end
     else
@@ -582,8 +591,6 @@ function Save(save, close)
     TriggerEvent("inmenu", false)
     TriggerEvent("ressurection:relationships:norevive")
     TriggerEvent("caue-ai:setDefaultRelations")
-    TriggerEvent("facewear:update")
-    TriggerEvent("np-weapons:getAmmo")
     CustomCamera("torso", true)
     startingMenu = false
 end
@@ -712,7 +719,6 @@ end
 
 ]]
 
-
 -- currentTats [[collectionHash, tatHash], [collectionHash, tatHash]]
 -- loop tattooHashList [categ] find [tatHash, collectionHash]
 
@@ -746,6 +752,44 @@ function SetTats(data)
     ClearPedDecorations(PlayerPedId())
     for i = 1, #currentTats do
         ApplyPedOverlay(PlayerPedId(), currentTats[i][1], currentTats[i][2])
+    end
+end
+
+--[[
+
+    Functions Fade
+
+]]
+
+function isFreemodeModel(pModelHash)
+    return pModelHash == `mp_f_freemode_01` or pModelHash == `mp_m_freemode_01`
+end
+
+function GetFadeTotal()
+    local data = getFacialDecorationsData()
+    return #data
+end
+
+function getFacialDecorationsData()
+    local playerPed = PlayerPedId()
+    local playerModel = GetEntityModel(playerPed)
+    if isFreemodeModel(playerModel) then
+        return FADE_CONFIGURATIONS[playerModel == `mp_m_freemode_01` and "male" or "female"]
+    else
+        return {}
+    end
+end
+
+function setFacialDecoration(pFadeStyle)
+    local fadeStyle = tonumber(pFadeStyle) or 255
+    local playerPed = PlayerPedId()
+    local playerModel = GetEntityModel(playerPed)
+    ClearPedFacialDecorations(playerPed)
+    if fadeStyle and fadeStyle > 0 and fadeStyle ~= 255 and isFreemodeModel(playerModel) then
+        local facialDecoration = FADE_CONFIGURATIONS[playerModel == `mp_m_freemode_01` and "male" or "female"][fadeStyle]
+        Wait(1)
+        print(playerPed, facialDecoration[1], facialDecoration[2])
+        SetPedFacialDecoration(playerPed, facialDecoration[1], facialDecoration[2])
     end
 end
 
@@ -862,8 +906,12 @@ RegisterNUICallback('savefacefeatures', function(data, cb)
 end)
 
 RegisterNUICallback('saveheadoverlay', function(data, cb)
-    local index = has_value(head_overlays, data["name"])
-    SetPedHeadOverlay(player,  index, tonumber(data["value"]), tonumber(data["opacity"]) / 100)
+    if data["name"] == "fadeStyle" then
+        setFacialDecoration(tonumber(data["value"]))
+    else
+        local index = has_value(head_overlays, data["name"])
+        SetPedHeadOverlay(player,  index, tonumber(data["value"]), tonumber(data["opacity"]) / 100)
+    end
     cb('ok')
 end)
 
@@ -880,10 +928,11 @@ end)
 
 RegisterNUICallback('escape', function(data, cb)
     local shouldSave = data['save'] or false
+    local newFadeStyle = data["fadeStyle"] or 255
     if shouldSave and currentPrice > 0 then
         local purchaseSuccess = RPC.execute("caue-clothes:purchase", currentPrice, currentTax)
         if not purchaseSuccess then
-            TriggerEvent("DoLongHudText", "You don't have enough money!")
+            TriggerEvent("DoLongHudText", "Você não tem dinheiro suficiente!")
             shouldSave = false
         end
     end
@@ -898,7 +947,7 @@ RegisterNUICallback('escape', function(data, cb)
         exports["caue-interaction"]:showInteraction(("[M] %s"):format(currentZone.text))
     end
 
-    Save(shouldSave,true)
+    Save(shouldSave, true, newFadeStyle)
     cb('ok')
 end)
 
@@ -981,15 +1030,18 @@ AddEventHandler("caue-clothes:setClothes", function(data)
         SetPedHairColor(player, tonumber(haircolor[1]), tonumber(haircolor[2]))
         SetHeadOverlayData(data.headOverlay)
 
+        currentFadeStyle = data.fadeStyle
+
         Citizen.Wait(500)
 
         if data.tattoos then
             currentTats = playerTattoosList
             SetTats(GetTats())
         end
+
+        setFacialDecoration(currentFadeStyle)
     end
 
-	TriggerEvent("facewear:update")
 	TriggerServerEvent("caue-hud:getData")
     TriggerServerEvent("caue-flags:ped:getFlags")
 end)
@@ -1007,20 +1059,26 @@ AddEventHandler('raid_clothes:openClothing', function(pDontShowBarber, pShouldCo
 
         currentPrice = tax.total
         currentTax = tax.tax
-        OpenMenu("clothing_shop", "$" .. tax.total .. " Incl. " .. tax.porcentage .. "% tax", currentPrice)
+        OpenMenu("clothing_shop", "$" .. tax.total .. " Incl. " .. tax.porcentage .. "% taxas", currentPrice)
         startingMenu = false
     else
         currentPrice = 0
-        OpenMenu("clothing_shop", '', 0)
+
+        if pDontShowBarber == nil and pShouldCost == nil then
+            OpenMenu("barber_shop", "", 0)
+        else
+            OpenMenu("clothing_shop", "", 0)
+        end
+
         startingMenu = true
     end
     passedClothing = pDontShowBarber or false
 end)
 
-RegisterNetEvent('raid_clothes:saveCharacterClothes')
-AddEventHandler('raid_clothes:saveCharacterClothes', function()
+RegisterNetEvent("caue-clothes:saveCurrentClothes")
+AddEventHandler("caue-clothes:saveCurrentClothes", function()
     local data = GetCurrentPed()
-    TriggerServerEvent("raid_clothes:insert_character_current", data)
+    TriggerServerEvent("caue-clothes:updateClothes", data, currentTats)
 end)
 
 --[[

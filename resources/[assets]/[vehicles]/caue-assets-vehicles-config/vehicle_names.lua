@@ -101,6 +101,7 @@ Citizen.CreateThread(function()
 	AddTextEntry("FLAG_023", "Ireland")
 	AddTextEntry("FLAG_024", "Wales")
 	AddTextEntry("FLAG_025", "England")
+
 	--Police Stickers
 	AddTextEntry("STICKER_SAPR", "Park Rangers")
 	AddTextEntry("STICKER_K9", "K9")
@@ -127,12 +128,15 @@ Citizen.CreateThread(function()
 	AddTextEntry("STICKER_B_451", "B_451")
 	AddTextEntry("STICKER_B_484", "B_484")
 	AddTextEntry("STICKER_B_490", "B_490")
+
 	--Explorer
 	AddTextEntry("NPOLEXP_ANT1", "LSPD City Range")
 	AddTextEntry("NPOLEXP_ANT2", "State & County Range")
 	AddTextEntry("NPOLEXP_BBAR_1", "Widebar")
+
 	-- Generic Spoiler
 	AddTextEntry("NULL_Spoiler", "Aero package")
+
 	--M5
 	AddTextEntry("F10M5_WINGRICE", "Awful Forza Spoiler")
 	AddTextEntry("F10M5_SPLITRICE", "Awful Forza Splitter")
@@ -209,6 +213,7 @@ Citizen.CreateThread(function()
 	AddTextEntry("M5_F10_ENG_V10", "Standard E60 M5 V10")
 	AddTextEntry("F10M5RC", "RC F10 M5")
 	AddTextEntry("F10_M5_LIVERY_1", "BMW M Motorsport")
+
 	--LC500
 	AddTextEntry("0x2C4374B9","QNFKR Racer by Flex")
 	AddTextEntry("0xFE7D192D","KillaManShankz by SnuggyMonkey")
@@ -225,15 +230,19 @@ Citizen.CreateThread(function()
 	AddTextEntry("LC500_LIV13","Shankz by JacobF")
 	AddTextEntry("LC500_LIV14","DodoAK47 by elle")
 	AddTextEntry("LC500_LIV15","Bullet Club by auggus")
+
 	--Bentley
 	AddTextEntry("0x6251F2A3","The Dragon")
+
 	--GTR C
 	AddTextEntry("0xFF1F5E98","Downforce COPIUM")
+
 	--Boxville
 	AddTextEntry("0xC33D77CC","NoPixel Cards")
 	AddTextEntry("0x81097365","Dodo Logistics")
 	AddTextEntry("0x726DD62E","Dodo Prime")
 	AddTextEntry("0xA4CA3AEA","Vultur Le Culture")
+
 	--Deluxo
 	AddTextEntry("0x850EC7A8","Back to the Future by Viper")
 	AddTextEntry("0x6FBE9D08","Black Waves by Kikobri")
@@ -252,6 +261,7 @@ Citizen.CreateThread(function()
 	AddTextEntry("0x16C0701D","Timelord 2077 White by SpartanOne")
 	AddTextEntry("0xED0F1CBB","Vix by Vix")
 	AddTextEntry("0xFB94B9C6","White Waves by Kikobri")
+
 	--Mustang
 	AddTextEntry("0x1AC92852","RTR Spec2")
 	AddTextEntry("0x2C2380BA","Spoiler2")
@@ -282,6 +292,7 @@ Citizen.CreateThread(function()
 	AddTextEntry("0xB7059BE1","Shelby GT350R")
 	AddTextEntry("0xD2F44E49","Mustang GT")
 	AddTextEntry("0xE1FA6C65","RTR Spec2")
+
 	--C7
 	AddTextEntry("0x4A1931C5","Z06")
 	AddTextEntry("0x56DF3703","Z06")
@@ -294,12 +305,15 @@ Citizen.CreateThread(function()
 	AddTextEntry("0xCE8648AE","Hennessy")
 	AddTextEntry("0xD94B5B62","Z06")
 	AddTextEntry("0xF5ACE7AB","Z06")
+
 	--Challenger
 	AddTextEntry("0x23B6AF16","SRT Spoiler")
+
 	--News
 	AddTextEntry("0xE3613EAD","LSBN News")
 	AddTextEntry("0xD11A9A20","LSBN News Inverse")
 	AddTextEntry("0x413AFA63","Weazel News")
+
 	--Everything Else
 	AddTextEntry("0x00D6B5EE","Hayes Auto Body Shop")
 	AddTextEntry("0xE9225A81","Hayes Auto Body Shop")
@@ -654,4 +668,7 @@ Citizen.CreateThread(function()
 
 	-- Vehicles
 	AddTextEntryByHash(GetHashKey("npolvic"), "Ford Crown Victoria Police Interceptor")
+	AddTextEntryByHash(GetHashKey("npolchar"), "Dodge Charger Pursuit Police")
+	AddTextEntryByHash(GetHashKey("npolexp"), "Ford Explorer Police Interceptor")
+	AddTextEntryByHash(GetHashKey("bimx"), "BIMX")
 end)

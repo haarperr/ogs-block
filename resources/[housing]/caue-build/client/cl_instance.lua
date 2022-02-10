@@ -13,9 +13,9 @@ RegisterNetEvent('Instance:setCurrentInstance')
 AddEventHandler('Instance:setCurrentInstance', function(instanceID,instance)
 	Build.CurrentInstanceID = instanceID
 	Build.CurrentInstance = instance
-	
 
-	if instanceID == -1 then 
+
+	if instanceID == -1 then
 		Build.func.ClearPedOfAllInstancing()
 	end
 
@@ -24,21 +24,19 @@ AddEventHandler('Instance:setCurrentInstance', function(instanceID,instance)
 end)
 
 
-Citizen.CreateThread(function() 
+Citizen.CreateThread(function()
 	Build.func.ClearPedOfAllInstancing()
 	Build.playerped = PlayerPedId()
 
     while true do
-    	Build.plyCoords = GetEntityCoords(PlayerPedId())
-		for i = 0, 256 do
-			if (NetworkIsPlayerActive(i)) then
-				local target = GetPlayerPed(i)
-				local targetCoords = GetEntityCoords(target)
-				local distance = Build.func.getDistanceIgnoreZ(Build.plyCoords,targetCoords)
+		Build.plyCoords = GetEntityCoords(PlayerPedId())
+		for k,v in pairs(GetActivePlayers()) do
+			local target = GetPlayerPed(v)
+			local targetCoords = GetEntityCoords(target)
+			local distance = Build.func.getDistanceIgnoreZ(Build.plyCoords,targetCoords)
 
-				if distance < Build.loadDistance and target ~= Build.playerped and target ~= nil then
-					Build.Players[GetPlayerServerId(i)] = i;
-				end
+			if distance < Build.loadDistance and target ~= Build.playerped and target ~= nil then
+				Build.Players[GetPlayerServerId(v)] = v
 			end
 		end
 
@@ -52,7 +50,7 @@ Citizen.CreateThread(function()
     	Build.plyCoords = GetEntityCoords(PlayerPedId())
     	--print("Target List "..json.encode(Build.Players))
 
-    	
+
         for i, target in pairs(Build.Players) do
 
         	if Build.CurrentInstance ~= nil and Build.CurrentInstance[i] then
@@ -105,7 +103,7 @@ function Build.func.WipePrevInstances()
 			--print("Making src "..i.." visiable due to out of range")
 			NetworkConcealPlayer(v,false,false)
 		end
-			
+
 	end
 
 	Build.Players = {}
@@ -114,10 +112,8 @@ end
 
 function Build.func.ClearPedOfAllInstancing()
 	Build.plyCoords = GetEntityCoords(PlayerPedId())
-	for i = 0, 256 do
-		if (NetworkIsPlayerActive(i)) then
-			NetworkConcealPlayer(i,false,false)
-		end
+	for k,v in pairs(GetActivePlayers()) do
+		NetworkConcealPlayer(v,false,false)
 	end
 end
 
@@ -139,7 +135,7 @@ function Build.func.enterInstancedBuilding(plan,genID)
 		Build.func.CleanUpPeds()
 		TriggerEvent("inhotel",true)
 	end
-		
+
     return false
 end
 

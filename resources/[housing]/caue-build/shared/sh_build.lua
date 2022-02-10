@@ -35,8 +35,8 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to see outfits","raid_clothes:outfits"},
-				["housingSecondary"] = {"to swap char","apartments:Logout"},
+				["housingMain"] = {"para vêr roupas","raid_clothes:outfits"},
+				["housingSecondary"] = {"para tela de seleção","apartments:Logout"},
 			},
 			[2] = {
 
@@ -44,7 +44,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","apartments:leave"},
+				["housingMain"] = {"para sair.","apartments:leave"},
 				["housingSecondary"] = {"",""},
 			},
 			[3] = {
@@ -53,9 +53,18 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to interact.","apartments:stash"},
+				["housingMain"] = {"para interagir.","apartments:stash"},
 				["housingSecondary"] = {"",""},
 			}
+		},
+		["peek"] = {
+			["model"] = -1388847408,
+			["event"] = "caue-housing:alarmEnter",
+			["id"] = "caue-housing:alarmEnter",
+			["icon"] = "hammer",
+			["label"] = "Disable",
+			["distance"] = {radius = 2.0},
+			["pos"] = vector3(-1.84,-2.62,1.10)
 		}
 	},
 
@@ -82,8 +91,8 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to see outfits","raid_clothes:outfits"},
-				["housingSecondary"] = {"to swap char","apartments:Logout"},
+				["housingMain"] = {"para vêr roupas","raid_clothes:outfits"},
+				["housingSecondary"] = {"para mudar de character","apartments:Logout"},
 			},
 			[2] = {
 
@@ -91,7 +100,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","apartments:leave"},
+				["housingMain"] = {"para sair.","apartments:leave"},
 				["housingSecondary"] = {"",""},
 			},
 			[3] = {
@@ -100,7 +109,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to interact.","apartments:stash"},
+				["housingMain"] = {"para interagir.","apartments:stash"},
 				["housingSecondary"] = {"",""},
 			},
 		}
@@ -132,15 +141,15 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to see outfits","raid_clothes:outfits"},
-				["housingSecondary"] = {"to swap char","apartments:Logout"},
+				["housingMain"] = {"para vêr roupas","raid_clothes:outfits"},
+				["housingSecondary"] = {"para mudar de character","apartments:Logout"},
 			},
 			[2] = {
 				["offset"] = vector3(4.3,-15.95,0.95),
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","apartments:leave"},
+				["housingMain"] = {"para sair.","apartments:leave"},
 				["housingSecondary"] = {"",""},
 			},
 			[3] = {
@@ -148,9 +157,18 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to interact.","apartments:stash"},
+				["housingMain"] = {"para interagir.","apartments:stash"},
 				["housingSecondary"] = {"",""},
 			}
+		},
+		["peek"] = {
+			["model"] = -1388847408,
+			["event"] = "caue-housing:alarmEnter",
+			["id"] = "caue-housing:alarmEnter",
+			["icon"] = "hammer",
+			["label"] = "Disable",
+			["distance"] = {radius = 2.0},
+			["pos"] = vector3(3.57,-0.38,1.06)
 		}
 	},
 
@@ -225,8 +243,8 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to see outfits","raid_clothes:outfits"},
-				["housingSecondary"] = {"to swap char","apartments:Logout"},
+				["housingMain"] = {"para vêr roupas","raid_clothes:outfits"},
+				["housingSecondary"] = {"para mudar de character","apartments:Logout"},
 			},
 			[2] = {
 
@@ -234,7 +252,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave ","apartments:leave"},
+				["housingMain"] = {"para mudar ","apartments:leave"},
 				["housingSecondary"] = {"",""},
 				--["housingSecondary"] = {"to enter garage.","apartments:garage"},
 			},
@@ -244,7 +262,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to interact.","apartments:stash"},
+				["housingMain"] = {"para interagir.","apartments:stash"},
 				["housingSecondary"] = {"",""},
 			}
 		}
@@ -274,8 +292,8 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to Room","apartments:garageToHouse"},
-				["housingSecondary"] = {"to Garage Door.","apartments:garageToWorld"},
+				["housingMain"] = {"para o quarto","apartments:garageToHouse"},
+				["housingSecondary"] = {"para a porta da garagem.","apartments:garageToWorld"},
 			},
 		}
 	},
@@ -305,10 +323,19 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","housing:frontdoor"},
+				["housingMain"] = {"para sair.","housing:frontdoor"},
 				["housingSecondary"] = {"",""},
 			},
 		},
+		["peek"] = {
+			["model"] = -1388847408,
+			["event"] = "caue-housing:alarmEnter",
+			["id"] = "caue-housing:alarmEnter",
+			["icon"] = "hammer",
+			["label"] = "Disable",
+			["distance"] = {radius = 2.0},
+			["pos"] = vector3(1.85,3.93,1.16)
+		}
 	},
 
 	-- Offices
@@ -337,7 +364,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","housing:frontdoor"},
+				["housingMain"] = {"para sair.","housing:frontdoor"},
 				["housingSecondary"] = {"",""},
 			},
 		},
@@ -356,7 +383,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","housing:frontdoor"},
+				["housingMain"] = {"para sair.","housing:frontdoor"},
 				["housingSecondary"] = {"",""},
 			},
 		},
@@ -373,7 +400,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","housing:frontdoor"},
+				["housingMain"] = {"para sair.","housing:frontdoor"},
 				["housingSecondary"] = {"",""},
 			},
 		},
@@ -390,7 +417,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","housing:frontdoor"},
+				["housingMain"] = {"para sair.","housing:frontdoor"},
 				["housingSecondary"] = {"",""},
 			},
 		},
@@ -407,7 +434,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","housing:frontdoor"},
+				["housingMain"] = {"para sair.","housing:frontdoor"},
 				["housingSecondary"] = {"",""},
 			},
 		},
@@ -424,10 +451,19 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","housing:frontdoor"},
+				["housingMain"] = {"para sair.","housing:frontdoor"},
 				["housingSecondary"] = {"",""},
 			},
 		},
+		["peek"] = {
+			["model"] = -1388847408,
+			["event"] = "caue-housing:alarmEnter",
+			["id"] = "caue-housing:alarmEnter",
+			["icon"] = "hammer",
+			["label"] = "Disable",
+			["distance"] = {radius = 2.0},
+			["pos"] = vector3(9.60,1.91,6.80)
+		}
 	},
 
 	["v_int_61"] = {
@@ -441,7 +477,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","housing:frontdoor"},
+				["housingMain"] = {"para sair.","housing:frontdoor"},
 				["housingSecondary"] = {"",""},
 			},
 		},
@@ -458,7 +494,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","housing:frontdoor"},
+				["housingMain"] = {"para sair.","housing:frontdoor"},
 				["housingSecondary"] = {"",""},
 			},
 		},
@@ -475,7 +511,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","housing:frontdoor"},
+				["housingMain"] = {"para sair.","housing:frontdoor"},
 				["housingSecondary"] = {"",""},
 			},
 		},
@@ -492,7 +528,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","housing:frontdoor"},
+				["housingMain"] = {"para sair.","housing:frontdoor"},
 				["housingSecondary"] = {"",""},
 			},
 		},
@@ -509,7 +545,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","housing:frontdoor"},
+				["housingMain"] = {"para sair.","housing:frontdoor"},
 				["housingSecondary"] = {"",""},
 			},
 		},
@@ -526,7 +562,7 @@ Build.Plans = {
 				["viewDist"] = 2.0,
 				["useDist"] = 2.0,
 				["generalUse"] = {"",""},
-				["housingMain"] = {"to leave.","housing:frontdoor"},
+				["housingMain"] = {"para sair.","housing:frontdoor"},
 				["housingSecondary"] = {"",""},
 			},
 		},

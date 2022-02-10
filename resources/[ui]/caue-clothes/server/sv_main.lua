@@ -11,6 +11,7 @@ databaseFormat = {
     "drawtextures",
     "proptextures",
     "hairColor",
+    "fadeStyle",
     "headBlend",
     "headStructure",
     "headOverlay",
@@ -64,6 +65,7 @@ AddEventHandler("caue-clothes:getClothes", function(_src)
                 drawtextures = json.decode(result[1].drawtextures),
                 proptextures = json.decode(result[1].proptextures),
                 hairColor = json.decode(result[1].hairColor),
+                fadeStyle = result[1].fadeStyle,
                 headBlend = json.decode(result[1].headBlend),
                 headStructure = json.decode(result[1].headStructure),
                 headOverlay = json.decode(result[1].headOverlay),
@@ -86,6 +88,8 @@ AddEventHandler("caue-clothes:updateClothes",function(data, tats)
     for i, v in ipairs(databaseFormat) do
         if v == "model" then
             data[v] = tostring(data[v])
+        elseif v == "fadeStyle" then
+            data[v] = tonumber(data[v])
         else
             if data[v] then
                 data[v] = json.encode(data[v])
@@ -107,17 +111,17 @@ AddEventHandler("caue-clothes:updateClothes",function(data, tats)
     function(result)
         if not result then
             exports.ghmattimysql:execute([[
-                INSERT INTO characters_clothes (cid, model, drawables, props, drawtextures, proptextures, hairColor, headBlend, headStructure, headOverlay, tattoos)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO characters_clothes (cid, model, drawables, props, drawtextures, proptextures, hairColor, fadeStyle, headBlend, headStructure, headOverlay, tattoos)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ]],
-            { cid, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.headBlend, data.headStructure, data.headOverlay, tattoos })
+            { cid, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay, tattoos })
         else
             exports.ghmattimysql:execute([[
                 UPDATE characters_clothes
-                SET model = ?, drawables = ?, props = ?, drawtextures = ?, proptextures = ?, hairColor = ?, headBlend = ?, headStructure = ?, headOverlay = ?, tattoos = ?
+                SET model = ?, drawables = ?, props = ?, drawtextures = ?, proptextures = ?, hairColor = ?, fadeStyle = ?, headBlend = ?, headStructure = ?, headOverlay = ?, tattoos = ?
                 WHERE cid = ?
             ]],
-            { data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.headBlend, data.headStructure, data.headOverlay, tattoos, cid })
+            { data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay, tattoos, cid })
         end
     end)
 end)

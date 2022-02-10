@@ -773,7 +773,7 @@
 
         <Item type="CWeaponInfo">
           <Name>WEAPON_MICROSMG2</Name>
-          <Model>w_sb_uzi</Model>
+          <Model>w_sb_microsmg2</Model>
           <Audio>AUDIO_ITEM_MICROSMG</Audio>
           <Slot>SLOT_MICROSMG2</Slot>
           <DamageType>BULLET</DamageType>
@@ -1014,11 +1014,29 @@
               <AttachBone>WAPClip</AttachBone>
               <Components>
                 <Item>
-                  <Name>COMPONENT_UZI_CLIP_01</Name>
+                  <Name>COMPONENT_MICROSMG2_CLIP_01</Name>
                   <Default value="true" />
                 </Item>
                 <Item>
-                  <Name>COMPONENT_UZI_CLIP_02</Name>
+                  <Name>COMPONENT_MICROSMG2_CLIP_02</Name>
+                  <Default value="false" />
+                </Item>
+              </Components>
+            </Item>
+            <Item>
+              <AttachBone>WAPFlshLasr</AttachBone>
+              <Components>
+                <Item>
+                  <Name>COMPONENT_AT_PI_FLSH</Name>
+                  <Default value="false" />
+                </Item>
+              </Components>
+            </Item>
+            <Item>
+              <AttachBone>WAPScop</AttachBone>
+              <Components>
+                <Item>
+                  <Name>COMPONENT_AT_SCOPE_MACRO</Name>
                   <Default value="false" />
                 </Item>
               </Components>
@@ -1027,7 +1045,7 @@
               <AttachBone>WAPSupp</AttachBone>
               <Components>
                 <Item>
-                  <Name>COMPONENT_AT_UZI_SUPP</Name>
+                  <Name>COMPONENT_AT_AR_SUPP_02</Name>
                   <Default value="false" />
                 </Item>
               </Components>
@@ -1036,11 +1054,7 @@
               <AttachBone>gun_root</AttachBone>
               <Components>
                 <Item>
-                  <Name>COMPONENT_UZI_STOCK</Name>
-                  <Default value="false" />
-                </Item>
-				<Item>
-                  <Name>COMPONENT_UZI_WOOD</Name>
+                  <Name>COMPONENT_MICROSMG_VARMOD_LUXE</Name>
                   <Default value="false" />
                 </Item>
               </Components>
@@ -1457,7 +1471,7 @@
           <RecoilAccuracyToAllowHeadShotPlayer value="0.175000" />
           <MinHeadShotDistancePlayer value="5.000000" />
           <MaxHeadShotDistancePlayer value="40.000000" />
-          <HeadShotDamageModifierPlayer value="1.500000" />
+          <HeadShotDamageModifierPlayer value="2.500000" />
           <Damage value="32.000000" />
           <DamageTime value="0.000000" />
           <DamageTimeInVehicle value="0.000000" />

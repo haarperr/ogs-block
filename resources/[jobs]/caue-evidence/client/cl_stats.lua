@@ -5,7 +5,7 @@
 ]]
 
 local allowdamage = false
-local StoringEnabled = true
+local StoringEnabled = false
 
 local CurrentDamageList = {}
 local CurrentLocationList = {}
@@ -27,9 +27,9 @@ local bleeddamage2 = false
 local sweatTriggered = false
 local bodySweat = 0
 
-local lastTarget
-local target
-local targetLastHealth
+local lastTarget = nil
+local target = nil
+local targetLastHealth = nil
 
 local passingout = false
 local fading = false
@@ -343,6 +343,8 @@ function bleedMulti(WeaponValue)
 end
 
 function myBleeds()
+    if true then return end
+
     bleedcount = bleedcount - 1
     bleeddamage2 = true
 
@@ -634,7 +636,8 @@ function findBed(fadein)
                 TriggerEvent("bones:client:updateServer")
             end
 
-            TriggerEvent("chatMessage", "Service ", 5, "It was a success!")
+            TriggerServerEvent("caue-evidence:hospitalHeal")
+            TriggerEvent("chatMessage", "Service ", {155, 80, 199}, "It was a success!")
             SetEntityHealth(PlayerPedId(), 200)
 
             Citizen.Wait(1000)
@@ -829,7 +832,7 @@ end
 
 function runHealAnim()
 	if not IsEntityPlayingAnim(PlayerPedId(), "mini@cpr@char_a@cpr_str", "cpr_pumpchest", 3) then
-		LoadAnimationDictionary("mini@cpr@char_a@cpr_str")
+		loadAnimDict("mini@cpr@char_a@cpr_str")
 		TaskPlayAnim(PlayerPedId(), "mini@cpr@char_a@cpr_str", "cpr_pumpchest", 8.0, -8, -1, 49, 0, 0, 0, 0)
 	end
 end
@@ -852,6 +855,139 @@ end
     Events
 
 ]]
+
+RegisterNetEvent("caue-evidence:reset")
+AddEventHandler("caue-evidence:reset",function()
+    allowdamage = false
+    StoringEnabled = false
+
+    CurrentDamageList = {}
+    CurrentLocationList = {}
+
+    armor = false
+    lasthealth = GetEntityHealth(PlayerPedId())
+    lastarmor = GetPedArmour(PlayerPedId())
+    lasthealth2 = lasthealth
+
+    bleedmulti = 1
+    bleedcount = 0
+    heavybleed = false
+    lightbleed = false
+    lightestbleed = false
+    initialbleed = false
+    bleeddamage = false
+    bleeddamage2 = false
+
+    sweatTriggered = false
+    bodySweat = 0
+
+    lastTarget = nil
+    target = nil
+    targetLastHealth = nil
+
+    passingout = false
+    fading = false
+    maxfade = 0.0
+    curfading = 0
+
+    legsdisabled = false
+    armsdisabled = false
+
+    bleedLevel = 0
+    setBleedLevel = 0
+
+    stresslevel = 0
+    clipchanged = false
+    myboneActive = false
+    indamagefunction = false
+
+    inbed = false
+    injurycount = 0
+    bonesUpdatingServer = false
+
+    sleeping = false
+    showInteraction = true
+
+    healing = false
+
+    bonesTarget = {}
+    healTargetBoneId = 0
+    targetidsend = 0
+
+    Currentstates = {
+        [1] = { ["text"] = "Red Hands", ["status"] = false, ["timer"] = 0 },
+        [2] = { ["text"] = "Dilated Eyes", ["status"] = false, ["timer"] = 0 },
+        [3] = { ["text"] = "Red Eyes", ["status"] = false, ["timer"] = 0 },
+        [4] = { ["text"] = "Smells Like Marijuana", ["status"] = false, ["timer"] = 0 },
+        [5] = { ["text"] = "Fresh Bandaging", ["status"] = false, ["timer"] = 0 },
+        [6] = { ["text"] = "Agitated", ["status"] = false, ["timer"] = 0 },
+        [7] = { ["text"] = "Uncoordinated", ["status"] = false, ["timer"] = 0 },
+        [8] = { ["text"] = "Breath smells like Alcohol", ["status"] = false, ["timer"] = 0 },
+        [9] = { ["text"] = "Smells like Gasoline", ["status"] = false, ["timer"] = 0 },
+        [10] = { ["text"] = "Red Gunpowder Residue", ["status"] = false, ["timer"] = 0 },
+        [11] = { ["text"] = "Smells of Chemicals", ["status"] = false, ["timer"] = 0 },
+        [12] = { ["text"] = "Smells of Oil / Metalwork", ["status"] = false, ["timer"] = 0 },
+        [13] = { ["text"] = "Ink Stained Hands", ["status"] = false, ["timer"] = 0 },
+        [14] = { ["text"] = "Smells like smoke.", ["status"] = false, ["timer"] = 0 },
+        [15] = { ["text"] = "Has camping equipment.", ["status"] = false, ["timer"] = 0 },
+        [16] = { ["text"] = "Smells like burnt Aluminum and iron.", ["status"] = false, ["timer"] = 0 },
+        [17] = { ["text"] = "Has metal specs on clothing.", ["status"] = false, ["timer"] = 0 },
+        [18] = { ["text"] = "Smells Like Cigarette Smoke.", ["status"] = false, ["timer"] = 0 },
+        [19] = { ["text"] = "Labored Breathing.", ["status"] = false, ["timer"] = 0 },
+        [20] = { ["text"] = "Body Sweat.", ["status"] = false, ["timer"] = 0 },
+        [21] = { ["text"] = "Clothing Sweat.", ["status"] = false, ["timer"] = 0 },
+        [22] = { ["text"] = "Wire Cuts.", ["status"] = false, ["timer"] = 0 },
+        [23] = { ["text"] = "Saturated Clothing.", ["status"] = false, ["timer"] = 0 },
+        [24] = { ["text"] = "Looks Dazed.", ["status"] = false, ["timer"] = 0 },
+        [25] = { ["text"] = "Looks Well Fed.", ["status"] = false, ["timer"] = 0 },
+        [26] = { ["text"] = "Has scratches on hands.", ["status"] = false, ["timer"] = 0 },
+        [27] = { ["text"] = "Looks Alert.", ["status"] = false, ["timer"] = 0 },
+    }
+
+    bones = {
+        [1] =  { ["applied"] = false, ["maxhit"] = false, ["part"] = "Pelvis",               ["boneIndex"] = 11816, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 4, ["offset1"] = 0.35, ["offset2"] = 0.35, ["zone"] = 0 },
+        [2] =  { ["applied"] = false, ["maxhit"] = false, ["part"] = "Left Thigh",           ["boneIndex"] = 58271, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 4, ["offset1"] = 0.35, ["offset2"] = 0.8,  ["zone"] = 4 },
+        [3] =  { ["applied"] = false, ["maxhit"] = false, ["part"] = "Mouth",                ["boneIndex"] = 47495, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.45, ["offset2"] = 0.35, ["zone"] = 1 },
+        [4] =  { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Left Foot",            ["boneIndex"] = 14201, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 4 },
+        [5] =  { ["applied"] = false, ["maxhit"] = false, ["part"] = "Left Knee",            ["boneIndex"] = 46078, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 4, ["offset1"] = 0.35, ["offset2"] = 0.55, ["zone"] = 4 },
+        [6] =  { ["applied"] = false, ["maxhit"] = false, ["part"] = "Right Thigh",          ["boneIndex"] = 51826, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 4, ["offset1"] = 0.35, ["offset2"] = 0.8,  ["zone"] = 5 },
+        [7] =  { ["applied"] = false, ["maxhit"] = false, ["part"] = "Spine Lower",          ["boneIndex"] = 24816, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 5, ["offset1"] = 0.25, ["offset2"] = 0.35, ["zone"] = 0 },
+        [8] =  { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Right Foot",           ["boneIndex"] = 52301, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 5 },
+        [9] =  { ["applied"] = false, ["maxhit"] = false, ["part"] = "Right Knee",           ["boneIndex"] = 16335, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 4, ["offset1"] = 0.35, ["offset2"] = 0.55, ["zone"] = 5 },
+        [10] = { ["applied"] = false, ["maxhit"] = false, ["part"] = "Spine Mid",            ["boneIndex"] = 24817, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 5, ["offset1"] = 0.25, ["offset2"] = 0.55, ["zone"] = 0 },
+        [11] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Left Hand",            ["boneIndex"] = 60309, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 2 },
+        [12] = { ["applied"] = false, ["maxhit"] = false, ["part"] = "Left Elbow",           ["boneIndex"] = 22711, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 3, ["offset1"] = 0.35, ["offset2"] = 0.75, ["zone"] = 2 },
+        [13] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Right Hand",           ["boneIndex"] = 57005, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 3 },
+        [14] = { ["applied"] = false, ["maxhit"] = false, ["part"] = "Right Elbow",          ["boneIndex"] = 2992,  ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 3, ["offset1"] = 0.35, ["offset2"] = 0.75, ["zone"] = 3 },
+        [15] = { ["applied"] = false, ["maxhit"] = false, ["part"] = "Neck",                 ["boneIndex"] = 39317, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 5, ["offset1"] = 0.25, ["offset2"] = 0.95, ["zone"] = 0 },
+        [16] = { ["applied"] = false, ["maxhit"] = false, ["part"] = "Head",                 ["boneIndex"] = 31086, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 2, ["offset1"] = 0.35, ["offset2"] = 0.75, ["zone"] = 1 },
+        [17] = { ["applied"] = false, ["maxhit"] = false, ["part"] = "Spine High",           ["boneIndex"] = 24818, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 5, ["offset1"] = 0.25, ["offset2"] = 0.85, ["zone"] = 0 },
+        [18] = { ["applied"] = false, ["maxhit"] = false, ["part"] = "Left Clavicle",        ["boneIndex"] = 64729, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 3, ["offset1"] = 0.15, ["offset2"] = 0.75, ["zone"] = 0 },
+        [19] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Left Finger Pinky",    ["boneIndex"] = 26610, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 2 },
+        [20] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Left Finger Index",    ["boneIndex"] = 26611, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 2 },
+        [21] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Left Finger Middle",   ["boneIndex"] = 26612, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 2 },
+        [22] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Left Finger Ring",     ["boneIndex"] = 26613, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 2 },
+        [23] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Left Finger Thumb",    ["boneIndex"] = 26614, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 2 },
+        [24] = { ["applied"] = false, ["maxhit"] = false, ["part"] = "Right Clavicle",       ["boneIndex"] = 10706, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 3, ["offset1"] = 0.35, ["offset2"] = 0.75, ["zone"] = 0 },
+        [25] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Right Finger Pinky",   ["boneIndex"] = 58866, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 3 },
+        [26] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Right Finger Index",   ["boneIndex"] = 58867, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 3 },
+        [27] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Right Finger Middle",  ["boneIndex"] = 58868, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 3 },
+        [28] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Right Finger Ring",    ["boneIndex"] = 58869, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 3 },
+        [29] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Right Finger Thumb",   ["boneIndex"] = 58870, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.2,  ["zone"] = 3 },
+        [30] = { ["applied"] = false, ["maxhit"] = false, ["part"] = "Face Left CheekBone",  ["boneIndex"] = 21550, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.55, ["offset2"] = 0.45, ["zone"] = 1 },
+        [31] = { ["applied"] = false, ["maxhit"] = false, ["part"] = "Face Right CheekBone", ["boneIndex"] = 19336, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.35, ["offset2"] = 0.45, ["zone"] = 1 },
+        [32] = { ["applied"] = false, ["maxhit"] = false, ["part"] = "Forehead",             ["boneIndex"] = 37193, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 2, ["offset1"] = 0.45, ["offset2"] = 0.75, ["zone"] = 1  },
+        [33] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Face UpperLip",        ["boneIndex"] = 61839, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.45, ["offset2"] = 0.35, ["zone"] = 1  },
+        [34] = { ["applied"] = false, ["maxhit"] = true,  ["part"] = "Face LowerLip",        ["boneIndex"] = 20623, ["timer"] = 0, ["hitcount"] = 0, ["injuryType"] = 1, ["offset1"] = 0.45, ["offset2"] = 0.35, ["zone"] = 1  },
+    }
+end)
+
+RegisterNetEvent("SpawnEventsClient")
+AddEventHandler("SpawnEventsClient",function()
+    -- allowdamage = true
+    StoringEnabled = true
+end)
+
 
 RegisterNetEvent("enabledamage")
 AddEventHandler("enabledamage",function(toggle)
@@ -880,7 +1016,7 @@ end)
 
 RegisterNetEvent("DoHealthFading")
 AddEventHandler("DoHealthFading",function()
-	fading = true
+    fading = true
     maxfade = 290.0 - (GetEntityHealth(PlayerPedId()) + 50.0)
 
     if maxfade < 65.0 then
@@ -994,7 +1130,7 @@ AddEventHandler("DoDamageFunction",function(InjuryType, CurrentHitCount, boneInd
 			if math.random(50) > 45 then
 				curhealth = curhealth - (CurrentHitCount * 3)
 				lasthealth2 = curhealth
-				SetEntityHealth(PlayerPedId(), curhealth)
+				-- SetEntityHealth(PlayerPedId(), curhealth)
                 ShakeGameplayCam("SMALL_EXPLOSION_SHAKE", 0.02)
 			    -- ApplyPedBlood(PlayerPedId(), boneIndex, 0.0, 0.0, 0.0, "wound_sheet")
 			end
@@ -1002,7 +1138,7 @@ AddEventHandler("DoDamageFunction",function(InjuryType, CurrentHitCount, boneInd
 			if math.random(50) > 20 then
 				curhealth = curhealth - (CurrentHitCount * 4)
 				lasthealth2 = curhealth
-				SetEntityHealth(PlayerPedId(), curhealth)
+				-- SetEntityHealth(PlayerPedId(), curhealth)
 				-- ApplyPedBlood(PlayerPedId(), boneIndex, 0.0, 0.0, 0.0, "wound_sheet")
 			end
 
@@ -1020,11 +1156,10 @@ AddEventHandler("DoDamageFunction",function(InjuryType, CurrentHitCount, boneInd
 				TriggerEvent("eventConc", 6)
 			end
 		else
-
             if math.random(50) > 40 then
                 curhealth = curhealth - (CurrentHitCount*3)
                 lasthealth2 = curhealth
-                SetEntityHealth(PlayerPedId(),curhealth)
+                -- SetEntityHealth(PlayerPedId(),curhealth)
                 ShakeGameplayCam("SMALL_EXPLOSION_SHAKE", 0.02)
                 -- ApplyPedBlood(PlayerPedId(), boneIndex, 0.0, 0.0, 0.0, "wound_sheet")
             end
@@ -1077,7 +1212,10 @@ end)
 
 RegisterNetEvent("bed:checkin")
 AddEventHandler("bed:checkin",function()
-	findBed(true)
+	local canHeal = RPC.execute("caue-evidence:canHeal")
+    if canHeal then
+        findBed(true)
+    end
 end)
 
 RegisterNetEvent("client:bed")
@@ -1176,7 +1314,7 @@ end)
 RegisterNetEvent("Evidence:StateSet")
 AddEventHandler("Evidence:StateSet",function(stateId,stateLength)
 	if Currentstates[stateId]["timer"] < 10 and stateLength ~= 0 then
-		-- TriggerEvent("chatMessage", "STATUS: ", 1, Currentstates[stateId]["text"])
+		-- TriggerEvent("chatMessage", "STATUS: ", {207, 181, 59}, Currentstates[stateId]["text"])
 	end
 
 	Currentstates[stateId]["timer"] = stateLength
@@ -1210,12 +1348,12 @@ AddEventHandler("Evidence:CurrentDamageList",function()
 	updateStates()
 
     for i, v in ipairs(CurrentDamageList) do
-		TriggerEvent("chatMessage", "STATUS: ", 1, v)
+		TriggerEvent("chatMessage", "STATUS: ", {207, 181, 59}, v)
 	end
 
     for i, v in ipairs(bones) do
 		if v["timer"] > 0 then
-			TriggerEvent("chatMessage", "STATUS: ", 1, v["part"] .. " Injury")
+			TriggerEvent("chatMessage", "STATUS: ", {207, 181, 59}, v["part"] .. " Injury")
 		end
 	end
 end)
@@ -1241,7 +1379,7 @@ AddEventHandler("healed:useOxy", function(isOxy)
     if isOxy then
         TriggerEvent("addiction:drugTaken", "oxy")
 
-        local addictionFactor = exports["np-drugeffects"]:getOwnAddictionFactor("oxy")
+        local addictionFactor = exports["caue-drugeffects"]:getOwnAddictionFactor("oxy")
         local healtime = map_range(addictionFactor, 0.0, 5.0, 30, 0)
 
         if healtime < 0 then
@@ -1321,7 +1459,7 @@ end)
 RegisterNetEvent("Evidence:CurrentDamageListTarget")
 AddEventHandler("Evidence:CurrentDamageListTarget",function(CurrentDamageListTarget,bt,targetid)
 	for i = 1, #CurrentDamageListTarget do
-		TriggerEvent("chatMessage", "STATUS: ", 1, CurrentDamageListTarget[i])
+		TriggerEvent("chatMessage", "STATUS: ", {207, 181, 59}, CurrentDamageListTarget[i])
 	end
 
     local myJob = exports["caue-base"]:getChar("job")
@@ -1335,7 +1473,7 @@ AddEventHandler("Evidence:CurrentPainList",function()
 	myPains()
 
 	for i = 1, #CurrentLocationList do
-		TriggerEvent("chatMessage", "STATUS: ", 1, CurrentLocationList[i] )
+		TriggerEvent("chatMessage", "STATUS: ", {207, 181, 59}, CurrentLocationList[i] )
 	end
 end)
 
@@ -1614,18 +1752,18 @@ Citizen.CreateThread(function()
 
         myPains()
 
-        if (heavybleed or lightbleed or lightestbleed) and (not exports["caue-base"]:getChar("dead")) then
-            TriggerEvent("evidence:bleeding")
+        -- if (heavybleed or lightbleed or lightestbleed) and (not exports["caue-base"]:getChar("dead")) then
+        --     TriggerEvent("evidence:bleeding")
 
-            Wait(50)
+        --     Wait(50)
 
-            if (GetPedArmour(PlayerPedId()) > 1 and math.random(80) > 100) or GetPedArmour(PlayerPedId()) < 35 then
-                if GetEntitySpeed(PlayerPedId()) < 1.0 or IsPedSittingInAnyVehicle(PlayerPedId()) or initialbleed or math.random(100) < 45 then
-                    myBleeds()
-                else
-                    myBleeds()
-                end
-            end
-        end
+        --     if (GetPedArmour(PlayerPedId()) > 1 and math.random(80) > 100) or GetPedArmour(PlayerPedId()) < 35 then
+        --         if GetEntitySpeed(PlayerPedId()) < 1.0 or IsPedSittingInAnyVehicle(PlayerPedId()) or initialbleed or math.random(100) < 45 then
+        --             myBleeds()
+        --         else
+        --             myBleeds()
+        --         end
+        --     end
+        -- end
     end
 end)

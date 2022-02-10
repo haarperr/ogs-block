@@ -3,6 +3,7 @@ games { "gta5" }
 
 shared_script {
     "@caue-lib/shared/sh_util.lua",
+    "@caue-lib/shared/sh_cacheable.lua",
     "shared/*",
 }
 

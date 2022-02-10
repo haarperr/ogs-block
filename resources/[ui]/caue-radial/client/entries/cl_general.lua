@@ -2,6 +2,22 @@ local GeneralEntries = MenuEntries["general"]
 
 GeneralEntries[#GeneralEntries+1] = {
     data = {
+        id = "check_jail",
+        title = "Jail Time",
+        icon = "#general-keys-give",
+        event = "checkjailtime"
+    },
+    isEnabled = function(pEntity, pContext)
+        return not isDisabled() and exports["caue-base"]:getChar("jail") > 0
+    end
+}
+
+AddEventHandler("checkjailtime", function()
+    TriggerEvent("DoLongHudText", "Time remaning: " .. exports["caue-base"]:getChar("jail"))
+end)
+
+GeneralEntries[#GeneralEntries+1] = {
+    data = {
         id = "vehicles",
         title = "Vehicle",
         icon = "#vehicle-options-vehicle",
@@ -14,8 +30,24 @@ GeneralEntries[#GeneralEntries+1] = {
 
 GeneralEntries[#GeneralEntries+1] = {
     data = {
+        id = "car-radio",
+        title = "Radio",
+        icon = "#car-radio",
+        event = "caue-radiocar:openRadial"
+    },
+    isEnabled = function(pEntity, pContext)
+        return not isDisabled() and IsPedInAnyVehicle(PlayerPedId(), false) and (GetPedInVehicleSeat(GetVehiclePedIsIn(PlayerPedId(), false), -1) == PlayerPedId() or GetPedInVehicleSeat(GetVehiclePedIsIn(PlayerPedId(), false), 0) == PlayerPedId())
+    end
+}
+
+AddEventHandler("caue-radiocar:openRadial", function()
+    ExecuteCommand("radiocar")
+end)
+
+GeneralEntries[#GeneralEntries+1] = {
+    data = {
         id = "vehicles-keysgive",
-        title = "Give Keys",
+        title = "Dar chaves",
         icon = "#general-keys-give",
         event = "vehicle:giveKey"
     },
@@ -27,7 +59,7 @@ GeneralEntries[#GeneralEntries+1] = {
 GeneralEntries[#GeneralEntries+1] = {
     data = {
         id = "peds-escort",
-        title = "Stop escorting",
+        title = "Parar escolta",
         icon = "#general-escort",
         event = "caue-police:escort"
     },
@@ -51,7 +83,7 @@ GeneralEntries[#GeneralEntries+1] = {
 GeneralEntries[#GeneralEntries+1] = {
     data = {
         id = "poledance:toggle",
-        title = "Stop poledancing",
+        title = "Parar poledancing",
         icon = "#poledance-toggle",
         event = "poledance:toggle"
     },
@@ -63,7 +95,7 @@ GeneralEntries[#GeneralEntries+1] = {
 GeneralEntries[#GeneralEntries+1] = {
     data = {
         id = "oxygentank",
-        title = "Remove Oxygen Tank",
+        title = "Remover Tanque de O2",
         icon = "#oxygen-mask",
         event = "RemoveOxyTank"
     },
@@ -126,7 +158,7 @@ GeneralEntries[#GeneralEntries+1] = {
 GeneralEntries[#GeneralEntries+1] = {
     data = {
         id = "unseat",
-        title = "Get up",
+        title = "Levantar",
         icon = "#obj-chair",
         event = "caue-emotes:sitOnChair"
     },
@@ -137,8 +169,20 @@ GeneralEntries[#GeneralEntries+1] = {
 
 GeneralEntries[#GeneralEntries+1] = {
     data = {
+        id = "property-rent",
+        title = "Alugar propriedade",
+        icon = "#real-estate-sell",
+        event = "caue-housing:rent"
+    },
+    isEnabled = function(pEntity, pContext)
+        return not exports["caue-base"]:getVar("dead") and exports["caue-housing"]:canRent()
+    end
+}
+
+GeneralEntries[#GeneralEntries+1] = {
+    data = {
         id = "property-enter",
-        title = "Enter Property",
+        title = "Entrar propriedade",
         icon = "#property-enter",
         event = "housing:interactionTriggered"
     },
@@ -150,7 +194,7 @@ GeneralEntries[#GeneralEntries+1] = {
 GeneralEntries[#GeneralEntries+1] = {
     data = {
         id = "property-lock",
-        title = "Unlock/Lock Property",
+        title = "Trancar/Destrancar propriedade",
         icon = "#property-lock",
         event = "housing:toggleClosestLock"
     },
@@ -161,8 +205,20 @@ GeneralEntries[#GeneralEntries+1] = {
 
 GeneralEntries[#GeneralEntries+1] = {
     data = {
+        id = "property-edit",
+        title = "Editar propriedade",
+        icon = "#property-edit",
+        event = "caue-housing:edit"
+    },
+    isEnabled = function(pEntity, pContext)
+        return not exports["caue-base"]:getVar("dead") and exports["caue-housing"]:canEdit()
+    end
+}
+
+GeneralEntries[#GeneralEntries+1] = {
+    data = {
         id = "vehicle-vehicleList",
-        title = "Vehicle List",
+        title = "Lista de veiculos",
         icon = "#vehicle-vehicleList",
         event = "caue-vehicles:garage",
         parameters = { nearby = true, radius = 4.0 }
@@ -185,47 +241,44 @@ GeneralEntries[#GeneralEntries+1] = {
     end
 }
 
-local canDropGoods = false
-local canDropGoodsTimer = nil
-AddEventHandler("np-jobs:247delivery:takeGoods", function()
-    canDropGoods = true
-    canDropGoodsTimer = GetGameTimer()
-end)
-AddEventHandler("np-jobs:247delivery:dropGoods", function()
-    canDropGoods = false
-    canDropGoodsTimer = nil
-end)
+local hasDrugs = function()
+    return exports["caue-inventory"]:hasEnoughOfItem("joint", 1, false) or
+        exports["caue-inventory"]:hasEnoughOfItem("1gcocaine", 1, false) or
+        exports["caue-inventory"]:hasEnoughOfItem("1gcrack", 1, false) or
+        exports["caue-inventory"]:hasEnoughOfItem("lean", 1, false)
+end
 
 GeneralEntries[#GeneralEntries+1] = {
     data = {
-        id = "job-drop-goods",
-        title = "Drop Goods",
-        icon = "#property-lock",
-        event = "np-jobs:247delivery:dropGoods"
+        id = "drugs-selling",
+        title = "Vender Drogas",
+        icon = "#weed-cultivation",
+        event = "caue-drugs:startSell"
     },
     isEnabled = function(pEntity, pContext)
-        return canDropGoods and canDropGoodsTimer + 15000 < GetGameTimer()
+        return not isDisabled() and hasDrugs() and not exports["caue-drugs"]:isSelling() and not exports["caue-jobs"]:getJob(CurrentJob, "is_emergency")
     end
 }
 
 GeneralEntries[#GeneralEntries+1] = {
     data = {
-        id = "dispatch:openDispatch",
-        title = "Dispatch",
-        icon = "#general-check-over-target",
-        event = "np-dispatch:openFull"
+        id = "drugs-selling",
+        title = "Parar Vendas",
+        icon = "#weed-cultivation",
+        event = "caue-drugs:startSell"
     },
-    isEnabled = function()
-        return (exports["caue-jobs"]:getJob(CurrentJob, "is_police") or exports["caue-jobs"]:getJob(CurrentJob, "is_medic")) and not exports["caue-base"]:getVar("dead")
+    isEnabled = function(pEntity, pContext)
+        return exports["caue-drugs"]:isSelling()
     end
 }
+
 
 GeneralEntries[#GeneralEntries+1] = {
     data = {
         id = "emotes:openmenu",
         title = "Emotes",
         icon = "#general-emotes",
-        event = "emotes:OpenMenu"
+        event = "dpemotes:emotes"
     },
     isEnabled = function(pEntity, pContext)
         return not exports["caue-base"]:getVar("dead")
@@ -256,17 +309,17 @@ GeneralEntries[#GeneralEntries+1] = {
     end
 }
 
-GeneralEntries[#GeneralEntries+1] = {
-    data = {
-        id = "general:checkoverself",
-        title = "Examine Self",
-        icon = "#general-check-over-self",
-        event = "Evidence:CurrentDamageList"
-    },
-    isEnabled = function(pEntity, pContext)
-        return not exports["caue-base"]:getVar("dead")
-    end
-}
+--GeneralEntries[#GeneralEntries+1] = {
+--     data = {
+--         id = "general:checkoverself",
+--         title = "Se examinar",
+--         icon = "#general-check-over-self",
+--         event = "Evidence:CurrentDamageList"
+--     },
+--     isEnabled = function(pEntity, pContext)
+--         return not exports["caue-base"]:getVar("dead")
+--     end
+-- }
 
 -- GeneralEntries[#GeneralEntries+1] = {
 --     data = {
@@ -297,19 +350,19 @@ GeneralEntries[#GeneralEntries+1] = {
 GeneralEntries[#GeneralEntries+1] = {
     data = {
       id = "mdw",
-      title = "MDW",
+      title = "MDT",
       icon = "#mdt",
-      event = "np-ui:openMDW"
+      event = "caue-mdt:open"
     },
     isEnabled = function()
-        return not exports["caue-base"]:getVar("dead") and exports["caue-jobs"]:getJob(CurrentJob, "is_police")
+        return not exports["caue-base"]:getVar("dead") and (exports["caue-jobs"]:getJob(CurrentJob, "is_emergency") or exports["caue-jobs"]:getJob(CurrentJob, "is_doj"))
     end
 }
 
 GeneralEntries[#GeneralEntries+1] = {
     data = {
         id = "prepare-boat-mount",
-        title = "Mount on Trailer",
+        title = "Montar no trailer",
         icon = "#vehicle-plate-remove",
         event = "vehicle:mountBoatOnTrailer"
     },
@@ -340,7 +393,7 @@ local policeModels = {
 GeneralEntries[#GeneralEntries+1] = {
     data = {
         id = "open-rifle-rack",
-        title = "Rifle Rack",
+        title = "Suporte rifle",
         icon = "#vehicle-plate-remove",
         event = "vehicle:openRifleRack"
     },
@@ -355,7 +408,7 @@ GeneralEntries[#GeneralEntries+1] = {
 }
 
 AddEventHandler("vehicle:openRifleRack", function()
-    local finished = exports["caue-taskbar"]:taskBar(2500, "Unlocking...")
+    local finished = exports["caue-taskbar"]:taskBar(2500, "Destrancando...")
     if finished ~= 100 then return end
     local veh = GetVehiclePedIsIn(PlayerPedId())
     if veh == 0 then return end
@@ -366,7 +419,7 @@ end)
 GeneralEntries[#GeneralEntries+1] = {
     data = {
         id = "open-documents",
-        title = "Documents",
+        title = "Documentos",
         icon = "#general-documents",
         event = "caue-documents:openDocuments"
     },
