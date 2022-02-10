@@ -19,6 +19,10 @@ function restartServer()
     os.exit()
 end
 
+function gitPull()
+    io.popen("start GITPULL.bat")
+end
+
 --[[
 
     Threads
@@ -28,6 +32,8 @@ end
 Citizen.CreateThread(function()
     Citizen.Wait(90000)
 
+    TriggerEvent("cron:runAt", 11, 50, gitPull)
     TriggerEvent("cron:runAt", 12, 00, restartServer)
+    TriggerEvent("cron:runAt", 23, 50, gitPull)
     TriggerEvent("cron:runAt", 24, 00, restartServer)
 end)
