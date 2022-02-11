@@ -4,7 +4,7 @@
 
 ]]
 
-local whitelistTags = {
+local whitelistTagsArray = {
     "924862182187995156", -- Dev
     "925760894380703825", -- Staff
     -- "925237446986301450", -- Insider
@@ -37,8 +37,14 @@ function haveWhitelist(src)
         return false, "user roles not found"
     end
 
+    local whitelistTags = exports.ghmattimysql:scalarSync([[
+        SELECT value
+        FROM variables
+        WHERE name = "whitelist_tags"
+    ]])
+
     for i, v in pairs(userdata.roles) do
-        if has_value(whitelistTags, v) then
+        if has_value(json.decode(whitelistTags), v) then
             return true, "have whitelist"
         end
     end

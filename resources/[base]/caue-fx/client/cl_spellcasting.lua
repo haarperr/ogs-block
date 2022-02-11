@@ -5,7 +5,7 @@ local manaTotal = 0
 --setHudValue("manaShow", true)
 --setHudValue("mana", 100)
 
---exports["np-ui"]:sendAppEvent("hud", {
+--exports["caue-ui"]:sendAppEvent("hud", {
 --  true | false = currentValues["manaShow"], -- lmao
 --  0 | 100 = currentValues["mana"],
 --})
@@ -18,7 +18,7 @@ AddEventHandler("fx:spellcast", function(Spell)
   if manaTotal > SpellList[Spell]["Base"]["Mana"] then
     staffEquipped = false
     manaTotal = manaTotal - SpellList[Spell]["Base"]["Mana"]
-    exports["np-ui"]:sendAppEvent("hud", { mana = manaTotal })
+    exports["caue-ui"]:sendAppEvent("hud", { mana = manaTotal })
     TriggerServerEvent('InteractSound_SV:PlayWithinDistance', 10.0, '/Spells/' .. SpellList[Spell]["Base"]["SoundFile"], 0.4)
     SpellCast(Spell)
   else
@@ -35,7 +35,7 @@ Citizen.CreateThread(function()
       if manaTotal > 100 then
         manaTotal = 100
       end
-      exports["np-ui"]:sendAppEvent("hud", { mana = manaTotal })
+      exports["caue-ui"]:sendAppEvent("hud", { mana = manaTotal })
     else
       Wait(1500)
     end
@@ -65,7 +65,7 @@ RegisterNetEvent("fx:spellmana")
 AddEventHandler("fx:spellmana", function()
   TriggerEvent('InteractSound_CL:PlayOnOne','/Spells/FairyEffect', 0.4)
   manaTotal = 100
-  exports["np-ui"]:sendAppEvent("hud", { mana = manaTotal })
+  exports["caue-ui"]:sendAppEvent("hud", { mana = manaTotal })
   TriggerServerEvent("fx:effect:start","buffed", GetRandomString(12))
   TriggerEvent('InteractSound_CL:PlayOnOne','/Spells/ArcaneEffect', 0.4)
 end)
@@ -77,7 +77,7 @@ AddEventHandler("fx:staffused", function(equipped)
     if equipped then
       SetPedArmour(PlayerPedId(),0)
     end
-    exports["np-ui"]:sendAppEvent("hud", { manaShow = equipped })
+    exports["caue-ui"]:sendAppEvent("hud", { manaShow = equipped })
     TriggerServerEvent("fx:effect:start","staffused", GetRandomString(12))
 end)
 

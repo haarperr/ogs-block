@@ -5,11 +5,13 @@
 } */
 
 .nicesexytext {
-   position: absolute;
-   font-family: 'arial black';
-   color: #bfb89c;
-   margin: -15px -5px;
-   text-transform: uppercase;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: 'arial black';
+    color: #bfb89c;
+    text-transform: uppercase;
+    text-align: center;
+    width: 6em;
 }
 
 .divwrap {

@@ -3,8 +3,6 @@ AddEventHandler("caue-login:spawnCharacter", function()
     local src = source
 
     local cid = exports["caue-base"]:getChar(src, "id")
-    local new = exports["caue-base"]:getChar(src, "new")
-
     if not cid then return end
 
     local spawnData = {
@@ -42,7 +40,11 @@ AddEventHandler("caue-login:spawnCharacter", function()
         end
     end
 
-    if new then
+    if exports["caue-base"]:getChar(src, "jail") > -1 then
+        spawnData["overwrites"] = "jail"
+    end
+
+    if exports["caue-base"]:getChar(src, "new") then
         exports.ghmattimysql:executeSync([[
             UPDATE characters
             SET new = 0

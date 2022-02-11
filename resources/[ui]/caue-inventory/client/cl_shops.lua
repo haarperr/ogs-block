@@ -7,19 +7,19 @@
 local listening = false
 
 local Shops = {
-    {
-        text = "[E] Olhar para comida",
-        action = function()
-            TriggerEvent("server-inventory-open", "22", "Shop");
-        end,
+    -- {
+    --     text = "[E] Olhar para comida",
+    --     action = function()
+    --         TriggerEvent("server-inventory-open", "22", "Shop");
+    --     end,
 
-        center = vector3(1776.15, 2640.95, 45.59),
-        radius = 3.0,
+    --     center = vector3(1776.15, 2640.95, 45.59),
+    --     radius = 3.0,
 
-        isEnabled = function()
-            return true
-        end,
-    },
+    --     isEnabled = function()
+    --         return true
+    --     end,
+    -- },
 }
 
 --[[

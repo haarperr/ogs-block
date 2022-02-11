@@ -1079,6 +1079,10 @@ function DisplayInventoryMultiple(playerinventory, itemCount, invName, targetinv
     } else if (targetinvName.indexOf('prison:stash') > -1) {
         displayName = 'Stash';
         secondaryMaxWeight = 250.0;
+    } else if (targetinvName.indexOf('jail') > -1) {
+        displayName = 'Possessions';
+        secondaryMaxWeight = 0.0;
+        slotLimitTarget = 50;
     } else if (targetinvName === 'gooddropoff') {
         displayName = 'Dropoff'
         secondaryMaxWeight = 500.0;
@@ -1134,8 +1138,6 @@ function BuildDrop(brokenSlots) {
 }
 
 // THIS IS A SHIT COPY PASTE JUST TIO UPDATE BECAUSE I COULDNT BE BOTHERED ADDING A VARIABLE TO LIKE 2 EVENTS :)
-
-// NOPIXEL BTW
 
 function produceInfo(data) {
     let string = '';
@@ -2356,10 +2358,10 @@ function AttemptDropInFilledSlot(slot) {
     if (inventoryReturnItemDropName === 'wrapsecondary' && TargetInventoryName === 'Shop') {
         if ((moveAmount > 1 && !stackable)) moveAmount = 1;
         if (moveAmount > 50) moveAmount = 50;
-        if (itemid2 === 'jailfood' || itemid2 === "slushy") {
-            moveAmount = 1;
-            closeOnMove = true;
-        }
+        // if (itemid2 === 'jailfood' || itemid2 === "slushy") {
+        //     moveAmount = 1;
+        //     closeOnMove = true;
+        // }
     }
 
     if (itemid1 == itemid2 && stackable) {
@@ -2842,10 +2844,10 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
     if (inventoryReturnItemDropName === 'wrapsecondary' && TargetInventoryName === 'Shop') {
         if (moveAmount > 1 && !JSON.parse(item.dataset.stackable)) moveAmount = 1;
         if (moveAmount > 50) moveAmount = 50;
-        if (itemidsent === 'jailfood' || itemidsent === "slushy") {
-            moveAmount = 1;
-            closeOnMove = true;
-        }
+        // if (itemidsent === 'jailfood' || itemidsent === "slushy") {
+        //     moveAmount = 1;
+        //     closeOnMove = true;
+        // }
     }
 
     if (!moveAmount) {

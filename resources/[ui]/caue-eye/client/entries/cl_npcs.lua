@@ -186,7 +186,7 @@ Entries["purchasemethkey"] = {
       {
           label = "Purchase Lab Key",
           icon = "key",
-          event = "np-meth:purchaseMethLabKey",
+          event = "caue-meth:purchaseMethLabKey",
           parameters = {}
       },
   },

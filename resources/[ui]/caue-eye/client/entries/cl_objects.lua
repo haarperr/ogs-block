@@ -45,7 +45,7 @@ Entries[#Entries + 1] = {
             id = "smoke_machine",
             label = "Loja de cigarros",
             icon = "circle",
-            event = "np-stripclub:smokemachine",
+            event = "caue-stripclub:smokemachine",
             parameters = {}
         }
     },

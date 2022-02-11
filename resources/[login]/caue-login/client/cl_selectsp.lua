@@ -134,6 +134,8 @@ function Spawn.overwriteSpawn(overwrite)
 		pos = vector4(1690.75,2593.14,45.61,178.75)
 	elseif overwrite == "rehab" then
 		pos = vector4(-1475.86,884.47,182.93,93.0)
+	elseif overwrite == "jail" then
+		pos = vector4(1802.51,2607.19,46.01,93.0)
 	end
 
 	Login.DeleteCamera()
@@ -143,12 +145,20 @@ function Spawn.overwriteSpawn(overwrite)
 	DoScreenFadeOut(2)
 	Login.DeleteCamera()
 
-	TriggerServerEvent("jail:characterFullySpawend")
+	if overwrite == "jail" then
+		TriggerEvent("caue-jail:begInJail", true)
+	end
 
 	Wait(200)
 
+	SetEntityInvincible(PlayerPedId(),false)
+	FreezeEntityPosition(PlayerPedId(),false)
+	SetEntityVisible(PlayerPedId(), true)
+	EnableAllControlActions(0)
+
 	DoScreenFadeIn(2500)
 
+	TriggerEvent("inSpawn", false)
 	TriggerEvent("caue-hud:toggle", true)
 end
 

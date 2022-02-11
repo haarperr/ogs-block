@@ -262,7 +262,7 @@ local function StockUpdate()
     end
 
     for i, v in ipairs(stocks) do
-        if v["id"] ~= "CRYPIX" then
+        if v["id"] ~= "SHUNG" then
             local currentValue = v["value"]
             local random = math.random(-100.0, 100.0)
 

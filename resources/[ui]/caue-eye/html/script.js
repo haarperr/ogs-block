@@ -18,7 +18,7 @@ window.addEventListener("message", function(event) {
                 if(index1 == index2 && item2 == true){
                     $(".target-label").append("<div id='target-"+index1+"'<li><span class='target-icon'><i class='fas fa-"+item1.icon+"'></i></span>&nbsp"+item1.label+"</li></div>");
                     $("#target-"+index1).hover((e)=> {
-                        $("#target-"+index1).css("color",e.type === "mouseenter"?"rgb(0, 248, 185)":"white")
+                        $("#target-"+index1).css("color",e.type === "mouseenter"?"rgb(207, 181, 59)":"white")
                     })
                     $("#target-"+index1+"").css("padding-top", "7px");
                     $("#target-"+index1).data('eventData', item1.event);

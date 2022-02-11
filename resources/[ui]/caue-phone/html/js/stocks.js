@@ -16,7 +16,7 @@ function addStocks(stocksData) {
                         <li class="collection-item">Value: ${stockEntry.value}</li>
                         <li class="collection-item center-align">`
                         stockElement += `<button class="btn-small stocks-button stocks-exchange" aria-label="Transfer" data-balloon-pos="up" data-stock-id="${stockEntry.identifier}"><i class="fas fa-exchange-alt"></i></button>`
-                            if (stockEntry.identifier != "CRYPIX") {
+                            if (stockEntry.identifier != "SHUNG") {
                                 stockElement += `
                                 &nbsp;<button class="btn-small stocks-button stocks-buy" aria-label="Buy" data-balloon-pos="up" data-stock-id="${stockEntry.identifier}"><i class="fas fa-plus"></i></button>
                                 &nbsp;<button class="btn-small stocks-button stocks-sell" aria-label="Sell" data-balloon-pos="up" data-stock-id="${stockEntry.identifier}"><i class="fas fa-minus"></i></button>`

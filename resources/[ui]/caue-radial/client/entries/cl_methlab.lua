@@ -4,7 +4,7 @@ local canStartCornering = false
 local showSellMethOption = false
 local hasCarTarget = false
 
-AddEventHandler("np:target:changed", function(pEntity, pEntityType)
+AddEventHandler("caue:target:changed", function(pEntity, pEntityType)
   if not pEntity or pEntityType ~= 2 then
     hasCarTarget = false
     return
@@ -12,18 +12,18 @@ AddEventHandler("np:target:changed", function(pEntity, pEntityType)
   hasCarTarget = true
 end)
 
-AddEventHandler("np-meth:showSellDrugsMenuItem", function(type, b)
+AddEventHandler("caue-meth:showSellDrugsMenuItem", function(type, b)
     if type == "cancorner" then
         canStartCornering = b
     end
 end)
 
-AddEventHandler("np-polyzone:enter", function(name)
+AddEventHandler("caue-polyzone:enter", function(name)
     if name == "meth_corner" then
         showSellMethOption = true
     end
 end)
-AddEventHandler("np-polyzone:exit", function(name)
+AddEventHandler("caue-polyzone:exit", function(name)
     if name == "meth_corner" then
         showSellMethOption = false
     end
@@ -35,7 +35,7 @@ Citizen.CreateThread(function()
             id = "sellmeth",
             icon = "#walking",
             title = "Sell",
-            event = "np-meth:cornerSellProduct",
+            event = "caue-meth:cornerSellProduct",
         },
         isEnabled = function()
             return not exports["caue-base"]:getVar("dead") and showSellMethOption and not canStartCornering and hasCarTarget
@@ -46,7 +46,7 @@ Citizen.CreateThread(function()
             id = "sellmethfromcorner",
             icon = "#walking",
             title = "Corner",
-            event = "np-meth:cornerStartSelling",
+            event = "caue-meth:cornerStartSelling",
         },
         isEnabled = function()
             return not exports["caue-base"]:getVar("dead") and canStartCornering
@@ -78,73 +78,73 @@ end)
 -- local Options = {
 --     {
 --         data = {
---             id = 'np-meth:startCooking',
+--             id = 'caue-meth:startCooking',
 --             title = "Start Cooking",
 --             icon = "#police-check",
---             event = "np-meth:startCooking",
+--             event = "caue-meth:startCooking",
 --         },
 --         isEnabled = checkObject("computer"),
 --     },
 --     {
 --         data = {
---             id = 'np-meth:adjustFridgeTemp',
+--             id = 'caue-meth:adjustFridgeTemp',
 --             title = "Adjust Temperature",
 --             icon = "#police-check",
---             event = "np-meth:adjustFridgeTemp",
+--             event = "caue-meth:adjustFridgeTemp",
 --         },
 --         isEnabled = checkObject("fridge"),
 --     },
 --     {
 --         data = {
---             id = 'np-meth:adjustSteamLevel',
+--             id = 'caue-meth:adjustSteamLevel',
 --             title = "Adjust Levels",
 --             icon = "#police-check",
---             event = "np-meth:adjustSteamLevel",
+--             event = "caue-meth:adjustSteamLevel",
 --         },
 --         isEnabled = checkObject("distil"),
 --     },
 --     {
 --         data = {
---             id = 'np-meth:adjustDistilSettings',
+--             id = 'caue-meth:adjustDistilSettings',
 --             title = "Adjust Settings",
 --             icon = "#police-check",
---             event = "np-meth:adjustDistilSettings",
+--             event = "caue-meth:adjustDistilSettings",
 --         },
 --         isEnabled = checkObject("distil"),
 --     },
 --     {
 --         data = {
---             id = 'np-meth:adjustMixerTemp',
+--             id = 'caue-meth:adjustMixerTemp',
 --             title = "Adjust Temperature",
 --             icon = "#police-check",
---             event = "np-meth:adjustMixerTemp",
+--             event = "caue-meth:adjustMixerTemp",
 --         },
 --         isEnabled = checkObject("mixer_temperature"),
 --     },
 --     {
 --         data = {
---             id = 'np-meth:addIngredient',
+--             id = 'caue-meth:addIngredient',
 --             title = "Add Ingredient",
 --             icon = "#police-check",
---             event = "np-meth:addIngredient",
+--             event = "caue-meth:addIngredient",
 --         },
 --         isEnabled = checkObject("mixer_drop"),
 --     },
 --     {
 --         data = {
---             id = 'np-meth:adjustMixerSettings',
+--             id = 'caue-meth:adjustMixerSettings',
 --             title = "Adjust Settings",
 --             icon = "#police-check",
---             event = "np-meth:adjustMixerSettings",
+--             event = "caue-meth:adjustMixerSettings",
 --         },
 --         isEnabled = checkObject("mixer_settings"),
 --     },
 --     {
 --         data = {
---             id = 'np-meth:pickupIngredient',
+--             id = 'caue-meth:pickupIngredient',
 --             title = "Pickup",
 --             icon = "#police-check",
---             event = "np-meth:pickupIngredient",
+--             event = "caue-meth:pickupIngredient",
 --         },
 --         isEnabled = checkObject("ingredient"),
 --     },

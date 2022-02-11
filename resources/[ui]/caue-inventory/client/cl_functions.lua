@@ -255,38 +255,11 @@ end)
 
 
 local fixingvehicle = false
-local HeadBone = 0x796e
 
-local jailBounds = PolyZone:Create({
-  vector2(1855.8966064453, 2701.9802246094),
-  vector2(1775.4013671875, 2770.5339355469),
-  vector2(1646.7535400391, 2765.9870605469),
-  vector2(1562.7836914063, 2686.6459960938),
-  vector2(1525.3662109375, 2586.5190429688),
-  vector2(1533.7038574219, 2465.5300292969),
-  vector2(1657.5997314453, 2386.9389648438),
-  vector2(1765.8286132813, 2404.4763183594),
-  vector2(1830.1740722656, 2472.1193847656),
-  vector2(1855.7557373047, 2569.0361328125)
-}, {
-    name = "jail_bounds",
-    minZ = 30,
-    maxZ = 70.5,
-    debugGrid = false,
-    gridDivisions = 25
-})
 
-RegisterNetEvent("inventory-jail")
-AddEventHandler("inventory-jail", function(startPosition, cid, name)
-    if (hasEnoughOfItem("okaylockpick",1,false)) then
-        local plyPed = PlayerPedId()
-        local coord = GetPedBoneCoords(plyPed, HeadBone)
-        local inPoly = jailBounds:isPointInside(coord)
-        if inPoly  then
-             TriggerServerEvent("server-inventory-open", startPosition, cid, "1", name);
-        end
-    end
-end)
+
+
+
 
 
 
@@ -300,7 +273,7 @@ end)
 
 RegisterNetEvent("SniffRequestCID")
 AddEventHandler("SniffRequestCID", function(src)
-    local cid = exports["isPed"]:isPed("cid")
+    local cid = exports["caue-base"]:getChar("id")
     TriggerServerEvent("SniffCID",cid,src)
 end)
 

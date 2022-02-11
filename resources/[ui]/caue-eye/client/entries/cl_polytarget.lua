@@ -8,7 +8,7 @@ Entries[#Entries + 1] = {
             id = "bar:grabDrink",
             label = "Pegar bebida",
             icon = "cocktail",
-            event = "np-stripclub:peekAction",
+            event = "caue-stripclub:peekAction",
             parameters = { action = "grabDrink" }
         }
     },
@@ -25,7 +25,7 @@ Entries[#Entries + 1] = {
             id = "bar:openFridge",
             label = "Abrir geladeira",
             icon = "circle",
-            event = "np-stripclub:peekAction",
+            event = "caue-stripclub:peekAction",
             parameters = { action = "openFridge" }
         }
     },

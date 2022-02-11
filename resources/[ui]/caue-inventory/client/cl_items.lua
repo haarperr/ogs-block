@@ -381,7 +381,7 @@ AddEventHandler("RunUseItem", function(itemid, slot, inventoryName, isWeapon, pa
     local remove = false
 
     if (itemid == "pdbadge") then
-        RPC.execute("np-gov:police:showBadge", json.decode(ItemInfo.information))
+        RPC.execute("caue-gov:police:showBadge", json.decode(ItemInfo.information))
     end
 
     if (itemid == "weedq") then

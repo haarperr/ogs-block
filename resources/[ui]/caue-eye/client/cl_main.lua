@@ -368,7 +368,7 @@ function StartPeekin()
     nearbyZones = exports["caue-polytarget"]:GetZones(GetEntityCoords(PlayerPedId())) or {}
 
     Citizen.CreateThread(function()
-        local rgbGreen, rgbWhite = {0, 248, 185}, {255, 255, 255}
+        local rgbGreen, rgbWhite = {207, 181, 59}, {255, 255, 255}
         local previousZones = {}
         local drawingZones = {}
         local lastUpdate = GetGameTimer()

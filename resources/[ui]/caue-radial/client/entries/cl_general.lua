@@ -13,7 +13,7 @@ GeneralEntries[#GeneralEntries+1] = {
 }
 
 AddEventHandler("checkjailtime", function()
-    TriggerEvent("DoLongHudText", "Time remaning: " .. exports["caue-base"]:getChar("jail"))
+    TriggerEvent("chatMessage", "DOC: " , { 33, 118, 255 }, "Você tem " .. exports["caue-base"]:getChar("jail") .. " meses restantes")
 end)
 
 GeneralEntries[#GeneralEntries+1] = {
@@ -233,7 +233,7 @@ GeneralEntries[#GeneralEntries+1] = {
         id = "fishing-borrowBoat",
         title = "Borrow Fishing Boat",
         icon = "#vehicle-vehicleList",
-        event = "np-fishing:rentBoat",
+        event = "caue-fishing:rentBoat",
         parameters = { nearby = true, radius = 4.0 }
     },
     isEnabled = function(pEntity, pContext)

@@ -258,7 +258,7 @@ Entries[#Entries + 1] = {
             id = "wheelchair",
             label = "toggle wheelchair",
             icon = "wheelchair",
-            event = "np:vehicle:wheelchair:control",
+            event = "caue:vehicle:wheelchair:control",
             parameters = {}
         }
     },

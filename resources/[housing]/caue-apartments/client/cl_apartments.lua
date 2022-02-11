@@ -525,7 +525,7 @@ function Apart.func.upgradeApartment(apartmentTargetType)
     local apartmentInfo = RPC.execute("getApartmentInformation")
     if apartmentInfo == nil then return false, "Failed to gather info" end
 
-    local hasBankAccount, bankAccountId = RPC.execute("GetDefaultBankAccount", exports["isPed"]:isPed("cid"))
+    local hasBankAccount, bankAccountId = RPC.execute("GetDefaultBankAccount", exports["caue-base"]:getChar("id"))
 
     if hasBankAccount then
         local comment = "Upgraded from apartment type ["..Apart.defaultInfo[1].."] to apartment type ["..apartmentTargetType.."]"

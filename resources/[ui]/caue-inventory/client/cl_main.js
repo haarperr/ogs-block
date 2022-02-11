@@ -991,7 +991,7 @@ on('player:receiveItem', async (id, amount, generateInformation, itemdata, retur
             data: Object.assign({}, itemdata),
             returnData: returnData
         };
-        cid = exports.isPed.isPed("cid");
+        cid = exports["caue-base"].getChar("id");
         emitNet('server-inventory-open', GetEntityCoords(PlayerPedId()), cid, '42069', "Drop-Overweight", {
             "items": [droppedItem]
         });

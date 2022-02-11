@@ -17,7 +17,7 @@ VehicleEntries[#VehicleEntries+1] = {
         id = "247goods",
         title = "Pegar pertences",
         icon = "#obj-box",
-        event = "np-jobs:247delivery:takeGoods"
+        event = "caue-jobs:247delivery:takeGoods"
     },
     isEnabled = function(pEntity, pContext)
         return not isDisabled() and GetEntityModel(pEntity) == `benson` and CurrentJob == "247_deliveries" and isCloseToTrunk(pEntity, PlayerPedId()) and not IsPedInAnyVehicle(PlayerPedId(), false)
@@ -29,7 +29,7 @@ VehicleEntries[#VehicleEntries+1] = {
         id = "impound-vehicle",
         title = "Pedir reboque",
         icon = "#vehicle-impound",
-        event = "np-jobs:impound:openImpoundRequestMenu",
+        event = "caue-jobs:impound:openImpoundRequestMenu",
         parameters = {}
     },
     isEnabled = function(pEntity, pContext)
@@ -42,7 +42,7 @@ VehicleEntries[#VehicleEntries+1] = {
         id = "impound-vehicle",
         title = "Rebocar veiculo",
         icon = "#vehicle-impound",
-        event = "np-jobs:impound:openImpoundMenu",
+        event = "caue-jobs:impound:openImpoundMenu",
     },
     isEnabled = function(pEntity, pContext)
         return not isDisabled() and pContext.distance <= 2.5 and CurrentJob == "impound" and IsImpoundDropOff and not IsPedInAnyVehicle(PlayerPedId(), false)
