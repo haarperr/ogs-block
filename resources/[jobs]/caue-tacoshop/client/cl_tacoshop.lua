@@ -190,7 +190,7 @@ Citizen.CreateThread(function()
 
     exports["caue-eye"]:AddPeekEntryByPolyTarget("caue-tacoshop:foods1", {{
         event = "caue-tacoshop:stationPrompt",
-        id = "caue-tacoshop:foods1",
+        id = "tacoshop_foods1",
         icon = "hamburger",
         label = "Cozinhar",
         parameters = { stationId = 1 }
@@ -204,7 +204,7 @@ Citizen.CreateThread(function()
 
     exports["caue-eye"]:AddPeekEntryByPolyTarget("caue-tacoshop:drinks1", {{
         event = "caue-tacoshop:stationPrompt",
-        id = "caue-tacoshop:drinks1",
+        id = "tacoshop_drinks1",
         icon = "mug-hot",
         label = "Bebidas",
         parameters = { stationId = 2 }
@@ -218,7 +218,7 @@ Citizen.CreateThread(function()
 
     exports["caue-eye"]:AddPeekEntryByPolyTarget("caue-tacoshop:register1", {{
         event = "caue-tacoshop:stationPrompt",
-        id = "caue-tacoshop:register1_worker",
+        id = "tacoshop_register1_worker",
         icon = "credit-card",
         label = "Charge Customer",
         parameters = { stationId = 3, registerId = 1 }
@@ -226,7 +226,7 @@ Citizen.CreateThread(function()
 
     exports["caue-eye"]:AddPeekEntryByPolyTarget("caue-tacoshop:register1", {{
         event = "caue-tacoshop:stationPrompt",
-        id = "caue-tacoshop:register1_customer",
+        id = "tacoshop_register1_customer",
         icon = "credit-card",
         label = "Make Payment",
         parameters = { stationId = 4, registerId = 1 }
@@ -242,7 +242,7 @@ Citizen.CreateThread(function()
 
     exports["caue-eye"]:AddPeekEntryByPolyTarget("caue-tacoshop:trays1", {{
         event = "caue-tacoshop:stationPrompt",
-        id = "caue-tacoshop:trays1",
+        id = "tacoshop_trays1",
         icon = "hand-holding",
         label = "Abrir",
         parameters = { stationId = 5, registerId = 1 }

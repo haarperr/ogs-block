@@ -80,7 +80,7 @@ end)
 Citizen.CreateThread(function()
     exports["caue-eye"]:AddPeekEntryByModel({ 303280717 }, {{
         event = "caue-heists:breakInToRegister",
-        id = "caue-heists:breakInToRegister",
+        id = "heists_breakInToRegister",
         icon = "hammer",
         label = "Smash!",
         parameters = {},

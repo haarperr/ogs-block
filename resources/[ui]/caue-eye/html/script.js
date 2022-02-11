@@ -1,48 +1,67 @@
-window.addEventListener('message', function(event) {
-    let item = event.data;
+window.addEventListener("message", function(event) {
+    const payload = event.data.payload
 
-    if (item.response == 'openTarget') {
+    if (event.data.action == "refresh") {
+        //Refresh data items entity
+        arraydatainteract = payload
+    }else if(event.data.action == "update"){
+        //Update View of items looking
         $(".target-label").html("");
+        if (payload.active == true) {
+            $(".target-eye").attr("src", "peek-active-1.png");
+        }else{
+            $(".target-eye").attr("src", "peek.png");
+        }
 
-        $('.target-wrapper').show();
-
-        // $(".target-eye").css("color", "grey");
-        $(".target-eye").attr("src", "peek.png");
-    } else if (item.response == 'closeTarget') {
-        $(".target-label").html("");
-
-        $('.target-wrapper').hide();
-    } else if (item.response == 'validTarget') {
-        $(".target-label").html("");
-
-        $.each(item.data, function (index, item) {
-            $(".target-label").append("<div id='target-"+index+"'<li><span class='target-icon'><i class='fas fa-"+item.icon+"'></i></span>&nbsp"+item.label+"</li></div>");
-            $("#target-"+index).hover((e)=> {
-                $("#target-"+index).css("color",e.type === "mouseenter"?"rgb(207, 181, 59)":"white")
+        $.each(arraydatainteract, function (index1, item1) {
+            $.each(payload.options, function (index2, item2) {
+                if(index1 == index2 && item2 == true){
+                    $(".target-label").append("<div id='target-"+index1+"'<li><span class='target-icon'><i class='fas fa-"+item1.icon+"'></i></span>&nbsp"+item1.label+"</li></div>");
+                    $("#target-"+index1).hover((e)=> {
+                        $("#target-"+index1).css("color",e.type === "mouseenter"?"rgb(0, 248, 185)":"white")
+                    })
+                    $("#target-"+index1+"").css("padding-top", "7px");
+                    $("#target-"+index1).data('eventData', item1.event);
+                    $("#target-"+index1).data('parametersData', item1.parameters);
+                }
             })
+        })
+    }else if(event.data.action == "peek"){
+        //Update eye event show or display
+        if (payload.display == true) {
+            $(".target-label").html("");
+            $('.target-wrapper').show();
+            $(".target-eye").attr("src", "peek.png");
+        }else{
+            $(".target-label").html("");
+            $('.target-wrapper').hide();
+        }
 
-            $("#target-"+index+"").css("padding-top", "7px");
-
-            $("#target-"+index).data('TargetData', item);
-        });
-
-        // $(".target-eye").css("color", "rgb(207, 181, 59)");
-        $(".target-eye").attr("src", "peek-active-1.png");
-    } else if (item.response == 'leftTarget') {
-        $(".target-label").html("");
-
-        // $(".target-eye").css("color", "grey");
-        $(".target-eye").attr("src", "peek.png");
+        if (payload.active == true) {
+            $(".target-eye").attr("src", "peek-active-1.png");
+        }else{
+            $(".target-eye").attr("src", "peek.png");
+            $(".target-label").html("");
+        }
+    }else if(event.data.action == "interact"){
+        contextdata = payload.context
+        entitydata = payload.entity
     }
 });
 
 $(document).on('mousedown', (event) => {
     let element = event.target;
-
     if (element.id.split("-")[0] === 'target') {
-        let TargetData = $("#"+element.id).data('TargetData');
-
-        $.post('https://caue-eye/selectTarget', JSON.stringify(TargetData));
+        let eventData = $("#"+element.id).data('eventData');
+        let parametersData = $("#"+element.id).data('parametersData');
+        $.post('https://caue-eye/caue-ui:targetSelectOption', JSON.stringify({
+            entity : entitydata,
+            option :{
+                event: eventData,
+                parameters: parametersData
+            },
+            context: contextdata,
+        }));
 
         $(".target-label").html("");
         $('.target-wrapper').hide();

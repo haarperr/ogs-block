@@ -1,4 +1,4 @@
-DEBUG_ENABLED, IsInVehicle = false, false
+debugEnabled, debugMaxDistance, IsInVehicle = false, 300.0, false
 
 CurrentPolyTarget = vector3(0.0, 0.0, 0.0)
 
@@ -19,7 +19,7 @@ function AddToComboZone(zone)
 
             if leftZones ~= nil then
                 for _, zone in ipairs(leftZones) do
-                    TriggerEvent("caue-polyzone:exit", zone.name)
+                    TriggerEvent("caue-polyzone:exit", zone.name, zone.data)
                 end
             end
         end, 250)
@@ -33,7 +33,7 @@ function CreateZone(options)
         if not TargetZones[key] then
             TargetZones[key] = true
         else
-            print('polyzone with name/id already added, skipping: ', key)
+            print("polyzone with name/id already added, skipping: ", key)
         end
     end
 end
@@ -41,9 +41,8 @@ end
 exports("AddBoxZone", function(name, vectors, length, width, options)
     if not options then options = {} end
     options.name = name
-    options.debugPoly = DEBUG_ENABLED or options.debugPoly
     CreateZone(options)
-    local boxCenter = type(vectors) ~= 'vector3' and vector3(vectors.x, vectors.y, vectors.z) or vectors
+    local boxCenter = type(vectors) ~= "vector3" and vector3(vectors.x, vectors.y, vectors.z) or vectors
     local zone = BoxZone:Create(boxCenter, length, width, options)
     AddToComboZone(zone)
 end)
@@ -51,11 +50,14 @@ end)
 exports("AddCircleZone", function(name, center, radius, options)
     if not options then options = {} end
     options.name = name
-    options.debugPoly = DEBUG_ENABLED or options.debugPoly
     CreateZone(options)
-    local circleCenter = type(center) ~= 'vector3' and vector3(center.x, center.y, center.z) or center
+    local circleCenter = type(center) ~= "vector3" and vector3(center.x, center.y, center.z) or center
     local zone = CircleZone:Create(circleCenter, radius, options)
     AddToComboZone(zone)
+end)
+
+exports("GetZones", function(point)
+    return TargetComboZone:getZones(point)
 end)
 
 function GetForwardVector(rotation)
@@ -79,7 +81,7 @@ function GetTargetCoords()
 
         TargetCoords = targetCoords
 
-        if DEBUG_ENABLED and hit ~= 0 then
+        if debugEnabled and hit ~= 0 then
             DrawMarker(28, targetCoords.x, targetCoords.y, targetCoords.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.01, 0.01, 0.01, 255, 0, 0, 255, false, false, 2, nil, nil, false)
         end
     end
@@ -87,10 +89,26 @@ function GetTargetCoords()
     return TargetCoords
 end
 
-AddEventHandler('baseevents:enteredVehicle', function()
+AddEventHandler("baseevents:enteredVehicle", function()
     IsInVehicle = true
 end)
 
-AddEventHandler('baseevents:leftVehicle', function()
+AddEventHandler("baseevents:leftVehicle", function()
     IsInVehicle = false
 end)
+
+local function toggleDebug(state)
+    if state == debugEnabled then return end
+    debugEnabled = state
+    if debugEnabled then
+        while debugEnabled do
+            local plyPos = GetEntityCoords(PlayerPedId()).xy
+            for i, zone in ipairs(TargetComboZone.zones) do
+                if zone and not zone.destroyed and #(plyPos - zone.center.xy) < debugMaxDistance then
+                    zone:draw()
+                end
+            end
+            Wait(0)
+        end
+    end
+end

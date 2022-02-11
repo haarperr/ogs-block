@@ -556,7 +556,7 @@ Citizen.CreateThread(function()
 
     exports["caue-eye"]:AddPeekEntryByPolyTarget("caue-tacoshop:delivery", {{
         event = "caue-tacoshop:deliveryStation",
-        id = "caue-tacoshop:deliveryStart",
+        id = "tacoshop_deliveryStart",
         icon = "motorcycle",
         label = "Iniciar Entregas",
         parameters = { stationId = 1 }
@@ -564,7 +564,7 @@ Citizen.CreateThread(function()
 
     exports["caue-eye"]:AddPeekEntryByPolyTarget("caue-tacoshop:delivery", {{
         event = "caue-tacoshop:deliveryStation",
-        id = "caue-tacoshop:deliveryStop",
+        id = "tacoshop_deliveryStop",
         icon = "motorcycle",
         label = "Cancelar Entregas",
         parameters = { stationId = 2 }

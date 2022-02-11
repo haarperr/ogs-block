@@ -20,6 +20,7 @@ server_scripts {
 }
 
 client_scripts {
+	"@caue-array/Array.lua",
 	"@caue-lib/client/cl_state.lua",
 	"client/cl_*.lua",
 	"client/entries/cl_*.lua",

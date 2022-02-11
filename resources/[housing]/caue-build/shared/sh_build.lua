@@ -60,7 +60,7 @@ Build.Plans = {
 		["peek"] = {
 			["model"] = -1388847408,
 			["event"] = "caue-housing:alarmEnter",
-			["id"] = "caue-housing:alarmEnter",
+			["id"] = "housing_alarmEnter",
 			["icon"] = "hammer",
 			["label"] = "Disable",
 			["distance"] = {radius = 2.0},
@@ -164,7 +164,7 @@ Build.Plans = {
 		["peek"] = {
 			["model"] = -1388847408,
 			["event"] = "caue-housing:alarmEnter",
-			["id"] = "caue-housing:alarmEnter",
+			["id"] = "housing_alarmEnter",
 			["icon"] = "hammer",
 			["label"] = "Disable",
 			["distance"] = {radius = 2.0},
@@ -330,7 +330,7 @@ Build.Plans = {
 		["peek"] = {
 			["model"] = -1388847408,
 			["event"] = "caue-housing:alarmEnter",
-			["id"] = "caue-housing:alarmEnter",
+			["id"] = "housing_alarmEnter",
 			["icon"] = "hammer",
 			["label"] = "Disable",
 			["distance"] = {radius = 2.0},
@@ -458,7 +458,7 @@ Build.Plans = {
 		["peek"] = {
 			["model"] = -1388847408,
 			["event"] = "caue-housing:alarmEnter",
-			["id"] = "caue-housing:alarmEnter",
+			["id"] = "housing_alarmEnter",
 			["icon"] = "hammer",
 			["label"] = "Disable",
 			["distance"] = {radius = 2.0},

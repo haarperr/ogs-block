@@ -1,10 +1,10 @@
 PlayerPed, CurrentTarget, IsInVehicle = nil, nil, false
 
-AddEventHandler('baseevents:enteredVehicle', function()
+AddEventHandler("baseevents:enteredVehicle", function()
     IsInVehicle = true
 end)
 
-AddEventHandler('baseevents:leftVehicle', function()
+AddEventHandler("baseevents:leftVehicle", function()
     IsInVehicle = false
 end)
 
@@ -56,21 +56,21 @@ Citizen.CreateThread(function()
         if entity and entityType ~= 0 then
             if entity ~= CurrentTarget then
                 CurrentTarget = entity
-                TriggerEvent('caue:target:changed', CurrentTarget, entityType, entityCoords)
+                TriggerEvent("caue:target:changed", CurrentTarget, entityType, entityCoords)
             end
         elseif CurrentTarget then
             CurrentTarget = nil
-            TriggerEvent('caue:target:changed', CurrentTarget)
+            TriggerEvent("caue:target:changed", CurrentTarget)
         end
 
         Citizen.Wait(idle)
     end
 end)
 
-exports('GetCurrentEntity', function()
+exports("GetCurrentEntity", function()
     return CurrentTarget
 end)
 
-exports('GetEntityInFrontOfEntity', GetEntityInFrontOfEntity)
+exports("GetEntityInFrontOfEntity", GetEntityInFrontOfEntity)
 
-exports('GetEntityPlayerIsLookingAt', GetEntityPlayerIsLookingAt)
+exports("GetEntityPlayerIsLookingAt", GetEntityPlayerIsLookingAt)

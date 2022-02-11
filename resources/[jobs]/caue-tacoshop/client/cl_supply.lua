@@ -159,7 +159,7 @@ Citizen.CreateThread(function()
 
     exports["caue-eye"]:AddPeekEntryByPolyTarget("caue-tacoshop:supply", {{
         event = "caue-tacoshop:supplyStation",
-        id = "caue-tacoshop:supplyStart",
+        id = "tacoshop_supplyStart",
         icon = "box",
         label = "Iniciar Reabastecimento",
         parameters = { stationId = 1 }
@@ -167,12 +167,12 @@ Citizen.CreateThread(function()
 
     exports["caue-eye"]:AddPeekEntryByPolyTarget("caue-tacoshop:supply", {{
         event = "caue-tacoshop:supplyStation",
-        id = "caue-tacoshop:supplyStop",
+        id = "tacoshop_supplyStop",
         icon = "box",
         label = "Cancelar Reabastecimento",
         parameters = { stationId = 2 }
     }}, { distance = { radius = 3.5 }, isEnabled = function() return rusticosotemideiasmerdasesseserverezap > 0 end })
 
 
-    
+
 end)

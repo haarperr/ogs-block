@@ -56,7 +56,7 @@ end)
 Citizen.CreateThread(function()
     exports["caue-eye"]:AddPeekEntryByModel(payphoneModels, {{
         event = "caue-phone:startPayPhoneCall",
-        id = "caue-phone:startPayPhoneCall",
+        id = "startPayPhoneCall",
         icon = "phone-volume",
         label = "Make Call",
         parameters = {},
