@@ -553,13 +553,13 @@ AddEventHandler("food:Condiment", function()
 
     changeHunger(40)
 
-    if stresslevel > 500 then
-        SetRunSprintMultiplierForPlayer(PlayerId(), 1.15)
-        dstamina = math.random(10,15)
-    else
-        SetRunSprintMultiplierForPlayer(PlayerId(), 1.25)
-        dstamina = math.random(10,15)
-    end
+    -- if stresslevel > 500 then
+    --     SetRunSprintMultiplierForPlayer(PlayerId(), 1.15)
+    --     dstamina = math.random(10,15)
+    -- else
+    --     SetRunSprintMultiplierForPlayer(PlayerId(), 1.25)
+    --     dstamina = math.random(10,15)
+    -- end
 
     while dstamina > 0 do
         Citizen.Wait(1000)
@@ -582,7 +582,7 @@ AddEventHandler("food:Condiment", function()
         SetPedToRagdoll(PlayerPedId(), 6000, 6000, 3, 0, 0, 0)
     end
 
-    SetRunSprintMultiplierForPlayer(PlayerId(), 1.0)
+    -- SetRunSprintMultiplierForPlayer(PlayerId(), 1.0)
     RevertToStressMultiplier()
 end)
 
@@ -652,7 +652,7 @@ AddEventHandler("food:SoftDrink", function()
 
     changeThirst(40)
 
-    SetRunSprintMultiplierForPlayer(PlayerId(), 1.25)
+    -- SetRunSprintMultiplierForPlayer(PlayerId(), 1.25)
     dstamina = math.random(10,15)
 
     while dstamina > 0 do
@@ -676,7 +676,7 @@ AddEventHandler("food:SoftDrink", function()
         SetPedToRagdoll(PlayerPedId(),6000,6000, 3, 0, 0, 0)
     end
 
-    SetRunSprintMultiplierForPlayer(PlayerId(), 1.0)
+    -- SetRunSprintMultiplierForPlayer(PlayerId(), 1.0)
     RevertToStressMultiplier()
 end)
 
