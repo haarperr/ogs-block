@@ -1,6 +1,5 @@
 body {
-    /* background-color: #15181d; */
-    background-color: transparent;
+    background-color: transparent; 
 }
 
 #canvas {
@@ -9,4 +8,8 @@ body {
     top: 45%;
     left: 45%;
     width: 10%;
+    background: #2d2d2d;
+    border-radius: 50%;
+    border: 5px solid #bfb89c;
+    transition: 1s all;
 }

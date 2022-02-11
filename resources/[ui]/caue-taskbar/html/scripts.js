@@ -15,20 +15,23 @@ $(document).ready(function () {
         var item = event.data;
         if (item.runProgress === true) {
             openMain();
-
-            $("#progress-bar").css("width", "0%");
-            $(".nicesexytext").empty();
+            
+            $(".cicleDisplay").css("stroke-dashoffset","100");
+            $(".nicesexytext,.divwrap p").empty();
+            $(".divwrap p").append("0%");
             $(".nicesexytext").append(item.name);
         }
 
         if (item.runUpdate === true) {
-            var percent = "" + item.Length + "%"
+            var percent = parseInt(item.Length);
 
-            $("#progress-bar").css("width", percent);
-            $(".nicesexytext").empty();
+            $(".cicleDisplay").css("stroke-dashoffset",100-percent);
+            $(".nicesexytext,.divwrap p").empty();
+            $(".divwrap p").append(percent+"%");
             $(".nicesexytext").append(item.name);
-        }
 
+        }
+        
         if (item.closeFail === true) {
             closeMain()
 
@@ -42,5 +45,16 @@ $(document).ready(function () {
         }
 
     });
+    //teste navegador
+    // var  porc = 90
+    // var  text = "Processando"
+    // $(".divwrap").fadeIn(10);
+
+
+
+    // $(".cicleDisplay").css("stroke-dashoffset",100-porc);
+    // $(".nicesexytext,.divwrap p").empty();
+    // $(".divwrap p").append(porc+"%");
+    // $(".nicesexytext").append(text);
 
 });
