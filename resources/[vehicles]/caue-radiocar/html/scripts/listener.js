@@ -7,7 +7,7 @@ var playerPos = [-90000,-90000,-90000];
 
 var vueJS = new Vue({
 	el: '.radio_cont',
-	data: 
+	data:
 	{
 		songs: [],
 		visible: false,
@@ -15,13 +15,13 @@ var vueJS = new Vue({
 		locales: localesex,
 		volume: 30,
 	},
-	
+
 	methods: {
 	    changeVolume: function(minus){
 	        if(minus){
-                $.post('https://rcore_radiocar/volumedown', JSON.stringify({}));
+                $.post('https://caue-radiocar/volumedown', JSON.stringify({}));
 	            }else{
-	            $.post('https://rcore_radiocar/volumeup', JSON.stringify({}));
+	            $.post('https://caue-radiocar/volumeup', JSON.stringify({}));
 	        }
 	    },
 
@@ -29,7 +29,7 @@ var vueJS = new Vue({
             $("#status").text(localesex.nothing);
             $("#nameSong").text(localesex.nameSong);
             $("#timeSong").text("00:00:00")
-            $.post('https://rcore_radiocar/stop', JSON.stringify({}));
+            $.post('https://caue-radiocar/stop', JSON.stringify({}));
 	    },
 
 	    changePage: function(pg){
@@ -39,7 +39,7 @@ var vueJS = new Vue({
 	    playCustomMusic: function(){
 	        $("#status").text(localesex.playing);
             updateName($("#url").val());
-            $.post('https://rcore_radiocar/play', JSON.stringify(
+            $.post('https://caue-radiocar/play', JSON.stringify(
             {
                 url: $("#url").val(),
             }));
@@ -47,23 +47,23 @@ var vueJS = new Vue({
 
 		showIndex: function (index) {
 			currentIndex = index;
-		},	
-		
+		},
+
 		playMusic: function (index) {
 			var url = this.songs[index].url
 			updateName(url);
 			$("#status").text(localesex.playing);
-			$.post('https://rcore_radiocar/play', JSON.stringify({
+			$.post('https://caue-radiocar/play', JSON.stringify({
 				url: url,
 			}));
 		}
 	}
-}) 
+})
 
 function editSong(){
 	vueJS.songs[currentIndex].label = $("#AddName").val();
 	vueJS.songs[currentIndex].url = $("#AddUrl").val();
-	$.post('https://rcore_radiocar/editSong', JSON.stringify({
+	$.post('https://caue-radiocar/editSong', JSON.stringify({
 		index: currentIndex,
 		label: $("#AddName").val(),
 		url: $("#AddUrl").val(),
@@ -289,7 +289,7 @@ $(function(){
 
 $(document).keyup(function(e) {
 	if (e.key === "Escape") {
-		$.post('https://rcore_radiocar/exit', JSON.stringify({}));
+		$.post('https://caue-radiocar/exit', JSON.stringify({}));
     }
 });
 

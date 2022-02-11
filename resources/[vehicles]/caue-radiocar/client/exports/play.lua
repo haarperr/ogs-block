@@ -1,8 +1,4 @@
 function PlayUrl(name_, url_, volume_, loop_, options)
-    if Config.UseExternalxSound then
-        exports["xsound"]:PlayUrl(name_, url_, volume_, loop_, options)
-        return
-    end
     if disableMusic then return end
     SendNUIMessage({
         type = "url",
@@ -25,14 +21,10 @@ function PlayUrl(name_, url_, volume_, loop_, options)
     soundInfo[name_].loop = loop_ or false
     soundInfo[name_].isDynamic = false
 
-    globalOptionsCache[name_] = options or {}
+    globalOptionsCache[name_] = options or { }
 end
 
 function PlayUrlPos(name_, url_, volume_, pos, loop_, options)
-    if Config.UseExternalxSound then
-        exports["xsound"]:PlayUrlPos(name_, url_, volume_, pos, loop_, options)
-        return
-    end
     if disableMusic then return end
     SendNUIMessage({
         type = "url",
@@ -55,24 +47,16 @@ function PlayUrlPos(name_, url_, volume_, pos, loop_, options)
     soundInfo[name_].loop = loop_ or false
     soundInfo[name_].isDynamic = true
 
-    globalOptionsCache[name_] = options or {}
+    globalOptionsCache[name_] = options or { }
 end
 
 function TextToSpeech(name_, lang, text, volume_, loop_, options)
-    if Config.UseExternalxSound then
-        exports["xsound"]:TextToSpeech(name_, lang, text, volume_, loop_, options)
-        return
-    end
     if disableMusic then return end
     local url = string.format("https://translate.google.com/translate_tts?ie=UTF-8&q=%s&tl=%s&total=1&idx=0&client=tw-ob", text, lang)
     PlayUrl(name_, url, volume_, loop_, options)
 end
 
 function TextToSpeechPos(name_, lang, text, volume_, pos, loop_, options)
-    if Config.UseExternalxSound then
-        exports["xsound"]:TextToSpeechPos(name_, lang, text, volume_, pos, loop_, options)
-        return
-    end
     if disableMusic then return end
     local url = string.format("https://translate.google.com/translate_tts?ie=UTF-8&q=%s&tl=%s&total=1&idx=0&client=tw-ob", text, lang)
     PlayUrlPos(name_, url, volume_, pos, loop_, options)

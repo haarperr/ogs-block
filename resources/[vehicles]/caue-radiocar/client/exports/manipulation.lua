@@ -1,8 +1,4 @@
 function Distance(name_, distance_)
-    if Config.UseExternalxSound then
-        exports["xsound"]:Distance(name_, distance_)
-        return
-    end
     SendNUIMessage({
         type = "distance",
         name = name_,
@@ -12,10 +8,6 @@ function Distance(name_, distance_)
 end
 
 function Position(name_, pos)
-    if Config.UseExternalxSound then
-        exports["xsound"]:Position(name_, pos)
-        return
-    end
     SendNUIMessage({
         type = "soundPosition",
         name = name_,
@@ -28,10 +20,6 @@ function Position(name_, pos)
 end
 
 function Destroy(name_)
-    if Config.UseExternalxSound then
-        exports["xsound"]:Destroy(name_)
-        return
-    end
     SendNUIMessage({
         type = "delete",
         name = name_
@@ -46,10 +34,6 @@ function Destroy(name_)
 end
 
 function Resume(name_)
-    if Config.UseExternalxSound then
-        exports["xsound"]:Resume(name_)
-        return
-    end
     SendNUIMessage({
         type = "resume",
         name = name_
@@ -63,10 +47,6 @@ function Resume(name_)
 end
 
 function Pause(name_)
-    if Config.UseExternalxSound then
-        exports["xsound"]:Pause(name_)
-        return
-    end
     SendNUIMessage({
         type = "pause",
         name = name_
@@ -80,10 +60,6 @@ function Pause(name_)
 end
 
 function setVolume(name_, vol)
-    if Config.UseExternalxSound then
-        exports["xsound"]:setVolume(name_, vol)
-        return
-    end
     SendNUIMessage({
         type = "volume",
         volume = vol,
@@ -93,10 +69,6 @@ function setVolume(name_, vol)
 end
 
 function setVolumeMax(name_, vol)
-    if Config.UseExternalxSound then
-        exports["xsound"]:setVolumeMax(name_, vol)
-        return
-    end
     SendNUIMessage({
         type = "max_volume",
         volume = vol,
@@ -106,10 +78,6 @@ function setVolumeMax(name_, vol)
 end
 
 function setTimeStamp(name_, timestamp)
-    if Config.UseExternalxSound then
-        exports["xsound"]:setTimeStamp(name_, timestamp)
-        return
-    end
     getInfo(name_).timeStamp = timestamp
     SendNUIMessage({
         name = name_,
@@ -119,18 +87,10 @@ function setTimeStamp(name_, timestamp)
 end
 
 function destroyOnFinish(id, bool)
-    if Config.UseExternalxSound then
-        exports["xsound"]:destroyOnFinish(id, bool)
-        return
-    end
     soundInfo[id].destroyOnFinish = bool
 end
 
 function setSoundLoop(name, value)
-    if Config.UseExternalxSound then
-        exports["xsound"]:setSoundLoop(name, value)
-        return
-    end
     SendNUIMessage({
         type = "loop",
         name = name,
@@ -140,10 +100,6 @@ function setSoundLoop(name, value)
 end
 
 function repeatSound(name)
-    if Config.UseExternalxSound then
-        exports["xsound"]:repeatSound(name)
-        return
-    end
     if soundExists(name) then
         SendNUIMessage({
             type = "repeat",
@@ -153,10 +109,6 @@ function repeatSound(name)
 end
 
 function setSoundDynamic(name, bool)
-    if Config.UseExternalxSound then
-        exports["xsound"]:setSoundDynamic(name, bool)
-        return
-    end
     if soundExists(name) then
         soundInfo[name].isDynamic = bool
         SendNUIMessage({
@@ -168,10 +120,6 @@ function setSoundDynamic(name, bool)
 end
 
 function setSoundURL(name, url)
-    if Config.UseExternalxSound then
-        exports["xsound"]:setSoundURL(name, url)
-        return
-    end
     if soundExists(name) then
         soundInfo[name].url = url
         SendNUIMessage({
