@@ -1,6 +1,11 @@
 RegisterNetEvent("caue:peds:rogue")
 AddEventHandler("caue:peds:rogue", function(toDelete)
-    if toDelete == nil then return end
+    local src = source
 
-    TriggerClientEvent("caue:peds:rogue:delete", -1, toDelete)
+    local coords = GetEntityCoords(GetPlayerPed(src))
+    local players = exports["caue-infinity"]:GetNerbyPlayers(coords, 250)
+
+    for i, v in ipairs(players) do
+        TriggerClientEvent("caue:peds:rogue:delete", v, toDelete)
+    end
 end)

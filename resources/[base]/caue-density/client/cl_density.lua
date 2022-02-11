@@ -8,8 +8,6 @@ DecorRegister("ScriptedPed", 2)
 
 local Densitities = {}
 
-local defaultDensity = 0.8
-
 local density = 0.8
 local pedDensity = 1.0
 local IsSpeeding = false
@@ -24,16 +22,12 @@ local RequiredChecks = 4
 
 ]]
 
-function RegisterDensityReason(pReason, pPriority)
-    Densitities[pReason] = { reason = pReason, priority = pPriority, level = -1, active = false }
-end
-
 function ChangeDensity(pReason, pLevel)
     if not Densitities[pReason] then return end
 
     Densitities[pReason]["level"] = pLevel
 
-    local level = defaultDensity
+    local level = Config.populationDensity
     local priority
 
     for _, reason in pairs(Densitities) do
@@ -49,9 +43,17 @@ function ChangeDensity(pReason, pLevel)
     density = level + 0.0
 end
 
+function RegisterDensityReason(pReason, pPriority)
+    Densitities[pReason] = {
+        reason = pReason,
+        priority = pPriority,
+        level = -1,
+        active = false
+    }
+end
+
 function IsModelValid(ped)
     local eType = GetPedType(ped)
-
     return eType ~= 0 and eType ~= 1 and eType ~= 3 and eType ~= 28 and not IsPedAPlayer(ped)
 end
 
@@ -69,7 +71,7 @@ function DeleteRoguePed(pPed)
     else
         local netId = NetworkGetNetworkIdFromEntity(pPed)
 
-        return { netId = netId, owner = GetPlayerServerId(owner)}
+        return { netId = netId, owner = GetPlayerServerId(owner) }
     end
 end
 
@@ -79,8 +81,8 @@ end
 
 ]]
 
-exports("RegisterDensityReason", RegisterDensityReason)
 exports("ChangeDensity", ChangeDensity)
+exports("RegisterDensityReason", RegisterDensityReason)
 
 --[[
 
@@ -88,14 +90,9 @@ exports("ChangeDensity", ChangeDensity)
 
 ]]
 
-AddEventHandler("pausePopulation", function(pPause)
-    density = pPause and 0.0 or defaultDensity
-    print("pausing polulation", density)
-end)
-
 RegisterNetEvent("caue:peds:rogue:delete")
 AddEventHandler("caue:peds:rogue:delete", function(pNetId)
-    local entity = NetworkGetEntityFromNetworkId(pNetId)
+  local entity = NetworkGetEntityFromNetworkId(pNetId)
 
     if DoesEntityExist(entity) then
         DeleteEntity(entity)
@@ -115,6 +112,22 @@ AddEventHandler("caue:peds:decor:set", function (pNetId, pType, pProperty, pValu
             DecorSetInt(entity, pProperty, pValue)
         end
     end
+end)
+
+AddEventHandler("pausePopulation", function(pPause)
+    density = pPause and 0.0 or Config.populationDensity
+    print("pausing polulation", density)
+end)
+
+AddEventHandler("caue-gopro:activateVRChair", function ()
+    density = 0.0
+    print("pausing polulation", density)
+end)
+
+AddEventHandler("caue-ui:application-closed", function(name)
+    if name ~= "gopros" then return end
+
+    density = Config.populationDensity
 end)
 
 AddEventHandler("baseevents:vehicleSpeeding", function (isSpeeding)
@@ -141,8 +154,9 @@ end)
 
 ]]
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
+        local pedDensity = density == 0.0 and 0.0 or 1.0
         local vehDensity = IsSpeeding and (IsDriver and 0.1 or 0.0) or density
 
         SetParkedVehicleDensityMultiplierThisFrame(pedDensity)
@@ -188,7 +202,6 @@ Citizen.CreateThread(function()
                 local entitycoords = GetEntityCoords(ped)
 
                 if count >= RequiredChecks and #(entitycoords - playerCoords) <= 100.0 then
-
                     local deleteInfo = DeleteRoguePed(ped)
 
                     if deleteInfo then
