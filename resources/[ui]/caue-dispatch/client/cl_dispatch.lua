@@ -442,7 +442,7 @@ function GetVehicleDescription()
 end
 
 function GetStreetAndZone()
-    local coords = GetEntityCoords(playerPed)
+    local coords = GetEntityCoords(PlayerPedId())
     local currentStreetHash, intersectStreetHash = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
     local currentStreetName = GetStreetNameFromHashKey(currentStreetHash)
     local area = GetLabelText(tostring(GetNameOfZone(coords.x, coords.y, coords.z)))
