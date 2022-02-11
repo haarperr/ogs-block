@@ -1500,34 +1500,34 @@ Citizen.CreateThread(function()
 
     local _categorys = exports.ghmattimysql:executeSync([[
         SELECT *
-        FROM mdt_penalcode_types
+        FROM mdt_penalcode_categorys
     ]])
 
     for i, v in ipairs(_categorys) do
-        penalCode[v.tid] = {}
-        penalCodeCategorys[v.tid] = v.type
+        penalCode[v.cid] = {}
+        penalCodeCategorys[v.cid] = v.category
 
         local _penalcode = exports.ghmattimysql:executeSync([[
             SELECT *
             FROM mdt_penalcode
-            WHERE type = ?
-            ORDER BY category ASC
+            WHERE category = ?
+            ORDER BY type ASC
         ]],
-        { v.tid })
+        { v.cid })
 
         for i2, v2 in ipairs(_penalcode) do
             local color = "green"
-            local class = "Infraction"
+            local class = "Infração"
 
-            if v2.category == 1 then
+            if v2.type == 1 then
                 color = "orange"
-                class = "Misdemeanor"
-            elseif v2.category == 2 then
+                class = "Contravenção"
+            elseif v2.type == 2 then
                 color = "red"
-                class = "Felony"
+                class = "Crime"
             end
 
-            table.insert(penalCode[v.tid], {
+            table.insert(penalCode[v.cid], {
                 id = v2.id,
                 color = color,
                 title = v2.label,
