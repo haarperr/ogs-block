@@ -70,7 +70,7 @@ end
 
 function getSidWithCid(cid)
     for i, v in pairs(ServerUsers) do
-        if v["char"]["id"] == cid then
+        if v["char"] and v["char"]["id"] == cid then
             return i
         end
     end
