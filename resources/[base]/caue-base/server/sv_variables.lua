@@ -79,7 +79,7 @@ end
 
 function getSidWithPhone(phone)
     for i,v in pairs(ServerUsers) do
-        if v["char"]["phone"] == phone then
+        if v["char"] and v["char"]["phone"] == phone then
             return i
         end
     end
@@ -88,7 +88,7 @@ end
 
 function getSidWithAccountId(account)
     for i,v in pairs(ServerUsers) do
-        if v["char"]["bankid"] == account then
+        if v["char"] and v["char"]["bankid"] == account then
             return i
         end
     end
@@ -98,7 +98,7 @@ end
 function JobCount(job)
     local count = 0
     for i,v in pairs(ServerUsers) do
-        if v["char"]["job"] == job then
+        if v["char"] and v["char"]["job"] == job then
             count = count + 1
         end
     end
