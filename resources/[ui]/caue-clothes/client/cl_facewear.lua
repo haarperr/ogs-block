@@ -4,7 +4,8 @@
 
 ]]
 
-local antispam = GetGameTimer()
+local removing = false
+local antispam = 0
 
 local items = {
     "hat",
@@ -39,6 +40,8 @@ function toggleFaceWear(pType, pRemove, pInfo, pSteal)
             return
         end
     end
+
+    removing = true
 
     if pType == "hat" then
         PropIndex = 0
@@ -98,7 +101,12 @@ function toggleFaceWear(pType, pRemove, pInfo, pSteal)
             end
         else
             if currentProp ~= -1 then
-                local _itemMeta = { prop = currentProp, txd = texture }
+                local _itemMeta = {
+                    _hideKeys = { "_remove_id" },
+                    _remove_id = math.random(10000000, 999999999),
+                    prop = currentProp,
+                    txd = texture
+                }
                 TriggerEvent("player:receiveItem", pType, 1, false, _itemMeta)
             end
 
@@ -119,7 +127,13 @@ function toggleFaceWear(pType, pRemove, pInfo, pSteal)
             end
         else
             if currentDrawable ~= -1 then
-                local _itemMeta = { prop = currentDrawable, txd = texture, palette = pal }
+                local _itemMeta = {
+                    _hideKeys = { "_remove_id" },
+                    _remove_id = math.random(10000000, 999999999),
+                    prop = currentDrawable,
+                    txd = texture,
+                    palette = pal
+                }
                 TriggerEvent("player:receiveItem", pType, 1, false, _itemMeta)
             end
 
@@ -145,11 +159,25 @@ function toggleFaceWear(pType, pRemove, pInfo, pSteal)
                 SetPedComponentVariation(PlayerPedId(), 3, bareArmsIndex, 0, -1)
 
                 ItemHandler = true
-                ItemMeta = { prop = currentDrawable, txd = texture, palette = pal, arms = arm }
+                ItemMeta = {
+                    _hideKeys = { "_remove_id", "arms" },
+                    _remove_id = math.random(10000000, 999999999),
+                    prop = currentDrawable,
+                    txd = texture,
+                    palette = pal,
+                    arms = arm
+                }
             end
         else
             if currentDrawable ~= -1 and currentDrawable ~= bareTorsoIndex then
-                local _itemMeta = { prop = currentDrawable, txd = texture, palette = pal, arms = arm }
+                local _itemMeta = {
+                    _hideKeys = { "_remove_id", "arms" },
+                    _remove_id = math.random(10000000, 999999999),
+                    prop = currentDrawable,
+                    txd = texture,
+                    palette = pal,
+                    arms = arm
+                }
                 TriggerEvent("player:receiveItem", pType, 1, false, _itemMeta)
             end
 
@@ -173,11 +201,23 @@ function toggleFaceWear(pType, pRemove, pInfo, pSteal)
                 SetPedComponentVariation(PlayerPedId(), PropIndex, bareLegsIndex, 0, -1)
 
                 ItemHandler = true
-                ItemMeta = { prop = currentDrawable, txd = texture, palette = pal }
+                ItemMeta = {
+                    _hideKeys = { "_remove_id" },
+                    _remove_id = math.random(10000000, 999999999),
+                    prop = currentDrawable,
+                    txd = texture,
+                    palette = pal
+                }
             end
         else
             if currentDrawable ~= -1 and currentDrawable ~= bareLegsIndex then
-                local _itemMeta = { prop = currentDrawable, txd = texture, palette = pal }
+                local _itemMeta = {
+                    _hideKeys = { "_remove_id" },
+                    _remove_id = math.random(10000000, 999999999),
+                    prop = currentDrawable,
+                    txd = texture,
+                    palette = pal
+                }
                 TriggerEvent("player:receiveItem", pType, 1, false, _itemMeta)
             end
 
@@ -200,11 +240,23 @@ function toggleFaceWear(pType, pRemove, pInfo, pSteal)
                 SetPedComponentVariation(PlayerPedId(), PropIndex, bareFootIndex, 0, -1)
 
                 ItemHandler = true
-                ItemMeta = { prop = currentDrawable, txd = texture, palette = pal }
+                ItemMeta = {
+                    _hideKeys = { "_remove_id" },
+                    _remove_id = math.random(10000000, 999999999),
+                    prop = currentDrawable,
+                    txd = texture,
+                    palette = pal
+                }
             end
         else
             if currentDrawable ~= -1 and currentDrawable ~= bareFootIndex then
-                local _itemMeta = { prop = currentDrawable, txd = texture, palette = pal }
+                local _itemMeta = {
+                    _hideKeys = { "_remove_id" },
+                    _remove_id = math.random(10000000, 999999999),
+                    prop = currentDrawable,
+                    txd = texture,
+                    palette = pal
+                }
                 TriggerEvent("player:receiveItem", pType, 1, false, _itemMeta)
             end
 
@@ -234,7 +286,7 @@ function toggleFaceWear(pType, pRemove, pInfo, pSteal)
             if pRemove then
                 TriggerEvent("player:receiveItem", pType, 1, false, ItemMeta)
             else
-                TriggerEvent("inventory:removeItemByMetaKV", pType, 1, "prop", pInfo.prop)
+                TriggerEvent("inventory:removeItemByMetaKV", pType, 1, "_remove_id", pInfo._remove_id)
             end
         end
     end
@@ -244,6 +296,10 @@ function toggleFaceWear(pType, pRemove, pInfo, pSteal)
     end
 
     TriggerEvent("caue-clothes:saveCurrentClothes")
+
+    Citizen.Wait(250)
+
+    removing = false
 end
 
 --[[
@@ -255,12 +311,17 @@ end
 AddEventHandler("caue-inventory:itemUsed", function(item, info)
     if has_value(items, item) == -1 then return end
 
-    if antispam >= GetGameTimer() then
+    if removing then
         TriggerEvent("DoLongHudText", "Mais devagar ok?", 2)
         return
     end
 
-    antispam = GetGameTimer() + 1000
+    if antispam >= GetCloudTimeAsInt() then
+        TriggerEvent("DoLongHudText", "Mais devagar ok?", 2)
+        return
+    end
+
+    antispam = GetCloudTimeAsInt() + 1
 
     local info = json.decode(info)
 
@@ -288,12 +349,12 @@ AddEventHandler("caue-facewear:steal", function(pArgs, pEntity)
 end)
 
 AddEventHandler("caue-facewear:radial", function(pArgs)
-    if antispam >= GetGameTimer() then
+    if antispam >= GetCloudTimeAsInt() then
         TriggerEvent("DoLongHudText", "Mais devagar ok?", 2)
         return
     end
 
-    antispam = GetGameTimer() + 1000
+    antispam = GetCloudTimeAsInt() + 1
 
     toggleFaceWear(pArgs, true, {}, false)
 end)
