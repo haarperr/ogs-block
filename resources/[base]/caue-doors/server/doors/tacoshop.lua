@@ -1,3 +1,5 @@
+DOORS = DOORS or {}
+
 DOORS[4001] = {
     ["active"] = true,
     ["model"] = -1635579193,

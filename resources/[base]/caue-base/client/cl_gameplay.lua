@@ -145,6 +145,7 @@ end)
 Citizen.CreateThread(function()
     while true do
         SetPedMinGroundTimeForStungun(PlayerPedId(), 5000)
+        SetEntityProofs(PlayerPedId(), false, false, false, false, false, true, false, false)
         SetPlayerHealthRechargeMultiplier(PlayerId(), 0.0)
         SetRadarBigmapEnabled(false, false)
 
