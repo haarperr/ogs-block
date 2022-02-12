@@ -64,7 +64,8 @@ end
 function polyHelperEnter(apartmentLocNumber,apartmentNumber)
     if listening then return end
     listening = true
-    exports["caue-interaction"]:showInteraction(getInteractionMessage(apartmentLocNumber,apartmentNumber))
+    -- exports["caue-interaction"]:showInteraction(getInteractionMessage(apartmentLocNumber,apartmentNumber))
+    exports["caue-interaction"]:showInteraction("[H] parar entrar")
     listen(apartmentLocNumber,apartmentNumber)
 end
 
