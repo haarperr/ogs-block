@@ -9,6 +9,7 @@ function SetRadioFrequency(pFrequency, pSendAppEvent)
       end
 
       TriggerServerEvent("AddPlayerToRadio", pFrequency, GetPlayerServerId(PlayerId()))
+      TriggerServerEvent("caue-mdt:setRadio", pFrequency)
 
       Debug("[Radio] Connected | Radio ID: %s", pFrequency)
     end

@@ -259,12 +259,23 @@ end)
 RegisterServerEvent("caue-mdt:setRadio")
 AddEventHandler("caue-mdt:setRadio", function(radio)
     local src = source
-    local user = exports["caue-base"]:getModule("Player"):GetUser(src)
-    local char = user:getCurrentCharacter()
-    if not user then
-        return
-    end
-    usersRadios[tonumber(char.id)] = radio
+    local cid = exports["caue-base"]:getChar(src, "id")
+
+    usersRadios[cid] = radio
+end)
+
+RegisterServerEvent("caue-mdt:setRadioTo")
+AddEventHandler("caue-mdt:setRadioTo", function(cid, radio)
+    local src = source
+    local target = exports["caue-base"]:getSidWithCid(cid)
+
+    if target == 0 then return end
+
+    local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
+    local nameTarget = exports["caue-base"]:getChar(target, "first_name") .. " " .. exports["caue-base"]:getChar(target, "last_name")
+
+    TriggerClientEvent("DoLongHudText", src, "A frequência de " .. nameTarget .. " foi setada para " .. radio)
+    TriggerClientEvent("caue-mdt:setRadio", target, tonumber(radio), name)
 end)
 
 RegisterServerEvent("caue-mdt:setCallsign")

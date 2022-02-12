@@ -622,20 +622,19 @@ AddEventHandler("caue-mdt:setWaypoint:unit", function(sentData)
 end)
 
 RegisterNUICallback("setRadio", function(data, cb)
-    -- TriggerServerEvent("caue-mdt:setRadio", data.cid, data.newradio)
+    TriggerServerEvent("caue-mdt:setRadioTo", data.cid, data.newradio)
     cb(true)
 end)
 
 RegisterNetEvent("caue-mdt:setRadio")
 AddEventHandler("caue-mdt:setRadio", function(radio, name)
     if radio then
-        if (not exports["caue-inventory"]:hasEnoughOfItem("radio",1,false)) then
+        if (not exports["caue-inventory"]:hasEnoughOfItem("radio",1,false) and not exports["caue-inventory"]:hasEnoughOfItem("pdradio",1,false)) then
             TriggerEvent("DoLongHudText", "Missing radio, " .. name .. " tried to set your radio frequency.", 2)
             return
         end
 
-        exports["caue-voice"]:setVoiceProperty("radioEnabled", true)
-        exports["caue-voice"]:setRadioChannel(tonumber(radio))
+        exports["caue-voice"]:SetRadioFrequency(radio)
         TriggerEvent("DoLongHudText", "A frequência do seu rádio foi setada para " .. radio .. " MHz, por " .. name)
     end
 end)
