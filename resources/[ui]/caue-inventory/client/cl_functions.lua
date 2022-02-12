@@ -210,7 +210,14 @@ AddEventHandler("animation:lockpickinvtest", function(disable)
     ClearPedTasks(PlayerPedId())
 end)
 
-
+AddEventHandler("caue-inventory:getBrick", function()
+    loadAnimDict("random@domestic")
+  	TaskTurnPedToFaceEntity(PlayerPedId(), pEntity, -1)
+  	TaskPlayAnim(PlayerPedId(),"random@domestic", "pickup_low",5.0, 1.0, 1.0, 48, 0.0, 0, 0, 0)
+  	Citizen.Wait(1600)
+  	ClearPedTasks(PlayerPedId())
+    TriggerEvent("player:receiveItem", "1064738331", 1)
+end)
 
 
 

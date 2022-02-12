@@ -420,7 +420,7 @@ Citizen.CreateThread(function()
 
             if GetGameTimer() > lastMessage then
                 lastMessage = GetGameTimer() + 300000
-                TriggerEvent("chatMessage", "DOC: " , { 33, 118, 255 }, "Você tem " .. newTime .. " meses restantes")
+                TriggerEvent("chatMessage", "DOC: " , { 33, 118, 255 }, "Você tem " .. newTime > -1 and newTime or 0 .. " meses restantes")
             end
         end
     end

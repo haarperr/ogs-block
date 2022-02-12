@@ -2,6 +2,23 @@ local Entries = {}
 
 Entries[#Entries + 1] = {
     type = "flag",
+    group = { "isCementMixer" },
+    data = {
+        {
+            id = "brick",
+            label = "Pegar Tijolo",
+            icon = "cube",
+            event = "caue-inventory:getBrick",
+            parameters = {}
+        }
+    },
+    options = {
+        distance = { radius = 1.5 }
+    }
+}
+
+Entries[#Entries + 1] = {
+    type = "flag",
     group = { "isYogaMat" },
     data = {
         {

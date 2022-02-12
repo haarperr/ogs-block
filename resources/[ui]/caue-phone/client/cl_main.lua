@@ -55,14 +55,13 @@ function openPhone()
 end
 
 function closePhone()
-    TriggerEvent("closeInventoryGui")
-
     SetNuiFocus(false, false)
     SendNUIMessage({
         openPhone = false
     })
 
     StopAnimTask(PlayerPedId(), "cellphone@", "cellphone_text_read_base", 1.0)
+
     if not IsInActiveCall() then
         TriggerEvent("destroyPropPhone")
     end

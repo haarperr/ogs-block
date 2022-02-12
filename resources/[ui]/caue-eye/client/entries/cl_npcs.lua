@@ -14,7 +14,7 @@ Entries[#Entries + 1] = {
 
     },
     options = {
-        distance = { radius = 2.5 }
+        distance = { radius = 3.5 }
     }
 }
 Entries[#Entries + 1] = {

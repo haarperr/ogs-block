@@ -177,4 +177,5 @@ ModelFlags = {
     [`bkr_prop_weed_med_01b`] = { "isWeedPlant" },
     [`bkr_prop_weed_lrg_01a`] = { "isWeedPlant" },
     [`bkr_prop_weed_lrg_01b`] = { "isLrgWeedPlant", "isWeedPlant" },
+    [`prop_cementmixer_02a`] = { "isCementMixer" },
 }

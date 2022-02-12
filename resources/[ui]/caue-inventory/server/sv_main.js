@@ -78,18 +78,19 @@ function GenerateInformation(player, itemid, itemdata) {
                     } else {
                         let string = `SELECT first_name, last_name, gender, dob FROM characters WHERE id = '${player}'`;
                         exports.ghmattimysql.execute(string, {}, function (result) {
-                            let gender = "Male"
+                            let gender = "Homem"
                             if (result[0].gender === 1) {
-                                gender = "Female"
+                                gender = "Mulher"
                             }
 
                             returnInfo = JSON.stringify({
-                                ["State ID"]: player.toString(),
-                                ["Name"]: result[0].first_name.replace(/[^\w\s]/gi, ''),
-                                ["Surname"]: result[0].last_name.replace(/[^\w\s]/gi, ''),
-                                ["Sex"]: gender,
-                                ["DOB"]: result[0].dob
+                                ["ID"]: player.toString(),
+                                ["Nome"]: result[0].first_name.replace(/[^\w\s]/gi, ''),
+                                ["Sobrenome"]: result[0].last_name.replace(/[^\w\s]/gi, ''),
+                                ["Sexo"]: gender,
+                                ["Data de Nascimento"]: result[0].dob
                             })
+
                             timeout = 1
                             clearTimeout(timeout)
                             return resolve(returnInfo);

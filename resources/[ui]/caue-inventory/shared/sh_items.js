@@ -373,7 +373,7 @@ itemList['1064738331'] = {
     { itemid: 'rubber', amount: 1 },
   ]],
   price: 250,
-  weight: 5,
+  weight: 50,
   nonStack: false,
   model: '',
   image: 'np_brick.png',

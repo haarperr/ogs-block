@@ -103,8 +103,8 @@ Generic.NPCS[#Generic.NPCS + 1] = {
     networked = false,
     distance = 25.0,
     position = {
-        coords = vector3(148.07, -1042.02, 29.27),
-        heading = 0.0,
+        coords = vector3(149.45, -1042.05, 29.37),
+        heading = 340.0,
         random = false,
     },
     appearance = nil,
@@ -118,7 +118,7 @@ Generic.NPCS[#Generic.NPCS + 1] = {
         ["isNPC"] = true,
         ["isBankAccountManager"] = true,
     },
-    scenario = "PROP_HUMAN_SEAT_CHAIR_UPRIGHT",
+    scenario = "WORLD_HUMAN_DRINKING",
 }
 
 Generic.NPCS[#Generic.NPCS + 1] = {
