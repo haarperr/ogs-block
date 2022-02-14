@@ -3703,6 +3703,58 @@ itemList['earrings'] = {
 
 /*
 
+  TCG START
+
+*/
+
+itemList['tcgcard'] = {
+  _name: 'tcgcard',
+  fullyDegrades: false,
+  decayrate: 0.0,
+  displayname: 'Trading Card',
+  price: 1,
+  weight: 0.0,
+  nonStack: true,
+  model: '',
+  image: 'np_tcgcard.png',
+  information: 'A single trading card.',
+  deg: false,
+};
+
+itemList['tcgtestpack'] = {
+  fullyDegrades: false,
+  decayrate: 0.0,
+  displayname: 'Booster Pack',
+  price: 1,
+  weight: 0.0,
+  nonStack: false,
+  model: '',
+  image: 'np_tcgpromobooster.png',
+  information: 'Promo set booster pack containing 1 card.',
+  deg: false,
+};
+
+itemList['tcgbinder'] = {
+  fullyDegrades: false,
+  decayrate: 0.0,
+  displayname: 'Trading Card Binder',
+  price: 1,
+  weight: 10.0,
+  nonStack: true,
+  model: '',
+  image: 'np_tcgbinder.png',
+  information: 'A binder for all your trading cards.',
+  deg: false,
+};
+
+/*
+
+  TCG END
+
+*/
+
+/*
+
   VEHICLES START
 
 */

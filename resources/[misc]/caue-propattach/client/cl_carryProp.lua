@@ -794,16 +794,16 @@ attachPropList = {
 		["zR"] = 0.0
   	},
 
-  ["trashbag"] = {
-    ["model"] = "prop_cs_street_binbag_01",
-    ["bone"] = 57005,
+  	["trashbag"] = {
+    	["model"] = "prop_cs_street_binbag_01",
+    	["bone"] = 57005,
 		["x"] = 0.39,
 		["y"] = -0.22,
 		["z"] = 0.06,
 		["xR"] = 63.0,
 		["yR"] = -126.0,
-    ["zR"] = -99.0,
-    ["vertexIndex"] = 0
+    	["zR"] = -99.0,
+    	["vertexIndex"] = 0
 	},
 
 	["police_id_board"] = {
@@ -817,6 +817,27 @@ attachPropList = {
 		["zR"] = 0.0
 	},
 
+	["tcg_card"] = {
+		["model"] = "np_npc_card",
+		["bone"] = 57005,
+		["x"] = 0.15,
+		["y"] = 0.055,
+		["z"] = -0.025,
+		["xR"] = 170.0,
+		["yR"] = 0.0,
+		["zR"] = -240.0
+  	},
+	["tcg_card_inspect"] = {
+		["model"] = "np_npc_card",
+		["bone"] = 57005,
+		["x"] = 0.13,
+		["y"] = 0.05,
+		["z"] = -0.035,
+		["xR"] = 35.0,
+		["yR"] = 245.0,
+		["zR"] = -15.0
+  	},
+
 	["police_badge"] = {
 		["model"] = "denis3d_policebadge_01",
 		["bone"] = 57005,
@@ -826,12 +847,12 @@ attachPropList = {
 		["xR"] = 40.0,
 		["yR"] = 55.0,
 		["zR"] = -267.0
-  },
-  ["prop_cs_walking_stick"] = {
-    ["model"] = "prop_cs_walking_stick",
-    ["bone"] = 28422, ["x"] = 0.06,["y"] = 0.03,["z"] = -0.01,["xR"] = 180.0,["yR"] = 288.0, ["zR"] = 0.0
-  },
-  ["bscoffee"] = {
+  	},
+  	["prop_cs_walking_stick"] = {
+    	["model"] = "prop_cs_walking_stick",
+    	["bone"] = 28422, ["x"] = 0.06,["y"] = 0.03,["z"] = -0.01,["xR"] = 180.0,["yR"] = 288.0, ["zR"] = 0.0
+  	},
+  	["bscoffee"] = {
 		["model"] = "prop_food_bs_coffee",
 		["bone"] = 28422,
 		["x"] = 0.02,
@@ -840,8 +861,8 @@ attachPropList = {
 		["xR"] = 0.0,
 		["yR"] = 0.0,
 		["zR"] = 90.0
-  },
-  ["softdrink"] = {
+  	},
+  	["softdrink"] = {
 		["model"] = "prop_food_bs_juice01",
 		["bone"] = 28422,
 		["x"] = 0.01,
@@ -850,7 +871,7 @@ attachPropList = {
 		["xR"] = 0.0,
 		["yR"] = 0.0,
 		["zR"] = 180.0
-  },
+  	},
   	["fries"] = {
 		["model"] = "prop_food_bs_chips",
 		["bone"] = 18905,

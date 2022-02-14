@@ -3508,64 +3508,34 @@ $(document).ready(() => {
         } else if (e.type == "getPenalCode") {
             const titles = e.titles
             const penalcode = e.penalcode
-            const job = e.job
-            if (job == "police") {
-                $(".incidents-charges-title").html("Charges");
-                $(".offenses-main-container").empty();
-                $.each(titles, function (index, value) {
-                    $('.offenses-main-container').append(
-                        `<div class="offenses-title-container">
-                            <div class="offenses-title">${value}</div>
-                        </div>
-                        <div class="offenses-container offenses-prepend-holder" id="penal-${index}">
-                        </div>
-                        `
-                    )
+
+            $(".incidents-charges-title").html("Charges");
+            $(".offenses-main-container").empty();
+            $.each(titles, function (index, value) {
+                $('.offenses-main-container').append(
+                    `<div class="offenses-title-container">
+                        <div class="offenses-title">${value}</div>
+                    </div>
+                    <div class="offenses-container offenses-prepend-holder" id="penal-${index}">
+                    </div>
+                    `
+                )
+            })
+            $.each(penalcode, function (index, value) {
+                $.each(value, function (i, v) {
+                    $(`#penal-${index}`).append(`
+                    <div class="offense-item ${v.color}-penis-code" data-sentence="${v.months}" data-fine="${v.fine}">
+                    <div style="display: flex; flex-direction: row; width: 100%; margin: auto; margin-top: 0vh;">
+                        <div class="offense-item-offense">${v.title}</div>
+                        <div class="offfense-item-name">${v.class}</div>
+                    </div>
+                    <div style="display: flex; flex-direction: row; width: 100%; margin: auto; margin-bottom: 0vh; padding-top: 0.75vh;">
+                        <div class="offense-item-id">${v.id}</div>
+                        <div class="offfense-item-months">${v.months} Meses - $${v.fine}</div>
+                    </div>
+                    `)
                 })
-                $.each(penalcode, function (index, value) {
-                    $.each(value, function (i, v) {
-                        $(`#penal-${index}`).append(`
-                        <div class="offense-item ${v.color}-penis-code" data-sentence="${v.months}" data-fine="${v.fine}">
-                        <div style="display: flex; flex-direction: row; width: 100%; margin: auto; margin-top: 0vh;">
-                            <div class="offense-item-offense">${v.title}</div>
-                            <div class="offfense-item-name">${v.class}</div>
-                        </div>
-                        <div style="display: flex; flex-direction: row; width: 100%; margin: auto; margin-bottom: 0vh; padding-top: 0.75vh;">
-                            <div class="offense-item-id">${v.id}</div>
-                            <div class="offfense-item-months">${v.months} Meses - $${v.fine}</div>
-                        </div>
-                        `)
-                    })
-                })
-            } else {
-                $(".offenses-main-container").empty();
-                $(".incidents-charges-title").html("Treatments");
-                $.each(titles, function (index, value) {
-                    $('.offenses-main-container').append(
-                        `<div class="offenses-title-container">
-                            <div class="offenses-title">${value}</div>
-                        </div>
-                        <div class="offenses-container offenses-prepend-holder" id="penal-${index}">
-                        </div>
-                        `
-                    )
-                })
-                $.each(penalcode, function (index, value) {
-                    $.each(value, function (i, v) {
-                        $(`#penal-${index}`).append(`
-                        <div class="offense-item ${v.color}-penis-code" data-fine="${v.fine}">
-                        <div style="display: flex; flex-direction: row; width: 100%; margin: auto; margin-top: 0vh;">
-                            <div class="offense-item-offense">${v.title}</div>
-                            <div class="offfense-item-name">${v.class}</div>
-                        </div>
-                        <div style="display: flex; flex-direction: row; width: 100%; margin: auto; margin-bottom: 0vh; padding-top: 0.75vh;">
-                            <div class="offense-item-id">${v.id}</div>
-                            <div class="offfense-item-months">$${v.fine}</div>
-                        </div>
-                        `)
-                    })
-                })
-            }
+            })
         } else if (e.type == "incidentData") {
             let table = e.data
 
