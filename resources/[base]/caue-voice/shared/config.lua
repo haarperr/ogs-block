@@ -37,6 +37,7 @@ Config.settings = {
     ["radioVolume"] = 0.8,
     ["phoneVolume"] = 0.8,
     ["atcVolume"] = 0.8,
+    ["dtVolume"] = 0.8,
 }
 
 ------- Voice Proximity -------

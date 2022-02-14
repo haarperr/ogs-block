@@ -34,6 +34,20 @@ function SetFilterParameters(pContext, pSettings)
     Debug("[Filter] Updated Submix parameters | %s", pContext)
 end
 
+function SetSubmixBalance(pContext, pBalance)
+    local data = SubmixList[pContext]
+
+    if not data or not pBalance then return end
+
+    local leftChannels, rightChannels = CalculateAudioBalance(pBalance)
+
+    SetAudioSubmixOutputVolumes(data.submix, 0, leftChannels, rightChannels, leftChannels, rightChannels, leftChannels, rightChannels)
+
+    Debug("[Filter] Update Submix Balance for %s | Values: Left %f Right %f ", pContext, leftChannels, rightChannels)
+end
+
+exports("SetSubmixBalance", SetSubmixBalance)
+
 function SetPlayerFilter(pServerId, pContext)
     if pContext == "default" then
         MumbleSetSubmixForServerId(pServerId, -1)

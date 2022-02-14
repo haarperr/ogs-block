@@ -2,51 +2,70 @@ RadioChannels, IsRadioOn, IsTalkingOnRadio, RadioVolume, CurrentChannel = {}, fa
 
 function SetRadioFrequency(pFrequency, pSendAppEvent)
     if CanUseFrequency(pFrequency, true) then
-      -- if pSendAppEvent then exports["caue-ui"]:sendAppEvent("radio", { value = pFrequency }) end
+        -- exports["caue-ui"]:sendAppEvent("hud", {
+        --     displayRadioChannel = true,
+        -- })
 
-      if IsTalkingOnRadio then
-          Citizen.Await(StopTransmission(true))
-      end
+        -- Citizen.SetTimeout(5000, function()
+        --     exports["caue-ui"]:sendAppEvent("hud", {
+        --         displayRadioChannel = false,
+        --     })
+        -- end)
 
-      TriggerServerEvent("AddPlayerToRadio", pFrequency, GetPlayerServerId(PlayerId()))
-      TriggerServerEvent("caue-mdt:setRadio", pFrequency)
+        -- exports["caue-ui"]:sendAppEvent("game", {
+        --     radioChannel = tostring(pFrequency)
+        -- })
 
-      Debug("[Radio] Connected | Radio ID: %s", pFrequency)
+        if pSendAppEvent then
+            TriggerEvent("ChannelSet", pFrequency)
+        end
+
+        if IsTalkingOnRadio then
+            Citizen.Await(StopTransmission(true))
+        end
+
+        TriggerServerEvent("AddPlayerToRadio", pFrequency, GetPlayerServerId(PlayerId()))
+
+        Debug("[Radio] Connected | Radio ID: %s", pFrequency)
+
+        return true
     end
+
+    return false
 end
 
 function CycleRadioChannels()
-  if not IsRadioOn then return end
+    if not IsRadioOn then return end
 
-  local firstEntry, lastEntry, nextChannel
+    local firstEntry, lastEntry, nextChannel
 
-  if IsTalkingOnRadio then
-      Citizen.Await(StopTransmission(true))
-  end
+    if IsTalkingOnRadio then
+        Citizen.Await(StopTransmission(true))
+    end
 
-  for radioID, _ in pairs(RadioChannels) do
-      if firstEntry == nil then
-          firstEntry = radioID
-      end
+    for radioID, _ in pairs(RadioChannels) do
+        if firstEntry == nil then
+            firstEntry = radioID
+        end
 
-      if CurrentChannel == nil then
-          nextChannel = radioID
-          break
-      elseif lastEntry == CurrentChannel.id then
-          nextChannel = radioID
-          break
-      end
+        if CurrentChannel == nil then
+            nextChannel = radioID
+            break
+        elseif lastEntry == CurrentChannel.id then
+            nextChannel = radioID
+            break
+        end
 
-      lastEntry = radioID
-  end
+        lastEntry = radioID
+    end
 
-  local radioID = _C(nextChannel ~= nil, nextChannel, firstEntry)
+    local radioID = _C(nextChannel ~= nil, nextChannel, firstEntry)
 
-  if radioID then
-      SetRadioChannel(radioID)
-  else
-      CurrentChannel = nil
-  end
+    if radioID then
+        SetRadioChannel(radioID)
+    else
+        CurrentChannel = nil
+    end
 end
 
 local function ConnectToRadio (radioID, subscribers)
@@ -111,12 +130,13 @@ end
 
 function SetRadioChannel(radioID)
     CurrentChannel = RadioChannels[radioID]
+    -- exports["caue-ui"]:sendAppEvent("game", { radioChannel = tostring(radioID) })
 
     Debug("[Radio] Channel Changed | Radio ID: %s", radioID)
 end
 
 function StartTransmission()
-    if not IsRadioOn or not CurrentChannel or Throttled("radio:transmit") or isDead then return end
+    if not IsRadioOn or not CurrentChannel or Throttled("radio:transmit") or exports["caue-base"]:getVar("dead") or IsTransmissionDisabled("radio") then return end
 
     if not IsTalkingOnRadio then
         IsTalkingOnRadio = true
@@ -163,13 +183,13 @@ function StopTransmission(forced)
 end
 
 function IncreaseRadioVolume()
-  local currentVolume = RadioVolume * 10
-  SetRadioVolume(currentVolume + 1)
+    local currentVolume = RadioVolume * 10
+    SetRadioVolume(currentVolume + 1)
 end
 
 function DecreaseRadioVolume()
-  local currentVolume = RadioVolume * 10
-  SetRadioVolume(currentVolume - 1)
+    local currentVolume = RadioVolume * 10
+    SetRadioVolume(currentVolume - 1)
 end
 
 function SetRadioVolume(volume, pDisableNotification)
@@ -240,6 +260,7 @@ function increaseRadioChannel()
     SetRadioFrequency(newChannel, true)
     TriggerEvent("DoLongHudText", ("New channel %s"):format(newChannel))
 end
+
 function decreaseRadioChannel()
     if not IsRadioOn then return end
     local newChannel = CurrentChannel.id - 1

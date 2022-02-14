@@ -1,69 +1,62 @@
-local activeChannels = {} --key is channel id, value is table with sub count and list of users in the channel
-local channelSubscribers = {} --key is player server id, value is channel id
+local activeChannels = {}
+local channelSubscribers = {}
 
-function removePlayerFromRadio(sId, channelId)
-    if not activeChannels[channelId] then return end
+function addPlayerToRadio(pServerId, pFrequency)
+    if channelSubscribers[pServerId] then
+        removePlayerFromRadio(pServerId, channelSubscribers[pServerId])
+    end
 
-    activeChannels[channelId].count = activeChannels[channelId].count - 1
+    if activeChannels[pFrequency] == nil then
+        activeChannels[pFrequency] = {}
+        activeChannels[pFrequency]["subscribers"] = {}
+    end
 
-    if activeChannels[channelId].count == 0 then
-        activeChannels[channelId] = nil
-    else
-        activeChannels[channelId].subscribers[sId] = nil
+    for _, subscriber in ipairs(activeChannels[pFrequency]["subscribers"]) do
+        TriggerClientEvent("caue:voice:radio:added", subscriber, pFrequency, pServerId)
+    end
 
-        for k,v in pairs(activeChannels[channelId].subscribers) do
-            TriggerClientEvent("caue:voice:radio:removed", k, channelId, sId)
+    table.insert(activeChannels[pFrequency]["subscribers"], pServerId)
+
+    channelSubscribers[pServerId] = pFrequency
+
+    TriggerClientEvent("caue:voice:radio:connect", pServerId, pFrequency, activeChannels[pFrequency]["subscribers"])
+end
+
+function removePlayerFromRadio(pServerId, pFrequency)
+    if not activeChannels[pFrequency] then return end
+
+    for index, subscriber in ipairs(activeChannels[pFrequency]["subscribers"]) do
+        if pServerId == subscriber then
+            table.remove(activeChannels[pFrequency]["subscribers"], index)
         end
     end
 
-    channelSubscribers[sId] = nil
-end
-
-function addPlayerToRadio(sId, channelId)
-    if channelSubscribers[sId] then
-        removePlayerFromRadio(sId, channelSubscribers[sId])
+    if #activeChannels[pFrequency]["subscribers"] == 0 then
+        activeChannels[pFrequency] = nil
+    else
+        for _, subscriber in ipairs(activeChannels[pFrequency]["subscribers"]) do
+            TriggerClientEvent("caue:voice:radio:removed", subscriber, pFrequency, pServerId)
+        end
     end
 
-    if activeChannels[channelId] == nil then
-        activeChannels[channelId] = {}
-        activeChannels[channelId].subscribers = {}
-        activeChannels[channelId].count = 0
-    end
-
-    activeChannels[channelId].count = activeChannels[channelId].count + 1
-
-    for k,v in pairs(activeChannels[channelId].subscribers) do
-        TriggerClientEvent("caue:voice:radio:added", k, channelId, sId)
-    end
-
-    channelSubscribers[sId] = channelId
-    activeChannels[channelId].subscribers[sId] = sId
-
-    TriggerClientEvent("caue:voice:radio:connect", sId, channelId, activeChannels[channelId].subscribers)
+    channelSubscribers[pServerId] = nil
 end
 
 RegisterNetEvent("AddPlayerToRadio")
-AddEventHandler("AddPlayerToRadio", function(channelId, sId)
-    addPlayerToRadio(sId, channelId)
+AddEventHandler("AddPlayerToRadio", function(pFrequency, pServerId)
+    if pFrequency > 0 then
+        addPlayerToRadio(pServerId, pFrequency)
+    else
+        if channelSubscribers[pServerId] then
+            removePlayerFromRadio(pServerId, channelSubscribers[pServerId])
+        end
+    end
 end)
 
 RegisterNetEvent("RemovePlayerFromRadio")
-AddEventHandler("RemovePlayerFromRadio", function(sId)
-    removePlayerFromRadio(sId, channelSubscribers[sId])
+AddEventHandler("RemovePlayerFromRadio", function(pServerId)
+    removePlayerFromRadio(pServerId, channelSubscribers[pServerId])
 end)
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 AddEventHandler("playerDropped", function(source, reason)
     if channelSubscribers[source] then

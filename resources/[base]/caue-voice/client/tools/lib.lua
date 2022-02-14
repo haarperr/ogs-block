@@ -79,7 +79,7 @@ end
 
 -- Required for floating point precision
 function almostEqual(pFloat1, pFloat2, pThreshold)
-    return math.abs(pFloat1 - pFloat2) <= pThreshold
+  return math.abs(pFloat1 - pFloat2) <= pThreshold
 end
 
 function MakeObject(data)
@@ -146,6 +146,19 @@ function RefreshConnection(pIsForced)
       NativeAudio = GetConvar("voice_useNativeAudio", "false") == "true"
       InitialConnection = pIsForced and InitialConnection or false
     end
+end
+
+function CalculateAudioBalance(pBalance)
+    local left, right = 1.0, 1.0
+
+    if pBalance > 1.0 then
+        left = 2.0 - pBalance
+        right = 1.0
+    else
+        left = 1.0
+        right = pBalance
+    end
+    return left + 0.0, right + 0.0
 end
 
 RegisterCommand("+mumble", function()

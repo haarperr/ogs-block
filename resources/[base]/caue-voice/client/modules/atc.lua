@@ -116,7 +116,7 @@ function StartATCRadioTask()
 end
 
 function StartATCTransmission()
-    if not IsATCRadioOn or not IsConnectedToATC or Throttled("atc:transmit") or isDead then return end
+    if not IsATCRadioOn or not IsConnectedToATC or Throttled("atc:transmit") or isDead or IsTransmissionDisabled("atc") then return end
 
     if not IsTransmittingToATC then
         IsTransmittingToATC = true
@@ -163,19 +163,19 @@ function LoadATCModule()
     UpdateContextVolume("atc", Config.settings.atcVolume)
 
     if Config.enableSubmixes and Config.enableFilters.radio then
-        RegisterContextSubmix("atc")
+        -- RegisterContextSubmix("atc")
 
-        filters = {
-            { name = "freq_low", value = 100.0 },
-            { name = "freq_hi", value = 5000.0 },
-            { name = "rm_mod_freq", value = 300.0 },
-            { name = "rm_mix", value = 0.1 },
-            { name = "fudge", value = 4.0 },
-            { name = "o_freq_lo", value = 300.0 },
-            { name = "o_freq_hi", value = 5000.0 },
-        }
+        -- local filters = {
+        --     { name = "freq_low", value = 100.0 },
+        --     { name = "freq_hi", value = 5000.0 },
+        --     { name = "rm_mod_freq", value = 300.0 },
+        --     { name = "rm_mix", value = 0.1 },
+        --     { name = "fudge", value = 4.0 },
+        --     { name = "o_freq_lo", value = 300.0 },
+        --     { name = "o_freq_hi", value = 5000.0 },
+        -- }
 
-        SetFilterParameters("atc", filters)
+        -- SetFilterParameters("atc", filters)
     end
 
     exports["caue-keybinds"]:registerKeyMapping("", "ATC", "Push-To-Talk", "+transmitToATCRadio", "-transmitToATCRadio")

@@ -53,18 +53,16 @@ function handleConnectionEvent(pChannel)
 
     if type(newChannel) ~= "number" then return end
 
-    if newChannel < 1.0 then
-        TriggerServerEvent("RemovePlayerFromRadio", GetPlayerServerId(PlayerId()))
-    else
-        exports["caue-voice"]:SetRadioFrequency(newChannel)
-    end
+    local result = exports["caue-voice"]:SetRadioFrequency(newChannel)
+
+    return result
 end
 
 function openRadio()
     local currentJob = exports["caue-base"]:getChar("job")
 
     if exports["caue-base"]:getVar("call") then
-        TriggerEvent("DoShortHudText", "Você não pode fazer isso em chamada!", 2)
+        TriggerEvent("DoShortHudText", "Você não pode fazer isso enquanto esta em uma chamada!", 2)
         return
     end
 
@@ -78,25 +76,21 @@ function openRadio()
         SetNuiFocus(true, true)
         SendNUIMessage({
             open = true,
-            jobType = exports["caue-jobs"]:getJob(currentJob, "is_emergency"),
+            emergency = exports["caue-jobs"]:getJob(currentJob, "is_emergency"),
         })
 
         toggleRadioAnimation(true)
     else
         SetNuiFocus(false, false)
         SendNUIMessage({
-            open = false,
-            jobType = exports["caue-jobs"]:getJob(currentJob, "is_emergency"),
+            close = true,
+            emergency = exports["caue-jobs"]:getJob(currentJob, "is_emergency"),
         })
 
-        closeRadio()
+        toggleRadioAnimation(false)
     end
 
     isRadioOpen = not isRadioOpen
-end
-
-function closeRadio()
-    toggleRadioAnimation(false)
 end
 
 --[[
@@ -105,21 +99,24 @@ end
 
 ]]
 
-RegisterNetEvent("caue-radio:setChannel")
-AddEventHandler("caue-radio:setChannel", function(chan)
-    handleConnectionEvent(chan)
+RegisterNetEvent("caue-radio:setChannel", function(params)
+    handleConnectionEvent(params[1])
 
     SendNUIMessage({
-        set = true,
+        setChannel = params[1],
+    })
+end)
+
+RegisterNetEvent("ChannelSet", function(chan)
+    SendNUIMessage({
         setChannel = chan,
     })
 end)
 
-RegisterNetEvent("ChannelSet")
-AddEventHandler("ChannelSet", function(chan)
+RegisterNetEvent("caue-radio:updateRadioState", function (frequency, powered)
     SendNUIMessage({
-        set = true,
-        setChannel = chan,
+        setChannel = frequency,
+        setState = powered,
     })
 end)
 
@@ -127,6 +124,20 @@ AddEventHandler("caue-inventory:itemUsed", function(item)
     if item ~= "radio" and item ~= "civradio" then return end
 
     openRadio()
+end)
+
+AddEventHandler("caue-inventory:itemCheck", function (item, state, quantity)
+    if item ~= "civradio" and item ~= "radio" then return end
+    if state or quantity > 0 then return end
+
+    exports["caue-voice"]:SetRadioPowerState(false)
+
+    SendNUIMessage({
+        setChannel = 0,
+        setState = false,
+    })
+
+    TriggerEvent("DoLongHudText", "Você foi desconectado do rádio.")
 end)
 
 --[[
@@ -147,7 +158,8 @@ end)
 
 RegisterNUICallback("setRadioChannel", function(data, cb)
     TriggerEvent("InteractSound_CL:PlayOnOne", "radioclick", 0.6)
-    handleConnectionEvent(data.channel)
+    local success = handleConnectionEvent(data.channel)
+    cb(success)
 end)
 
 RegisterNUICallback("volumeUp", function(data, cb)
@@ -163,11 +175,12 @@ end)
 RegisterNUICallback("close", function(data, cb)
     SetNuiFocus(false, false)
     SendNUIMessage({
-        open = false,
+        close = true,
     })
 
     isRadioOpen = false
-    closeRadio()
+
+    toggleRadioAnimation(false)
 end)
 
 --[[

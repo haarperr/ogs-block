@@ -20,15 +20,19 @@ end)
 
 
 RegisterNetEvent("caue:voice:transmission:state")
-AddEventHandler("caue:voice:transmission:state", function(group, context, transmitting, isMult)
-	local _source = source
+AddEventHandler("caue:voice:transmission:state", function(pGroup, pContext, pTransmitting, pEffect)
+	local src = source
 
-	if type(group) == "table" then
-		for k, v in pairs(group) do
-			TriggerClientEvent("caue:voice:transmission:state", v, _source, context, transmitting)
+	local srcPed = GetPlayerPed(src)
+	local vehicle = GetVehiclePedIsIn(srcPed, false)
+	local isSourceInVehicle = vehicle ~= 0
+
+	if type(pGroup) == "table" then
+		for k, v in pairs(pGroup) do
+			TriggerClientEvent("caue:voice:transmission:state", v, src, pContext, pTransmitting, pEffect, isSourceInVehicle)
 		end
 	else
-		TriggerClientEvent("caue:voice:transmission:state", group, _source, context, transmitting)
+		TriggerClientEvent("caue:voice:transmission:state", pGroup, src, pContext, pTransmitting, pEffect, isSourceInVehicle)
 	end
 end)
 

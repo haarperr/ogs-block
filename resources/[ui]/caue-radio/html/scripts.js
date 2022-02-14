@@ -3,98 +3,120 @@ $(document).ready(function () {
     var Emergency = false;
     var Powered = false;
 
-    $("#RadioChannel").attr("disabled", "disabled");
-    $("#RadioChannel").val("");
-    $("#RadioChannel").attr("placeholder", "Off");
+    function escapeHtml(string) {
+        return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+            return entityMap[s];
+        });
+    }
 
+    function closeGui() {
+        $(".full-screen").fadeOut(100);
+        $(".radio-container").fadeOut(100);
+        $("#cursor").css("display", "none");
+
+        $.post("https://caue-radio/close", JSON.stringify({}));
+    }
+
+    function Save() {
+        if (Powered) {
+            RadioChannel = parseFloat($("#RadioChannel").val());
+
+            if (!RadioChannel) {
+                RadioChannel = "0.0";
+            }
+
+            if (RadioChannel < 100.0 || RadioChannel > 999.9) {
+                if (RadioChannel < 10 && Emergency === false) {
+                    RadioChannel = "0.0";
+                }
+            }
+
+            $.post("https://caue-radio/setRadioChannel", JSON.stringify({
+                channel: RadioChannel
+            }), function(success) {
+                if (success == false) {
+                    RadioChannel = "0.0";
+                    $("#RadioChannel").val("");
+                    $("#RadioChannel").attr("placeholder", "100.0+");
+                    $("#RadioChannel").prop("disabled", false);
+                }
+            });
+        }
+    }
+
+    // Listen for NUI Events
     window.addEventListener("message", function (event) {
         var item = event.data;
 
-        if (item.set === true) {
-            RadioChannel = item.setChannel
+        if (item.setChannel) {
+            RadioChannel = item.setChannel;
         }
 
-        if (item.open === true) {
-            Emergency = item.jobType
+        if (item.setState) {
+            Powered = item.setState;
+        }
 
+        if (item.emergency) {
+            Emergency = item.emergency;
+        }
+
+        if (item.open) {
             if (RadioChannel != "0.0" && Powered) {
-                $("#RadioChannel").val(RadioChannel)
+                $("#RadioChannel").val(RadioChannel);
             } else {
                 if (Powered) {
-                    $("#RadioChannel").val("")
-                    $("#RadioChannel").attr("placeholder", "100.0-999.9");
+                    $("#RadioChannel").val("");
+                    $("#RadioChannel").attr("placeholder", "100.0+");
+                    $("#RadioChannel").prop("disabled", false);
                 } else {
-                    $("#RadioChannel").val("")
+                    $("#RadioChannel").val("");
                     $("#RadioChannel").attr("placeholder", "Off");
+                    $("#RadioChannel").prop("disabled", true);
                 }
             }
 
             $(".full-screen").fadeIn(100);
             $(".radio-container").fadeIn(100);
             $("#cursor").css("display", "block");
-            $("#RadioChannel").focus()
-        }
-
-        if (item.open === false) {
-            $(".full-screen").fadeOut(100);
-            $(".radio-container").fadeOut(100);
-            $("#cursor").css("display", "none");
+            $("#RadioChannel").focus();
         }
     });
 
     $("#Radio-Form").submit(function (e) {
         e.preventDefault();
-        $.post("https://caue-radio/close");
+        Save();
     });
 
     $("#power").click(function () {
         if (Powered === false) {
             Powered = true;
-
-            $("#RadioChannel").removeAttr("disabled");
-            $("#RadioChannel").val(RadioChannel);
-
-            $.post("https://caue-radio/poweredOn");
+            $("#RadioChannel").prop("disabled", false);
+            $("#RadioChannel").focus();
+            $("#RadioChannel").val(RadioChannel === "0.0" ? "" : RadioChannel);
+            $("#RadioChannel").attr("placeholder", "100.0+");
+            $.post("https://caue-radio/poweredOn", JSON.stringify({
+                channel: RadioChannel
+            }));
         } else {
             Powered = false;
-
-            $.post("https://caue-radio/poweredOff");
-
-            $("#RadioChannel").attr("disabled", "disabled");
+            $.post("https://caue-radio/poweredOff", JSON.stringify({}));
             $("#RadioChannel").val("");
             $("#RadioChannel").attr("placeholder", "Off");
+            $("#RadioChannel").prop("disabled", true);
         }
     });
-
-    $("#setChannel").click(function () {
-        RadioChannel = parseFloat($("#RadioChannel").val())
-
-        if (!RadioChannel) {
-            RadioChannel = "0.0"
-        }
-
-        if (RadioChannel < 100.0 || RadioChannel > 999.9) {
-            if (RadioChannel < 10 && Emergency) {} else {
-                RadioChannel = "0.0"
-            }
-        }
-
-        $.post("https://caue-radio/setRadioChannel", JSON.stringify({
-            channel: RadioChannel
-        }));
-    });
-
     $("#volumeUp").click(function () {
-        $.post("https://caue-radio/volumeUp");
+        $.post("https://caue-radio/volumeUp", JSON.stringify({}));
     });
 
     $("#volumeDown").click(function () {
-        $.post("https://caue-radio/volumeDown");
+        $.post("https://caue-radio/volumeDown", JSON.stringify({}));
     });
 
+    // On 'Esc' call close method
     document.onkeyup = function (data) {
         if (data.which == 27) {
-            $.post("https://caue-radio/close");
+            closeGui();
         }
     };
 });

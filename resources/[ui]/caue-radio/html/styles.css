@@ -3,9 +3,13 @@ html {
     font-family: verdana;
 }
 
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,700,500italic,900,700italic,900italic);
+@import url(//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css);
+@import url(https://fonts.googleapis.com/css?family=Titillium+Web:400,200,300,600,700);
+
 .full-screen {
     width: 100%;
-    height: 100%;
+    height: 85%;
     top: 1%;
     display: flex;
     align-items: center;
@@ -26,30 +30,24 @@ html {
 #power {
     min-width: 35px;
     min-height: 55px;
-    margin-left: 65px;
-    margin-top: -215px;
+    margin-left: 157px;
+    margin-top: -80px;
+
 }
 
 #volumeUp {
     min-width: 25px;
     min-height: 60px;
-    margin-left: 148px;
-    margin-top: -235px;
+    margin-left: 61px;
+    margin-top: -5px;
+
 }
 
 #volumeDown {
     min-width: 25px;
     min-height: 60px;
-    margin-left: 120px;
-    margin-top: -235px;
-}
-
-#setChannel {
-    position: absolute;
-    width: 5.5%;
-    height: 5%;
-    bottom: 8.5%;
-    right: 7.5%;
+    margin-left: 63px;
+    margin-top: 8px;
 }
 
 #volumeUp:hover::before {
@@ -59,8 +57,9 @@ html {
     top: -20px;
     font-size: 12px;
     color: white;
-    background-color: black;
+    background-color: rgba(83, 83, 83, 0.644);
     padding: 2px;
+    border-radius: 3px;
 }
 
 #volumeDown:hover::before {
@@ -70,8 +69,9 @@ html {
     top: -20px;
     font-size: 12px;
     color: white;
-    background-color: black;
+    background-color: rgba(83, 83, 83, 0.644);
     padding: 2px;
+    border-radius: 3px;
 }
 
 #power:hover::before {
@@ -81,29 +81,21 @@ html {
     top: -20px;
     font-size: 12px;
     color: white;
-    background-color: black;
+    background-color: rgba(83, 83, 83, 0.644);
     padding: 2px;
-}
-
-#setChannel:hover::before {
-    content: attr(title);
-    display: block;
-    position: relative;
-    top: -20px;
-    font-size: 12px;
-    color: white;
-    background-color: black;
-    padding: 2px;
+    border-radius: 3px;
 }
 
 input {
     background-color: rgba(0, 0, 0, 0);
     background: transparent;
     text-align: center;
+    color: white;
     border: none;
     font-size: 20px;
     outline: 0;
-    padding-left: 30px;
+    padding-left: 103px;
+    margin: -76px;
 }
 
 input[type=number]::-webkit-inner-spin-button,
@@ -113,14 +105,14 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .radio-container {
-    background-image: url("background.png");
+    background-image: url("nui://caue-radio/html/background.png");
     background-repeat: no-repeat;
     background-size: 100% 100%;
     width: 300px;
     height: 610px;
     border-radius: 10px;
     margin-left: 82%;
-    margin-top: 23%;
+    margin-top: 31%;
     opacity: 1;
     overflow: hidden;
     display: none;

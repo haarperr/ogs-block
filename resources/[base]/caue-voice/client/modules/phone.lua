@@ -25,7 +25,7 @@ function StartPhoneCall(serverId, callId)
         end
     end)
 
-    Debug('[Phone] Call Started | Call ID %s | Player %s', callId, serverId)
+    Debug("[Phone] Call Started | Call ID %s | Player %s", callId, serverId)
 end
 
 function StopPhoneCall(serverId, callId)
@@ -37,7 +37,7 @@ function StopPhoneCall(serverId, callId)
 
     RemovePlayerFromTargetList(serverId, "phone", true, true)
 
-    Debug('[Phone] Call Ended | Call ID %s | Player %s', callId, serverId)
+    Debug("[Phone] Call Ended | Call ID %s | Player %s", callId, serverId)
 end
 
 function IncreasePhoneVolume()
@@ -99,3 +99,19 @@ function LoadPhoneModule()
 
     Debug("[Phone] Module Loaded")
 end
+
+RegisterNetEvent("caue-voice:setTransmissionDisabled", function ()
+    WasEventCanceled()
+
+    if not IsOnPhoneCall then return end
+
+    local serverId = CurrentCall.targetId
+
+    local isPhoneDisabled = IsTransmissionDisabled("phone")
+
+    if isPhoneDisabled then
+        RemovePlayerFromTargetList(serverId, "phone", true, true)
+    elseif not isPhoneDisabled and not IsPlayerInContextTargetList(serverId, "phone") then
+        AddPlayerToTargetList(serverId, "phone", true)
+    end
+end)

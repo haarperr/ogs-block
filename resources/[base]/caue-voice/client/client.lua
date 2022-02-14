@@ -147,6 +147,10 @@ function RemovePlayerFromTargetList(serverID, context, transmit, refresh)
     end
 end
 
+function IsPlayerInContextTargetList(serverID, context)
+    return Targets:targetContextExist(serverID, context)
+end
+
 function AddGroupToTargetList(group, context, pIsInVehicle)
     if not Targets:contextExists(context) then return end
 
@@ -240,6 +244,8 @@ function SetVoiceProximity(proximity)
     end
 
     range = range > -1 and range or voiceProximity.range
+
+    if IsTransmissionDisabled("proximity") then return end
 
     NetworkSetTalkerProximity(range + 0.0)
 
@@ -378,6 +384,34 @@ end)
 RegisterNetEvent("SpawnEventsClient");
 AddEventHandler("SpawnEventsClient", RefreshConnection)
 
+local TransmissionDisabled = {}
+
+function IsTransmissionDisabled(pType)
+    return TransmissionDisabled[pType] == true
+end
+
+RegisterNetEvent("caue-voice:setTransmissionDisabled", function (pType, pDisabled)
+    if type(pType) == "table" then
+        for name, disabled in pairs(pType) do
+            TransmissionDisabled[name] = disabled
+
+            Debug("[%s] Transmission Disabled: %s", name, disabled or "NA")
+        end
+    else
+        TransmissionDisabled[pType] = pDisabled
+
+        Debug("[%s] Transmission Disabled: %s", pType, pDisabled or "NA")
+    end
+
+    local isProximityDisabled = IsTransmissionDisabled("proximity")
+
+    if isProximityDisabled then
+        NetworkSetTalkerProximity(0.1)
+    else
+        SetVoiceProximity(CurrentProximity)
+    end
+end)
+
 Citizen.CreateThread(function()
     exports["caue-keybinds"]:registerKeyMapping("", "Voice", "Proximity / Range Toggle", "+cycleProximity", "-cycleProximity", "Z")
     RegisterCommand("+cycleProximity", CycleVoiceProximity, false)
@@ -429,6 +463,10 @@ Citizen.CreateThread(function()
 
     if Config.enableRadio then
         LoadATCModule()
+    end
+
+    if Config.enableRadio then
+        LoadDTModule()
     end
 
     if Config.environmentalEffects then
