@@ -33,7 +33,7 @@ TCG.Cards = {
     },
     ["bhadbabie"] = {
         name = "Bhad Bhabie",
-        description = "I just don't care what people have to say",
+        description = "I just do not care what people have to say",
         image = "https://i.imgur.com/pOAsnGQ.png",
     },
     ["cardib"] = {
@@ -48,7 +48,7 @@ TCG.Cards = {
     },
     ["dababy"] = {
         name = "DaBaby",
-        description = "Anything i do i'm doing it for a reason",
+        description = "Anything i do i am doing it for a reason",
         image = "https://i.imgur.com/FfHyq3j.png",
     },
     ["desiigner"] = {
@@ -58,7 +58,7 @@ TCG.Cards = {
     },
     ["dojacat"] = {
         name = "Doja Cat",
-        description = "I really pull from everyone i'm absorbent",
+        description = "I really pull from everyone i am absorbent",
         image = "https://i.imgur.com/QKPdSb1.png",
     },
     ["drake"] = {
@@ -68,17 +68,17 @@ TCG.Cards = {
     },
     ["fettywap"] = {
         name = "Fetty Wap",
-        description = "This is something you should know i don't ever chase no hoes",
+        description = "This is something you should know i do not ever chase no hoes",
         image = "https://i.imgur.com/OFV6CqY.png",
     },
     ["future"] = {
         name = "Future",
-        description = "I know i haven't always done things the right way",
+        description = "I know i have not always done things the right way",
         image = "https://i.imgur.com/oTHZGT3.png",
     },
     ["juicewrld"] = {
         name = "Juice Wrld",
-        description = "You found another one but i'm the better one",
+        description = "You found another one but i am the better one",
         image = "https://i.imgur.com/0ubR8oW.png",
     },
     ["kayflock"] = {
@@ -88,27 +88,27 @@ TCG.Cards = {
     },
     ["kendricklamar"] = {
         name = "Kendrick Lamar",
-        description = "Live your life, live it right",
+        description = "Live your life live it right",
         image = "https://i.imgur.com/xUNYlUk.png",
     },
     ["kodakblack"] = {
         name = "Kodak Black",
-        description = "Adults think it's disrespectful when you don't let them disrespect you",
+        description = "Adults think it is disrespectful when you do not let them disrespect you",
         image = "https://i.imgur.com/pkszDPt.png",
     },
     ["lildurk"] = {
         name = "Lil Durk",
-        description = "You ain't get back for your mans, you in the club like he ain't dead",
+        description = "You aint get back for your mans you in the club like he aint dead",
         image = "https://i.imgur.com/0sZK1YN.png",
     },
     ["lilloaded"] = {
         name = "Lil Loaded",
-        description = "Keep me on the block, block, baby block.",
+        description = "Keep me on the block block baby block.",
         image = "https://i.imgur.com/uSHSrjn.png",
     },
     ["lilpeep"] = {
         name = "Lil Peep",
-        description = "She said i'm a crybaby i can't be up lately",
+        description = "She said i am a crybaby i can not be up lately",
         image = "https://i.imgur.com/mVQMiFu.png",
     },
     ["lilpump"] = {
@@ -118,17 +118,17 @@ TCG.Cards = {
     },
     ["liluzivert"] = {
         name = "Lil Uzi Vert",
-        description = "I'm just doing me and to me, that's what got me this far",
+        description = "I am just doing me and to me that is what got me this far",
         image = "https://i.imgur.com/US0UzTn.png",
     },
     ["lilwayne"] = {
         name = "Lil Wayne",
-        description = "Love me or hate me i swear it won't make or break me",
+        description = "Love me or hate me i swear it will not make or break me",
         image = "https://i.imgur.com/pIONqTL.png",
     },
     ["macmiller"] = {
         name = "Mac Miller",
-        description = "They're gonna try to tell you no, shatter all your dreams",
+        description = "They are gonna try to tell you no, shatter all your dreams",
         image = "https://i.imgur.com/qEATNdb.png",
     },
     ["metroboomin"] = {
@@ -158,7 +158,7 @@ TCG.Cards = {
     },
     ["pushat"] = {
         name = "Pusha T",
-        description = "Pain is joy when it cries, it's my smile in disguise.",
+        description = "Pain is joy when it cries, it is my smile in disguise.",
         image = "https://i.imgur.com/1aRYVYU.png",
     },
     ["rickross"] = {
@@ -168,7 +168,7 @@ TCG.Cards = {
     },
     ["roddyricch"] = {
         name = "Roddy Ricch",
-        description = "I ain't follow nobody path i did it my own way",
+        description = "I do not follow nobody path i did it my own way",
         image = "https://i.imgur.com/IWpqUmX.png",
     },
     ["21savage"] = {
@@ -198,7 +198,7 @@ TCG.Cards = {
     },
     ["wizkhalifa"] = {
         name = "Wiz Khalifa",
-        description = "You don't need to many people to be happy",
+        description = "You do not need to many people to be happy",
         image = "https://i.imgur.com/QJQ9BTj.png",
     },
     ["xxxtentacion"] = {
@@ -208,12 +208,12 @@ TCG.Cards = {
     },
     ["ybncordae"] = {
         name = "YBN Cordae",
-        description = "Don't let nobody tell you can't do whatever the fuck you put your mind too",
+        description = "Do not let nobody tell you can not do whatever the fuck you put your mind too",
         image = "https://i.imgur.com/CRKyY9F.png",
     },
     ["ybnnahmir"] = {
         name = "YBN Nahmir",
-        description = "I'm trying to spread peac low key",
+        description = "I am trying to spread peac low key",
         image = "https://i.imgur.com/bNEKgce.png",
     },
     ["ynwmelly"] = {
@@ -238,7 +238,7 @@ TCG.Cards = {
     },
     ["dmx"] = {
         name = "DMX",
-        description = "Every day, i get closer to God",
+        description = "Every day i get closer to God",
         image = "https://i.imgur.com/by8hH90.png",
     },
     ["drdre"] = {
@@ -263,7 +263,7 @@ TCG.Cards = {
     },
     ["jayz"] = {
         name = "Jay Z",
-        description = "Only God can judge me so i'm gone, either love me or leave me alone",
+        description = "Only God can judge me so i am gone, either love me or leave me alone",
         image = "https://i.imgur.com/Su1niBX.png",
     },
 }
