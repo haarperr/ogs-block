@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Montserrat');
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@900&family=Montserrat:wght@600&family=Roboto:wght@700&display=swap');
 
 :root {
     --color-1: #1E3955;
@@ -114,6 +114,30 @@ input::-webkit-inner-spin-button {
     display: none;
 }
 
+.weapons-page-container  {
+    background-color: var(--color-9);
+    border-radius: 15px;
+    position: absolute;
+    width: 96.5%;
+    height: 96.5%;
+    left: 2.0%;
+    top: 1.5%;
+    display: none;
+    overflow: auto
+}
+
+.missing-page-container  {
+    background-color: var(--color-9);
+    border-radius: 15px;
+    position: absolute;
+    width: 96.5%;
+    height: 96.5%;
+    left: 2.0%;
+    top: 1.5%;
+    display: none;
+    overflow: auto
+}
+
 .stafflogs-page-container  {
     background-color: var(--color-9);
     border-radius: 15px;
@@ -160,7 +184,6 @@ input::-webkit-inner-spin-button {
 }
 
 .header-middle {
-    background-color: var(--color-2);
     border-radius: 15px;
     width: fit-content;
     height: fit-content;
@@ -295,6 +318,7 @@ input::-webkit-inner-spin-button {
 .warrant-item-info {
     color: #cccccc;
     font-size: 12px;
+    margin-top: 10px;
 }
 
 .warrant-bottom-info {
@@ -429,7 +453,7 @@ span.bulletin-item-title {
 }
 
 span.bulletin-item-title[contenteditable]:empty::before {
-    content: 'Enter Title';
+    content: 'Digite o título';
 }
 
 .bulletin-item-info {
@@ -448,7 +472,7 @@ span.bulletin-item-info {
 }
 
 span.bulletin-item-info[contenteditable]:empty::before {
-    content: 'Enter Bulletin Information';
+    content: 'Insira as informações do aviso';
 }
 
 .bulletin-bottom-info {
@@ -532,7 +556,7 @@ span.bulletin-item-info[contenteditable]:empty::before {
     margin-bottom: 0px;
     margin-right: 3px;
     margin-left: 3px;
-    width: 8%;
+    width: 17.4%;
     align-items: center;
     user-select: none;
     border-radius: 5px;
@@ -1145,6 +1169,16 @@ a {
     background-color: rgba(0, 0, 0, 0);
 }
 
+.manage-profile-phone-input {
+    border: none;
+    outline: none;
+    margin-left: 2.5px;
+    font-size: 16px;
+    margin-top: 2px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0);
+}
+
 .manage-profile-url {
     color: white;
     margin-left: 10px;
@@ -1181,9 +1215,9 @@ a {
 .manage-profile-right-container {
     display: flex;
     flex-direction: column;
-    height: 95.7%;
+    height: 97.7%;
     width: 50vh;
-     margin-top: 10px;
+    margin-top: 10px;
     margin-left: 10px;
     margin-right: 15px;
 }
@@ -1257,10 +1291,43 @@ a {
     padding-bottom: 5px;
     text-align: center;
     margin: auto;
-     margin-top: 10px;
+    margin-top: 10px;
     margin-right: 0px;
     margin-bottom: 0px;
     width: 84%;
+    align-items: center;
+    user-select: none;
+}
+
+.bolos-tags-title {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+    margin: auto;
+    margin-top: 10px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    width: 84%;
+    align-items: center;
+    user-select: none;
+}
+
+.tags-title-publicrecords {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+    margin: auto;
+     margin-top: 10px;
+    margin-bottom: 0px;
+    width: 95%;
     align-items: center;
     user-select: none;
 }
@@ -1284,6 +1351,44 @@ a {
     background-color: var(--color-3);
 }
 
+.weapons-add-btn {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    margin: auto;
+     margin-top: 10px;
+    margin-left: 5px;
+    margin-bottom: 0px;
+    width: 10%;
+    text-align: center;
+}
+
+.weapons-add-btn:hover {
+    background-color: var(--color-3);
+}
+
+.missing-add-btn {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    margin: auto;
+     margin-top: 10px;
+    margin-left: 5px;
+    margin-bottom: 0px;
+    width: 10%;
+    text-align: center;
+}
+
+.missing-add-btn:hover {
+    background-color: var(--color-3);
+}
+
 .tags-holder {
     overflow: auto;
     margin: auto;
@@ -1293,6 +1398,82 @@ a {
 }
 
 .tag {
+    display: inline-block;
+    text-decoration: none;
+    margin: auto;
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-top: 10px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+    color: black;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: white;
+    user-select: none;
+    width: fit-content;
+}
+
+.manage-reports-civilians {
+    display: inline-block;
+    text-decoration: none;
+    margin: auto;
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-top: 10px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+    color: black;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: white;
+    user-select: none;
+    width: fit-content;
+}
+
+.manage-reports-officers {
+    display: inline-block;
+    text-decoration: none;
+    margin: auto;
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-top: 10px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+    color: black;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: white;
+    user-select: none;
+    width: fit-content;
+}
+
+.manage-reports-tags {
+    display: inline-block;
+    text-decoration: none;
+    margin: auto;
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-top: 10px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+    color: black;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: white;
+    user-select: none;
+    width: fit-content;
+}
+
+.manage-bolos-officers {
     display: inline-block;
     text-decoration: none;
     margin: auto;
@@ -1336,15 +1517,71 @@ span.tag-input[contenteditable]:empty::before {
     border: none;
 }
 
+span.weapon-input[contenteditable]:empty::before {
+    content: 'Número de Série';
+}
+
+span.missing-input[contenteditable]:empty::before {
+    content: 'Número de Série';
+}
+
+.weapon-input {
+    display: inline-block;
+    text-decoration: none;
+    margin: auto;
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-top: 10px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+    color: black;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: white;
+    user-select: none;
+    width: fit-content;
+    outline: none;
+    border: none;
+}
+
+.missing-input {
+    display: inline-block;
+    text-decoration: none;
+    margin: auto;
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-top: 10px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+    color: black;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: white;
+    user-select: none;
+    width: fit-content;
+    outline: none;
+    border: none;
+}
+
 .manage-profile-vehs-container {
-    display: flex;
+    /* display: flex;
     flex-direction: column;
     background-color: var(--color-1);
     width: 100%;
     border: 2px solid var(--color-3);
     margin-top: 10px;
-    max-height: 150px;
-    overflow: scroll;
+    min-height: 100px;
+    max-height: 200px;
+    overflow: scroll; */
+
+    background-color: var(--color-1);
+    width: 100%;
+    border: 2px solid var(--color-3);
+    height: 15%;
 }
 
 .vehs-title {
@@ -1389,24 +1626,6 @@ span.tag-input[contenteditable]:empty::before {
     user-select: none;
 }
 
-.house-tag {
-    display: inline-block;
-    text-decoration: none;
-    margin: auto;
-    margin-left: 0px;
-    margin-right: 10px;
-    margin-top: 10px;
-    padding: 4px;
-    padding-left: 8px;
-    padding-right: 8px;
-    border-radius: 10px;
-    color: black;
-    font-size: 12px;
-    font-weight: 600;
-    background-color: white;
-    user-select: none;
-}
-
 .manage-profile-houses-container {
     display: flex;
     flex-direction: column;
@@ -1414,7 +1633,8 @@ span.tag-input[contenteditable]:empty::before {
     width: 100%;
     border: 2px solid var(--color-3);
     margin-top: 10px;
-    max-height: 150px;
+    min-height: 100px;
+    max-height: 200px;
     overflow: scroll;
 }
 
@@ -1442,7 +1662,103 @@ span.tag-input[contenteditable]:empty::before {
     user-select: none;
 }
 
-.houses-tag {
+.manage-profile-weapons-container {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-1);
+    width: 100%;
+    border: 2px solid var(--color-3);
+    margin-top: 10px;
+    min-height: 100px;
+    max-height: 200px;
+    overflow: scroll;
+}
+
+.weapons-title {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+    margin: auto;
+    margin-top: 10px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    width: 84%;
+    align-items: center;
+    user-select: none;
+}
+
+.weapons-title-publicrecords {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+    margin: auto;
+     margin-top: 10px;
+    margin-bottom: 0px;
+    width: 95%;
+    align-items: center;
+    user-select: none;
+}
+
+.weapons-holder {
+    overflow: auto;
+    margin: auto;
+    margin-top: 10px;
+    width: 95%;
+    user-select: none;
+}
+
+.weapons-tag {
+    display: inline-block;
+    text-decoration: none;
+    margin: auto;
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-top: 10px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+    color: black;
+    font-size: 12px;
+    font-weight: bolder;
+    background-color: white;
+    user-select: none;
+}
+
+.missing-title {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+    margin: auto;
+    margin-top: 10px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    width: 84%;
+    align-items: center;
+    user-select: none;
+}
+
+.missing-holder {
+    overflow: auto;
+    margin: auto;
+    margin-top: 10px;
+    width: 95%;
+    user-select: none;
+}
+
+.missing-tag {
     display: inline-block;
     text-decoration: none;
     margin: auto;
@@ -1488,6 +1804,22 @@ span.tag-input[contenteditable]:empty::before {
     user-select: none;
 }
 
+.gallery-title-publicrecords {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+    margin: auto;
+     margin-top: 10px;
+    margin-bottom: 0px;
+    width: 95%;
+    align-items: center;
+    user-select: none;
+}
+
 .gallery-add-btn {
     background-color: var(--color-4);
     color: white;
@@ -1529,7 +1861,7 @@ span.tag-input[contenteditable]:empty::before {
     width: 100%;
     border: 2px solid var(--color-3);
     margin-top: 10px;
-    max-height: 200px;
+    max-height: 400px;
     overflow: scroll;
 }
 
@@ -2108,7 +2440,7 @@ span.tag-input[contenteditable]:empty::before {
     width: fit-content;
 }
 
-.manage-incidents-officers-container {
+.manage-incidents-officeun-container {
     display: flex;
     flex-direction: column;
     border: 2px solid var(--color-3);
@@ -2124,7 +2456,7 @@ span.tag-input[contenteditable]:empty::before {
     user-select: none;
 }
 
-.manage-incidents-officers-title {
+.manage-incidents-officeun-title {
     background-color: var(--color-4);
     color: white;
     font-size: 18px;
@@ -2141,7 +2473,7 @@ span.tag-input[contenteditable]:empty::before {
     user-select: none;
 }
 
-.manage-incidents-officers-add-btn {
+.manage-incidents-officeun-add-btn {
     background-color: var(--color-4);
     color: white;
     font-size: 18px;
@@ -2158,11 +2490,11 @@ span.tag-input[contenteditable]:empty::before {
     pointer-events: none;
 }
 
-.manage-incidents-officers-add-btn:hover {
+.manage-incidents-officeun-add-btn:hover {
     background-color: var(--color-3);
 }
 
-.manage-incidents-officers-holder {
+.manage-incidents-officeun-holder {
     overflow: auto;
     margin: auto;
     margin-top: 10px;
@@ -2368,11 +2700,11 @@ span.tag-incident-input[contenteditable]:empty::before {
     border: none;
 }
 
-span.officers-incident-input[contenteditable]:empty::before {
+span.officeun-incident-input[contenteditable]:empty::before {
     content: '(XXX) Officer Name';
 }
 
-.officers-incident-input {
+.officeun-incident-input {
     display: inline-block;
     text-decoration: none;
     margin: auto;
@@ -3193,7 +3525,7 @@ span.civilians-incident-input[contenteditable]:empty::before {
     flex-direction: column;
     height: 95.7%;
     width: 50vh;
-     margin-top: 10px;
+    margin-top: 10px;
     margin-left: 10px;
     margin-right: 15px;
 }
@@ -3227,7 +3559,7 @@ span.civilians-incident-input[contenteditable]:empty::before {
     user-select: none;
 }
 
-.manage-officers-tags-holder {
+.manage-officeun-tags-holder {
     overflow: auto;
     margin: auto;
     width: 95%;
@@ -3235,7 +3567,7 @@ span.civilians-incident-input[contenteditable]:empty::before {
     user-select: none;
 }
 
-.officers-add-btn {
+.officeun-add-btn {
     background-color: var(--color-4);
     color: white;
     font-size: 18px;
@@ -3250,11 +3582,11 @@ span.civilians-incident-input[contenteditable]:empty::before {
     text-align: center;
 }
 
-.officers-add-btn:hover {
+.officeun-add-btn:hover {
     background-color: var(--color-3);
 }
 
-.manage-officers-tags-container {
+.manage-officeun-tags-container {
     display: flex;
     flex-direction: column;
     background-color: var(--color-1);
@@ -3650,7 +3982,7 @@ span.officer-tag-bolo-input[contenteditable]:empty::before {
     color: var(--color-8);
 }
 
-.dispatch-info-job-lssd {
+.dispatch-info-job-lspd {
     color: #2554cc;
 }
 
@@ -3658,7 +3990,7 @@ span.officer-tag-bolo-input[contenteditable]:empty::before {
     color: #cc7e25;
 }
 
-.dispatch-info-job-sast {
+.dispatch-info-job-sahp {
     color: #2589cc;
 }
 
@@ -3678,7 +4010,7 @@ span.officer-tag-bolo-input[contenteditable]:empty::before {
     color: #008080;
 }
 
-.dispatch-info-job-ambulance {
+.dispatch-info-job-ems {
     color: #cc2525;
 }
 
@@ -3686,7 +4018,7 @@ span.officer-tag-bolo-input[contenteditable]:empty::before {
     color: #FFEAB9;
 }
 
-.active-info-job-lssd {
+.active-info-job-lspd {
     background-color: #2554cc;
 }
 
@@ -3694,7 +4026,7 @@ span.officer-tag-bolo-input[contenteditable]:empty::before {
     background-color: #cc7e25;
 }
 
-.active-info-job-sast {
+.active-info-job-sahp {
     background-color: #2589cc;
 }
 
@@ -3714,7 +4046,7 @@ span.officer-tag-bolo-input[contenteditable]:empty::before {
     background-color: #008080;
 }
 
-.active-info-job-ambulance {
+.active-info-job-ems {
     background-color: #cc2525;
 }
 
@@ -4134,7 +4466,7 @@ span.officer-tag-bolo-input[contenteditable]:empty::before {
     user-select: none;
 }
 
-.reports-officers-tags-holder {
+.reports-officeun-tags-holder {
     overflow: auto;
     margin: auto;
     width: 95%;
@@ -4142,7 +4474,7 @@ span.officer-tag-bolo-input[contenteditable]:empty::before {
     user-select: none;
 }
 
-.reports-officers-add-btn {
+.reports-officeun-add-btn {
     background-color: var(--color-4);
     color: white;
     font-size: 18px;
@@ -4157,11 +4489,11 @@ span.officer-tag-bolo-input[contenteditable]:empty::before {
     text-align: center;
 }
 
-.reports-officers-add-btn:hover {
+.reports-officeun-add-btn:hover {
     background-color: var(--color-3);
 }
 
-.reports-officers-tags-container {
+.reports-officeun-tags-container {
     display: flex;
     flex-direction: column;
     background-color: var(--color-1);
@@ -4529,6 +4861,188 @@ span.civilian-tag-reports-input[contenteditable]:empty::before {
     margin-bottom: 15px;
 }
 
+.weapons-container {
+    background-color: var(--color-1);
+    border: 2px solid var(--color-3);
+    display: flex;
+    flex-direction: column;
+    height: 74.7vh;
+    width: 50%;
+     margin-top: 10px;
+    margin-left: 10px;
+}
+
+.weapons-search-refresh {
+    width: 13.7%;
+    font-size: 15px;
+    font-weight: lighter;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    background-color: var(--color-10);
+    margin: auto;
+    margin-left: 5px;
+     margin-top: 10px;
+    margin-bottom: 0px;
+    color: white;
+    text-align: center;
+    user-select: none;
+}
+
+.weapons-search-refresh:hover {
+    background-color: #aa891c;
+}
+
+.weapons-search-title {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+    margin: auto;
+     margin-top: 10px;
+    margin-bottom: 0px;
+    width: 95%;
+    align-items: center;
+    user-select: none;
+}
+
+.weapons-search-title:hover {
+    background-color: var(--color-3);
+}
+
+.weapons-search-input {
+    background-color: var(--color-3);
+    color: white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+    margin: auto;
+     margin-top: 10px;
+    margin-bottom: 0px;
+    width: 95%;
+    align-items: center;
+    user-select: none;
+    display: none;
+}
+
+#weapons-search-input {
+    outline: none;
+    border: none;
+    width: 95%;
+    color: white;
+    font-size: 15px;
+    background-color: rgba(0, 0, 0, 0);
+    margin: auto;
+}
+
+#weapons-search-input::placeholder {
+    color: white;
+}
+
+.weapons-items {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    margin: auto;
+    margin-top: 10px;
+    width: 95%;
+    height: 100%;
+    margin-bottom: 15px;
+}
+
+.missing-container {
+    background-color: var(--color-1);
+    border: 2px solid var(--color-3);
+    display: flex;
+    flex-direction: column;
+    height: 74.7vh;
+    width: 50%;
+     margin-top: 10px;
+    margin-left: 10px;
+}
+
+.missing-search-refresh {
+    width: 13.7%;
+    font-size: 15px;
+    font-weight: lighter;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    background-color: var(--color-10);
+    margin: auto;
+    margin-left: 5px;
+     margin-top: 10px;
+    margin-bottom: 0px;
+    color: white;
+    text-align: center;
+    user-select: none;
+}
+
+.missing-search-refresh:hover {
+    background-color: #aa891c;
+}
+
+.missing-search-title {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+    margin: auto;
+     margin-top: 10px;
+    margin-bottom: 0px;
+    width: 95%;
+    align-items: center;
+    user-select: none;
+}
+
+.missing-search-title:hover {
+    background-color: var(--color-3);
+}
+
+.missing-search-input {
+    background-color: var(--color-3);
+    color: white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+    margin: auto;
+     margin-top: 10px;
+    margin-bottom: 0px;
+    width: 95%;
+    align-items: center;
+    user-select: none;
+    display: none;
+}
+
+#missing-search-input {
+    outline: none;
+    border: none;
+    width: 95%;
+    color: white;
+    font-size: 15px;
+    background-color: rgba(0, 0, 0, 0);
+    margin: auto;
+}
+
+#missing-search-input::placeholder {
+    color: white;
+}
+
+.missing-items {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    margin: auto;
+    margin-top: 10px;
+    width: 95%;
+    height: 100%;
+    margin-bottom: 15px;
+}
+
 .vehicle-information-container {
     background-color: var(--color-1);
     border: 2px solid var(--color-3);
@@ -4561,11 +5075,119 @@ span.civilian-tag-reports-input[contenteditable]:empty::before {
     background-color: #1caa28;
 }
 
+.weapon-information-container {
+    background-color: var(--color-1);
+    border: 2px solid var(--color-3);
+    display: flex;
+    flex-direction: column;
+    height: 74.7vh;
+    width: 50%;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.weapon-information-save {
+    width: 13.7%;
+    font-size: 15px;
+    font-weight: lighter;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    background-color: #1b8f25;
+    margin: auto;
+    margin-left: 5px;
+     margin-top: 10px;
+    margin-bottom: 0px;
+    color: white;
+    text-align: center;
+    user-select: none;
+}
+
+.weapon-information-save:hover {
+    background-color: #1caa28;
+}
+
+.profile-jail:hover {
+    background-color: #1caa28;
+}
+
+.profile-missing:hover {
+    background-color: #1caa28;
+}
+
+.missing-information-container {
+    background-color: var(--color-1);
+    border: 2px solid var(--color-3);
+    display: flex;
+    flex-direction: column;
+    height: 74.7vh;
+    width: 50%;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.missing-information-save {
+    width: 13.7%;
+    font-size: 15px;
+    font-weight: lighter;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    background-color: #1b8f25;
+    margin: auto;
+    margin-left: 5px;
+     margin-top: 10px;
+    margin-bottom: 0px;
+    color: white;
+    text-align: center;
+    user-select: none;
+}
+
+.missing-information-save:hover {
+    background-color: #1caa28;
+}
+
 .add-charge:hover {
     background-color: #1caa28;
 }
 
 .vehicle-information-title {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 5px;
+    padding-bottom: 0px;
+    text-align: center;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    width: 81%;
+    /* width: 66%; */
+    align-items: center;
+    user-select: none;
+}
+
+.weapon-information-title {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 5px;
+    padding-bottom: 0px;
+    text-align: center;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    width: 81%;
+    /* width: 66%; */
+    align-items: center;
+    user-select: none;
+}
+
+.missing-information-title {
     background-color: var(--color-4);
     color: white;
     font-size: 18px;
@@ -4644,6 +5266,136 @@ span.civilian-tag-reports-input[contenteditable]:empty::before {
 }
 
 .dmv-id {
+    color: white;
+    font-size: 13px;
+}
+
+.weapon-item {
+    background-color: var(--color-5);
+    width: 100%;
+    height: 9vh;
+    margin: auto;
+    margin-bottom: 10px;
+    margin-top: 0px;
+    display: flex;
+    user-select: none;
+
+}
+
+.weapon-item:hover {
+    background-color: var(--color-3);
+}
+
+.missing-item {
+    background-color: var(--color-5);
+    width: 100%;
+    height: 9vh;
+    margin: auto;
+    margin-bottom: 10px;
+    margin-top: 0px;
+    display: flex;
+    user-select: none;
+
+}
+
+.missing-item:hover {
+    background-color: var(--color-3);
+}
+
+.weapon-image {
+    width: 7vh;
+    height: 7vh;
+    margin-left: 10px;
+    margin-top: auto;
+    margin-bottom: auto;
+    object-fit: cover;
+}
+
+.weapon-item-title {
+    font-size: 16px;
+    font-weight: lighter;
+    color: white;
+    padding-top: 15px;
+}
+
+.weapon-tags {
+    display: flex;
+    overflow-x: auto;
+    width: 98%;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.weapon-tag {
+    margin: auto;
+    margin-left: 0px;
+    margin-right: 6px;
+    padding: 4px;
+    padding-left: 7px;
+    padding-right: 7px;
+    border-radius: 10px;
+    color: white;
+    font-size: 12px;
+    font-weight: bolder;
+    background-color: #956E09;
+}
+
+.weapon-bottom-info {
+    display: flex;
+    margin: auto;
+    width: 100%;
+}
+
+.weapon-id {
+    color: white;
+    font-size: 13px;
+}
+
+.missing-image {
+    width: 7vh;
+    height: 7vh;
+    margin-left: 10px;
+    margin-top: auto;
+    margin-bottom: auto;
+    object-fit: cover;
+}
+
+.missing-item-title {
+    font-size: 16px;
+    font-weight: lighter;
+    color: white;
+    padding-top: 15px;
+}
+
+.missing-tags {
+    display: flex;
+    overflow-x: auto;
+    width: 98%;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.missing-tag {
+    margin: auto;
+    margin-left: 0px;
+    margin-right: 6px;
+    padding: 4px;
+    padding-left: 7px;
+    padding-right: 7px;
+    border-radius: 10px;
+    color: white;
+    font-size: 12px;
+    font-weight: bolder;
+    background-color: #956E09;
+}
+
+.missing-bottom-info {
+    display: flex;
+    margin: auto;
+    width: 100%;
+}
+
+.missing-id {
     color: white;
     font-size: 13px;
 }
@@ -4891,6 +5643,492 @@ span.civilian-tag-reports-input[contenteditable]:empty::before {
     border: none;
 }
 
+.weapon-info-stuff {
+    display: flex;
+    flex-direction: row;
+    width: 95%;
+    margin: auto;
+     margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+.weapon-info-image {
+    width: 444px;
+    height: 269px;
+    object-fit: cover;
+}
+
+.weapon-info-inner-container {
+    display: flex;
+    flex-direction: column;
+    width: 55%;
+}
+
+.weapon-info-plate {
+    color: white;
+    margin-left: 10px;
+    font-size: 15px;
+    user-select: none;
+}
+
+.weapon-info-plate-input {
+    border: none;
+    outline: none;
+    margin-left: 2.5px;
+    font-size: 16px;
+    margin-top: 5px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.weapon-info-owner {
+    color: white;
+    margin-left: 10px;
+    font-size: 15px;
+    user-select: none;
+}
+
+.weapon-info-owner-input {
+    border: none;
+    outline: none;
+    margin-left: 2.5px;
+    font-size: 16px;
+    margin-top: 5px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.weapon-info-class {
+    color: white;
+    margin-left: 10px;
+    font-size: 15px;
+    user-select: none;
+}
+
+.weapon-info-class-input {
+    border: none;
+    outline: none;
+    margin-left: 2.5px;
+    font-size: 16px;
+    margin-top: 5px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.weapon-info-model {
+    color: white;
+    margin-left: 10px;
+    font-size: 15px;
+    user-select: none;
+}
+
+.weapon-info-model-input {
+    border: none;
+    outline: none;
+    margin-left: 2.5px;
+    font-size: 16px;
+    margin-top: 5px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.weapon-info-imageurl {
+    color: white;
+    margin-left: 10px;
+    font-size: 15px;
+    user-select: none;
+}
+
+.weapon-info-imageurl-input {
+    border: none;
+    outline: none;
+    margin-left: 2.5px;
+    font-size: 16px;
+    margin-top: 5px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.weapon-info-icon {
+    color: white;
+    font-size: 16px;
+    margin-left: 10px
+}
+
+.weapon-info-line {
+    background-color: var(--color-3);
+    height: 2px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.weapon-info-tags-container {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--color-3);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    width: 95%;
+    height: fit-content;
+    align-items: center;
+    user-select: none;
+}
+
+.weapon-info-tags-title {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+    margin: auto;
+     margin-top: 10px;
+    margin-bottom: 0px;
+    width: 95%;
+    align-items: center;
+    user-select: none;
+}
+
+.weapon-info-tags-add-btn:hover {
+    background-color: var(--color-3);
+}
+
+.weapon-info-tags-add-btn {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 7.25px;
+    padding-bottom: 7.25px;
+    margin: auto;
+    margin-top: 15px;
+    margin-bottom: 0px;
+    margin-left: 5px;
+    margin-right: 0px;
+    width: 10%;
+    text-align: center;
+}
+
+.weapon-info-tags-holder {
+    overflow: auto;
+    margin: auto;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    width: 95%;
+    max-height: 14vh;
+    user-select: none;
+}
+
+.weapon-info-tag {
+    display: inline-block;
+    text-decoration: none;
+    margin: auto;
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+    color: black;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: white;
+    user-select: none;
+    width: fit-content;
+}
+
+.weapon-info-content {
+    width: 93%;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    border: none;
+    outline: none;
+    min-height: 41vh;
+    resize: none;
+    background-color: var(--color-5);
+    color: white;
+    font-size: 16px;
+    padding: 10px;
+}
+
+.weapon-tags {
+    display: flex;
+    overflow-x: auto;
+    width: 98%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.weapon-tag {
+    display: inline-block;
+    text-decoration: none;
+    margin: auto;
+    margin-left: 0px;
+    margin-right: 10px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: white;
+    user-select: none;
+    width: fit-content;
+    outline: none;
+    border: none;
+}
+
+.missing-info-stuff {
+    display: flex;
+    flex-direction: row;
+    width: 95%;
+    margin: auto;
+     margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+.missing-info-image {
+    width: 444px;
+    height: 269px;
+    object-fit: cover;
+}
+
+.missing-info-inner-container {
+    display: flex;
+    flex-direction: column;
+    width: 55%;
+}
+
+.missing-info-plate {
+    color: white;
+    margin-left: 10px;
+    font-size: 15px;
+    user-select: none;
+}
+
+.missing-info-plate-input {
+    border: none;
+    outline: none;
+    margin-left: 2.5px;
+    font-size: 16px;
+    margin-top: 5px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.missing-info-owner {
+    color: white;
+    margin-left: 10px;
+    font-size: 15px;
+    user-select: none;
+}
+
+.missing-info-owner-input {
+    border: none;
+    outline: none;
+    margin-left: 2.5px;
+    font-size: 16px;
+    margin-top: 5px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.missing-info-class {
+    color: white;
+    margin-left: 10px;
+    font-size: 15px;
+    user-select: none;
+}
+
+.missing-info-class-input {
+    border: none;
+    outline: none;
+    margin-left: 2.5px;
+    font-size: 16px;
+    margin-top: 5px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.missing-info-model {
+    color: white;
+    margin-left: 10px;
+    font-size: 15px;
+    user-select: none;
+}
+
+.missing-info-model-input {
+    border: none;
+    outline: none;
+    margin-left: 2.5px;
+    font-size: 16px;
+    margin-top: 5px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.missing-info-imageurl {
+    color: white;
+    margin-left: 10px;
+    font-size: 15px;
+    user-select: none;
+}
+
+.missing-info-imageurl-input {
+    border: none;
+    outline: none;
+    margin-left: 2.5px;
+    font-size: 16px;
+    margin-top: 5px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.missing-info-icon {
+    color: white;
+    font-size: 16px;
+    margin-left: 10px
+}
+
+.missing-info-line {
+    background-color: var(--color-3);
+    height: 2px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.missing-info-tags-container {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--color-3);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    width: 95%;
+    height: fit-content;
+    align-items: center;
+    user-select: none;
+}
+
+.missing-info-tags-title {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
+    margin: auto;
+     margin-top: 10px;
+    margin-bottom: 0px;
+    width: 95%;
+    align-items: center;
+    user-select: none;
+}
+
+.missing-info-tags-add-btn:hover {
+    background-color: var(--color-3);
+}
+
+.missing-info-tags-add-btn {
+    background-color: var(--color-4);
+    color: white;
+    font-size: 18px;
+    font-weight: bolder;
+    padding-top: 7.25px;
+    padding-bottom: 7.25px;
+    margin: auto;
+    margin-top: 15px;
+    margin-bottom: 0px;
+    margin-left: 5px;
+    margin-right: 0px;
+    width: 10%;
+    text-align: center;
+}
+
+.missing-info-tags-holder {
+    overflow: auto;
+    margin: auto;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    width: 95%;
+    max-height: 14vh;
+    user-select: none;
+}
+
+.missing-info-tag {
+    display: inline-block;
+    text-decoration: none;
+    margin: auto;
+    margin-left: 0px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+    color: black;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: white;
+    user-select: none;
+    width: fit-content;
+}
+
+.missing-info-content {
+    width: 93%;
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    border: none;
+    outline: none;
+    min-height: 41vh;
+    resize: none;
+    background-color: var(--color-5);
+    color: white;
+    font-size: 16px;
+    padding: 10px;
+}
+
+.missing-tags {
+    display: flex;
+    overflow-x: auto;
+    width: 98%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.missing-tag {
+    display: inline-block;
+    text-decoration: none;
+    margin: auto;
+    margin-left: 0px;
+    margin-right: 10px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 10px;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: white;
+    user-select: none;
+    width: fit-content;
+    outline: none;
+    border: none;
+}
+
 .stafflogs-container {
     background-color: var(--color-1);
     border: 2px solid var(--color-3);
@@ -5013,11 +6251,59 @@ span.civilian-tag-reports-input[contenteditable]:empty::before {
     background-color: #950909;
 }
 
+.incident-delete:hover {
+    background-color: #950909;
+}
+
+.associated-incidents-remove-tag:hover {
+    background-color: #950909;
+}
+
+.bolos-remove-tags-tag:hover {
+    background-color: #950909;
+}
+
+.missing-delete:hover {
+    background-color: #950909;
+}
+
+.bolos-remove-officer-tag:hover {
+    background-color: #950909;
+}
+
+.reports-remove-officer-tag:hover {
+    background-color: #950909;
+}
+
+.reports-remove-civ-tag:hover {
+    background-color: #950909;
+}
+
+.reports-remove-tags-tag:hover {
+    background-color: #950909;
+}
+
+.incidents-remove-civ-tag:hover {
+    background-color: #950909;
+}
+
+.report-delete:hover {
+    background-color: #950909;
+}
+
+.remove-image-incident:hover {
+    background-color: #950909;
+}
+
 .remove-bulletin:hover {
     background-color: #950909;
 }
 
 .search-vehicle:hover {
+    background-color: #956E09;
+}
+
+.search-weapon:hover {
     background-color: #956E09;
 }
 
@@ -5295,6 +6581,14 @@ span.civilian-tag-reports-input[contenteditable]:empty::before {
     margin-top: 40.5vh;
 }
 
+.jail-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    margin-top: 40.5vh;
+}
+
 .radio-container {
     display: flex;
     flex-direction: column;
@@ -5447,6 +6741,78 @@ span.civilian-tag-reports-input[contenteditable]:empty::before {
     background-color: #15ac12;
 }
 
+.jail-inner-container {
+    background-color: var(--color-5);
+    width: 30vh;
+    height: 17.5vh;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+    border: .45vh solid white;
+}
+
+.jail-title {
+    color: white;
+    font-size: 2vh;
+    font-weight: bold;
+    margin: auto;
+    margin-top: 2vh;
+    margin-bottom: 0vh;
+}
+
+.jail-input {
+    width: 20vh;
+    margin: auto;
+    margin-top: 1.5vh;
+    margin-bottom: 0vh;
+    background-color: var(--color-6);
+    border: none;
+    outline: none;
+    font-size: 2vh;
+    color: white;
+    text-align: center;
+    padding: 1vh;
+}
+
+.jail-buttons {
+    width: 20vh;
+    margin: auto;
+    margin-top: 1.5vh;
+    display: flex;
+    flex-direction: row;
+}
+
+.jail-cancel {
+    color: white;
+    padding: .5vh;
+    padding-left: 1vh;
+    padding-right: 1vh;
+    background-color: #D77A0D;
+    border-radius: 1vh;
+    margin: auto;
+    user-select: none;
+}
+
+.jail-cancel:hover {
+    background-color: #f18f1e;
+}
+
+.jail-submit {
+    color: white;
+    padding: .5vh;
+    padding-left: 1vh;
+    padding-right: 1vh;
+    background-color: #0B9509;
+    border-radius: 1vh;
+    margin: auto;
+    user-select: none;
+}
+
+.jail-submit:hover {
+    background-color: #15ac12;
+}
+
 
 /* Keep At Bottom */
 
@@ -5515,11 +6881,15 @@ span.civilian-tag-reports-input[contenteditable]:empty::before {
     background-color: #1caa28;
 }
 
-.Set-Waypoint:hover {
+.set-waypoint:hover {
     background-color: #f18f1e;
 }
 
 .call-detach:hover {
+    background-color: #950909;
+}
+
+.remove-call:hover {
     background-color: #950909;
 }
 
@@ -5722,7 +7092,6 @@ span.civilian-tag-reports-input[contenteditable]:empty::before {
     outline: none;
     font-size: 1.2vh;
     color: rgb(255, 255, 255);
-    font-family: Roboto, sans-serif;
     font-style: normal;
     font-weight: normal;
     margin-left: 1vh;

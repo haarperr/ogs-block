@@ -11,8 +11,6 @@ let canCreateBulletin = 0
 let mouse_is_inside = false;
 let currentTab = ".dashboard-page-container"
 let MyName = ""
-let MyJob = "unemployed"
-let MyJobRank = 0
 let canInputReportTag = true
 let canInputReportOfficerTag = true
 let canInputReportCivilianTag = true
@@ -21,10 +19,13 @@ let canSearchForReports = true
 let canSaveVehicle = true
 var LastName = ""
 var DispatchNum = 0
+let PoliceRoster = ""
+let EMSRoster = ""
+var isPublicRecords = false
 
 const MONTH_NAMES = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-    'Julho', 'Agosto', 'Septembro', 'Outubro', 'Novembro', 'Dezembro'
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ];
 
 function getFormattedDate(date, prefomattedDate = false, hideYear = false) {
@@ -39,14 +40,14 @@ function getFormattedDate(date, prefomattedDate = false, hideYear = false) {
     }
 
     if (prefomattedDate) {
-        return `${prefomattedDate} at ${hours}:${minutes}`;
+        return `${prefomattedDate} as ${hours}:${minutes}`;
     }
 
     if (hideYear) {
-        return `${day}. ${month} at ${hours}:${minutes}`;
+        return `${day}. ${month} as ${hours}:${minutes}`;
     }
 
-    return `${day}. ${month} ${year}. at ${hours}:${minutes}`;
+    return `${day}. ${month} ${year}. as ${hours}:${minutes}`;
 }
 
 function timeAgo(dateParam) {
@@ -69,7 +70,7 @@ function timeAgo(dateParam) {
     } else if (seconds < 60) {
         return `${seconds} Segundos atrás`;
     } else if (seconds < 90) {
-        return 'A um minuto atrás';
+        return 'Cerca de um minuto atrás';
     } else if (minutes < 60) {
         return `${minutes} Minutos atrás`;
     } else if (isToday) {
@@ -90,13 +91,6 @@ $(document).ready(() => {
     }, function () {
         $(".close-all").css("opacity", "1");
     });
-    $(".incidents-charges-title-container").hover(function () {
-        $(".incidents-charges-table-container").css("opacity", "0.1");
-        $(".close-all").css("filter", "none");
-    }, function () {
-        $(".close-all").css("filter", "brightness(30%)");
-        $(".incidents-charges-table-container").css("opacity", "1");
-    });
     $(".nav-item").click(function () {
         if ($(this).hasClass("active-nav") == false) {
             fidgetSpinner($(this).data("page"));
@@ -109,18 +103,42 @@ $(document).ready(() => {
             id: id
         }));
     })
+    $(".profile-items").on("contextmenu", ".profile-item", function (e) {
+        var args = ""
+        args = [
+            // {
+            //     "className": "profile-jail",
+            //     "icon": "fas fa-circle",
+            //     "text": "Jail Citizen",
+            //     "info": $(this).data("id"),
+            //     "status": ""
+            // },
+            {
+                "className": "profile-missing",
+                "icon": "fas fa-circle",
+                "text": "Missing Citizen",
+                "info": $(this).data("id"),
+                "status": ""
+            },
+        ]
+        if (["police", "sheriff", "state_police", "park_ranger"].includes(currentJob)) {
+            openContextMenu(e, args);
+        }
+    })
     $(".bulletin-add-btn").click(function () {
         if (canCreateBulletin == 0) {
             $(this).removeClass('fa-plus').addClass('fa-minus');
             let BulletinId = Number($('.bulletin-item').first().data("id")) + 1
-            if (Number.isNaN(BulletinId)) { BulletinId = 1 }
+            if (Number.isNaN(BulletinId)) {
+                BulletinId = 1
+            }
             canCreateBulletin = BulletinId
             $('.bulletin-items-continer').prepend(`<div class="bulletin-item" data-id="${canCreateBulletin}">
                 <span contenteditable="true" class="bulletin-item-title"></span>
                 <span contenteditable="true" class="bulletin-item-info"></span>
                 <div class="bulletin-bottom-info">
                 <div class="bulletin-id">ID: ${BulletinId}</div>
-                <div class="bulletin-date">${MyName} - Just Now</div>
+                <div class="bulletin-date">${MyName} - Agora</div>
                 </div>
             </div>`)
         } else {
@@ -132,6 +150,8 @@ $(document).ready(() => {
     $(".bulletin-items-continer").on("keydown", ".bulletin-item", function (e) {
         if (e.keyCode === 13) {
             $(".bulletin-add-btn").removeClass('fa-minus').addClass('fa-plus');
+            let id = $(this).find(".bulletin-id").text()
+            let date = $(this).find(".bulletin-date").text()
             let title = $(this).find(".bulletin-item-title").text()
             let info = $(this).find(".bulletin-item-info").text()
             let time = new Date()
@@ -153,27 +173,32 @@ $(document).ready(() => {
         }
     });
     $(".bulletin-items-continer").on("contextmenu", ".bulletin-item", function (e) {
-        let args = [
-            {
-                "className": "remove-bulletin",
-                "icon": "fas fa-times",
-                "text": "Remover Item",
-                "info": $(this).data("id"),
-                "status": ""
-            }
-        ]
+        let args = [{
+            "className": "remove-bulletin",
+            "icon": "fas fa-times",
+            "text": "Remover Aviso",
+            "info": $(this).data("id"),
+            "status": ""
+        }]
         openContextMenu(e, args);
     })
     $(".contextmenu").on("click", ".remove-bulletin", function () {
         let BulletinId = $(this).data("info")
+        let time = new Date()
         $(".bulletin-items-continer").find("[data-id='" + BulletinId + "']").remove();
         $.post('https://caue-mdt/deleteBulletin', JSON.stringify({
-            id: BulletinId
+            id: BulletinId,
+            time: time.getTime()
         }));
-        if (canCreateBulletin == BulletinId) { canCreateBulletin = 0 }
-        if ($(".bulletin-add-btn").hasClass("fa-minus")) { $(".bulletin-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
+        if (canCreateBulletin == BulletinId) {
+            canCreateBulletin = 0
+        }
+        if ($(".bulletin-add-btn").hasClass("fa-minus")) {
+            $(".bulletin-add-btn").removeClass('fa-minus').addClass('fa-plus');
+        }
     });
     $(".associated-incidents-tags-add-btn").on("click", "", function () {
+        IncidentSearchType = "person"
         document.addEventListener('mouseup', onMouseDownIcidents);
         $(".icidents-person-search-container").fadeIn(250)
         $(".close-all").css("filter", "brightness(15%)");
@@ -192,7 +217,10 @@ $(document).ready(() => {
                 $(this).removeClass('fa-minus').addClass('fa-plus');
             }
         } else {
-            $(this).effect("shake", { times: 2, distance: 2 }, 500)
+            $(this).effect("shake", {
+                times: 2,
+                distance: 2
+            }, 500)
         }
     });
     $('#gallery-upload-input').keydown(function (e) {
@@ -201,7 +229,7 @@ $(document).ready(() => {
             let cid = $(".manage-profile-citizenid-input").val();
             if (URL !== "") {
                 let randomNum = Math.ceil(Math.random() * 10).toString()
-                $('.gallery-inner-container').prepend(`<img src="${URL}" class="gallery-img ${randomNum}" onerror="this.src='img/not-found.jpg'">`);
+                $('.gallery-inner-container').prepend(`<img src="${URL}" class="gallery-img ${randomNum}" onerror="this.src='https://cdn.discordapp.com/attachments/770324167894761522/912602343164502096/not-found.jpg'">`);
                 setTimeout(() => {
                     URL = $("." + randomNum).attr("src")
                     $.post('https://caue-mdt/addGalleryImg', JSON.stringify({
@@ -225,14 +253,14 @@ $(document).ready(() => {
             $('.manage-profile-save').prepend(`<span class="fas fa-check"></span>`);
             setTimeout(() => {
                 $(".manage-profile-save").empty();
-                $(".manage-profile-save").html("Salvar");
+                $(".manage-profile-save").html("Save");
                 canSaveProfile = true
             }, 750);
             setTimeout(() => {
                 let pfp = $(".manage-profile-pic").attr("src");
                 let newpfp = $(".manage-profile-url-input").val();
                 if (newpfp.includes("base64")) {
-                    newpfp = "img/not-found.jpg"
+                    newpfp = "https://cdn.discordapp.com/attachments/770324167894761522/912602343164502096/not-found.jpg"
                 } else {
                     pfp = newpfp
                 }
@@ -274,51 +302,66 @@ $(document).ready(() => {
             let civilians = new Array()
             let evidence = new Array()
 
-            $('.manage-incidents-tags-holder').find('div').each(function(){
-                if ($(this).text() != "") { tags.push($(this).text()) }
+            $('.manage-incidents-tags-holder').find('div').each(function () {
+                if ($(this).text() != "") {
+                    tags.push($(this).text())
+                }
             });
 
-            $(".manage-incidents-officers-holder").find('div').each(function(){
-                if ($(this).text() != "") { officers.push($(this).text()) }
+            $(".manage-incidents-officeun-holder").find('div').each(function () {
+                if ($(this).text() != "") {
+                    officers.push($(this).text())
+                }
             });
 
-            $(".manage-incidents-civilians-holder").find('div').each(function(){
-                if ($(this).text() != "") { civilians.push($(this).text()) }
+            $(".manage-incidents-civilians-holder").find('div').each(function () {
+                if ($(this).text() != "") {
+                    civilians.push($(this).text())
+                }
             });
 
-            $(".manage-incidents-evidence-holder").find('img').each(function(){
-                if ($(this).attr("src") != "") { evidence.push($(this).attr("src")) }
+            $(".manage-incidents-evidence-holder").find('img').each(function () {
+                if ($(this).attr("src") != "") {
+                    evidence.push($(this).attr("src"))
+                }
             });
 
             let time = new Date()
 
             let associated = new Array()
 
-            $(".associated-incidents-user-container").each(function(index) {
-                var cid = Number($(this).data("id"))
+            $(".associated-incidents-user-container").each(function (index) {
+                var cid = $(this).data("id")
                 var guilty = false
                 var warrant = false
                 var processed = false
                 var isassociated = false
                 var charges = new Array()
 
-                $(".associated-incidents-user-tags-holder").children('div').each(function(index) {
-                    if (Number($(this).data("id")) == cid) {
+                $(".associated-incidents-user-tags-holder").children('div').each(function (index) {
+                    if ($(this).data("id") == cid) {
                         if ($(this).hasClass("green-tag")) {
-                            if ($(this).text() == 'Guilty') { guilty = true }
-                            if ($(this).text() == 'Warrant') { warrant = true }
-                            if ($(this).text() == 'Processed') { processed = true }
-                            if ($(this).text() == 'Associated') { isassociated = true }
+                            if ($(this).text() == 'Guilty') {
+                                guilty = true
+                            }
+                            if ($(this).text() == 'Mandado') {
+                                warrant = true
+                            }
+                            if ($(this).text() == 'Processado') {
+                                processed = true
+                            }
+                            if ($(this).text() == 'Associado') {
+                                isassociated = true
+                            }
                         }
                     }
                 });
 
-                $(".associated-incidents-user-holder").children('div').each(function(index) {
-                    if (Number($(".associated-incidents-user-holder").children().eq(index).data("id")) == cid) {
+                $(".associated-incidents-user-holder").children('div').each(function (index) {
+                    if ($(".associated-incidents-user-holder").children().eq(index).data("id") == cid) {
                         charges.push($(".associated-incidents-user-holder").children().eq(index).html())
                     }
                 });
-
 
                 associated.push({
                     cid: $(this).data("id"),
@@ -353,7 +396,7 @@ $(document).ready(() => {
                     $('.incidents-search-refresh').prepend(`<span class="fas fa-spinner fa-spin"></span>`);
                     setTimeout(() => {
                         $(".incidents-search-refresh").empty();
-                        $(".incidents-search-refresh").html("Atualizar");
+                        $(".incidents-search-refresh").html("Refresh");
                         canRefreshIncidents = true
                         $.post('https://caue-mdt/getAllIncidents', JSON.stringify({}));
                     }, 1500);
@@ -363,38 +406,46 @@ $(document).ready(() => {
         }
     });
     $(".manage-incidents-title-holder").on("click", ".manage-incidents-create", function () {
-        let tempalte = "📝 Sumário:\n\n[Coloque o sumário de seu Report aqui]\n\n🧍 Refem: [Nome aqui]\n\n🔪 Armas/Items Confiscados:\n\n· [Coloque a lista aqui]\n\n-----\n💸 Multa:\n⌚ Sentença:\n-----"
-        $("#manage-incidents-title-input").val("Nome - Charge - " + $(".date").html());
-        $(".manage-incidents-reports-content").val(tempalte);
-
+        if ($(".badge-logo").attr('src') == 'https://cdn.discordapp.com/attachments/770324167894761522/912602342275301396/ems_badge.png') {
+            $(".manage-incidents-reports-content").val("ICU Room #: [ # ]\n\nReport ID: [ Report ID ]\n\nTime Admitted: [ Date and Time Here ]\n\nSurgery: [Yes/No]\n\nInjuries/Ailments:\n - [ Enter List Of Injuries Here ]\n\n\nAdditional Attending:\n - [ List Any Other Staff Here ]\n\n\n🧑‍🤝‍🧑 Additonal Emergency Contacts:\n - [ Name And Number ]\n\n\nNotes:\n[Additional Notes Here]");
+            $("#manage-incidents-title-input").val("Name - " + $(".date").html());
+            $(".manage-incidents-editing-title").html("You are currently creating a new check-in report");
+            $(".manage-incidents-title-holder").empty();
+            $(".manage-incidents-title-holder").prepend(
+                `
+                <div class="manage-incidents-title">Manage ICU Check-in</div>
+                <div class="manage-incidents-create"> <span class="fas fa-plus" style="margin-top: 3.5px;"></span></div>
+                <div class="manage-incidents-save"><span class="fas fa-save" style="margin-top: 3.5px;"></span></div>
+                `
+            );
+        } else {
+            $(".manage-incidents-reports-content").val("📝 Sumário:\n\n[Insira um resumo do relatório aqui]\n\n🧍 Refém: [Nome aqui]\n\n🔪 Armas/Items Confiscados:\n\n· [Lista aqui]\n\n-----\n💸 Multa:\n⌚ Sentença:\n-----");
+            $("#manage-incidents-title-input").val("Nome - Acusação - " + $(".date").html());
+            $(".manage-incidents-editing-title").html("Você está criando um novo incidente");
+            $(".manage-incidents-title-holder").empty();
+            $(".manage-incidents-title-holder").prepend(
+                `
+                <div class="manage-incidents-title">Incidente</div>
+                <div class="manage-incidents-create"> <span class="fas fa-plus" style="margin-top: 3.5px;"></span></div>
+                <div class="manage-incidents-save"><span class="fas fa-save" style="margin-top: 3.5px;"></span></div>
+                `
+            );
+        }
         $(".manage-incidents-tags-holder").empty();
-        $(".manage-incidents-officers-holder").empty();
+        $(".manage-incidents-officeun-holder").empty();
         $(".manage-incidents-civilians-holder").empty();
         $(".manage-incidents-evidence-holder").empty();
-        $(".manage-incidents-title-holder").empty();
-        $(".manage-incidents-title-holder").prepend(
-            `
-            <div class="manage-incidents-title">Manage Incident</div>
-            <div class="manage-incidents-create"> <span class="fas fa-plus" style="margin-top: 3.5px;"></span></div>
-            <div class="manage-incidents-save"><span class="fas fa-save" style="margin-top: 3.5px;"></span></div>
-            `
-        );
         $(".manage-incidents-title").css("width", "66%");
         $(".manage-incidents-create").css("margin-right", "0px");
-
         $(".incidents-ghost-holder").html("")
         $(".associated-incidents-tags-holder").html("")
-
-        $(".manage-incidents-editing-title").html("Você esta reportando um novo incidente");
-        $(".manage-incidents-editing-title").removeData("id");
-
+        $(".manage-incidents-editing-title").data("id", 0);
         $(".manage-incidents-tags-add-btn").css("pointer-events", "auto")
         $(".manage-incidents-reports-content").css("pointer-events", "auto")
-        $(".manage-incidents-officers-add-btn").css("pointer-events", "auto")
+        $(".manage-incidents-officeun-add-btn").css("pointer-events", "auto")
         $(".manage-incidents-civilians-add-btn").css("pointer-events", "auto")
         $(".manage-incidents-evidence-add-btn").css("pointer-events", "auto")
         $(".associated-incidents-tags-add-btn").css("pointer-events", "auto")
-
     });
     $(".tags-add-btn").click(function () {
         if ($(".manage-profile-citizenid-input").val()) {
@@ -409,10 +460,39 @@ $(document).ready(() => {
             }
 
         } else {
-            $(this).effect("shake", { times: 2, distance: 2 }, 500)
+            $(this).effect("shake", {
+                times: 2,
+                distance: 2
+            }, 500)
         }
     });
-
+    $(".weapons-add-btn").click(function () {
+        if ($(".manage-profile-citizenid-input").val()) {
+            if (canInputTag) {
+                $(this).removeClass('fa-plus').addClass('fa-minus');
+                $('.weapons-holder').prepend(`<span contenteditable="true" class="weapon-input"></span>`);
+                canInputTag = false
+            } else if (!canInputTag) {
+                $(this).removeClass('fa-minus').addClass('fa-plus');
+                $(".weapon-input").remove()
+                canInputTag = true
+            }
+        } else {
+            $(this).effect("shake", {
+                times: 2,
+                distance: 2
+            }, 500)
+        }
+    });
+    $(".weapons-holder").on("keydown", ".weapon-input", function (e) {
+        if (e.keyCode === 13) {
+            addWeapon($(".weapon-input").text())
+            if ($(".weapons-add-btn").hasClass("fa-minus")) {
+                $(".weapons-add-btn").removeClass('fa-minus').addClass('fa-plus');
+            }
+            $(".weapon-input").remove()
+        }
+    });
     $(".tags-holder").on("keydown", ".tag-input", function (e) {
         if (e.keyCode === 13) {
             addTag($(".tag-input").text())
@@ -423,13 +503,13 @@ $(document).ready(() => {
         }
     });
     $(".contextmenu").on("click", ".search-vehicle", function () {
-       let plate = $(this).data("info");
-       fidgetSpinner(".dmv-page-container");
-       currentTab = ".dmv-page-container";
-       setTimeout(() => {
-           $(".dmv-search-input").slideDown(250);
-           $(".dmv-search-input").css("display", "block")
-           setTimeout(() => {
+        let plate = $(this).data("info");
+        fidgetSpinner(".dmv-page-container");
+        currentTab = ".dmv-page-container";
+        setTimeout(() => {
+            $(".dmv-search-input").slideDown(250);
+            $(".dmv-search-input").css("display", "block")
+            setTimeout(() => {
                 $("#dmv-search-input:text").val(plate.toString());
                 $.post('https://caue-mdt/searchVehicles', JSON.stringify({
                     name: plate.toString()
@@ -442,38 +522,68 @@ $(document).ready(() => {
                     }));
                 }, 250);
 
-           }, 250);
-       }, 250);
+            }, 250);
+        }, 250);
 
     });
-    $(".vehs-holder").on("contextmenu", ".veh-tag", function (e) {
-        let args = [
-            {
-                "className": "search-vehicle",
-                "icon": "fas fa-car",
-                "text": "Procurar Veiculo",
-                "info": $(this).data("plate"),
-                "status": ""
-            }
-        ]
-        openContextMenu(e, args);
+    $(".contextmenu").on("click", ".search-weapon", function () {
+        let plate = $(this).data("info");
+        fidgetSpinner(".weapons-page-container");
+        currentTab = ".weapons-page-container";
+        setTimeout(() => {
+            $(".weapons-search-input").slideDown(250);
+            $(".weapons-search-input").css("display", "block")
+            setTimeout(() => {
+                $("#weapons-search-input:text").val(plate.toString());
+                $.post('https://caue-mdt/searchWeapon', JSON.stringify({
+                    name: plate.toString()
+                }));
+                $(".weapons-items").empty();
+                $('.weapons-items').prepend(`<div class="profile-loader"></div>`);
+                setTimeout(() => {
+                    $.post('https://caue-mdt/getWeaponData', JSON.stringify({
+                        serialnumber: plate.toString()
+                    }));
+                }, 250);
+            }, 250);
+        }, 250);
     });
+    $(".vehs-holder").on("contextmenu", ".veh-tag", function (e) {
+        let args = [{
+            "className": "search-vehicle",
+            "icon": "fas fa-car",
+            "text": "Procurar Veículo",
+            "info": $(this).data("plate"),
+            "status": ""
+        }]
+        openContextMenu(e, args);
+    })
     $(".contextmenu").on("click", ".search-house", function () {
         let house_id = $(this).data("info");
         $.post('https://caue-mdt/searchHouse', JSON.stringify({
             house_id: house_id.toString()
         }));
     });
-    $(".houses-holder").on("contextmenu", ".house-tag", function (e) {
+    $(".houses-holder").on("contextmenu", ".white-tag", function (e) {
         let args = [
             {
                 "className": "search-house",
                 "icon": "fas fa-map-marker-alt",
-                "text": "Colocar no GPS",
+                "text": "Marcar no GPS",
                 "info": $(this).data("house-id"),
                 "status": ""
             }
         ]
+        openContextMenu(e, args);
+    })
+    $(".weapons-holder").on("contextmenu", ".tag", function (e) {
+        let args = [{
+            "className": "search-weapon",
+            "icon": "fas fa-circle",
+            "text": "Search Weapon",
+            "info": $(this).data("plate"),
+            "status": ""
+        }]
         openContextMenu(e, args);
     })
     $(".gallery-inner-container").on("click", ".gallery-img", function () {
@@ -493,95 +603,85 @@ $(document).ready(() => {
         $(".manage-incidents-evidence-holder img").filter("[src='" + $(this).data("info") + "']").remove();
     });
     $(".gallery-inner-container").on("contextmenu", ".gallery-img", function (e) {
-        let args = [
-            {
+        let args = [{
                 "className": "remove-image",
                 "icon": "fas fa-times",
-                "text": "Remove Image",
+                "text": "Remover Imagem",
                 "info": $(this).attr("src"),
                 "status": ""
             },
             {
                 "className": "expand-image",
                 "icon": "fas fa-expand",
-                "text": "Expand Image",
+                "text": "Expandir Imagem",
                 "info": $(this).attr("src"),
                 "status": $(this).css("filter")
             },
         ]
         openContextMenu(e, args);
     })
+    // $(".licenses-holder").on("contextmenu", ".license-tag", function (e) {
+    //     const fuckyou = $(this).data("type")
+    //     let type = $(this).html();
+    //     if (type == "Drivers") {
+    //         info = "Drivers";
+    //     } else if (type == "Hunting") {
+    //         info = "Hunting";
+    //     } else if (type == "Pilot") {
+    //         info = "Pilot";
+    //     } else if (type == "Weapon") {
+    //         info = "Weapon";
+    //     } else if (type == "Fishing") {
+    //         info = "Fishing";
+    //     } else if (type == "Bar") {
+    //         info = "Bar";
+    //     } else if (type == "Business") {
+    //         info = "Business";
+    //     } else {
+    //         info = type
+    //     };
+    //     if ($(this).hasClass("green-tag")) {
+    //         openContextMenu(e, [{
+    //             "className": "revoke-licence",
+    //             "icon": "fas fa-times",
+    //             "text": "Revoke License",
+    //             "info": info,
+    //             "status": fuckyou
+    //         }]);
+    //     } else if ($(this).hasClass("red-tag")) {
+    //         openContextMenu(e, [{
+    //             "className": "give-licence",
+    //             "icon": "fas fa-check",
+    //             "text": "Give License",
+    //             "info": info,
+    //             "status": fuckyou
+    //         }]);
+    //     }
+    // })
+    // $(".contextmenu").on("click", ".revoke-licence", function () {
+    //     const Elem = $(this).data("status")
+    //     $(".license-tag").filter(`[data-type="${Elem}"]`).removeClass("green-tag").addClass("red-tag")
 
-    $(".licenses-holder").on("contextmenu", ".license-tag", function (e) {
-        const fuckyou = $(this).data("type")
-        let type = $(this).html();
+    //     $.post('https://caue-mdt/updateLicence', JSON.stringify({
+    //         cid: $(".manage-profile-citizenid-input").val(),
+    //         type: $(this).data("info"),
+    //         status: "revoke"
+    //     }));
 
-        if (type == "Drivers") {
-            info = "Drivers";
-        } else if (type == "Hunting") {
-            info = "Hunting";
-        } else if (type == "Pilot") {
-            info = "Pilot";
-        } else if (type == "Weapon") {
-            info = "Weapon";
-        } else if (type == "Fishing") {
-            info = "Fishing";
-        } else if (type == "Bar") {
-            info = "Bar";
-        } else if (type == "Business") {
-            info = "Business";
-        } else {
-            info = type
-        };
+    //     onMouseDown()
+    // })
+    // $(".contextmenu").on("click", ".give-licence", function () {
+    //     const Elem = $(this).data("status")
+    //     $(".license-tag").filter(`[data-type="${Elem}"]`).removeClass("red-tag").addClass("green-tag")
 
-        if (MyJob === "police" || MyJob === "doj") {
-            if ($(this).hasClass("green-tag")) {
-                openContextMenu(e, [{
-                    "className": "revoke-licence",
-                    "icon": "fas fa-times",
-                    "text": "Remover Licença",
-                    "info": info,
-                    "status": fuckyou
-                }]);
-            } else if ($(this).hasClass("red-tag")) {
-                openContextMenu(e, [{
-                    "className": "give-licence",
-                    "icon": "fas fa-check",
-                    "text": "Remover Licença",
-                    "info": info,
-                    "status": fuckyou
-                }]);
-            }
-        }
-    })
+    //     $.post('https://caue-mdt/updateLicence', JSON.stringify({
+    //         cid: $(".manage-profile-citizenid-input").val(),
+    //         type: $(this).data("info"),
+    //         status: "give"
+    //     }));
 
-    $(".contextmenu").on("click", ".revoke-licence", function () {
-
-        $.post('https://caue-mdt/updateLicence', JSON.stringify({
-            cid: $(".manage-profile-citizenid-input").val(),
-            type: $(this).data("info"),
-            status: "revoke"
-        }));
-
-        const Elem = $(this).data("status")
-        $(".license-tag").filter(`[data-type="${Elem}"]`).removeClass("green-tag").addClass("red-tag")
-
-        onMouseDown()
-    })
-
-    $(".contextmenu").on("click", ".give-licence", function () {
-        $.post('https://caue-mdt/updateLicence', JSON.stringify({
-            cid: $(".manage-profile-citizenid-input").val(),
-            type: $(this).data("info"),
-            status: "give"
-        }));
-
-        const Elem = $(this).data("status")
-        $(".license-tag").filter(`[data-type="${Elem}"]`).removeClass("red-tag").addClass("green-tag")
-
-        onMouseDown()
-    })
-
+    //     onMouseDown()
+    // })
     $(".profile-title").click(function () {
         if (canSearchForProfiles == true) {
             if ($(".profile-search-input").css("display") == "none") {
@@ -684,7 +784,9 @@ $(document).ready(() => {
             if ($(".respond-calls-container").css("display") == "block") {
                 shouldClose = false
                 $(".respond-calls-container").fadeOut(500)
-                setTimeout(() => { $(".close-all").css("filter", "none"); }, 250);
+                setTimeout(() => {
+                    $(".close-all").css("filter", "none");
+                }, 250);
             }
 
             if ($(".gallery-image-enlarged").css("display") == "block") {
@@ -724,15 +826,6 @@ $(document).ready(() => {
                 }, 250);
             }
 
-            if ($(".impound-form").css("display") != "none") {
-                shouldClose = false
-                $(".impound-form").slideUp(250);
-                $(".impound-form").fadeOut(250);
-                setTimeout(() => {
-                    $(".close-all").css("filter", "none");
-                }, 250);
-            }
-
             if (shouldClose == true) {
                 $.post('https://caue-mdt/escape', JSON.stringify({}));
             }
@@ -756,10 +849,10 @@ $(document).ready(() => {
             }));
         }
     });
+
     $(".manage-incidents-tags-holder").on("keydown", ".tag-incident-input", function (e) {
         if (e.keyCode === 13) {
             $('.manage-incidents-tags-holder').prepend(`<div class="manage-incidents-tag tag">${$(".tag-incident-input").text()}</div>`);
-            // Have it save instantly if it's an existing report.
             if ($(".manage-incidents-tags-add-btn").hasClass("fa-minus")) {
                 $(".manage-incidents-tags-add-btn").removeClass('fa-minus').addClass('fa-plus');
             }
@@ -767,35 +860,29 @@ $(document).ready(() => {
         }
     });
 
-    $(".manage-incidents-officers-add-btn").click(function () {
-        if ($(".officers-incident-input")[0]) {
-            $(this).removeClass('fa-minus').addClass('fa-plus');
-            $(".officers-incident-input").remove()
-        } else {
-            $(this).removeClass('fa-plus').addClass('fa-minus');
-            $('.manage-incidents-officers-holder').prepend(`<span contenteditable="true" class="officers-incident-input"></span>`);
-        }
+    $(".manage-incidents-officeun-add-btn").click(function () {
+        IncidentSearchType = "officer"
+        document.addEventListener('mouseup', onMouseDownIcidents);
+        $(".icidents-person-search-container").fadeIn(250)
+        $(".close-all").css("filter", "brightness(15%)");
     });
 
-    $(".manage-incidents-officers-holder").on("keydown", ".officers-incident-input", function (e) {
+    $(".manage-incidents-officeun-holder").on("keydown", ".officeun-incident-input", function (e) {
         if (e.keyCode === 13) {
-            $('.manage-incidents-officers-holder').prepend(`<div class="manage-incidents-officers">${$(".officers-incident-input").text()}</div>`);
+            $('.manage-incidents-officeun-holder').prepend(`<div class="manage-incidents-officers">${$(".officeun-incident-input").text()}</div>`);
             // Have it save instantly if it's an existing report.
-            if ($(".manage-incidents-officers-add-btn").hasClass("fa-minus")) {
-                $(".manage-incidents-officers-add-btn").removeClass('fa-minus').addClass('fa-plus');
+            if ($(".manage-incidents-officeun-add-btn").hasClass("fa-minus")) {
+                $(".manage-incidents-officeun-add-btn").removeClass('fa-minus').addClass('fa-plus');
             }
-            $(".officers-incident-input").remove()
+            $(".officeun-incident-input").remove()
         }
     });
 
     $(".manage-incidents-civilians-add-btn").click(function () {
-        if ($(".civilians-incident-input")[0]) {
-            $(this).removeClass('fa-minus').addClass('fa-plus');
-            $(".civilians-incident-input").remove()
-        } else {
-            $(this).removeClass('fa-plus').addClass('fa-minus');
-            $('.manage-incidents-civilians-holder').prepend(`<span contenteditable="true" class="civilians-incident-input"></span>`);
-        }
+        IncidentSearchType = "civilian"
+        document.addEventListener('mouseup', onMouseDownIcidents);
+        $(".icidents-person-search-container").fadeIn(250)
+        $(".close-all").css("filter", "brightness(15%)");
     });
 
     $(".manage-incidents-civilians-holder").on("keydown", ".civilians-incident-input", function (e) {
@@ -829,7 +916,7 @@ $(document).ready(() => {
             let cid = $(".manage-profile-citizenid-input").val();
             if (URL !== "") {
                 let randomNum = Math.ceil(Math.random() * 10).toString()
-                $('.manage-incidents-evidence-holder').prepend(`<img src="${URL}" class="incidents-img ${randomNum}" onerror="this.src='img/not-found.jpg'">`);
+                $('.manage-incidents-evidence-holder').prepend(`<img src="${URL}" class="incidents-img ${randomNum}" onerror="this.src='https://cdn.discordapp.com/attachments/770324167894761522/912602343164502096/not-found.jpg'">`);
                 $("#incidents-upload-input").val("");
                 $(".incidents-upload-input").slideUp(250);
                 setTimeout(() => {
@@ -849,47 +936,49 @@ $(document).ready(() => {
     })
 
     $(".manage-bolos-title-holder").on("click", ".manage-bolos-new", function () {
-        //if ($(".manage-bolos-editing-title").html() == 'You are currently creating a new BOLO') {
-            //$(".manage-bolos-new").effect("shake", { times: 2, distance: 2 }, 500)
-        //} else {
-            var template = "";
-            if ($(".badge-logo").attr('src') == 'img/ems_badge.png') {
-                template = "ICU Room #: [ # ]\n\nReport ID: [ Report ID ]\n\nTime Admitted: [ Date and Time Here ]\n\nCirurgia: [Sim/Não]\n\nMachucados:\n - [ Enter List Of Injuries Here ]\n\n\nAdditional Attending:\n - [ List Any Other Staff Here ]\n\n\n🧑‍🤝‍🧑 Additonal Emergency Contacts:\n - [ Name And Number ]\n\n\nNotes:\n[Additional Notes Here]"
-            }
-            $(".manage-bolos-editing-title").html("Você esta criando um novo BOLO")
-            $(".manage-bolos-editing-title").removeData("id");
-            $(".manage-bolos-input-title").val('');
-            $(".manage-bolos-input-plate").val('');
-            $(".manage-bolos-input-owner").val('');
-            $(".manage-bolos-input-individual").val('');
-            $(".manage-bolos-reports-content").val(template);
-            $(".manage-bolos-tags-holder").empty();
-            $(".bolo-gallery-inner-container").empty();
-            $(".manage-officers-tags-holder").empty();
+        var template = "";
+        if ($(".badge-logo").attr('src') == 'https://cdn.discordapp.com/attachments/770324167894761522/912602342275301396/ems_badge.png') {
+            template = "ICU Room #: [ # ]\n\nReport ID: [ Report ID ]\n\nTime Admitted: [ Date and Time Here ]\n\nSurgery: [Yes/No]\n\nInjuries/Ailments:\n - [ Enter List Of Injuries Here ]\n\n\nAdditional Attending:\n - [ List Any Other Staff Here ]\n\n\n🧑‍🤝‍🧑 Additonal Emergency Contacts:\n - [ Name And Number ]\n\n\nNotes:\n[Additional Notes Here]"
+        }
+        $(".manage-bolos-editing-title").html("Você está criando um novo BOLO")
+        $(".manage-bolos-input-title").val('');
+        $(".manage-bolos-input-plate").val('');
+        $(".manage-bolos-input-owner").val('');
+        $(".manage-bolos-input-individual").val('');
+        $(".manage-bolos-reports-content").val(template);
+        $(".manage-bolos-tags-holder").empty();
+        $(".bolo-gallery-inner-container").empty();
+        $(".manage-officeun-tags-holder").empty();
 
-            if ($(".manage-bolos-tags-add-btn").hasClass("fa-minus")) { $(".manage-bolos-tags-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
-            if ($(".bolo-gallery-add-btn").hasClass("fa-minus")) { $(".bolo-gallery-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
-            if ($(".officers-add-btn").hasClass("fa-minus")) { $(".officers-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
+        if ($(".manage-bolos-tags-add-btn").hasClass("fa-minus")) {
+            $(".manage-bolos-tags-add-btn").removeClass('fa-minus').addClass('fa-plus');
+        }
+        if ($(".bolo-gallery-add-btn").hasClass("fa-minus")) {
+            $(".bolo-gallery-add-btn").removeClass('fa-minus').addClass('fa-plus');
+        }
+        if ($(".officeun-add-btn").hasClass("fa-minus")) {
+            $(".officeun-add-btn").removeClass('fa-minus').addClass('fa-plus');
+        }
 
-            if ($(".bolo-gallery-upload-input").css("display") == "block") {
-                $(".bolo-gallery-upload-input").slideUp(250);
-                setTimeout(() => {
-                    $(".bolo-gallery-upload-input").css("display", "none")
-                }, 250);
-            }
+        if ($(".bolo-gallery-upload-input").css("display") == "block") {
+            $(".bolo-gallery-upload-input").slideUp(250);
+            setTimeout(() => {
+                $(".bolo-gallery-upload-input").css("display", "none")
+            }, 250);
+        }
 
-            canInputTag = true
-            canInputBoloTag = true
-            canInputBoloOfficerTag = true
+        canInputTag = true
+        canInputBoloTag = true
+        canInputBoloOfficerTag = true
 
-            $(".tag-bolo-input").remove()
-            canInputBoloTag = true
+        $(".tag-bolo-input").remove()
+        canInputBoloTag = true
 
         //}
     })
 
     $(".manage-bolos-title-holder").on("click", ".manage-bolos-save", function () {
-        let existing = !($(".manage-bolos-editing-title").html() == 'Você esta criando um novo BOLO')
+        let existing = !($(".manage-bolos-editing-title").html() == 'Você está criando um novo BOLO')
         let id = $(".manage-bolos-editing-title").data("id");
         let title = $("#bolotitle").val()
         let plate = $("#boloplate").val()
@@ -901,20 +990,20 @@ $(document).ready(() => {
         let gallery = new Array()
         let officers = new Array()
 
-        $(".manage-bolos-tags-holder").each(function( index ) {
+        $(".manage-bolos-tags-holder").each(function (index) {
             if ($(this).text() != "") {
                 tags.push($(this).text())
             }
 
         });
 
-        $(".bolo-gallery-inner-container").each(function( index ) {
-            if ($(this).text() != "") {
-                gallery.push($(this).text())
+        $(".bolo-gallery-inner-container").find('img').each(function () {
+            if ($(this).attr("src") != "") {
+                gallery.push($(this).attr("src"))
             }
         });
 
-        $(".manage-officers-tags-holder").each(function( index ) {
+        $(".manage-officeun-tags-holder").each(function (index) {
             if ($(this).text() != "") {
                 officers.push($(this).text())
             }
@@ -938,18 +1027,17 @@ $(document).ready(() => {
     })
 
     $(".manage-incidents-evidence-holder").on("contextmenu", ".incidents-img", function (e) {
-        let args = [
-            {
+        let args = [{
                 "className": "remove-image-incident",
                 "icon": "fas fa-times",
-                "text": "Remove Image",
+                "text": "Remover Imagem",
                 "info": $(this).attr("src"),
                 "status": ""
             },
             {
                 "className": "expand-image",
                 "icon": "fas fa-expand",
-                "text": "Expand Image",
+                "text": "Expandir Imagem",
                 "info": $(this).attr("src"),
                 "status": $(this).css("filter")
             },
@@ -1025,20 +1113,20 @@ $(document).ready(() => {
 
     $(".bolo-gallery-add-btn").click(function () {
         //if ($(".manage-profile-citizenid-input").val()) {
-            if ($(".bolo-gallery-upload-input").css("display") == "none") {
-                $(".bolo-gallery-upload-input").slideDown(250);
-                $(".bolo-gallery-upload-input").css("display", "block")
-                $(this).removeClass('fa-plus').addClass('fa-minus');
-            } else {
-                $(".bolo-gallery-upload-input").slideUp(250);
-                setTimeout(() => {
-                    $(".bolo-gallery-upload-input").css("display", "none")
-                }, 250);
-                $(this).removeClass('fa-minus').addClass('fa-plus');
-            }
+        if ($(".bolo-gallery-upload-input").css("display") == "none") {
+            $(".bolo-gallery-upload-input").slideDown(250);
+            $(".bolo-gallery-upload-input").css("display", "block")
+            $(this).removeClass('fa-plus').addClass('fa-minus');
+        } else {
+            $(".bolo-gallery-upload-input").slideUp(250);
+            setTimeout(() => {
+                $(".bolo-gallery-upload-input").css("display", "none")
+            }, 250);
+            $(this).removeClass('fa-minus').addClass('fa-plus');
+        }
         //} else {
-           // $(this).effect("shake", { times: 2, distance: 2 }, 500)
-       // }
+        // $(this).effect("shake", { times: 2, distance: 2 }, 500)
+        // }
     });
 
     $('#bolo-gallery-upload-input').keydown(function (e) {
@@ -1047,7 +1135,7 @@ $(document).ready(() => {
             let cid = $(".manage-profile-citizenid-input").val();
             if (URL !== "") {
                 let randomNum = Math.ceil(Math.random() * 10).toString()
-                $('.bolo-gallery-inner-container').prepend(`<img src="${URL}" class="bolo-img ${randomNum}" onerror="this.src='img/not-found.jpg'">`);
+                $('.bolo-gallery-inner-container').prepend(`<img src="${URL}" class="bolo-img ${randomNum}" onerror="this.src='https://cdn.discordapp.com/attachments/770324167894761522/912602343164502096/not-found.jpg'">`);
                 $("#bolo-gallery-upload-input").val("");
                 $(".bolo-gallery-upload-input").slideUp(250);
                 setTimeout(() => {
@@ -1059,9 +1147,15 @@ $(document).ready(() => {
     });
 
     $(".bolos-items").on("click", ".bolo-item", function () {
-        if ($(".manage-bolos-tags-add-btn").hasClass("fa-minus")) { $(".manage-bolos-tags-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
-        if ($(".bolo-gallery-add-btn").hasClass("fa-minus")) { $(".bolo-gallery-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
-        if ($(".officers-add-btn").hasClass("fa-minus")) { $(".officers-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
+        if ($(".manage-bolos-tags-add-btn").hasClass("fa-minus")) {
+            $(".manage-bolos-tags-add-btn").removeClass('fa-minus').addClass('fa-plus');
+        }
+        if ($(".bolo-gallery-add-btn").hasClass("fa-minus")) {
+            $(".bolo-gallery-add-btn").removeClass('fa-minus').addClass('fa-plus');
+        }
+        if ($(".officeun-add-btn").hasClass("fa-minus")) {
+            $(".officeun-add-btn").removeClass('fa-minus').addClass('fa-plus');
+        }
 
         if ($(".bolo-gallery-upload-input").css("display") == "block") {
             $(".bolo-gallery-upload-input").slideUp(250);
@@ -1082,53 +1176,125 @@ $(document).ready(() => {
     $(".contextmenu").on("click", ".bolo-delete", function () {
 
         if ($(this).data("info") != 0) {
-            if ($(".badge-logo").attr('src') == 'img/ems_badge.png') {
+            if ($(".badge-logo").attr('src') == 'https://cdn.discordapp.com/attachments/770324167894761522/912602342275301396/ems_badge.png') {
                 $(".bolos-items").find("[data-id='" + $(this).data("info") + "']").remove();
                 $.post('https://caue-mdt/deleteICU', JSON.stringify({
-                id: $(this).data("info")
+                    id: $(this).data("info"),
+                    time: new Date().getTime()
+                }));
+            }
+            $(".bolos-items").find("[data-id='" + $(this).data("info") + "']").remove();
+            $.post('https://caue-mdt/deleteBolo', JSON.stringify({
+                id: $(this).data("info"),
+                time: new Date().getTime()
             }));
-        }
-        $(".bolos-items").find("[data-id='" + $(this).data("info") + "']").remove();
-        $.post('https://caue-mdt/deleteBolo', JSON.stringify({
-            id: $(this).data("info")
-        }));
         }
 
     });
 
+    $(".contextmenu").on("click", ".incident-delete", function () {
+        $(".incidents-items").find("[data-id='" + $(this).data("info") + "']").remove();
+        $.post('https://caue-mdt/deleteIncident', JSON.stringify({
+            id: $(this).data("info"),
+            time: new Date().getTime()
+        }));
+    });
+
+    $(".contextmenu").on("click", ".missing-delete", function () {
+        $(".missing-items").find("[data-id='" + $(this).data("info") + "']").remove();
+        $.post('https://caue-mdt/deleteMissing', JSON.stringify({
+            id: $(this).data("info"),
+            time: new Date().getTime()
+        }));
+    });
+
+
+    $(".contextmenu").on("click", ".profile-jail", function () {
+        $(".jail-container").fadeIn(0)
+        $(".jail-inner-container").slideDown(500)
+        $(".jail-inner-container").fadeIn(500)
+        $(".jail-container").data("id", $(this).data("info"))
+    });
+
+    $(".contextmenu").on("click", ".profile-missing", function () {
+        $.post('https://caue-mdt/missingCitizen', JSON.stringify({
+            cid: $(this).data("info"),
+            time: new Date().getTime()
+        }));
+    });
+
+    $(".contextmenu").on("click", ".report-delete", function () {
+        $(".reports-items").find("[data-id='" + $(this).data("info") + "']").remove();
+        $.post('https://caue-mdt/deleteReport', JSON.stringify({
+            id: $(this).data("info"),
+            time: new Date().getTime()
+        }));
+    });
+
+    $(".incidents-items").on("contextmenu", ".incidents-item", function (e) {
+        var args = ""
+        args = [{
+            "className": "incident-delete",
+            "icon": "fas fa-times",
+            "text": "Delete Incident",
+            "info": $(this).data("id"),
+            "status": ""
+        }, ]
+        openContextMenu(e, args);
+    })
+
+    $(".missing-items").on("contextmenu", ".missing-item", function (e) {
+        var args = ""
+        args = [{
+            "className": "missing-delete",
+            "icon": "fas fa-times",
+            "text": "Remove",
+            "info": $(this).data("dbid"),
+            "status": ""
+        }, ]
+        openContextMenu(e, args);
+    })
+
+    $(".reports-items").on("contextmenu", ".reports-item", function (e) {
+        var args = ""
+        args = [{
+            "className": "report-delete",
+            "icon": "fas fa-times",
+            "text": "Delete Report",
+            "info": $(this).data("id"),
+            "status": ""
+        }, ]
+        openContextMenu(e, args);
+    })
+
     $(".bolos-items").on("contextmenu", ".bolo-item", function (e) {
         var args = ""
-        args = [
-            {
+        args = [{
+            "className": "bolo-delete",
+            "icon": "fas fa-times",
+            "text": "Delete Bolo",
+            "info": $(this).data("id"),
+            "status": ""
+        }, ]
+        if ($(".badge-logo").attr('src') == 'https://cdn.discordapp.com/attachments/770324167894761522/912602342275301396/ems_badge.png') {
+            args = [{
                 "className": "bolo-delete",
                 "icon": "fas fa-times",
-                "text": "Delete Bolo",
+                "text": "Delete Check-In",
                 "info": $(this).data("id"),
                 "status": ""
-            },
-        ]
-        if ($(".badge-logo").attr('src') == 'img/ems_badge.png') {
-            args = [
-                {
-                    "className": "bolo-delete",
-                    "icon": "fas fa-times",
-                    "text": "Delete Check-In",
-                    "info": $(this).data("id"),
-                    "status": ""
-                },
-            ]}
+            }, ]
+        }
         openContextMenu(e, args);
     })
     $(".incidents-ghost-holder").on("contextmenu", ".associated-incidents-user-holder", function (e) {
-        let args = [
-            {
-                "className": "add-charge",
-                "icon": "fas fa-check",
-                "text": "Add Charge",
-                "info": $(this).data("name"),
-                "status": ""
-            },
-        ]
+        let args = [{
+            "className": "add-charge",
+            "icon": "fas fa-check",
+            "text": "Add Charge",
+            "info": $(this).data("name"),
+            "status": ""
+        }, ]
         openContextMenu(e, args);
     })
     $(".contextmenu").on("click", ".add-charge", function () {
@@ -1137,7 +1303,7 @@ $(document).ready(() => {
         $(".incidents-charges-table").fadeIn(500);
         $("#current-charges-holder").data("cid", $(this).data("info"));
         $("#current-charges-holder").html("")
-        $(".associated-incidents-user-holder").children('div').each(function(index) {
+        $(".associated-incidents-user-holder").children('div').each(function (index) {
             if ($(".associated-incidents-user-holder").children().eq(index).data("id") == stupidasscid) {
                 const randomNum = Math.ceil(Math.random() * 1000).toString()
                 $("#current-charges-holder").prepend(`<div class="current-charges-tag" data-link="${randomNum}">${$(".associated-incidents-user-holder").children().eq(index).html()}</div>`)
@@ -1150,11 +1316,13 @@ $(document).ready(() => {
     });
 
     var shiftPressed = false;
-    $(document).keydown(function(event) {
-        shiftPressed = event.keyCode==16;
+    $(document).keydown(function (event) {
+        shiftPressed = event.keyCode == 16;
     });
-    $(document).keyup(function(event) {
-        if( event.keyCode==16 ){ shiftPressed = false; }
+    $(document).keyup(function (event) {
+        if (event.keyCode == 16) {
+            shiftPressed = false;
+        }
     });
 
 
@@ -1176,7 +1344,7 @@ $(document).ready(() => {
             $(".sentence-recommended-amount").val(NewSentence)
 
         } else if (e.which == 3) {
-            $(".associated-incidents-user-holder").children('div').each(function(index) {
+            $(".associated-incidents-user-holder").children('div').each(function (index) {
                 if ($(".associated-incidents-user-holder").children().eq(index).data("id") == cid) {
                     if ($(".associated-incidents-user-holder").children().eq(index).html() == newItem) {
                         const linkedId = $(".associated-incidents-user-holder").children().eq(index).data("link")
@@ -1185,7 +1353,7 @@ $(document).ready(() => {
 
                         var stop = false
 
-                        $("#current-charges-holder").children('div').each(function(index) {
+                        $("#current-charges-holder").children('div').each(function (index) {
                             if (stop == false) {
                                 if ($("#current-charges-holder").children().eq(index).html() == newItem) {
                                     const linkedId = $("#current-charges-holder").children().eq(index).data("link")
@@ -1217,20 +1385,21 @@ $(document).ready(() => {
             $(this).css("filter", "none");
         }
     })
-    $(".contextmenu").on("click", ".bolo-remove-image", function () { $(".bolo-gallery-inner-container img").filter("[src='" + $(this).data("info") + "']").remove(); });
+    $(".contextmenu").on("click", ".bolo-remove-image", function () {
+        $(".bolo-gallery-inner-container img").filter("[src='" + $(this).data("info") + "']").remove();
+    });
     $(".bolo-gallery-inner-container").on("contextmenu", ".bolo-img", function (e) {
-        let args = [
-            {
+        let args = [{
                 "className": "bolo-remove-image",
                 "icon": "fas fa-times",
-                "text": "Remove Image",
+                "text": "Remover Imagem",
                 "info": $(this).attr("src"),
                 "status": ""
             },
             {
                 "className": "expand-image",
                 "icon": "fas fa-expand",
-                "text": "Expand Image",
+                "text": "Expandir Imagem",
                 "info": $(this).attr("src"),
                 "status": $(this).css("filter")
             },
@@ -1238,31 +1407,26 @@ $(document).ready(() => {
         openContextMenu(e, args);
     })
 
-    $(".officers-add-btn").click(function () {
-        if (canInputBoloOfficerTag) {
-            $(this).removeClass('fa-plus').addClass('fa-minus');
-            $('.manage-officers-tags-holder').prepend(`<span contenteditable="true" class="officer-tag-bolo-input"></span>`);
-            canInputBoloOfficerTag = false
-        } else if (!canInputBoloOfficerTag) {
-            $(this).removeClass('fa-minus').addClass('fa-plus');
-            $(".officer-tag-bolo-input").remove()
-            canInputBoloOfficerTag = true
-        }
+    $(".officeun-add-btn").click(function () {
+        IncidentSearchType = "bolos_officer"
+        document.addEventListener('mouseup', onMouseDownIcidents);
+        $(".icidents-person-search-container").fadeIn(250)
+        $(".close-all").css("filter", "brightness(15%)");
     });
 
-    $(".manage-officers-tags-holder").on("keydown", ".officer-tag-bolo-input", function (e) {
+    $(".manage-officeun-tags-holder").on("keydown", ".officer-tag-bolo-input", function (e) {
         if (e.keyCode === 13) {
-            $('.manage-officers-tags-holder').prepend(`<div class="tag">${$(".officer-tag-bolo-input").text()}</div>`);
+            $('.manage-officeun-tags-holder').prepend(`<div class="manage-bolos-officers">${$(".officer-tag-bolo-input").text()}</div>`);
             // Have it save instantly if it's an existing report.
-            if ($(".officers-add-btn").hasClass("fa-minus")) {
+            if ($(".officeun-add-btn").hasClass("fa-minus")) {
                 canInputBoloOfficerTag = true
-                $(".officers-add-btn").removeClass('fa-minus').addClass('fa-plus');
+                $(".officeun-add-btn").removeClass('fa-minus').addClass('fa-plus');
             }
             canInputBoloOfficerTag = true
             $(".officer-tag-bolo-input").remove()
         }
     });
-    $(".incidents-ghost-holder").on("click", ".associated-incidents-user-tag", function() {
+    $(".incidents-ghost-holder").on("click", ".associated-incidents-user-tag", function () {
         if ($(this).hasClass("red-tag")) {
             $(this).removeClass("red-tag");
             $(this).addClass("green-tag");
@@ -1294,79 +1458,114 @@ $(document).ready(() => {
             }));
         }
     });
-    $(".associated-incidents-tags-holder").on("contextmenu", ".associated-incidents-tag", function(e) {
-        let args = [
-            {
-                "className": "associated-incidents-remove-tag",
-                "icon": "fas fa-times",
-                "text": "Remove Tag",
-                "info": $(this).html(),
-                "status": $(this).data("id")
-            },
-        ]
+    $(".associated-incidents-tags-holder").on("contextmenu", ".associated-incidents-tag", function (e) {
+        let args = [{
+            "className": "associated-incidents-remove-tag",
+            "icon": "fas fa-times",
+            "text": "Remover",
+            "info": $(this).html(),
+            "status": $(this).data("id")
+        }, ]
         openContextMenu(e, args);
     });
     $(".icidents-person-search-holder").on("click", ".icidents-person-search-item", function () {
-        $(".icidents-person-search-container").fadeOut(250);
-        $(".close-all").css("filter", "none");
-        $(".associated-incidents-tags-holder").prepend(
-            `<div class="associated-incidents-tag" data-id="${$(this).data("id")}">${$(this).data("name")}</div>`
-        );
-
-        $(".incidents-ghost-holder").prepend(
-            `
-            <div class="associated-incidents-user-container" data-id="${$(this).data("cid")}">
-                <div class="associated-incidents-user-title">${$(this).data("info")}</div>
-                <div class="associated-incidents-user-tags-holder">
-                    <div class="associated-incidents-user-tag red-tag" data-id="${$(this).data("cid")}">Warrant</div>
-                    <div class="associated-incidents-user-tag red-tag" data-id="${$(this).data("cid")}">Guilty</div>
-                    <div class="associated-incidents-user-tag red-tag" data-id="${$(this).data("cid")}">Processed</div>
-                    <div class="associated-incidents-user-tag red-tag" data-id="${$(this).data("cid")}">Associated</div>
-                </div>
-                <div class="associated-incidents-user-holder" data-name="${$(this).data("cid")}">
-                </div>
-                <div class="manage-incidents-title-tag" data-id="${$(this).data("cid")}">Recommended Fine</div>
-                <div class="associated-incidents-fine-input" data-id="${$(this).data("cid")}"><img src="https://i.imgur.com/h7S5f9J.png"> <input disabled placeholder="0" class="fine-recommended-amount" id="fine-recommended-amount" data-id="${$(this).data("cid")}" type="number"></div>
-                <div class="manage-incidents-title-tag" data-id="${$(this).data("cid")}">Recommended Sentence</div>
-                <div class="associated-incidents-sentence-input" data-id="${$(this).data("cid")}"><img src="https://i.imgur.com/9Xn6xXK.png"> <input disabled placeholder="0" class="sentence-recommended-amount" id="sentence-recommended-amount" data-id="${$(this).data("cid")}" type="number"></div>
-                <div class="manage-incidents-title-tag" data-id="${$(this).data("cid")}">Fine</div>
-                <div class="associated-incidents-fine-input" data-id="${$(this).data("cid")}"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="Enter fine here..." value="0" class="fine-amount" data-id="${$(this).data("cid")}" type="number"></div>
-                <div class="manage-incidents-title-tag" data-id="${$(this).data("cid")}">Sentence</div>
-                <div class="associated-incidents-sentence-input" data-id="${$(this).data("cid")}"><img src="https://i.imgur.com/9Xn6xXK.png"> <input placeholder="Enter months here..." value="0" class="sentence-amount" data-id="${$(this).data("cid")}" type="number"></div>
-            </div>
-            `
-        );
+        if (IncidentSearchType == "person") {
+            $(".icidents-person-search-container").fadeOut(250);
+            $(".close-all").css("filter", "none");
+            $(".associated-incidents-tags-holder").prepend(
+                `<div class="associated-incidents-tag" data-id="${$(this).data("id")}">${$(this).data("name")}</div>`
+            );
+            if ($(".badge-logo").attr('src') == 'https://cdn.discordapp.com/attachments/770324167894761522/912602342275301396/ems_badge.png') {
+                $(".incidents-ghost-holder").prepend(
+                    `
+                    <div class="associated-incidents-user-container" data-id="${$(this).data("cid")}">
+                        <div class="associated-incidents-user-title">${$(this).data("info")}</div>
+                        <div class="associated-incidents-user-tags-holder">
+                            <div class="associated-incidents-user-tag red-tag" data-id="${$(this).data("cid")}">Processed</div>
+                            <div class="associated-incidents-user-tag red-tag" data-id="${$(this).data("cid")}">Associated</div>
+                        </div>
+                        <div class="associated-incidents-user-holder" data-name="${$(this).data("cid")}">
+                        </div>
+                        <div class="manage-incidents-title-tag" data-id="${$(this).data("cid")}">Multa Recomendada</div>
+                        <div class="associated-incidents-fine-input" data-id="${$(this).data("cid")}"><img src="https://i.imgur.com/h7S5f9J.png"> <input disabled placeholder="0" class="fine-recommended-amount" id="fine-recommended-amount" data-id="${$(this).data("cid")}" type="number"></div>
+                        <div class="manage-incidents-title-tag" data-id="${$(this).data("cid")}">Multa</div>
+                        <div class="associated-incidents-fine-input" data-id="${$(this).data("cid")}"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="Coloque a multa aqui..." value="0" class="fine-amount" data-id="${$(this).data("cid")}" type="number"></div>
+                    </div>
+                    `
+                );
+            } else {
+                $(".incidents-ghost-holder").prepend(
+                    `
+                    <div class="associated-incidents-user-container" data-id="${$(this).data("cid")}">
+                        <div class="associated-incidents-user-title">${$(this).data("info")}</div>
+                        <div class="associated-incidents-user-tags-holder">
+                            <div class="associated-incidents-user-tag red-tag" data-id="${$(this).data("cid")}">Mandado</div>
+                            <div class="associated-incidents-user-tag red-tag" data-id="${$(this).data("cid")}">Culadp</div>
+                            <div class="associated-incidents-user-tag red-tag" data-id="${$(this).data("cid")}">Processado</div>
+                            <div class="associated-incidents-user-tag red-tag" data-id="${$(this).data("cid")}">Associado</div>
+                        </div>
+                        <div class="associated-incidents-user-holder" data-name="${$(this).data("cid")}">
+                        </div>
+                        <div class="manage-incidents-title-tag" data-id="${$(this).data("cid")}">Multa Recomendada</div>
+                        <div class="associated-incidents-fine-input" data-id="${$(this).data("cid")}"><img src="https://i.imgur.com/h7S5f9J.png"> <input disabled placeholder="0" class="fine-recommended-amount" id="fine-recommended-amount" data-id="${$(this).data("cid")}" type="number"></div>
+                        <div class="manage-incidents-title-tag" data-id="${$(this).data("cid")}">Sentença Recomendada</div>
+                        <div class="associated-incidents-sentence-input" data-id="${$(this).data("cid")}"><img src="https://i.imgur.com/9Xn6xXK.png"> <input disabled placeholder="0" class="sentence-recommended-amount" id="sentence-recommended-amount" data-id="${$(this).data("cid")}" type="number"></div>
+                        <div class="manage-incidents-title-tag" data-id="${$(this).data("cid")}">Multa</div>
+                        <div class="associated-incidents-fine-input" data-id="${$(this).data("cid")}"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="Coloque a multa aqui..." value="0" class="fine-amount" data-id="${$(this).data("cid")}" type="number"></div>
+                        <div class="manage-incidents-title-tag" data-id="${$(this).data("cid")}">Sentença</div>
+                        <div class="associated-incidents-sentence-input" data-id="${$(this).data("cid")}"><img src="https://i.imgur.com/9Xn6xXK.png"> <input placeholder="Coloque a sentença aqui..." value="0" class="sentence-amount" data-id="${$(this).data("cid")}" type="number"></div>
+                    </div>
+                    `
+                );
+            }
+        } else if (IncidentSearchType == "officer") {
+            $(".icidents-person-search-container").fadeOut(250);
+            $(".close-all").css("filter", "none");
+            $(".manage-incidents-officeun-holder").append(`<div class="manage-incidents-officers">${$(this).data("name")}</div>`);
+        } else if (IncidentSearchType == "civilian") {
+            $(".icidents-person-search-container").fadeOut(250);
+            $(".close-all").css("filter", "none");
+            $(".manage-incidents-civilians-holder").append(`<div class="manage-incidents-civilians">${$(this).data("name")}</div>`);
+        } else if (IncidentSearchType == "reports_officer") {
+            $(".icidents-person-search-container").fadeOut(250);
+            $(".close-all").css("filter", "none");
+            $('.reports-officeun-tags-holder').append(`<div class="manage-reports-officers">${$(this).data("name")}</div>`);
+        } else if (IncidentSearchType == "reports_civilian") {
+            $(".icidents-person-search-container").fadeOut(250);
+            $(".close-all").css("filter", "none");
+            $('.reports-civilians-tags-holder').append(`<div class="manage-reports-civilians">${$(this).data("name")}</div>`);
+        } else if (IncidentSearchType == "bolos_officer") {
+            $(".icidents-person-search-container").fadeOut(250);
+            $(".close-all").css("filter", "none");
+            $('.manage-officeun-tags-holder').append(`<div class="manage-bolos-officers">${$(this).data("name")}</div>`);
+        }
     });
 
     $(".contextmenu").on("click", ".incidents-remove-tag", function () {
         $(`.tag:contains(${$(this).data("info")})`).remove()
     });
     $(".manage-incidents-tags-holder").on("contextmenu", ".tag", function (e) {
-        let args = [
-            {
-                "className": "incidents-remove-tag",
-                "icon": "fas fa-times",
-                "text": "Remove Tag",
-                "info": $(this).html(),
-                "status": ""
-            },
-        ]
+        let args = [{
+            "className": "incidents-remove-tag",
+            "icon": "fas fa-times",
+            "text": "Remover Tag",
+            "info": $(this).html(),
+            "status": ""
+        }, ]
         openContextMenu(e, args);
     });
 
     $(".contextmenu").on("click", ".incidents-remove-officer-tag", function () {
         $(`.manage-incidents-officers:contains(${$(this).data("info")})`).remove()
     });
-    $(".manage-incidents-officers-holder").on("contextmenu", ".manage-incidents-officers", function (e) {
-        let args = [
-            {
-                "className": "incidents-remove-officer-tag",
-                "icon": "fas fa-times",
-                "text": "Remove Tag",
-                "info": $(this).html(),
-                "status": ""
-            },
-        ]
+    $(".manage-incidents-officeun-holder").on("contextmenu", ".manage-incidents-officers", function (e) {
+        let args = [{
+            "className": "incidents-remove-officer-tag",
+            "icon": "fas fa-times",
+            "text": "Remover Tag",
+            "info": $(this).html(),
+            "status": ""
+        }, ]
         openContextMenu(e, args);
     });
 
@@ -1374,15 +1573,83 @@ $(document).ready(() => {
         $(`.manage-incidents-civilians:contains(${$(this).data("info")})`).remove()
     });
     $(".manage-incidents-civilians-holder").on("contextmenu", ".manage-incidents-civilians", function (e) {
-        let args = [
-            {
-                "className": "incidents-remove-civ-tag",
-                "icon": "fas fa-times",
-                "text": "Remove Tag",
-                "info": $(this).html(),
-                "status": ""
-            },
-        ]
+        let args = [{
+            "className": "incidents-remove-civ-tag",
+            "icon": "fas fa-times",
+            "text": "Remover Tag",
+            "info": $(this).html(),
+            "status": ""
+        }, ]
+        openContextMenu(e, args);
+    });
+
+    $(".contextmenu").on("click", ".reports-remove-civ-tag", function () {
+        $(`.manage-reports-civilians:contains(${$(this).data("info")})`).remove()
+    });
+    $(".reports-civilians-tags-holder").on("contextmenu", ".manage-reports-civilians", function (e) {
+        let args = [{
+            "className": "reports-remove-civ-tag",
+            "icon": "fas fa-times",
+            "text": "Remover Tag",
+            "info": $(this).html(),
+            "status": ""
+        }, ]
+        openContextMenu(e, args);
+    });
+
+    $(".contextmenu").on("click", ".bolos-remove-officer-tag", function () {
+        $(`.manage-bolos-officers:contains(${$(this).data("info")})`).remove()
+    });
+    $(".manage-officeun-tags-holder").on("contextmenu", ".manage-bolos-officers", function (e) {
+        let args = [{
+            "className": "bolos-remove-officer-tag",
+            "icon": "fas fa-times",
+            "text": "Remover Tag",
+            "info": $(this).html(),
+            "status": ""
+        }, ]
+        openContextMenu(e, args);
+    });
+
+    $(".contextmenu").on("click", ".bolos-remove-tags-tag", function () {
+        $(`.tag-bolo-input:contains(${$(this).data("info")})`).remove()
+    });
+    $(".manage-bolos-tags-holder").on("contextmenu", ".tag-bolo-input", function (e) {
+        let args = [{
+            "className": "bolos-remove-tags-tag",
+            "icon": "fas fa-times",
+            "text": "Remover Tag",
+            "info": $(this).html(),
+            "status": ""
+        }, ]
+        openContextMenu(e, args);
+    });
+
+    $(".contextmenu").on("click", ".reports-remove-tags-tag", function () {
+        $(`.manage-reports-tags:contains(${$(this).data("info")})`).remove()
+    });
+    $(".manage-reports-tags-holder").on("contextmenu", ".manage-reports-tags", function (e) {
+        let args = [{
+            "className": "reports-remove-tags-tag",
+            "icon": "fas fa-times",
+            "text": "Remover Tag",
+            "info": $(this).html(),
+            "status": ""
+        }, ]
+        openContextMenu(e, args);
+    });
+
+    $(".contextmenu").on("click", ".reports-remove-officer-tag", function () {
+        $(`.manage-reports-officers:contains(${$(this).data("info")})`).remove()
+    });
+    $(".reports-officeun-tags-holder").on("contextmenu", ".manage-reports-officers", function (e) {
+        let args = [{
+            "className": "reports-remove-officer-tag",
+            "icon": "fas fa-times",
+            "text": "Remover Tag",
+            "info": $(this).html(),
+            "status": ""
+        }, ]
         openContextMenu(e, args);
     });
 
@@ -1411,15 +1678,13 @@ $(document).ready(() => {
         }
     });
     $(".tags-holder").on("contextmenu", ".tag", function (e) {
-        let args = [
-            {
-                "className": "incidents-remove-normal-tag",
-                "icon": "fas fa-times",
-                "text": "Remove Tag",
-                "info": $(this).html(),
-                "status": ""
-            },
-        ]
+        let args = [{
+            "className": "incidents-remove-normal-tag",
+            "icon": "fas fa-times",
+            "text": "Remover Tag",
+            "info": $(this).html(),
+            "status": ""
+        }, ]
         openContextMenu(e, args);
     });
     $(".reports-search-title").click(function () {
@@ -1435,10 +1700,10 @@ $(document).ready(() => {
             }
         }
     });
-    $('.icidents-person-search-container').hover(function(){
-        mouse_is_inside=true;
-    }, function(){
-        mouse_is_inside=false;
+    $('.icidents-person-search-container').hover(function () {
+        mouse_is_inside = true;
+    }, function () {
+        mouse_is_inside = false;
     });
     $(".reports-search-refresh").click(function () {
         if (canRefreshReports == true) {
@@ -1453,7 +1718,7 @@ $(document).ready(() => {
             }, 1500);
         }
     });
-    $(".dispatch-comms-refresh").click(function(){
+    $(".dispatch-comms-refresh").click(function () {
         $(".dispatch-comms-refresh").empty();
         $('.dispatch-comms-refresh').prepend(`<span class="fas fa-spinner fa-spin"></span>`);
         setTimeout(() => {
@@ -1470,9 +1735,15 @@ $(document).ready(() => {
             currentTab = ".reports-page-container";
         }
 
-        if ($(".manage-reports-tags-add-btn").hasClass("fa-minus")) { $(".manage-reports-tags-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
-        if ($(".reports-gallery-add-btn").hasClass("fa-minus")) { $(".reports-gallery-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
-        if ($(".reports-officers-add-btn").hasClass("fa-minus")) { $(".reports-officers-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
+        if ($(".manage-reports-tags-add-btn").hasClass("fa-minus")) {
+            $(".manage-reports-tags-add-btn").removeClass('fa-minus').addClass('fa-plus');
+        }
+        if ($(".reports-gallery-add-btn").hasClass("fa-minus")) {
+            $(".reports-gallery-add-btn").removeClass('fa-minus').addClass('fa-plus');
+        }
+        if ($(".reports-officeun-add-btn").hasClass("fa-minus")) {
+            $(".reports-officeun-add-btn").removeClass('fa-minus').addClass('fa-plus');
+        }
 
         if ($(".reports-gallery-upload-input").css("display") == "block") {
             $(".reports-gallery-upload-input").slideUp(250);
@@ -1504,7 +1775,7 @@ $(document).ready(() => {
 
     $(".manage-reports-tags-holder").on("keydown", ".tag-reports-input", function (e) {
         if (e.keyCode === 13) {
-            $('.manage-reports-tags-holder').prepend(`<div class="tag">${$(".tag-reports-input").text()}</div>`);
+            $('.manage-reports-tags-holder').prepend(`<div class="manage-reports-tags">${$(".tag-reports-input").text()}</div>`);
             // Have it save instantly if it's an existing report.
             if ($(".manage-reports-tags-add-btn").hasClass("fa-minus")) {
                 $(".manage-reports-tags-add-btn").removeClass('fa-minus').addClass('fa-plus');
@@ -1516,20 +1787,20 @@ $(document).ready(() => {
 
     $(".reports-gallery-add-btn").click(function () {
         //if ($(".manage-profile-citizenid-input").val()) {
-            if ($(".reports-gallery-upload-input").css("display") == "none") {
-                $(".reports-gallery-upload-input").slideDown(250);
-                $(".reports-gallery-upload-input").css("display", "block")
-                $(this).removeClass('fa-plus').addClass('fa-minus');
-            } else {
-                $(".reports-gallery-upload-input").slideUp(250);
-                setTimeout(() => {
-                    $(".reports-gallery-upload-input").css("display", "none")
-                }, 250);
-                $(this).removeClass('fa-minus').addClass('fa-plus');
-            }
+        if ($(".reports-gallery-upload-input").css("display") == "none") {
+            $(".reports-gallery-upload-input").slideDown(250);
+            $(".reports-gallery-upload-input").css("display", "block")
+            $(this).removeClass('fa-plus').addClass('fa-minus');
+        } else {
+            $(".reports-gallery-upload-input").slideUp(250);
+            setTimeout(() => {
+                $(".reports-gallery-upload-input").css("display", "none")
+            }, 250);
+            $(this).removeClass('fa-minus').addClass('fa-plus');
+        }
         //} else {
-           // $(this).effect("shake", { times: 2, distance: 2 }, 500)
-       // }
+        // $(this).effect("shake", { times: 2, distance: 2 }, 500)
+        // }
     });
 
     $('#reports-gallery-upload-input').keydown(function (e) {
@@ -1538,7 +1809,7 @@ $(document).ready(() => {
             let cid = $(".manage-profile-citizenid-input").val();
             if (URL !== "") {
                 let randomNum = Math.ceil(Math.random() * 10).toString()
-                $('.reports-gallery-inner-container').prepend(`<img src="${URL}" class="reports-img ${randomNum}" onerror="this.src='img/not-found.jpg'">`);
+                $('.reports-gallery-inner-container').prepend(`<img src="${URL}" class="reports-img ${randomNum}" onerror="this.src='https://cdn.discordapp.com/attachments/770324167894761522/912602343164502096/not-found.jpg'">`);
                 $("#reports-gallery-upload-input").val("");
                 $(".reports-gallery-upload-input").slideUp(250);
                 setTimeout(() => {
@@ -1556,20 +1827,21 @@ $(document).ready(() => {
             $(this).css("filter", "none");
         }
     })
-    $(".contextmenu").on("click", ".reports-remove-image", function () { $(".reports-gallery-inner-container img").filter("[src='" + $(this).data("info") + "']").remove(); });
+    $(".contextmenu").on("click", ".reports-remove-image", function () {
+        $(".reports-gallery-inner-container img").filter("[src='" + $(this).data("info") + "']").remove();
+    });
     $(".reports-gallery-inner-container").on("contextmenu", ".reports-img", function (e) {
-        let args = [
-            {
+        let args = [{
                 "className": "reports-remove-image",
                 "icon": "fas fa-times",
-                "text": "Remove Image",
+                "text": "Remover Imagem",
                 "info": $(this).attr("src"),
                 "status": ""
             },
             {
                 "className": "expand-image",
                 "icon": "fas fa-expand",
-                "text": "Expand Image",
+                "text": "Expandir Imagem",
                 "info": $(this).attr("src"),
                 "status": $(this).css("filter")
             },
@@ -1577,25 +1849,20 @@ $(document).ready(() => {
         openContextMenu(e, args);
     })
 
-    $(".reports-officers-add-btn").click(function () {
-        if (canInputReportOfficerTag) {
-            $(this).removeClass('fa-plus').addClass('fa-minus');
-            $('.reports-officers-tags-holder').prepend(`<span contenteditable="true" class="officer-tag-reports-input"></span>`);
-            canInputReportOfficerTag = false
-        } else if (!canInputReportOfficerTag) {
-            $(this).removeClass('fa-minus').addClass('fa-plus');
-            $(".officer-tag-reports-input").remove()
-            canInputReportOfficerTag = true
-        }
+    $(".reports-officeun-add-btn").click(function () {
+        IncidentSearchType = "reports_officer"
+        document.addEventListener('mouseup', onMouseDownIcidents);
+        $(".icidents-person-search-container").fadeIn(250)
+        $(".close-all").css("filter", "brightness(15%)");
     });
 
-    $(".reports-officers-tags-holder").on("keydown", ".officer-tag-reports-input", function (e) {
+    $(".reports-officeun-tags-holder").on("keydown", ".officer-tag-reports-input", function (e) {
         if (e.keyCode === 13) {
-            $('.reports-officers-tags-holder').prepend(`<div class="tag">${$(".officer-tag-reports-input").text()}</div>`);
+            $('.reports-officeun-tags-holder').prepend(`<div class="manage-reports-officers">${$(".officer-tag-reports-input").text()}</div>`);
             // Have it save instantly if it's an existing report.
-            if ($(".reports-officers-add-btn").hasClass("fa-minus")) {
+            if ($(".reports-officeun-add-btn").hasClass("fa-minus")) {
                 canInputReportOfficerTag = true
-                $(".reports-officers-add-btn").removeClass('fa-minus').addClass('fa-plus');
+                $(".reports-officeun-add-btn").removeClass('fa-minus').addClass('fa-plus');
             }
             canInputReportOfficerTag = true
             $(".officer-tag-reports-input").remove()
@@ -1603,20 +1870,15 @@ $(document).ready(() => {
     });
 
     $(".reports-civilians-add-btn").click(function () {
-        if (canInputReportCivilianTag) {
-            $(this).removeClass('fa-plus').addClass('fa-minus');
-            $('.reports-civilians-tags-holder').prepend(`<span contenteditable="true" class="civilian-tag-reports-input"></span>`);
-            canInputReportCivilianTag = false
-        } else if (!canInputReportCivilianTag) {
-            $(this).removeClass('fa-minus').addClass('fa-plus');
-            $(".civilian-tag-reports-input").remove()
-            canInputReportCivilianTag = true
-        }
+        IncidentSearchType = "reports_civilian"
+        document.addEventListener('mouseup', onMouseDownIcidents);
+        $(".icidents-person-search-container").fadeIn(250)
+        $(".close-all").css("filter", "brightness(15%)");
     });
 
     $(".reports-civilians-tags-holder").on("keydown", ".civilian-tag-reports-input", function (e) {
         if (e.keyCode === 13) {
-            $('.reports-civilians-tags-holder').prepend(`<div class="tag">${$(".civilian-tag-reports-input").text()}</div>`);
+            $('.reports-civilians-tags-holder').prepend(`<div class="manage-reports-civilians">${$(".civilian-tag-reports-input").text()}</div>`);
             // Have it save instantly if it's an existing report.
             if ($(".reports-civilians-add-btn").hasClass("fa-minus")) {
                 canInputReportCivilianTag = true
@@ -1628,39 +1890,38 @@ $(document).ready(() => {
     });
 
     $(".manage-reports-title-holder").on("click", ".manage-reports-new", function () {
-        //if ($(".manage-bolos-editing-title").html() == 'You are currently creating a new BOLO') {
-            //$(".manage-bolos-new").effect("shake", { times: 2, distance: 2 }, 500)
-        //} else {
-            if ($(".badge-logo").attr('src') == 'img/ems_badge.png') {
-                template = "Submitted to ICU?: [Yes/No]\n\nIncident Report:\n[ Brief summary of what happened and who did what while on scene. Note anything that stood out about the scene as well as what was done to treat the patient ]\n\n\nList of Injuries:\n- [ State what injury or injuries occurred ]\n\n\n💉 Surgical Report:\n[ Full report on what was done in surgery, list any complications or anything that was found while in operation. Note who was attending and what they did during the surgery. At the end of the report be sure to note the state of the patient after ]\n\n\nAttending:\n- [ List Any Attending Here ]\n\n\nMedications Applied:\n- [ List Any Attending Here ]\n\n\nNotes:\n[ Additional Notes Here ]"
-            }
-            $(".manage-reports-editing-title").html("Você esta criando um novo Report")
-            $(".manage-reports-editing-title").removeData("id");
-            $(".manage-reports-input-title").val('');
-            $(".manage-reports-input-type").val('');
-            $(".manage-reports-reports-content").val(template);
-            $(".manage-reports-tags-holder").empty();
-            $(".reports-gallery-inner-container").empty();
-            $(".reports-officers-tags-holder").empty();
-            $(".reports-civilians-tags-holder").empty();
+        $(".manage-reports-editing-title").html("Você está criando um novo relatório")
+        $(".manage-reports-input-title").val('');
+        $(".manage-reports-input-type").val('');
+        $(".manage-reports-reports-content").val('');
+        $(".manage-reports-tags-holder").empty();
+        $(".reports-gallery-inner-container").empty();
+        $(".reports-officeun-tags-holder").empty();
+        $(".reports-civilians-tags-holder").empty();
 
-            if ($(".manage-reports-tags-add-btn").hasClass("fa-minus")) { $(".manage-reports-tags-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
-            if ($(".reports-gallery-add-btn").hasClass("fa-minus")) { $(".reports-gallery-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
-            if ($(".officers-add-btn").hasClass("fa-minus")) { $(".officers-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
+        if ($(".manage-reports-tags-add-btn").hasClass("fa-minus")) {
+            $(".manage-reports-tags-add-btn").removeClass('fa-minus').addClass('fa-plus');
+        }
+        if ($(".reports-gallery-add-btn").hasClass("fa-minus")) {
+            $(".reports-gallery-add-btn").removeClass('fa-minus').addClass('fa-plus');
+        }
+        if ($(".officeun-add-btn").hasClass("fa-minus")) {
+            $(".officeun-add-btn").removeClass('fa-minus').addClass('fa-plus');
+        }
 
-            if ($(".reports-gallery-upload-input").css("display") == "block") {
-                $(".reports-gallery-upload-input").slideUp(250);
-                setTimeout(() => {
-                    $(".reports-gallery-upload-input").css("display", "none")
-                }, 250);
-            }
+        if ($(".reports-gallery-upload-input").css("display") == "block") {
+            $(".reports-gallery-upload-input").slideUp(250);
+            setTimeout(() => {
+                $(".reports-gallery-upload-input").css("display", "none")
+            }, 250);
+        }
 
-            canInputTag = true
-            canInputReportTag = true
-            canInputReportOfficerTag = true
+        canInputTag = true
+        canInputReportTag = true
+        canInputReportOfficerTag = true
 
-            $(".tag-reports-input").remove()
-            canInputReportTag = true
+        $(".tag-reports-input").remove()
+        canInputReportTag = true
 
         //}
     })
@@ -1690,20 +1951,28 @@ $(document).ready(() => {
         let officers = new Array()
         let civilians = new Array()
 
-        $('.manage-reports-tags-holder').find('div').each(function(){
-            if ($(this).text() != "") { tags.push($(this).text()) }
+        $('.manage-reports-tags-holder').find('div').each(function () {
+            if ($(this).text() != "") {
+                tags.push($(this).text())
+            }
         });
 
-        $(".reports-gallery-inner-container").find('img').each(function(){
-            if ($(this).attr("src") != "") { gallery.push($(this).attr("src")) }
+        $(".reports-gallery-inner-container").find('img').each(function () {
+            if ($(this).attr("src") != "") {
+                gallery.push($(this).attr("src"))
+            }
         });
 
-        $(".reports-officers-tags-holder").find('div').each(function(){
-            if ($(this).text() != "") { officers.push($(this).text()) }
+        $(".reports-officeun-tags-holder").find('div').each(function () {
+            if ($(this).text() != "") {
+                officers.push($(this).text())
+            }
         });
 
-        $(".reports-civilians-tags-holder").find('div').each(function(){
-            if ($(this).text() != "") { civilians.push($(this).text()) }
+        $(".reports-civilians-tags-holder").find('div').each(function () {
+            if ($(this).text() != "") {
+                civilians.push($(this).text())
+            }
         });
 
         let time = new Date()
@@ -1736,6 +2005,61 @@ $(document).ready(() => {
         }
     });
 
+    $(".weapons-search-title").click(function () {
+        if (canSearchForVehicles == true) {
+            if ($(".weapons-search-input").css("display") == "none") {
+                $(".weapons-search-input").slideDown(250);
+                $(".weapons-search-input").css("display", "block")
+            } else {
+                $(".weapons-search-input").slideUp(250);
+                setTimeout(() => {
+                    $(".weapons-search-input").css("display", "none")
+                }, 250);
+            }
+        }
+    });
+
+    $(".missing-search-title").click(function () {
+        if (canSearchForVehicles == true) {
+            if ($(".missing-search-input").css("display") == "none") {
+                $(".missing-search-input").slideDown(250);
+                $(".missing-search-input").css("display", "block")
+            } else {
+                $(".missing-search-input").slideUp(250);
+                setTimeout(() => {
+                    $(".missing-search-input").css("display", "none")
+                }, 250);
+            }
+        }
+    });
+
+    $('#weapons-search-input').keydown(function (e) {
+        if (e.keyCode === 13 && canSearchForVehicles == true) {
+            let name = $("#weapons-search-input").val()
+            if (name !== "") {
+                canSearchForVehicles = false
+                $.post('https://caue-mdt/searchWeapon', JSON.stringify({
+                    name: name
+                }));
+                $(".weapons-items").empty();
+                $('.weapons-items').prepend(`<div class="profile-loader"></div>`);
+            }
+        }
+    });
+
+    $('#missing-search-input').keydown(function (e) {
+        if (e.keyCode === 13) {
+            let name = $("#missing-search-input").val()
+            if (name !== "") {
+                $.post('https://caue-mdt/searchMissing', JSON.stringify({
+                    name: name
+                }));
+                $(".missing-items").empty();
+                $('.missing-items').prepend(`<div class="profile-loader"></div>`);
+            }
+        }
+    });
+
     $('#dmv-search-input').keydown(function (e) {
         if (e.keyCode === 13 && canSearchForVehicles == true) {
             let name = $("#dmv-search-input").val()
@@ -1753,6 +2077,18 @@ $(document).ready(() => {
     $(".dmv-items").on("click", ".dmv-item", function () {
         $.post('https://caue-mdt/getVehicleData', JSON.stringify({
             plate: $(this).data("plate")
+        }));
+    });
+
+    $(".weapons-items").on("click", ".weapon-item", function () {
+        $.post('https://caue-mdt/getWeaponData', JSON.stringify({
+            serialnumber: $(this).data("plate")
+        }));
+    });
+
+    $(".missing-items").on("click", ".missing-item", function () {
+        $.post('https://caue-mdt/getMissingData', JSON.stringify({
+            id: $(this).data("dbid")
         }));
     });
 
@@ -1774,7 +2110,7 @@ $(document).ready(() => {
                 let imageurl = $(".vehicle-info-image").attr("src");
                 let newImageurl = $(".vehicle-info-imageurl-input").val()
                 if (newImageurl.includes("base64")) {
-                    imageurl = "img/not-found.jpg"
+                    imageurl = "https://cdn.discordapp.com/attachments/770324167894761522/912602343164502096/not-found.jpg"
                 } else {
                     imageurl = newImageurl
                 }
@@ -1791,9 +2127,77 @@ $(document).ready(() => {
         }
     })
 
+    $(".weapon-information-title-holder").on("click", ".weapon-information-save", function () {
+        if (canSaveVehicle) {
+            canSaveVehicle = false
+            $(".weapon-information-save").empty();
+            $('.weapon-information-save').prepend(`<span class="fas fa-check"></span>`);
+            setTimeout(() => {
+                $(".weapon-information-save").empty();
+                $(".weapon-information-save").html("Save");
+                canSaveVehicle = true
+            }, 750);
+            setTimeout(() => {
+                let dbid = $(".weapon-information-title-holder").data("dbid")
+                let serialnumber = $(".weapon-info-plate-input").val()
+                let notes = $(".weapon-info-content").val()
+                let brand = $(".weapon-info-class-input").val()
+                let type = $(".weapon-info-model-input").val()
+                let imageurl = $(".weapon-info-image").attr("src");
+                let newImageurl = $(".weapon-info-imageurl-input").val()
+                if (newImageurl.includes("base64")) {
+                    imageurl = "https://cdn.discordapp.com/attachments/770324167894761522/912602343164502096/not-found.jpg"
+                } else {
+                    imageurl = newImageurl
+                }
+                $.post('https://caue-mdt/saveWeaponInfo', JSON.stringify({
+                    dbid: dbid,
+                    serialnumber: serialnumber,
+                    imageurl: imageurl,
+                    brand: brand,
+                    type: type,
+                    notes: notes
+                }));
+                $(".weapon-info-image").attr("src", newImageurl);
+            }, 250);
+        }
+    })
+
+    $(".missing-information-title-holder").on("click", ".missing-information-save", function () {
+        if (canSaveVehicle) {
+            canSaveVehicle = false
+            $(".missing-information-save").empty();
+            $('.missing-information-save').prepend(`<span class="fas fa-check"></span>`);
+            setTimeout(() => {
+                $(".missing-information-save").empty();
+                $(".missing-information-save").html("Save");
+                canSaveVehicle = true
+            }, 750);
+            setTimeout(() => {
+                let dbid = $(".missing-information-title-holder").data("dbid")
+                let last_seen = $(".missing-info-model-input").val()
+                let notes = $(".missing-info-content").val()
+                let imageurl = $(".missing-info-image").attr("src");
+                let newImageurl = $(".missing-info-imageurl-input").val()
+                if (newImageurl.includes("base64")) {
+                    imageurl = "https://cdn.discordapp.com/attachments/770324167894761522/912602343164502096/not-found.jpg"
+                } else {
+                    imageurl = newImageurl
+                }
+                $.post('https://caue-mdt/saveMissingInfo', JSON.stringify({
+                    id: dbid,
+                    last_seen: last_seen,
+                    imageurl: imageurl,
+                    notes: notes
+                }));
+                $(".missing-info-image").attr("src", newImageurl);
+            }, 250);
+        }
+    })
+
     $(".contextmenu").on("click", ".mark-code-5", function () {
         let tag = $(".vehicle-tags").find(".code5-tag")
-        if ( tag.hasClass("red-tag")) {
+        if (tag.hasClass("red-tag")) {
             tag.removeClass('red-tag').addClass('green-tag');
             $.post('https://caue-mdt/knownInformation', JSON.stringify({
                 dbid: $(".vehicle-information-title-holder").data("dbid"),
@@ -1806,7 +2210,7 @@ $(document).ready(() => {
 
     $(".contextmenu").on("click", ".remove-code-5", function () {
         let tag = $(".vehicle-tags").find(".code5-tag")
-        if ( tag.hasClass("green-tag")) {
+        if (tag.hasClass("green-tag")) {
             tag.removeClass('green-tag').addClass('red-tag');
             $.post('https://caue-mdt/knownInformation', JSON.stringify({
                 dbid: $(".vehicle-information-title-holder").data("dbid"),
@@ -1822,25 +2226,21 @@ $(document).ready(() => {
         if (plate) {
             let args = []
             if ($(this).hasClass("red-tag")) {
-                args = [
-                    {
-                        "className": "mark-code-5",
-                        "icon": "fas fa-check",
-                        "text": "Mark as Code 5",
-                        "info": plate,
-                        "status": ""
-                    }
-                ]
+                args = [{
+                    "className": "mark-code-5",
+                    "icon": "fas fa-check",
+                    "text": "Marcar como Código 5",
+                    "info": plate,
+                    "status": ""
+                }]
             } else {
-                args = [
-                    {
-                        "className": "remove-code-5",
-                        "icon": "fas fa-times",
-                        "text": "Remove Code 5 Status",
-                        "info": plate,
-                        "status": ""
-                    }
-                ]
+                args = [{
+                    "className": "remove-code-5",
+                    "icon": "fas fa-times",
+                    "text": "Remover Status de Código 5",
+                    "info": plate,
+                    "status": ""
+                }]
             }
 
             openContextMenu(e, args);
@@ -1850,7 +2250,7 @@ $(document).ready(() => {
 
     $(".contextmenu").on("click", ".mark-stolen", function () {
         let tag = $(".vehicle-tags").find(".stolen-tag")
-        if ( tag.hasClass("red-tag")) {
+        if (tag.hasClass("red-tag")) {
             tag.removeClass('red-tag').addClass('green-tag');
             $.post('https://caue-mdt/knownInformation', JSON.stringify({
                 dbid: $(".vehicle-information-title-holder").data("dbid"),
@@ -1863,7 +2263,7 @@ $(document).ready(() => {
 
     $(".contextmenu").on("click", ".remove-stolen", function () {
         let tag = $(".vehicle-tags").find(".stolen-tag")
-        if ( tag.hasClass("green-tag")) {
+        if (tag.hasClass("green-tag")) {
             tag.removeClass('green-tag').addClass('red-tag');
             $.post('https://caue-mdt/knownInformation', JSON.stringify({
                 dbid: $(".vehicle-information-title-holder").data("dbid"),
@@ -1879,163 +2279,25 @@ $(document).ready(() => {
         if (plate) {
             let args = []
             if ($(this).hasClass("red-tag")) {
-                args = [
-                    {
-                        "className": "mark-stolen",
-                        "icon": "fas fa-check",
-                        "text": "Mark as Stolen",
-                        "info": plate,
-                        "status": ""
-                    }
-                ]
+                args = [{
+                    "className": "mark-stolen",
+                    "icon": "fas fa-check",
+                    "text": "Marcar como Roubado",
+                    "info": plate,
+                    "status": ""
+                }]
             } else {
-                args = [
-                    {
-                        "className": "remove-stolen",
-                        "icon": "fas fa-times",
-                        "text": "Remove Code 5 Status",
-                        "info": plate,
-                        "status": ""
-                    }
-                ]
+                args = [{
+                    "className": "remove-stolen",
+                    "icon": "fas fa-times",
+                    "text": "Remover Status de Roubado",
+                    "info": plate,
+                    "status": ""
+                }]
             }
 
             openContextMenu(e, args);
 
-        }
-    })
-
-    $(".contextmenu").on("click", ".impound-vehicle", function () {
-        const plate = $(this).data("info")
-        $(".impound-linkedreport").val("").removeAttr("disabled")
-        $(".impound-fee").val("").removeAttr("disabled")
-        $(".impound-time").val("").removeAttr("disabled")
-        $(".impound-fee").css("color", "white")
-        $(".impound-cancel").html("Cancel")
-        $(".impound-submit").fadeIn(250)
-        $(".impound-form").slideDown(250)
-        $(".impound-form").fadeIn(250)
-        $(".impound-form").data("plate", plate)
-        $(".impound-plate").val(plate)
-    });
-
-    $(".impound-submit").click(function() {
-        const plate = $(".impound-plate").val()
-        const linkedreport = $(".impound-linkedreport").val()
-        const fee = $(".impound-fee").val()
-        const time = $(".impound-time").val()
-
-        if (!plate || plate === "") {
-            $(".impound-form").css("border", "1px solid rgb(184, 3, 3)");
-            setTimeout(() => {
-                $(".impound-form").css("border", "1px solid rgb(168, 168, 168)");
-            }, 500)
-            return
-        }
-
-        if (!linkedreport || linkedreport === "") {
-            $(".impound-form").css("border", "1px solid rgb(184, 3, 3)");
-            setTimeout(() => {
-                $(".impound-form").css("border", "1px solid rgb(168, 168, 168)");
-            }, 500)
-            return
-        }
-
-        if (!fee || fee === "") {
-            $(".impound-form").css("border", "1px solid rgb(184, 3, 3)");
-            setTimeout(() => {
-                $(".impound-form").css("border", "1px solid rgb(168, 168, 168)");
-            }, 500)
-            return
-        }
-
-        if (!time || time === "") {
-            $(".impound-form").css("border", "1px solid rgb(184, 3, 3)");
-            setTimeout(() => {
-                $(".impound-form").css("border", "1px solid rgb(168, 168, 168)");
-            }, 500)
-            return
-        }
-
-        $.post('https://caue-mdt/impoundVehicle', JSON.stringify({
-            plate: plate,
-            linkedreport: linkedreport,
-            fee: fee,
-            time: time
-        }));
-
-        $(".impound-plate").val("")
-        $(".impound-linkedreport").val("")
-        $(".impound-fee").val("")
-        $(".impound-time").val("")
-        $(".impound-fee").css("color", "white")
-
-        $(".impound-form").slideUp(250)
-        $(".impound-form").fadeOut(250)
-    });
-
-    $(".impound-cancel").click(function() {
-        $(".impound-form").slideUp(250)
-        $(".impound-form").fadeOut(250)
-
-
-        $(".impound-plate").val("")
-        $(".impound-linkedreport").val("")
-        $(".impound-fee").val("")
-        $(".impound-time").val("")
-        $(".impound-fee").css("color", "white")
-    })
-
-    $(".contextmenu").on("click", ".remove-impound", function () {
-        const plate = $(this).data("info")
-        $.post('https://caue-mdt/removeImpound', JSON.stringify({
-            plate: plate
-        }));
-
-        $(".vehicle-tags").find(".impound-tag").addClass("red-tag").removeClass("green-tag")
-    });
-
-    $(".contextmenu").on("click", ".status-impound", function () {
-        const plate = $(this).data("info")
-        $.post('https://caue-mdt/statusImpound', JSON.stringify({
-            plate: plate
-        }));
-    });
-
-    $(".vehicle-tags").on("contextmenu", ".impound-tag", function (e) {
-        let plate = $(".vehicle-info-plate-input").val()
-        if (plate) {
-
-            let args = []
-            if ($(this).hasClass("red-tag")) {
-                args = [
-                    {
-                        "className": "impound-vehicle",
-                        "icon": "fas fa-check",
-                        "text": "State Impound",
-                        "info": plate,
-                        "status": ""
-                    }
-                ]
-            } else {
-                args = [
-                    {
-                        "className": "remove-impound",
-                        "icon": "fas fa-times",
-                        "text": "Unimpound Vehicle",
-                        "info": plate,
-                        "status": ""
-                    },
-                    {
-                        "className": "status-impound",
-                        "icon": "fas fa-info-circle",
-                        "text": "View Impound Status",
-                        "info": plate,
-                        "status": ""
-                    }
-                ]
-            }
-            openContextMenu(e, args);
         }
     })
 
@@ -2091,23 +2353,22 @@ $(document).ready(() => {
     $(".warrants-items").on("contextmenu", ".warrants-item", function (e) {
         //let information = $(this).html()
         //if (information) {
-            args = [
-                {
-                    "className": "view-profile",
-                    "icon": "far fa-eye",
-                    "text": "View Profile",
-                    "info": $(this).data("cid"),
-                    "status": ""
-                },
-                {
-                    "className": "view-incident",
-                    "icon": "fas fa-search",
-                    "text": "View Incident",
-                    "info": $(this).data("id"),
-                    "status": ""
-                },
-            ]
-            openContextMenu(e, args);
+        args = [{
+                "className": "view-profile",
+                "icon": "far fa-eye",
+                "text": "Ver Perfil",
+                "info": $(this).data("cid"),
+                "status": ""
+            },
+            {
+                "className": "view-incident",
+                "icon": "fas fa-search",
+                "text": "Ver Incidente",
+                "info": $(this).data("id"),
+                "status": ""
+            },
+        ]
+        openContextMenu(e, args);
         //}
     })
 
@@ -2139,14 +2400,6 @@ $(document).ready(() => {
         $(".callsign-container").data("id", info)
     })
 
-    $(".contextmenu").on("click", ".set-radio", function () {
-        let info = $(this).data("info")
-        $(".radio-container").fadeIn(0)
-        $(".radio-inner-container").slideDown(500)
-        $(".radio-inner-container").fadeIn(500)
-        $(".radio-container").data("id", info)
-    })
-
     $(".contextmenu").on("click", ".set-waypoint", function () {
         let info = $(this).data("info")
         $.post('https://caue-mdt/setWaypointU', JSON.stringify({
@@ -2158,31 +2411,24 @@ $(document).ready(() => {
         let cid = $(this).data("id")
         if (cid) {
             args = [
-                {
-                    "className": "toggle-duty",
-                    "icon": "fas fa-thumbtack",
-                    "text": "Toggle Duty",
-                    "info": cid,
-                    "status": ""
-                },
-                {
-                    "className": "set-callsign",
-                    "icon": "far fa-id-badge",
-                    "text": "Set Callsign",
-                    "info": cid,
-                    "status": ""
-                },
-                {
-                    "className": "set-radio",
-                    "icon": "fas fa-broadcast-tower",
-                    "text": "Set Radio",
-                    "info": cid,
-                    "status": ""
-                },
+                // {
+                //     "className": "toggle-duty",
+                //     "icon": "fas fa-thumbtack",
+                //     "text": "Toggle Duty",
+                //     "info": cid,
+                //     "status": ""
+                // },
+                // {
+                //     "className": "set-callsign",
+                //     "icon": "far fa-id-badge",
+                //     "text": "Set Callsign",
+                //     "info": cid,
+                //     "status": ""
+                // },
                 {
                     "className": "set-waypoint",
                     "icon": "fas fa-map-marker-alt",
-                    "text": "Set Waypoint",
+                    "text": "Marcar no GPS",
                     "info": cid,
                     "status": ""
                 },
@@ -2191,7 +2437,7 @@ $(document).ready(() => {
         }
     })
 
-    $(".contextmenu").on("click", ".Set-Waypoint", function () {
+    $(".contextmenu").on("click", ".set-waypoint", function () {
         const callId = $(this).data("info")
         $.post('https://caue-mdt/setWaypoint', JSON.stringify({
             callid: callId,
@@ -2208,6 +2454,14 @@ $(document).ready(() => {
     $(".contextmenu").on("click", ".call-detach", function () {
         const callId = $(this).data("info")
         $.post('https://caue-mdt/callDetach', JSON.stringify({
+            callid: callId
+        }));
+    })
+
+    $(".contextmenu").on("click", ".remove-call", function () {
+        const callId = $(this).data("info")
+        $(".active-calls-item").filter("[data-id='" + callId + "']").remove()
+        $.post('https://caue-mdt/removeCall', JSON.stringify({
             callid: callId
         }));
     })
@@ -2251,70 +2505,82 @@ $(document).ready(() => {
         const canRespond = $(this).data("canrespond")
         if (callId) {
             if (canRespond == true) {
-                args = [
-                    {
+                args = [{
                         "className": "respond-call",
                         "icon": "fas fa-reply",
-                        "text": "Respond to Call",
+                        "text": "Responder",
                         "info": callId,
                         "status": ""
                     },
                     {
                         "className": "attached-units",
                         "icon": "fas fa-link",
-                        "text": "Attached Units",
+                        "text": "Unidades Vinculadas",
+                        "info": callId,
+                        "status": ""
+                    },
+                    {
+                        "className": "remove-call",
+                        "icon": "fas fa-circle",
+                        "text": "Remover Chamado",
                         "info": callId,
                         "status": ""
                     },
                     {
                         "className": "call-detach",
                         "icon": "fas fa-sign-out-alt",
-                        "text": "Detach",
+                        "text": "Desvincular",
                         "info": callId,
                         "status": ""
                     },
                     {
                         "className": "call-attach",
                         "icon": "fas fa-sign-in-alt",
-                        "text": "Respond",
+                        "text": "Vincular",
                         "info": callId,
                         "status": ""
                     },
                     {
-                        "className": "Set-Waypoint",
+                        "className": "set-waypoint",
                         "icon": "fas fa-map-marker-alt",
-                        "text": "Set Waypoint",
+                        "text": "Marcar no GPS",
                         "info": callId,
                         "status": ""
                     },
                 ]
             } else if (canRespond == false) {
-                args = [
-                    {
+                args = [{
                         "className": "attached-units",
                         "icon": "fas fa-link",
-                        "text": "Attached Units",
+                        "text": "Unidades Vinculadas",
                         "info": callId,
                         "status": ""
                     },
                     {
                         "className": "call-detach",
                         "icon": "fas fa-sign-out-alt",
-                        "text": "Detach",
+                        "text": "Desvincular",
+                        "info": callId,
+                        "status": ""
+                    },
+                    {
+                        "className": "remove-call",
+                        "icon": "fas fa-circle",
+                        "text": "Remover Chamado",
                         "info": callId,
                         "status": ""
                     },
                     {
                         "className": "call-attach",
                         "icon": "fas fa-sign-in-alt",
-                        "text": "Respond",
+                        "text": "Vincular",
                         "info": callId,
                         "status": ""
                     },
                     {
-                        "className": "Set-Waypoint",
+                        "className": "set-waypoint",
                         "icon": "fas fa-map-marker-alt",
-                        "text": "Set Waypoint",
+                        "text": "Marcar no GPS",
                         "info": callId,
                         "status": ""
                     },
@@ -2345,55 +2611,23 @@ $(document).ready(() => {
     $(".dispatch-attached-units-holder").on("contextmenu", ".dispatch-attached-unit-item", function (e) {
         const cid = $(this).data("id")
         if (cid) {
-            args = [
-                {
+            args = [{
                     "className": "call-dispatch-detach",
                     "icon": "fas fa-sign-out-alt",
-                    "text": "Desanexar",
+                    "text": "Desvincular",
                     "info": cid,
                     "status": ""
                 },
                 {
                     "className": "Set-Dispatch-Waypoint",
                     "icon": "fas fa-map-marker-alt",
-                    "text": "Colocar no GPS",
+                    "text": "Marcar no GPS",
                     "info": cid,
                     "status": ""
                 },
             ]
             openContextMenu(e, args);
         }
-    })
-
-    $(".contextmenu").on("click", ".dispatch-reply", function () {
-        const callsign = $(this).data("info")
-        const currVal = $(".dispatch-input").val()
-        if (currVal === "") {
-            $(".dispatch-input").val(callsign + " ")
-        } else {
-            $(".dispatch-input").val(currVal + " " + callsign + " ")
-        }
-        $(".dispatch-input").focus()
-    })
-
-    $(".dispatch-items").on("contextmenu", ".dispatch-item-message", function(e) {
-        const Callsign = $(this).data("author")
-
-        var mySubString = Callsign.substring(
-            Callsign.indexOf("(") + 1,
-            Callsign.lastIndexOf(")")
-        );
-
-        args = [
-            {
-                "className": "dispatch-reply",
-                "icon": "fas fa-reply",
-                "text": "Responder",
-                "info": mySubString,
-                "status": ""
-            },
-        ]
-        openContextMenu(e, args);
     })
 
     $(".callsign-buttons").on("click", ".callsign-cancel", function () {
@@ -2406,11 +2640,39 @@ $(document).ready(() => {
         }, 500)
     })
 
+    $(".jail-buttons").on("click", ".jail-cancel", function () {
+        $(".jail-inner-container").slideUp(500)
+        $(".jail-inner-container").fadeOut(500)
+        setTimeout(() => {
+            $(".jail-container").slideUp(500)
+            $(".jail-container").fadeOut(500)
+            $(".jail-input").val("")
+        }, 500)
+    })
+
+    $(".jail-buttons").on("click", ".jail-submit", function () {
+        const time = $(".jail-input").val()
+        if (time.length > 0) {
+            let cid = $(".jail-container").data("id")
+            $.post('https://caue-mdt/jailPlayer', JSON.stringify({
+                cid: cid,
+                time: time
+            }));
+            $(".jail-inner-container").slideUp(500)
+            $(".jail-inner-container").fadeOut(500)
+            setTimeout(() => {
+                $(".jail-container").slideUp(500)
+                $(".jail-container").fadeOut(500)
+                $(".jail-input").val("")
+            }, 500)
+        }
+    })
+
     $(".callsign-buttons").on("click", ".callsign-submit", function () {
         const callsign = $(".callsign-input").val()
         if (callsign.length > 2) {
             let editingcallsign = $(".callsign-container").data("id")
-            let name = $(`[data-id="${editingcallsign}"]`).find(".unit-name").html().replace( /\s*(?:\[[^\]]*\]|\([^)]*\))\s*/g, "" )
+            let name = $(`[data-id="${editingcallsign}"]`).find(".unit-name").html().replace(/\s*(?:\[[^\]]*\]|\([^)]*\))\s*/g, "")
             let newunitname = `(${callsign}) ${name}`
             $(`[data-id="${editingcallsign}"]`).find(".unit-name").html(newunitname)
             $.post('https://caue-mdt/setCallsign', JSON.stringify({
@@ -2424,37 +2686,6 @@ $(document).ready(() => {
                 $(".callsign-container").slideUp(500)
                 $(".callsign-container").fadeOut(500)
                 $(".callsign-input").val("")
-            }, 500)
-        }
-    })
-
-    $(".radio-buttons").on("click", ".radio-cancel", function () {
-        $(".radio-inner-container").slideUp(500)
-        $(".radio-inner-container").fadeOut(500)
-        setTimeout(() => {
-            $(".radio-container").slideUp(500)
-            $(".radio-container").fadeOut(500)
-            $(".radio-input").val("")
-        }, 500)
-    })
-
-    $(".radio-buttons").on("click", ".radio-submit", function () {
-        const radio = $(".radio-input").val()
-        if (radio.length > 0) {
-            let editingradio = $(".radio-container").data("id")
-            let newunitname = `${radio}`
-            $(`[data-id="${editingradio}"]`).find(".unit-radio").html(newunitname)
-            $.post('https://caue-mdt/setRadio', JSON.stringify({
-                cid: editingradio,
-                newradio: radio
-            }));
-
-            $(".radio-inner-container").slideUp(500)
-            $(".radio-inner-container").fadeOut(500)
-            setTimeout(() => {
-                $(".radio-container").slideUp(500)
-                $(".radio-container").fadeOut(500)
-                $(".radio-input").val("")
             }, 500)
         }
     })
@@ -2514,31 +2745,31 @@ $(document).ready(() => {
         }
     })
 
-    function JobColors(sentJob, sentRank) {
+    function JobColors(sentJob) {
+        currentJob = sentJob
         if (sentJob) {
-            MyJob = sentJob;
-            MyJobRank = sentRank;
-
+            $(".dashboard-nav-item").show()
             $(".profiles-nav-item").show()
             $(".incidents-nav-item").show()
             $(".reports-nav-item").show()
             $(".bolo-nav-item").show()
-            $(".penalcode-nav-item").show()
+            $(".rooster-nav-item").show()
             $(".dmv-nav-item").show()
-            $(".logs-nav-item").hide()
+            $(".weapons-nav-item").show()
+            $(".missing-nav-item").show()
 
-            $(".manage-profile-name-input-1").attr("readonly", true)
-            $(".manage-profile-name-input-2").attr("readonly", true)
+            $(".weapons-nav-item").show()
+            $(".missing-nav-item").show()
 
-            if (MyJobRank.hire === true) {
-                $(".logs-nav-item").show()
-            }
+            $(".manage-profile-editing-title").show()
+            $(".manage-profile-save").show()
 
-            if (sentJob == 'police') {
-                $(".badge-logo").attr('src','img/sasp_badge.png');
-                $(".header-title").html("Los Santos County");
-                $(".quote-span").html("A Tradition of Service!");
-                $(".dispatch-title-ofsomesort").html("Dispatch")
+            if (["police", "sheriff", "state_police", "park_ranger"].includes(sentJob)) {
+                $(".badge-logo").attr('src', 'https://cdn.discordapp.com/attachments/770324167894761522/912602343483260958/sasp_badge.png');
+                $(".header-title").html("SAN ANDREAS STATE POLICE");
+                $(".quote-span").html("In Caue we belive 🐒");
+                $(".dispatch-title-ofsomesort").html("Mensagens");
+
                 document.documentElement.style.setProperty('--color-1', '#1E3955');
                 document.documentElement.style.setProperty('--color-2', '#213F5F');
                 document.documentElement.style.setProperty('--color-3', '#2C537B');
@@ -2547,27 +2778,44 @@ $(document).ready(() => {
                 document.documentElement.style.setProperty('--color-6', '#121f2c');
                 document.documentElement.style.setProperty('--color-7', 'rgb(28, 54, 82)');
                 document.documentElement.style.setProperty('--color-8', '#2554cc');
+
                 $("#home-warrants-container").fadeIn(0)
                 $("#home-reports-container").fadeOut(0)
-                $(".roster-iframe").attr("src", "https://www.google.com/logos/fnbx/solitaire/standalone.html")
-                $(".bolo-nav-item").html("BOLOs");
-                $(".bolos-search-title").html("Bolos");
-                $("#bolos-search-input").attr('placeholder','Search Bolo...');
-                $(".manage-bolos-title").html("Gerenciar Bolo");
-                $(".manage-bolos-editing-title").html("Você esta criando um BOLO novo");
+
+                $(".convictions-title").html("Known Convictions");
+
+                $(".incidents-nav-item").html('<i class="fas fa-stethoscope"></i> INCIDENTES');
+                $(".incidents-title").html(`<span class="fas fa-search"></span> Incidentes`);
+                $("#incidents-search-input").attr('placeholder', 'Procurar Incidente...');
+                $(".manage-incidents-reports-content").attr('placeholder', 'O conteúdo do relatório de incidentes vai aqui...');
+                $(".manage-incidents-title").html("Incidente");
+                $(".manage-incidents-editing-title").html("Você está criando um novo incidente");
+                $(".manage-incidents-officeun-title").html("Oficiais Envolvidos");
+                $(".manage-incidents-evidence-title").html("Evidencias");
+                $(".associated-incidents-tags-title").html("Criminosos Envolvidos");
+
+                $("#reports-officeun-involved-tag-title").html("Oficiais Envolvidos")
+
+                $(".bolo-nav-item").html('<i class="fas fa-car"></i> BOLOS');
+                $(".bolos-search-title").html(`<span class="fas fa-search"></span> BOLOs`);
+                $("#bolos-search-input").attr('placeholder', 'Procurar BOLO...');
+                $(".manage-bolos-title").html("BOLO");
+                $(".manage-bolos-editing-title").html("Você está criando um novo BOLO");
                 $(".boloplate-title").html("Placa");
-                $(".boloowner-title").html("Propietário");
-                $(".boloindividual-title").html("Pessoa");
-                $("#boloplate").attr('placeholder','Coloque a placa aqui...');
-                $("#bolodetail").attr('placeholder','Detalhes do BOLO aqui...');
-                $("#boloowner").attr('placeholder','Coloque o dono do veiculo aqui...');
-                $("#boloindividual").attr('placeholder','Coloque a pessoa aqui...');
-                $("#reports-officers-involved-tag-title").html("Oficiais Envolvidos")
-            } else if (sentJob == 'ems') {
-                $(".badge-logo").attr('src','img/ems_badge.png');
+                $(".boloowner-title").html("Proprietário");
+                $(".boloindividual-title").html("Indivíduo");
+                $("#boloplate").attr('placeholder', 'Coloque a placa aqui...');
+                $("#bolodetail").attr('placeholder', 'Coloque detalhes do BOLO aqui...');
+                $("#boloowner").attr('placeholder', 'Coloque o proprietário do veículo aqui...');
+                $("#boloindividual").attr('placeholder', 'Coloque o indivíduo aqui...');
+
+                $(".roster-iframe").attr("src", PoliceRoster)
+            } else if (["ems", "doctor"].includes(sentJob)) {
+                $(".badge-logo").attr('src', 'https://cdn.discordapp.com/attachments/770324167894761522/912602342275301396/ems_badge.png');
                 $(".header-title").html("SAN ANDREAS MEDICAL DEPARTMENT");
-                $(".quote-span").html("In Caue, we belive!");
-                $(".dispatch-title-ofsomesort").html("Dispatch")
+                $(".quote-span").html("In Caue we belive 🐒");
+                $(".dispatch-title-ofsomesort").html("Mensagens")
+
                 document.documentElement.style.setProperty('--color-1', '#551e1e');
                 document.documentElement.style.setProperty('--color-2', '#5f2121');
                 document.documentElement.style.setProperty('--color-3', '#7b2c2c');
@@ -2576,29 +2824,36 @@ $(document).ready(() => {
                 document.documentElement.style.setProperty('--color-6', '#2c1212');
                 document.documentElement.style.setProperty('--color-7', 'rgb(82, 28, 28)');
                 document.documentElement.style.setProperty('--color-8', '#cc2525');
+
+                $(".dmv-nav-item").hide()
+                $(".weapons-nav-item").hide()
+                $(".bolo-nav-item").hide()
+                $(".missing-nav-item").hide()
+
                 $("#home-warrants-container").fadeOut(0)
                 $("#home-reports-container").fadeIn(0)
-                $(".roster-iframe").attr("src", "https://www.google.com/logos/fnbx/solitaire/standalone.html")
-                $(".incidents-nav-item").hide()
-                $(".dmv-nav-item").hide()
-                $(".bolo-nav-item").html("ICU");
-                $(".bolos-search-title").html("ICU Entradas");
-                $("#bolos-search-input").attr('placeholder','Procurar ICU...');
-                $(".manage-bolos-title").html("Gerenciar Entrada de ICU");
-                $(".manage-bolos-editing-title").html("Você esta criando uma nova Entrada de ICU");
-                $(".boloplate-title").html("Estimativa de Recuperação");
-                $(".boloowner-title").html("Contato da Emergência");
-                $(".boloindividual-title").html("Paciênte");
-                $("#boloplate").attr('placeholder','Tempo de recuperação aqui...');
-                $("#bolodetail").attr('placeholder','Detalhes da ICU aqui...');
-                $("#boloowner").attr('placeholder','Contato de emergencia aqui..');
-                $("#boloindividual").attr('placeholder','Nome do Paciente e Identidade...');
-                $("#reports-officers-involved-tag-title").html("EMS Involved")
-            } else if (sentJob == 'doj') {
-                $(".badge-logo").attr('src','img/court.png');
+
+                $(".convictions-title").html("Treatments");
+
+                $(".incidents-nav-item").html('<i class="fas fa-stethoscope"></i> ICU');
+                $(".incidents-title").html("ICU Check-ins");
+                $("#incidents-search-input").attr('placeholder', 'Search Check-ins...');
+                $(".manage-incidents-reports-content").attr('placeholder', 'Check-in content goes here...');
+                $(".manage-incidents-title").html("Manage ICU Check-in");
+                $(".manage-incidents-editing-title").html("You are creating a new ICU Check-in");
+                $(".manage-incidents-officeun-title").html("EMS Involved");
+                $(".manage-incidents-evidence-title").html("Gallery");
+                $(".associated-incidents-tags-title").html("Patient Involved");
+
+                $("#reports-officeun-involved-tag-title").html("EMS Involved")
+
+                $(".roster-iframe").attr("src", EMSRoster)
+            } else if (sentJob == "doj") {
+                $(".badge-logo").attr('src','https://cdn.discordapp.com/attachments/780004019820298251/919168234626883634/court.png');
                 $(".header-title").html("DEPARTMENT OF JUSTICE");
-                $(".quote-span").html("A Tradition of Service!");
-                $(".dispatch-title-ofsomesort").html("Message Board")
+                $(".quote-span").html("In Caue we belive 🐒");
+                $(".dispatch-title-ofsomesort").html("Mensagens")
+
                 document.documentElement.style.setProperty('--color-1', '#553a1e');
                 document.documentElement.style.setProperty('--color-2', '#5f4321');
                 document.documentElement.style.setProperty('--color-3', '#7b552c');
@@ -2607,10 +2862,38 @@ $(document).ready(() => {
                 document.documentElement.style.setProperty('--color-6', '#2c2312');
                 document.documentElement.style.setProperty('--color-7', 'rgb(82, 60, 28)');
                 document.documentElement.style.setProperty('--color-8', '#cc9225');
+
+                $(".reports-nav-item").hide()
+                $(".bolo-nav-item").hide()
+                $(".rooster-nav-item").hide()
+
                 $("#home-warrants-container").fadeIn(0)
                 $("#home-reports-container").fadeOut(0)
-                $(".roster-iframe").attr("src", "https://www.google.com/logos/fnbx/solitaire/standalone.html")
+            } else if (sentJob == "publicrecords") {
+                $(".badge-logo").attr('src','https://cdn.discordapp.com/attachments/780004019820298251/919168234626883634/court.png');
+                $(".header-title").html("DEPARTMENT OF JUSTICE");
+
+                document.documentElement.style.setProperty('--color-1', '#553a1e');
+                document.documentElement.style.setProperty('--color-2', '#5f4321');
+                document.documentElement.style.setProperty('--color-3', '#7b552c');
+                document.documentElement.style.setProperty('--color-4', '#5e4123');
+                document.documentElement.style.setProperty('--color-5', '#382815');
+                document.documentElement.style.setProperty('--color-6', '#2c2312');
+                document.documentElement.style.setProperty('--color-7', 'rgb(82, 60, 28)');
+                document.documentElement.style.setProperty('--color-8', '#cc9225');
+
+                $(".dashboard-nav-item").hide()
+                $(".incidents-nav-item").hide()
+                $(".reports-nav-item").hide()
                 $(".bolo-nav-item").hide()
+                $(".rooster-nav-item").hide()
+                $(".dmv-nav-item").hide()
+                $(".weapons-nav-item").hide()
+                $(".missing-nav-item").hide()
+                $(".stafflogs-nav-item").hide()
+
+                $(".manage-profile-editing-title").hide()
+                $(".manage-profile-save").hide()
             }
         }
     }
@@ -2620,18 +2903,28 @@ $(document).ready(() => {
         $(".dispatch-msg-notif").fadeIn(500)
         if (e.type == "show") {
             if (e.enable == true) {
-                JobColors(e.job, e.rank)
+                isPublicRecords = false
+                JobColors(e.job)
                 $("body").fadeIn(0);
                 $(".close-all").css("filter", "none");
                 $(".close-all").fadeOut(0);
-                if (!currentTab) { currentTab = ".dashboard-page-container" }
                 $(currentTab).slideDown(250);
                 timeShit();
+                if (e.isAdmin) {
+                    $(".stafflogs-nav-item").show()
+                } else {
+                    $(".stafflogs-nav-item").hide()
+                }
+                $(".tags-add-btn").show()
+                $(".weapons-add-btn").show()
+                $(".gallery-add-btn").show()
+                $(".tags-title").removeClass("tags-title-publicrecords")
+                $(".weapons-title").removeClass("weapons-title-publicrecords")
+                $(".gallery-title").removeClass("gallery-title-publicrecords")
+                $('.manage-profile-url-input').removeAttr('readonly');
             } else {
                 $(".callsign-inner-container").fadeOut(0)
                 $(".callsign-container").fadeOut(0)
-                $(".radio-inner-container").fadeOut(0)
-                $(".radio-container").fadeOut(0)
                 $(".icidents-person-search-container").fadeOut(0)
                 $(".dispatch-attached-units").fadeOut(0)
                 $(".respond-calls").fadeOut(0)
@@ -2639,34 +2932,89 @@ $(document).ready(() => {
                 $("body").slideUp(250);
                 $(".close-all").slideUp(250);
             }
+        } else if (e.type == "PublicRecords") {
+            isPublicRecords = true
+            $(".tags-title").removeClass("tags-title-publicrecords")
+            $(".weapons-title").removeClass("weapons-title-publicrecords")
+            $(".gallery-title").removeClass("gallery-title-publicrecords")
+            JobColors("publicrecords")
+            $("body").fadeIn(0);
+            $(".close-all").css("filter", "none");
+            $(".close-all").fadeOut(0);
+            $(".profile-page-container").slideDown(250);
+            timeShit();
+            $(".tags-add-btn").hide()
+            $(".weapons-add-btn").hide()
+            $(".gallery-add-btn").hide()
+            $(".tags-title").toggleClass("tags-title-publicrecords")
+            $(".weapons-title").toggleClass("weapons-title-publicrecords")
+            $(".gallery-title").toggleClass("gallery-title-publicrecords")
+            if (e.settings['AllowImageChange']) {
+                $('.manage-profile-url-input').removeAttr('readonly');
+            } else {
+                $('.manage-profile-url-input').attr('readonly', true)
+            }
+
+            $(".manage-profile-vehs-container").fadeOut(250)
+            $(".manage-profile-weapons-container").fadeOut(250)
+            // $(".manage-profile-licenses-container").fadeOut(250)
+            $(".manage-profile-houses-container").fadeOut(250)
+
+            $.post('https://caue-mdt/getAllProfiles', JSON.stringify({}));
         } else if (e.type == "data") {
             $(".name-shit").html(e.name)
             $(".header-location").html(" " + e.location)
             MyName = e.fullname
+        } else if (e.type == "checkPlate") {
+            let plate = e.plate;
+            fidgetSpinner(".dmv-page-container");
+            currentTab = ".dmv-page-container";
+            setTimeout(() => {
+                $(".dmv-search-input").slideDown(250);
+                $(".dmv-search-input").css("display", "block")
+                setTimeout(() => {
+                    $("#dmv-search-input:text").val(plate.toString());
+                    $.post('https://caue-mdt/searchVehicles', JSON.stringify({
+                        name: plate.toString()
+                    }));
+                }, 250);
+            }, 250);
         } else if (e.type == "profileData") {
             let table = e.data
             if (!canInputTag) {
-                if ($(".tags-add-btn").hasClass("fa-minus")) { $(".tags-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
+                if ($(".tags-add-btn").hasClass("fa-minus")) {
+                    $(".tags-add-btn").removeClass('fa-minus').addClass('fa-plus');
+                }
                 $(".tag-input").remove()
                 canInputTag = true
             }
 
             if ($(".gallery-upload-input").css("display") == "block") {
                 $(".gallery-upload-input").slideUp(250);
-                setTimeout(() => { $(".gallery-upload-input").css("display", "none") }, 250);
+                setTimeout(() => {
+                    $(".gallery-upload-input").css("display", "none")
+                }, 250);
             }
 
-            if ($(".gallery-add-btn").hasClass("fa-minus")) { $(".gallery-add-btn").removeClass('fa-minus').addClass('fa-plus'); }
+            if ($(".gallery-add-btn").hasClass("fa-minus")) {
+                $(".gallery-add-btn").removeClass('fa-minus').addClass('fa-plus');
+            }
 
-            $(".manage-profile-editing-title").html("You are currently editing " + table["firstname"] + " " + table["lastname"])
+            let number = table["phone"].toString()
+            let phoneNumber = `(${number.slice(0, 3)}) ${number.slice(3, 6)}-${number.slice(6, 10)}`
+
+            $(".manage-profile-editing-title").html("Você está editando no momento " + table["firstname"] + " " + table["lastname"])
             $(".manage-profile-citizenid-input").val(table["cid"]);
             $(".manage-profile-name-input-1").val(table["firstname"])
             $(".manage-profile-name-input-2").val(table["lastname"])
             $(".manage-profile-dob-input").val(table["dateofbirth"]);
             $(".manage-profile-job-input").val(table["job"]);
+            $(".manage-profile-phone-input").val(phoneNumber);
             $(".manage-profile-url-input").val(table["profilepic"]);
             $(".manage-profile-info").val(table["policemdtinfo"]);
-            $('.manage-profile-info').removeAttr('disabled');
+            if (isPublicRecords == false) {
+                $('.manage-profile-info').removeAttr('disabled');
+            }
             $(".manage-profile-pic").attr("src", table["profilepic"]);
 
             let driver = ""
@@ -2712,55 +3060,80 @@ $(document).ready(() => {
                 business = "red-tag"
             }
 
-            $(".licenses-holder").empty();
-            $('.licenses-holder').prepend(`
-                <div class="license-tag ${driver} driver">Drivers</div>
-                <div class="license-tag ${weapon} weapon">Weapon</div>
-                <div class="license-tag ${hunting} hunting">Hunting</div>
-                <div class="license-tag ${fishing} fishing">Fishing</div>
-                <div class="license-tag ${pilot} pilot">Pilot</div>
-                <div class="license-tag ${bar} bar">Bar</div>
-                <div class="license-tag ${business} business">Business</div>
-            `);
-
+            // $(".licenses-holder").empty();
+            // $('.licenses-holder').prepend(`
+            //     <div class="license-tag ${driver} driver">Drivers</div>
+            //     <div class="license-tag ${weapon} weapon">Weapon</div>
+            //     <div class="license-tag ${hunting} hunting">Hunting</div>
+            //     <div class="license-tag ${fishing} fishing">Fishing</div>
+            //     <div class="license-tag ${pilot} pilot">Pilot</div>
+            //     <div class="license-tag ${bar} bar">Bar</div>
+            //     <div class="license-tag ${business} business">Business</div>
+            // `);
             $(".tags-holder").empty();
-            $.each(table["tags"], function (index, value) {
-                $('.tags-holder').prepend(`<div class="tag">${value}</div>`);
-            })
-
             $(".vehs-holder").empty();
-            if (table["vehicles"] && (MyJob == "police" || MyJob == "doj")) {
+            $(".weapons-holder").empty();
+            $(".gallery-inner-container").empty();
+            $(".convictions-holder").empty();
+            $(".houses-holder").empty();
+
+            if (table["tags"]) {
+                $.each(table["tags"], function (index, value) {
+                    $('.tags-holder').prepend(`<div class="tag">${value}</div>`);
+                })
+            }
+
+            if (table["weapons"]) {
+                $.each(table["weapons"], function (index, value) {
+                    $('.weapons-holder').prepend(`<div class="tag" data-plate="${value}">${value}</div>`);
+                })
+            }
+
+            if (table["vehicles"]) {
                 $.each(table["vehicles"], function (index, value) {
                     $('.vehs-holder').prepend(`<div class="veh-tag" data-plate="${value.plate}">${value.plate} - ${value.model} </div>`);
                 })
             }
 
-            $(".houses-holder").empty();
-            if (table["properties"] && (MyJob == "police" || MyJob == "doj")) {
+            if (table["properties"]) {
                 $.each(table["properties"], function (index, value) {
-                    $('.houses-holder').prepend(`<div class="house-tag" data-house-id="${value.house_id}">${value.house_name}</div>`);
+                    $('.houses-holder').prepend(`<div class="white-tag" data-house-id="${value.house_id}">${value.house_name}</div>`);
                 })
             }
 
-            $(".gallery-inner-container").empty();
-            $.each(table["gallery"], function (index, value) {
-                $('.gallery-inner-container').prepend(`<img src="${value}" class="gallery-img" onerror="this.src='img/not-found.jpg'">`);
-            })
-
-            $(".convictions-holder").empty();
-            if (table["convictions"]) {
-                $.each(table["convictions"], function (index, value) {
-                    $('.convictions-holder').prepend(`<div class="white-tag">${value} </div>`);
+            if (table["gallery"]) {
+                $.each(table["gallery"], function (index, value) {
+                    $('.gallery-inner-container').prepend(`<img src="${value}" class="gallery-img" onerror="this.src='https://cdn.discordapp.com/attachments/770324167894761522/912602343164502096/not-found.jpg'">`);
                 })
             }
-
-            if (e.isLimited) {
+            if ($(".badge-logo").attr('src') == 'https://cdn.discordapp.com/attachments/770324167894761522/912602343483260958/sasp_badge.png') {
+                if (table["convictions"]) {
+                    $.each(table["convictions"], function (index, value) {
+                        $('.convictions-holder').prepend(`<div class="white-tag">${value} </div>`);
+                    })
+                }
+            } else if ($(".badge-logo").attr('src') == 'https://cdn.discordapp.com/attachments/770324167894761522/912602342275301396/ems_badge.png') {
+                if (table["treatments"]) {
+                    $.each(table["treatments"], function (index, value) {
+                        $('.convictions-holder').prepend(`<div class="white-tag">${value} </div>`);
+                    })
+                }
+            } else {
+                if (table["convictions"]) {
+                    $.each(table["convictions"], function (index, value) {
+                        $('.convictions-holder').prepend(`<div class="white-tag">${value} </div>`);
+                    })
+                }
+            }
+            if (e.isLimited || isPublicRecords) {
                 $(".manage-profile-vehs-container").fadeOut(250)
-                $(".manage-profile-houses-container").fadeOut(250)
+                $(".manage-profile-weapons-container").fadeOut(250)
+                // $(".manage-profile-licenses-container").fadeOut(250)
                 $(".manage-profile-houses-container").fadeOut(250)
             } else {
                 $(".manage-profile-vehs-container").fadeIn(250)
-                $(".manage-profile-houses-container").fadeIn(250)
+                $(".manage-profile-weapons-container").fadeIn(250)
+                // $(".manage-profile-licenses-container").fadeIn(250)
                 $(".manage-profile-houses-container").fadeIn(250)
             }
         } else if (e.type == "profiles") {
@@ -2776,8 +3149,6 @@ $(document).ready(() => {
                 let fishing = ""
                 let bar = ""
                 let business = ""
-                let warrant = ""
-                let convictions = ""
                 if (value.Weapon == true) {
                     weapon = "green-tag";
                 } else {
@@ -2812,18 +3183,6 @@ $(document).ready(() => {
                     business = "green-tag";
                 } else {
                     business = "red-tag";
-                }
-                if (value.warrant == true) {
-                    warrant = "green-tag";
-                } else {
-                    warrant = "red-tag";
-                }
-                if (value.convictions < 5) {
-                    convictions = "green-tag";
-                } else if (value.convictions > 4 && value.convictions < 15) {
-                    convictions = "orange-tag";
-                } else {
-                    convictions = "red-tag";
                 }
                 $('.profile-items').prepend(
                     `
@@ -2871,21 +3230,24 @@ $(document).ready(() => {
                     <div class="bulletin-date">${value.author} - ${timeAgo(Number(value.time))}</div>
                 </div>
             </div>`)
+        } else if (e.type == "removeCall") {
+            const callid = e.callid
+            $(".active-calls-item").filter("[data-id='" + callid + "']").remove()
         } else if (e.type == "deleteBulletin") {
             $(".bulletin-items-continer").find("[data-id='" + e.data + "']").remove();
         } else if (e.type == "warrants") {
-            const value = e.data
-            if (value.firsttime) { $(".warrants-items").empty(); }
-            $('.warrants-items').prepend(`<div class="warrants-item" data-cid=${value.cid} data-id=${value.linkedincident}><div style="display: flex; flex-direction: column; margin-top: 2.5px; margin-left: 0.75vh; width: 100%;">
-                <div style="display: flex; flex-direction: column;">
-                    <div class="warrant-title">${value.name}</div>
-                    <div class="warrant-item-info">${value.reporttitle} - ${timeAgo(Number(value.time))}</div>
-                </div>
-                <div class="warrant-bottom-info">
-                    <div class="warrant-id">ID: ${value.linkedincident}</div>
-                    <div class="warrant-expiry-date">Expires in 15 days</div>
-                </div>
-            </div></div>`)
+            $(".warrants-items").empty();
+            $.each(e.data, function (index, value) {
+                $('.warrants-items').prepend(`<div class="warrants-item" data-cid=${value.cid} data-id=${value.linkedincident}><div style="display: flex; flex-direction: column; margin-top: 2.5px; margin-left: 0.75vh; width: 100%;">
+                    <div style="display: flex; flex-direction: column;">
+                        <div class="warrant-title">${value.name}</div>
+                        <div class="warrant-item-info">${value.reporttitle} - ${timeAgo(Number(value.time))}</div>
+                    </div>
+                    <div class="warrant-bottom-info">
+                        <div class="warrant-id">ID: ${value.linkedincident}</div>
+                    </div>
+                </div></div>`)
+            })
         } else if (e.type == "dispatchmessages") {
             const table = e.data
             LastName = ""
@@ -2893,10 +3255,10 @@ $(document).ready(() => {
             $(".dispatch-items").empty();
             $.each(table, function (index, value) {
                 DispatchNum = DispatchNum + 1
-                if (LastName == value.name) {
+                if (LastName == value.author) {
                     $('.dispatch-items').append(`
                     <div class="dispatch-item-grid dispatch-item-msg">
-                        <div class="dispatch-item-message" data-author="${value.name}">${value.message}</div>
+                        <div class="dispatch-item-message">${value.message}</div>
                     </div>
                     `)
                 } else {
@@ -2904,21 +3266,21 @@ $(document).ready(() => {
                         $('.dispatch-items').append(`<div class="dispatch-item" style="display: flex; margin-top: 0vh;" >
                         <img src="${value.image}" class="dispatch-message-profilepic">
                         <div class="dispatch-item-grid">
-                            <div class="dispatch-item-info dispatch-info-job-${value.job}"> ${value.name} <span style="color:#969696; margin-left: 0.5vh; font-size: 12px; font-weight: normal;">${timeAgo(Number(value.time))}</span> </div>
-                            <div class="dispatch-item-message" data-author="${value.name}">${value.message}</div>
+                            <div class="dispatch-item-info"> ${value.author} <span style="color:#969696; margin-left: 0.5vh; font-size: 12px; font-weight: normal;">${timeAgo(Number(value.time))}</span> </div>
+                            <div class="dispatch-item-message">${value.message}</div>
                         </div>
                         </div>`)
                     } else {
                         $('.dispatch-items').append(`<div class="dispatch-item" style="display: flex;" >
                         <img src="${value.image}" class="dispatch-message-profilepic">
                         <div class="dispatch-item-grid">
-                            <div class="dispatch-item-info dispatch-info-job-${value.job}"> ${value.name} <span style="color:#969696; margin-left: 0.5vh; font-size: 12px; font-weight: normal;">${timeAgo(Number(value.time))}</span> </div>
-                            <div class="dispatch-item-message" data-author="${value.name}">${value.message}</div>
+                            <div class="dispatch-item-info"> ${value.author} <span style="color:#969696; margin-left: 0.5vh; font-size: 12px; font-weight: normal;">${timeAgo(Number(value.time))}</span> </div>
+                            <div class="dispatch-item-message">${value.message}</div>
                         </div>
                         </div>`)
                     }
                 }
-                LastName = value.name
+                LastName = value.author
                 $('.dispatch-items').scrollTop($('.dispatch-items')[0].scrollHeight)
             })
             $('.dispatch-items').scrollTop($('.dispatch-items')[0].scrollHeight)
@@ -2930,7 +3292,7 @@ $(document).ready(() => {
                 if (LastName == value.name) {
                     $('.dispatch-items').append(`
                     <div class="dispatch-item-grid dispatch-item-msg">
-                        <div class="dispatch-item-message" data-author="${value.name}">${value.message}</div>
+                        <div class="dispatch-item-message ">${value.message}</div>
                     </div>
                     `)
                 } else {
@@ -2938,16 +3300,16 @@ $(document).ready(() => {
                         $('.dispatch-items').append(`<div class="dispatch-item" style="display: flex; margin-top: 0vh;" >
                         <img src="${value.image}" class="dispatch-message-profilepic">
                         <div class="dispatch-item-grid">
-                            <div class="dispatch-item-info dispatch-info-job-${value.job}"> ${value.name} <span style="color:#969696; margin-left: 0.5vh; font-size: 12px; font-weight: normal;">${timeAgo(Number(value.time))}</span> </div>
-                            <div class="dispatch-item-message" data-author="${value.name}">${value.message}</div>
+                            <div class="dispatch-item-info> ${value.name} <span style="color:#969696; margin-left: 0.5vh; font-size: 12px; font-weight: normal;">${timeAgo(Number(value.time))}</span> </div>
+                            <div class="dispatch-item-message">${value.message}</div>
                         </div>
                         </div>`)
                     } else {
                         $('.dispatch-items').append(`<div class="dispatch-item" style="display: flex;" >
                         <img src="${value.image}" class="dispatch-message-profilepic">
                         <div class="dispatch-item-grid">
-                            <div class="dispatch-item-info dispatch-info-job-${value.job}"> ${value.name} <span style="color:#969696; margin-left: 0.5vh; font-size: 12px; font-weight: normal;">${timeAgo(Number(value.time))}</span> </div>
-                            <div class="dispatch-item-message" data-author="${value.name}">${value.message}</div>
+                            <div class="dispatch-item-info> ${value.name} <span style="color:#969696; margin-left: 0.5vh; font-size: 12px; font-weight: normal;">${timeAgo(Number(value.time))}</span> </div>
+                            <div class="dispatch-item-message">${value.message}</div>
                         </div>
                         </div>`)
                     }
@@ -2983,7 +3345,9 @@ $(document).ready(() => {
 
                 if (value['gender']) {
                     let gender = "Male"
-                    if (value['gender'] == 0 || value['gender'] == 2) { gender = "Female" }
+                    if (value['gender'] == 0 || value['gender'] == 2) {
+                        gender = "Female"
+                    }
                     DispatchItem += `<div class="call-bottom-info"><span class="fas fa-genderless"></span>${gender}</div>`
                 }
 
@@ -3037,8 +3401,8 @@ $(document).ready(() => {
                 }, 1000);
             }
         } else if (e.type == "sendCallResponse") {
-            if ( $(".respond-calls-container").data("id") == e.callid) {
-                $(".respond-calls-responses").prepend(`<div class="respond-calls-response"> ${e['name']} responded "${e['message']}" - ${timeAgo(Number(e.time))}. </div>`)
+            if ($(".respond-calls-container").data("id") == e.callid) {
+                $(".respond-calls-responses").prepend(`<div class="respond-calls-response"> ${e['name']} respondeu "${e['message']}" - ${timeAgo(Number(e.time))}. </div>`)
             }
         } else if (e.type == "getCallResponses") {
             const table = e.data
@@ -3051,7 +3415,7 @@ $(document).ready(() => {
                 $(".respond-calls-container").data("id", e.callid)
             }, 1000);
             $.each(table, function (index, value) {
-                $(".respond-calls-responses").prepend(`<div class="respond-calls-response"> ${value['name']} responded "${value['message']}" - ${timeAgo(Number(value.time))}. </div>`)
+                $(".respond-calls-responses").prepend(`<div class="respond-calls-response"> ${value['name']} respondeu "${value['message']}" - ${timeAgo(Number(value.time))}. </div>`)
             })
         } else if (e.type == "calls") {
             const table = e.data
@@ -3079,7 +3443,9 @@ $(document).ready(() => {
 
                     if (value['gender']) {
                         let gender = "Male"
-                        if (value['gender'] == 0 || value['gender'] == 2) { gender = "Female" }
+                        if (value['gender'] == 0 || value['gender'] == 2) {
+                            gender = "Female"
+                        }
                         DispatchItem += `<div class="call-bottom-info"><span class="fas fa-genderless"></span>${gender}</div>`
                     }
 
@@ -3112,7 +3478,7 @@ $(document).ready(() => {
                     }
 
                     DispatchItem += `</div></div></div>`
-                    $(".active-calls-list").prepend($(DispatchItem).hide().fadeIn('slow'))
+                    $(".active-calls-list").prepend(DispatchItem)
                 }
 
 
@@ -3126,11 +3492,11 @@ $(document).ready(() => {
             canSearchForProfiles = true
             $(".incidents-items").empty();
             $.each(table, function (index, value) {
-                $('.incidents-items').append(
+                $('.incidents-items').prepend(
                     `<div class="incidents-item" data-id="${value.id}">
                     <div class="incidents-top-holder">
                         <div class="incidents-item-title">${value.title}</div>
-                        <div class="incedent-report-name">Incident Report</div>
+                        <div class="incedent-report-name">Relatório de Incidente</div>
                     </div>
                     <div class="incidents-bottom-holder">
                         <div class="incedent-report-id">ID: ${value.id}</div>
@@ -3142,44 +3508,80 @@ $(document).ready(() => {
         } else if (e.type == "getPenalCode") {
             const titles = e.titles
             const penalcode = e.penalcode
-            $(".offenses-main-container").empty();
-            $.each(titles, function (index, value) {
-                $('.offenses-main-container').append(
-                    `<div class="offenses-title-container">
-                        <div class="offenses-title">${value}</div>
-                    </div>
-                    <div class="offenses-container offenses-prepend-holder" id="penal-${index}">
-                    </div>
-                    `
-                )
-            })
-            $.each(penalcode, function (index, value) {
-                $.each(value, function (i, v) {
-                    $(`#penal-${index}`).append(`
-                    <div class="offense-item ${v.color}-penis-code" data-sentence="${v.months}" data-fine="${v.fine}">
-                    <div style="display: flex; flex-direction: row; width: 100%; margin: auto; margin-top: 0vh;">
-                        <div class="offense-item-offense">${v.title}</div>
-                        <div class="offfense-item-name">${v.class}</div>
-                    </div>
-                    <div style="display: flex; flex-direction: row; width: 100%; margin: auto; margin-bottom: 0vh; padding-top: 0.75vh;">
-                        <div class="offense-item-id">${v.id}</div>
-                        <div class="offfense-item-months">${v.months} Months - $${v.fine} - 0 Points(s)</div>
-                    </div>
-                    `)
+            const job = e.job
+            if (job == "police") {
+                $(".incidents-charges-title").html("Charges");
+                $(".offenses-main-container").empty();
+                $.each(titles, function (index, value) {
+                    $('.offenses-main-container').append(
+                        `<div class="offenses-title-container">
+                            <div class="offenses-title">${value}</div>
+                        </div>
+                        <div class="offenses-container offenses-prepend-holder" id="penal-${index}">
+                        </div>
+                        `
+                    )
                 })
-            })
+                $.each(penalcode, function (index, value) {
+                    $.each(value, function (i, v) {
+                        $(`#penal-${index}`).append(`
+                        <div class="offense-item ${v.color}-penis-code" data-sentence="${v.months}" data-fine="${v.fine}">
+                        <div style="display: flex; flex-direction: row; width: 100%; margin: auto; margin-top: 0vh;">
+                            <div class="offense-item-offense">${v.title}</div>
+                            <div class="offfense-item-name">${v.class}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: row; width: 100%; margin: auto; margin-bottom: 0vh; padding-top: 0.75vh;">
+                            <div class="offense-item-id">${v.id}</div>
+                            <div class="offfense-item-months">${v.months} Meses - $${v.fine}</div>
+                        </div>
+                        `)
+                    })
+                })
+            } else {
+                $(".offenses-main-container").empty();
+                $(".incidents-charges-title").html("Treatments");
+                $.each(titles, function (index, value) {
+                    $('.offenses-main-container').append(
+                        `<div class="offenses-title-container">
+                            <div class="offenses-title">${value}</div>
+                        </div>
+                        <div class="offenses-container offenses-prepend-holder" id="penal-${index}">
+                        </div>
+                        `
+                    )
+                })
+                $.each(penalcode, function (index, value) {
+                    $.each(value, function (i, v) {
+                        $(`#penal-${index}`).append(`
+                        <div class="offense-item ${v.color}-penis-code" data-fine="${v.fine}">
+                        <div style="display: flex; flex-direction: row; width: 100%; margin: auto; margin-top: 0vh;">
+                            <div class="offense-item-offense">${v.title}</div>
+                            <div class="offfense-item-name">${v.class}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: row; width: 100%; margin: auto; margin-bottom: 0vh; padding-top: 0.75vh;">
+                            <div class="offense-item-id">${v.id}</div>
+                            <div class="offfense-item-months">$${v.fine}</div>
+                        </div>
+                        `)
+                    })
+                })
+            }
         } else if (e.type == "incidentData") {
             let table = e.data
 
             $(".incidents-ghost-holder").html("")
             $(".associated-incidents-tags-holder").html("")
 
-            $(".manage-incidents-editing-title").html("You are currently editing incident " + table["id"]);
+            if ($(".badge-logo").attr('src') == 'https://cdn.discordapp.com/attachments/770324167894761522/912602342275301396/ems_badge.png') {
+                $(".manage-incidents-editing-title").html("You are currently editing check-in report " + table["id"]);
+            } else {
+                $(".manage-incidents-editing-title").html("Você está editando o incidente " + table["id"]);
+            }
             $(".manage-incidents-editing-title").data("id", Number(table['id']));
 
             $(".manage-incidents-tags-add-btn").css("pointer-events", "auto")
             $(".manage-incidents-reports-content").css("pointer-events", "auto")
-            $(".manage-incidents-officers-add-btn").css("pointer-events", "auto")
+            $(".manage-incidents-officeun-add-btn").css("pointer-events", "auto")
             $(".manage-incidents-civilians-add-btn").css("pointer-events", "auto")
             $(".manage-incidents-evidence-add-btn").css("pointer-events", "auto")
             $(".associated-incidents-tags-add-btn").css("pointer-events", "auto")
@@ -3192,13 +3594,13 @@ $(document).ready(() => {
                 $('.manage-incidents-tags-holder').append(`<div class="manage-incidents-tag tag">${value}</div>`);
             })
 
-            $(".manage-incidents-officers-holder").empty();
-            $.each(table["officersinvolved"], function (index, value) {
-                $(".manage-incidents-officers-holder").append(`<div class="manage-incidents-officers">${value}</div>`);
+            $(".manage-incidents-officeun-holder").empty();
+            $.each(table["officers"], function (index, value) {
+                $(".manage-incidents-officeun-holder").append(`<div class="manage-incidents-officers">${value}</div>`);
             })
 
             $(".manage-incidents-civilians-holder").empty();
-            $.each(table["civsinvolved"], function (index, value) {
+            $.each(table["civilians"], function (index, value) {
                 $(".manage-incidents-civilians-holder").append(`<div class="manage-incidents-civilians">${value}</div>`);
             })
 
@@ -3208,13 +3610,25 @@ $(document).ready(() => {
             })
 
             $(".manage-incidents-title-holder").empty();
-            $(".manage-incidents-title-holder").prepend(
-                `
-                <div class="manage-incidents-title">Manage Incident</div>
-                <div class="manage-incidents-create"> <span class="fas fa-plus" style="margin-top: 3.5px;"></span></div>
-                <div class="manage-incidents-save"><span class="fas fa-save" style="margin-top: 3.5px;"></span></div>
-                `
-            );
+
+            if ($(".badge-logo").attr('src') == 'https://cdn.discordapp.com/attachments/770324167894761522/912602342275301396/ems_badge.png') {
+                $(".manage-incidents-title-holder").prepend(
+                    `
+                    <div class="manage-incidents-title">Manage ICU Check-in</div>
+                    <div class="manage-incidents-create"> <span class="fas fa-plus" style="margin-top: 3.5px;"></span></div>
+                    <div class="manage-incidents-save"><span class="fas fa-save" style="margin-top: 3.5px;"></span></div>
+                    `
+                );
+            } else {
+                $(".manage-incidents-title-holder").prepend(
+                    `
+                    <div class="manage-incidents-title">Incidente</div>
+                    <div class="manage-incidents-create"> <span class="fas fa-plus" style="margin-top: 3.5px;"></span></div>
+                    <div class="manage-incidents-save"><span class="fas fa-save" style="margin-top: 3.5px;"></span></div>
+                    `
+                );
+            }
+
             $(".manage-incidents-title").css("width", "66%");
             $(".manage-incidents-create").css("margin-right", "0px");
 
@@ -3229,57 +3643,93 @@ $(document).ready(() => {
                 var processedTag = "red-tag"
                 var associatedTag = "red-tag"
 
-                if (value.warrant == 1) { warrantTag = "green-tag" }
-                if (value.guilty == 1) { guiltyTag = "green-tag" }
-                if (value.processed == 1) { processedTag = "green-tag" }
-                if (value.associated == 1) { associatedTag = "green-tag" }
+                if (value.warrant) {
+                    warrantTag = "green-tag"
+                }
+                if (value.guilty) {
+                    guiltyTag = "green-tag"
+                }
+                if (value.processed) {
+                    processedTag = "green-tag"
+                }
+                if (value.isassociated) {
+                    associatedTag = "green-tag"
+                }
 
                 const cid = value.cid
 
-                if (value.associated == 1) {
-                    $(".incidents-ghost-holder").prepend(
-                        `<div class="associated-incidents-user-container" data-id="${value.cid}">
-                            <div class="associated-incidents-user-title">${value.name} (#${value.cid})</div>
-                            <div class="associated-incidents-user-tags-holder">
-                                <div class="associated-incidents-user-tag ${warrantTag}" data-id="${value.cid}">Warrant</div>
-                                <div class="associated-incidents-user-tag ${guiltyTag}" data-id="${value.cid}">Guilty</div>
-                                <div class="associated-incidents-user-tag ${processedTag}" data-id="${value.cid}">Processed</div>
-                                <div class="associated-incidents-user-tag ${associatedTag}" data-id="${value.cid}">Associated</div>
-                            </div>
-                            <div class="associated-incidents-user-holder" data-name="${value.cid}" style="display:none;">
-                            </div>
-                            <div class="manage-incidents-title-tag" data-id="${value.cid}" style="display:none;">Recommended Fine</div>
-                            <div class="associated-incidents-fine-input" data-id="${value.cid}" style="display:none;"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="0" disabled class="fine-recommended-amount" id="fine-recommended-amount" data-id="${value.cid}" type="number"></div>
-                            <div class="manage-incidents-title-tag" data-id="${value.cid}" style="display:none;">Recommended Sentence</div>
-                            <div class="associated-incidents-sentence-input" data-id="${value.cid}" style="display:none;"><img src="https://i.imgur.com/9Xn6xXK.png"> <input placeholder="0" disabled class="sentence-recommended-amount" id="sentence-recommended-amount" data-id="${value.cid}" type="number"></div>
-                            <div class="manage-incidents-title-tag" data-id="${value.cid}" style="display:none;">Fine</div>
-                            <div class="associated-incidents-fine-input" data-id="${value.cid}" style="display:none;"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="Enter fine here..." value="0" class="fine-amount" data-id="${value.cid}" type="number"></div>
-                            <div class="manage-incidents-title-tag" data-id="${value.cid}" style="display:none;">Sentence</div>
-                            <div class="associated-incidents-sentence-input" data-id="${value.cid}" style="display:none;"><img src="https://i.imgur.com/9Xn6xXK.png"> <input placeholder="Enter months here..." value="0" class="sentence-amount" data-id="${value.cid}" type="number"></div>
-                        </div>`
-                    );
+                if ($(".badge-logo").attr('src') == 'https://cdn.discordapp.com/attachments/770324167894761522/912602342275301396/ems_badge.png') {
+                    if (value.isassociated) {
+                        $(".incidents-ghost-holder").prepend(
+                            `<div class="associated-incidents-user-container" data-id="${value.cid}">
+                                <div class="associated-incidents-user-title">${value.name} (#${value.cid})</div>
+                                <div class="associated-incidents-user-holder" data-name="${value.cid}" style="display:none;">
+                                </div>
+                                <div class="manage-incidents-title-tag" data-id="${value.cid}" style="display:none;">Multa Recomendada</div>
+                                <div class="associated-incidents-fine-input" data-id="${value.cid}" style="display:none;"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="0" disabled class="fine-recommended-amount" id="fine-recommended-amount" data-id="${value.cid}" type="number"></div>
+                                <div class="manage-incidents-title-tag" data-id="${value.cid}" style="display:none;">Multa</div>
+                                <div class="associated-incidents-fine-input" data-id="${value.cid}" style="display:none;"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="Coloque a multa aqui..." value="0" class="fine-amount" data-id="${value.cid}" type="number"></div>
+                            </div>`
+                        );
+                    } else {
+                        $(".incidents-ghost-holder").prepend(
+                            `<div class="associated-incidents-user-container" data-id="${value.cid}">
+                                <div class="associated-incidents-user-title">${value.name} (#${value.cid})</div>
+                                <div class="associated-incidents-user-holder" data-name="${value.cid}">
+                                </div>
+                                <div class="manage-incidents-title-tag" data-id="${value.cid}">Multa Recomendada</div>
+                                <div class="associated-incidents-fine-input" data-id="${value.cid}"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="0" disabled class="fine-recommended-amount" id="fine-recommended-amount" data-id="${value.cid}" type="number"></div>
+                                <div class="manage-incidents-title-tag" data-id="${value.cid}">Multa</div>
+                                <div class="associated-incidents-fine-input" data-id="${value.cid}"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="Coloque a multa aqui..." value="0" class="fine-amount" data-id="${value.cid}" type="number"></div>
+                            </div>`
+                        );
+                    }
                 } else {
-                    $(".incidents-ghost-holder").prepend(
-                        `<div class="associated-incidents-user-container" data-id="${value.cid}">
-                            <div class="associated-incidents-user-title">${value.name} (#${value.cid})</div>
-                            <div class="associated-incidents-user-tags-holder">
-                                <div class="associated-incidents-user-tag ${warrantTag}" data-id="${value.cid}">Warrant</div>
-                                <div class="associated-incidents-user-tag ${guiltyTag}" data-id="${value.cid}">Guilty</div>
-                                <div class="associated-incidents-user-tag ${processedTag}" data-id="${value.cid}">Processed</div>
-                                <div class="associated-incidents-user-tag ${associatedTag}" data-id="${value.cid}">Associated</div>
-                            </div>
-                            <div class="associated-incidents-user-holder" data-name="${value.cid}">
-                            </div>
-                            <div class="manage-incidents-title-tag" data-id="${value.cid}">Recommended Fine</div>
-                            <div class="associated-incidents-fine-input" data-id="${value.cid}"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="0" disabled class="fine-recommended-amount" id="fine-recommended-amount" data-id="${value.cid}" type="number"></div>
-                            <div class="manage-incidents-title-tag" data-id="${value.cid}">Recommended Sentence</div>
-                            <div class="associated-incidents-sentence-input" data-id="${value.cid}"><img src="https://i.imgur.com/9Xn6xXK.png"> <input placeholder="0" disabled class="sentence-recommended-amount" id="sentence-recommended-amount" data-id="${value.cid}" type="number"></div>
-                            <div class="manage-incidents-title-tag" data-id="${value.cid}">Fine</div>
-                            <div class="associated-incidents-fine-input" data-id="${value.cid}"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="Enter fine here..." value="0" class="fine-amount" data-id="${value.cid}" type="number"></div>
-                            <div class="manage-incidents-title-tag" data-id="${value.cid}">Sentence</div>
-                            <div class="associated-incidents-sentence-input" data-id="${value.cid}"><img src="https://i.imgur.com/9Xn6xXK.png"> <input placeholder="Enter months here..." value="0" class="sentence-amount" data-id="${value.cid}" type="number"></div>
-                        </div>`
-                    );
+                    if (value.isassociated) {
+                        $(".incidents-ghost-holder").prepend(
+                            `<div class="associated-incidents-user-container" data-id="${value.cid}">
+                                <div class="associated-incidents-user-title">${value.name} (#${value.cid})</div>
+                                <div class="associated-incidents-user-tags-holder">
+                                    <div class="associated-incidents-user-tag ${warrantTag}" data-id="${value.cid}">Mandado</div>
+                                    <div class="associated-incidents-user-tag ${guiltyTag}" data-id="${value.cid}">Culpado</div>
+                                    <div class="associated-incidents-user-tag ${processedTag}" data-id="${value.cid}">Processado</div>
+                                    <div class="associated-incidents-user-tag ${associatedTag}" data-id="${value.cid}">Associado</div>
+                                </div>
+                                <div class="associated-incidents-user-holder" data-name="${value.cid}" style="display:none;">
+                                </div>
+                                <div class="manage-incidents-title-tag" data-id="${value.cid}" style="display:none;">Multa Recomendada</div>
+                                <div class="associated-incidents-fine-input" data-id="${value.cid}" style="display:none;"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="0" disabled class="fine-recommended-amount" id="fine-recommended-amount" data-id="${value.cid}" type="number"></div>
+                                <div class="manage-incidents-title-tag" data-id="${value.cid}" style="display:none;">Sentença Recomendada</div>
+                                <div class="associated-incidents-sentence-input" data-id="${value.cid}" style="display:none;"><img src="https://i.imgur.com/9Xn6xXK.png"> <input placeholder="0" disabled class="sentence-recommended-amount" id="sentence-recommended-amount" data-id="${value.cid}" type="number"></div>
+                                <div class="manage-incidents-title-tag" data-id="${value.cid}" style="display:none;">Multa</div>
+                                <div class="associated-incidents-fine-input" data-id="${value.cid}" style="display:none;"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="Coloque a multa aqui..." value="0" class="fine-amount" data-id="${value.cid}" type="number"></div>
+                                <div class="manage-incidents-title-tag" data-id="${value.cid}" style="display:none;">Sentença</div>
+                                <div class="associated-incidents-sentence-input" data-id="${value.cid}" style="display:none;"><img src="https://i.imgur.com/9Xn6xXK.png"> <input placeholder="Coloque a sentença aqui..." value="0" class="sentence-amount" data-id="${value.cid}" type="number"></div>
+                            </div>`
+                        );
+                    } else {
+                        $(".incidents-ghost-holder").prepend(
+                            `<div class="associated-incidents-user-container" data-id="${value.cid}">
+                                <div class="associated-incidents-user-title">${value.name} (#${value.cid})</div>
+                                <div class="associated-incidents-user-tags-holder">
+                                    <div class="associated-incidents-user-tag ${warrantTag}" data-id="${value.cid}">Mandado</div>
+                                    <div class="associated-incidents-user-tag ${guiltyTag}" data-id="${value.cid}">Culpado</div>
+                                    <div class="associated-incidents-user-tag ${processedTag}" data-id="${value.cid}">Processado</div>
+                                    <div class="associated-incidents-user-tag ${associatedTag}" data-id="${value.cid}">Associado</div>
+                                </div>
+                                <div class="associated-incidents-user-holder" data-name="${value.cid}">
+                                </div>
+                                <div class="manage-incidents-title-tag" data-id="${value.cid}">Multa Recomendada</div>
+                                <div class="associated-incidents-fine-input" data-id="${value.cid}"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="0" disabled class="fine-recommended-amount" id="fine-recommended-amount" data-id="${value.cid}" type="number"></div>
+                                <div class="manage-incidents-title-tag" data-id="${value.cid}">Sentença Recomendada</div>
+                                <div class="associated-incidents-sentence-input" data-id="${value.cid}"><img src="https://i.imgur.com/9Xn6xXK.png"> <input placeholder="0" disabled class="sentence-recommended-amount" id="sentence-recommended-amount" data-id="${value.cid}" type="number"></div>
+                                <div class="manage-incidents-title-tag" data-id="${value.cid}">Multa</div>
+                                <div class="associated-incidents-fine-input" data-id="${value.cid}"><img src="https://i.imgur.com/h7S5f9J.png"> <input placeholder="Coloque a multa aqui..." value="0" class="fine-amount" data-id="${value.cid}" type="number"></div>
+                                <div class="manage-incidents-title-tag" data-id="${value.cid}">Sentença</div>
+                                <div class="associated-incidents-sentence-input" data-id="${value.cid}"><img src="https://i.imgur.com/9Xn6xXK.png"> <input placeholder="Coloque a sentença aqui..." value="0" class="sentence-amount" data-id="${value.cid}" type="number"></div>
+                            </div>`
+                        );
+                    }
                 }
 
                 $(".fine-amount").filter("[data-id='" + value.cid + "']").val(value.fine)
@@ -3305,9 +3755,9 @@ $(document).ready(() => {
                     <div class="icidents-person-search-item" data-info="${name} (#${value.id})" data-cid="${value.id}" data-name="${name}">
                         <img src="${value.image}" class="icidents-person-search-item-pfp">
                         <div class="icidents-person-search-item-right">
-                            <div class="icidents-person-search-item-right-cid-title">Citizen ID</div>
+                            <div class="icidents-person-search-item-right-cid-title">ID</div>
                             <div class="icidents-person-search-item-right-cid-input"><span class="fas fa-id-card"></span> ${value.id}</div>
-                            <div class="icidents-person-search-item-right-name-title">Name</div>
+                            <div class="icidents-person-search-item-right-name-title">Nome</div>
                             <div class="icidents-person-search-item-right-name-input"><span class="fas fa-user"></span> ${name}</div>
                         </div>
                     </div>
@@ -3316,9 +3766,9 @@ $(document).ready(() => {
             })
         } else if (e.type == "boloData") {
             let table = e.data
-            $(".manage-bolos-editing-title").html("You are currently editing BOLO " + table["id"]);
+            $(".manage-bolos-editing-title").html("Você está editando o BOLO " + table["id"]);
 
-            if ($(".badge-logo").attr('src') == 'img/ems_badge.png') {
+            if ($(".badge-logo").attr('src') == 'https://cdn.discordapp.com/attachments/770324167894761522/912602342275301396/ems_badge.png') {
                 $(".manage-bolos-editing-title").html("You are editing ICU Check-in " + table["id"]);
             }
 
@@ -3339,20 +3789,22 @@ $(document).ready(() => {
             $(".bolo-gallery-inner-container").empty();
             $.each(table["gallery"], function (index, value) {
                 let randomNum = Math.ceil(Math.random() * 10).toString()
-                $('.bolo-gallery-inner-container').prepend(`<img src="${value}" class="bolo-img ${randomNum}" onerror="this.src='img/not-found.jpg'">`);
+                $('.bolo-gallery-inner-container').prepend(`<img src="${value}" class="bolo-img ${randomNum}" onerror="this.src='https://cdn.discordapp.com/attachments/770324167894761522/912602343164502096/not-found.jpg'">`);
             })
 
-            $(".manage-officers-tags-holder").empty();
+            $(".manage-officeun-tags-holder").empty();
             $.each(table["officers"], function (index, value) {
-                $('.manage-officers-tags-holder').prepend(`<div class="tag">${value}</div>`);
+                $('.manage-officeun-tags-holder').prepend(`<div class="manage-bolos-officers">${value}</div>`);
             })
 
         } else if (e.type == "bolos") {
             let table = e.data
-            var reportName = "General BOLO"
+            var reportName = "Geral BOLO"
             canSearchForProfiles = true
             $(".bolos-items").empty();
-            if ($(".badge-logo").attr('src') == 'img/ems_badge.png') {reportName = "ICU Check-in"}
+            if ($(".badge-logo").attr('src') == 'https://cdn.discordapp.com/attachments/770324167894761522/912602342275301396/ems_badge.png') {
+                reportName = "ICU Check-in"
+            }
             $.each(table, function (index, value) {
                 $('.bolos-items').prepend(
                     `<div class="bolo-item" data-id="${value.id}">
@@ -3367,6 +3819,24 @@ $(document).ready(() => {
                 </div>`
                 )
             })
+        } else if (e.type == "missing") {
+            let table = e.data
+            $(".missing-items").empty();
+            canSearchForVehicles = true
+            $.each(table, function (index, value) {
+                $('.missing-items').prepend(`
+                <div class="missing-item" data-id="${value.id}" data-dbid="${value.id}" data-cid="${value.cid}">
+                    <img src="${value.image}" class="missing-image">
+                    <div style="display: flex; flex-direction: column; margin-top: 2.5px; margin-left: 5px; width: 100%; padding: 5px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <div class="missing-item-title">${value.name}</div></div>
+                        <div class="missing-bottom-info">
+                            <div class="missing-id">ID: ${value.id} · Visto pela última vez: ${value.last_seen}</div>
+                        </div>
+                    </div>
+                </div>
+                `)
+            })
         } else if (e.type == "boloComplete") {
             let id = e.data
             if (canRefreshBolo == true) {
@@ -3380,7 +3850,7 @@ $(document).ready(() => {
                     $.post('https://caue-mdt/getAllBolos', JSON.stringify({}));
                 }, 1500);
             }
-            $(".manage-bolos-editing-title").html("You are currently editing BOLO " + id);
+            $(".manage-bolos-editing-title").html("Você está editando o BOLO " + id);
             $(".manage-bolos-editing-title").data("id", Number(id));
         } else if (e.type == "reportComplete") {
             let id = e.data
@@ -3395,14 +3865,14 @@ $(document).ready(() => {
                     $.post('https://caue-mdt/getAllReports', JSON.stringify({}));
                 }, 1500);
             }
-            $(".manage-reports-editing-title").html("You are currently editing report " + id);
+            $(".manage-reports-editing-title").html("Você está editando o relatório " + id);
             $(".manage-reports-editing-title").data("id", Number(id));
         } else if (e.type == "reports") {
             let table = e.data
             canSearchForReports = true
             $(".reports-items").empty();
             $.each(table, function (index, value) {
-                $('.reports-items').append(
+                $('.reports-items').prepend(
                     `<div class="reports-item" data-id="${value.id}">
                     <div class="reports-top-holder">
                         <div class="reports-item-title">${value.title}</div>
@@ -3418,7 +3888,7 @@ $(document).ready(() => {
         } else if (e.type == "reportData") {
             let table = e.data
 
-            $(".manage-reports-editing-title").html("You are currently editing report " + table["id"]);
+            $(".manage-reports-editing-title").html("Você está editando o relatório " + table["id"]);
 
             $(".manage-reports-editing-title").data("id", Number(table["id"]));
 
@@ -3427,19 +3897,21 @@ $(document).ready(() => {
             $(".manage-reports-reports-content").val(table["detail"]);
 
             $(".manage-reports-tags-holder").empty();
-            $.each(table["tags"], function (index, value) {
-                $('.manage-reports-tags-holder').append(`<div class="tag">${value}</div>`);
-            })
-
             $(".reports-gallery-inner-container").empty();
+            $(".reports-officeun-tags-holder").empty();
+            $(".reports-civilians-tags-holder").empty();
+            $.each(table["tags"], function (index, value) {
+                $('.manage-reports-tags-holder').append(`<div class="manage-reports-tags">${value}</div>`);
+            })
             $.each(table["gallery"], function (index, value) {
                 let randomNum = Math.ceil(Math.random() * 10).toString()
-                $('.reports-gallery-inner-container').append(`<img src="${value}" class="reports-img ${randomNum}" onerror="this.src='img/not-found.jpg'">`);
+                $('.reports-gallery-inner-container').append(`<img src="${value}" class="reports-img ${randomNum}" onerror="this.src='https://cdn.discordapp.com/attachments/770324167894761522/912602343164502096/not-found.jpg'">`);
             })
-
-            $(".reports-officers-tags-holder").empty();
-            $.each(table["officersinvolved"], function (index, value) {
-                $('.reports-officers-tags-holder').append(`<div class="tag">${value}</div>`);
+            $.each(table["officers"], function (index, value) {
+                $('.reports-officeun-tags-holder').append(`<div class="manage-reports-officers">${value}</div>`);
+            })
+            $.each(table["civilians"], function (index, value) {
+                $('.reports-civilians-tags-holder').append(`<div class="manage-reports-civilians">${value}</div>`);
             })
         } else if (e.type == "searchedVehicles") {
             let table = e.data
@@ -3449,24 +3921,25 @@ $(document).ready(() => {
                 let paint = value.color
                 let impound = "red-tag"
                 let bolo = "red-tag"
-                let codefive = "red-tag"
+                let code5 = "red-tag"
                 let stolen = "red-tag"
 
-                if (value.impound === true) {
+                if (value.impound) {
                     impound = "green-tag"
                 }
 
-                if (value.bolo === true) {
+                if (value.bolo) {
                     bolo = "green-tag"
                 }
 
-                if (value.code === true) {
-                    codefive = "green-tag"
+                if (value.code5) {
+                    code5 = "green-tag"
                 }
 
-                if (value.stolen === true) {
+                if (value.stolen) {
                     stolen = "green-tag"
                 }
+
 
                 $('.dmv-items').prepend(`
                 <div class="dmv-item" data-id="${value.id}" data-dbid="${value.dbid}" data-plate="${value.plate}">
@@ -3476,14 +3949,50 @@ $(document).ready(() => {
                         <div class="dmv-item-title">${value.model}</div>
                             <div class="dmv-tags">
                                 <div class="dmv-tag ${paint}-color">${value.colorName}</div>
-                                <div class="dmv-tag ${impound}">Impound</div>
+                                <div class="dmv-tag ${impound}">Apreendido</div>
                                 <div class="dmv-tag ${bolo}">BOLO</div>
-                                <div class="dmv-tag ${stolen}">Stolen</div>
-                                <div class="dmv-tag ${codefive}">Code 5</div>
+                                <div class="dmv-tag ${stolen}">Roubado</div>
+                                <div class="dmv-tag ${code5}">Código 5</div>
                             </div>
                         </div>
                         <div class="dmv-bottom-info">
-                            <div class="dmv-id">ID: ${value.id} · Owner: ${value.owner}</div>
+                            <div class="dmv-id">ID: ${value.id} · Proprietário: ${value.owner}</div>
+                        </div>
+                    </div>
+                </div>
+                `)
+            })
+        } else if (e.type == "searchedWeapons") {
+            let table = e.data
+            $(".weapons-items").empty();
+            canSearchForVehicles = true
+            $.each(table, function (index, value) {
+                $('.weapons-items').prepend(`
+                <div class="weapon-item" data-id="${value.id}" data-dbid="${value.id}" data-plate="${value.serial}">
+                    <img src="${value.image}" class="weapon-image">
+                    <div style="display: flex; flex-direction: column; margin-top: 2.5px; margin-left: 5px; width: 100%; padding: 5px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <div class="weapon-item-title">${value.serial}</div></div>
+                        <div class="weapon-bottom-info">
+                            <div class="weapon-id">ID: ${value.id} · Proprietário: ${value.owner}</div>
+                        </div>
+                    </div>
+                </div>
+                `)
+            })
+        } else if (e.type == "searchedMissing") {
+            let table = e.data
+            $(".missing-items").empty();
+            canSearchForVehicles = true
+            $.each(table, function (index, value) {
+                $('.missing-items').prepend(`
+                <div class="missing-item" data-id="${value.id}" data-dbid="${value.id}" data-cid="${value.cid}">
+                    <img src="${value.image}" class="missing-image">
+                    <div style="display: flex; flex-direction: column; margin-top: 2.5px; margin-left: 5px; width: 100%; padding: 5px;">
+                    <div style="display: flex; flex-direction: column;">
+                        <div class="missing-item-title">${value.name}</div></div>
+                        <div class="missing-bottom-info">
+                            <div class="missing-id">ID: ${value.id} · Visto pela última vez: ${value.last_seen}</div>
                         </div>
                     </div>
                 </div>
@@ -3504,34 +4013,55 @@ $(document).ready(() => {
 
             $(".vehicle-tags").empty();
             $(".vehicle-info-image").attr("src", table["image"]);
-            $('.vehicle-tags').prepend(`<div class="dmv-tag ${table.color}-color">${table.colorName}</div>`);
 
             let impound = "red-tag"
             let bolo = "red-tag"
-            let codefive = "red-tag"
+            let code5 = "red-tag"
             let stolen = "red-tag"
 
-            if (table.impound === true) {
+            if (table.impound) {
                 impound = "green-tag"
             }
 
-            if (table.bolo === true) {
+            if (table.bolo) {
                 bolo = "green-tag"
             }
 
-            if (table.code === true) {
-                codefive = "green-tag"
+            if (table.code5) {
+                code5 = "green-tag"
             }
 
-            if (table.stolen === true) {
+            if (table.stolen) {
                 stolen = "green-tag"
             }
 
-            $('.vehicle-tags').append(`<div class="vehicle-tag ${impound} impound-tag">Impound</div>`);
+            $('.vehicle-tags').prepend(`<div class="dmv-tag ${table.color}-color">${table.colorName}</div>`);
+            $('.vehicle-tags').append(`<div class="vehicle-tag ${impound}">Apreendido</div>`);
             $('.vehicle-tags').append(`<div class="vehicle-tag ${bolo}">BOLO</div>`);
-            $('.vehicle-tags').append(`<div class="vehicle-tag ${codefive} code5-tag">Code 5</div>`);
-            $('.vehicle-tags').append(`<div class="vehicle-tag ${stolen} stolen-tag">Stolen</div>`);
+            $('.vehicle-tags').append(`<div class="vehicle-tag ${stolen} stolen-tag">Roubado</div>`);
+            $('.vehicle-tags').append(`<div class="vehicle-tag ${code5} code5-tag">Código 5</div>`);
             $(".vehicle-info-imageurl-input").val(table["image"]);
+        } else if (e.type == "getWeaponData") {
+            let table = e.data
+            $(".weapon-information-title-holder").data("dbid", Number(table["id"]));
+            $(".weapon-info-plate-input").val(table["serial"]);
+            $(".weapon-info-owner-input").val(table["owner"]);
+            $(".weapon-info-class-input").val(table["brand"]);
+            $(".weapon-info-model-input").val(table["type"]);
+            $(".weapon-info-imageurl-input").val(table["image"]);
+            $(".weapon-info-content").val(table["notes"]);
+            $(".weapon-tags").empty();
+            $(".weapon-info-image").attr("src", table["image"]);
+        } else if (e.type == "getMissingData") {
+            let table = e.data
+            $(".missing-information-title-holder").data("dbid", Number(table["id"]));
+            $(".missing-info-plate-input").val(table["name"]);
+            $(".missing-info-owner-input").val(timeAgo(Number(table["date"])));
+            $(".missing-info-model-input").val(table["last_seen"]);
+            $(".missing-info-imageurl-input").val(table["image"]);
+            $(".missing-info-content").val(table["notes"]);
+            $(".missing-tags").empty();
+            $(".missing-info-image").attr("src", table["image"]);
         } else if (e.type == "updateVehicleDbId") {
             $(".vehicle-information-title-holder").data("dbid", Number(e.data));
         } else if (e.type == "updateIncidentDbId") {
@@ -3539,7 +4069,7 @@ $(document).ready(() => {
 
             $(".manage-incidents-tags-add-btn").css("pointer-events", "auto")
             $(".manage-incidents-reports-content").css("pointer-events", "auto")
-            $(".manage-incidents-officers-add-btn").css("pointer-events", "auto")
+            $(".manage-incidents-officeun-add-btn").css("pointer-events", "auto")
             $(".manage-incidents-civilians-add-btn").css("pointer-events", "auto")
             $(".manage-incidents-evidence-add-btn").css("pointer-events", "auto")
             $(".associated-incidents-tags-add-btn").css("pointer-events", "auto")
@@ -3548,60 +4078,28 @@ $(document).ready(() => {
         } else if (e.type == "callAttach") {
             $(".active-calls-item").filter("[data-id='" + e.callid + "']").children().children().find(".call-radio").html(e.data)
         } else if (e.type == "getAllLogs") {
-            let table = e.data
+            let table = e.data.reverse();
             $(".stafflogs-container").empty();
             $.each(table, function (index, value) {
-                $('.stafflogs-container').append(`<p style="margin : 0; padding-top:0.8vh;">• ${value.text} <span style="color: grey; float: right; padding-right: 1vh;">(${timeAgo(Number(value.time))})</span></p>`)
+                $('.stafflogs-container').prepend(`<p style="margin : 0; padding-top:0.8vh;">• ${value.text} <span style="color: grey; float: right; padding-right: 1vh;">(${timeAgo(Number(value.time))})</span></p>`)
             })
-        } else if (e.type == "statusImpound") {
-            const table = e.data
-            const plate = e.plate
-            const linkedreport = table['linkedreport']
-            const fee = table['fee']
-            const time = table['time'] * 1000
-
-            let localDate = new Date(time);
-            const impoundDate = localDate.toLocaleDateString('pt-br', { timeZone: 'America/Sao_Paulo' });
-            const impoundTime = localDate.toLocaleTimeString('pt-br', { timeZone: 'America/Sao_Paulo' });
-
-            $(".impound-plate").val(plate).attr("disabled", "disabled")
-            $(".impound-linkedreport").val(linkedreport).attr("disabled", "disabled")
-            $(".impound-fee").val("$" + fee).attr("disabled", "disabled")
-
-            if (table.paid === 1) {
-                $(".impound-fee").css("color", "green")
-            } else {
-                $(".impound-fee").css("color", "red")
-            }
-
-            $(".impound-time").val(impoundDate + "  -  " + impoundTime).attr("disabled", "disabled")
-            $(".impound-cancel").html("Close")
-            $(".impound-submit").fadeOut(250)
-            $(".impound-form").slideDown(250)
-            $(".impound-form").fadeIn(250)
-        } else if (e.type == "greenShit") {
-            $(".vehicle-tags").find(".impound-tag").addClass("green-tag").removeClass("red-tag")
         } else if (e.type == "getActiveUnits") {
             var PoliceCount = 0
             var EmsCount = 0
-            var DocCount = 0
-            var PaCount = 0
+            var DojCount = 0
 
             const police = e.police
-            const bcso = e.bcso
-            const sast = e.sast
-            const sasp = e.sasp
-            const doc = e.doc
-            const sapr = e.sapr
-            const PublicAffairs = e.pa
+            const sheriff = e.sheriff
+            const state_police = e.state_police
+            const park_ranger = e.park_ranger
             const ems = e.ems
+            const doj = e.doj
 
             $(".active-unit-list").empty();
 
             $.each(police, function (index, value) {
                 var status = "10-8"
                 var statuscolor = "green-status"
-                var radioback = "var(--color-3)"
                 var radio = "0"
                 var callsign = "000"
                 if (value.duty == 0) {
@@ -3610,25 +4108,25 @@ $(document).ready(() => {
                 } else if (value.duty == 1) {
                     PoliceCount = PoliceCount + 1
                 }
-                if (value.radio) { radio = value.radio }
-                if (value.sig100) {
-                    radioback = "#7b2c2c"
+                if (value.radio) {
+                    radio = value.radio
                 }
-                if (value.callsign) { callsign = value.callsign }
+                if (value.callsign) {
+                    callsign = value.callsign
+                }
                 $('.active-unit-list').prepend(`
                 <div class="active-unit-item" data-id="${value.cid}">
                     <div class="unit-status ${statuscolor}">${status}</div>
-                    <div class="unit-job active-info-job-police">LSSD</div>
+                    <div class="unit-job active-info-job-lspd">LSPD</div>
                     <div class="unit-name">(${callsign}) ${value.name}</div>
-                    <div class="unit-radio" style="background-color: ${radioback};">${radio}</div>
+                    <div class="unit-radio">${radio}</div>
                 </div>
                 `)
             })
 
-            $.each(bcso, function (index, value) {
+            $.each(sheriff, function (index, value) {
                 var status = "10-8"
                 var statuscolor = "green-status"
-                var radioback = "var(--color-3)"
                 var radio = "0"
                 var callsign = "000"
                 if (value.duty == 0) {
@@ -3637,25 +4135,25 @@ $(document).ready(() => {
                 } else if (value.duty == 1) {
                     PoliceCount = PoliceCount + 1
                 }
-                if (value.radio) { radio = value.radio }
-                if (value.sig100) {
-                    radioback = "#7b2c2c"
+                if (value.radio) {
+                    radio = value.radio
                 }
-                if (value.callsign) { callsign = value.callsign }
+                if (value.callsign) {
+                    callsign = value.callsign
+                }
                 $('.active-unit-list').prepend(`
                 <div class="active-unit-item" data-id="${value.cid}">
                     <div class="unit-status ${statuscolor}">${status}</div>
-                    <div class="unit-job active-info-job-bcso">BCSO</div>
+                    <div class="unit-job active-info-job-lspd">BCSO</div>
                     <div class="unit-name">(${callsign}) ${value.name}</div>
-                    <div class="unit-radio" style="background-color: ${radioback};">${radio}</div>
+                    <div class="unit-radio">${radio}</div>
                 </div>
                 `)
             })
 
-            $.each(sast, function (index, value) {
+            $.each(state_police, function (index, value) {
                 var status = "10-8"
                 var statuscolor = "green-status"
-                var radioback = "var(--color-3)"
                 var radio = "0"
                 var callsign = "000"
                 if (value.duty == 0) {
@@ -3664,25 +4162,25 @@ $(document).ready(() => {
                 } else if (value.duty == 1) {
                     PoliceCount = PoliceCount + 1
                 }
-                if (value.radio) { radio = value.radio }
-                if (value.sig100) {
-                    radioback = "#7b2c2c"
+                if (value.radio) {
+                    radio = value.radio
                 }
-                if (value.callsign) { callsign = value.callsign }
+                if (value.callsign) {
+                    callsign = value.callsign
+                }
                 $('.active-unit-list').prepend(`
                 <div class="active-unit-item" data-id="${value.cid}">
                     <div class="unit-status ${statuscolor}">${status}</div>
-                    <div class="unit-job active-info-job-sast">SAST</div>
+                    <div class="unit-job active-info-job-lspd">SASP</div>
                     <div class="unit-name">(${callsign}) ${value.name}</div>
-                    <div class="unit-radio" style="background-color: ${radioback};">${radio}</div>
+                    <div class="unit-radio">${radio}</div>
                 </div>
                 `)
             })
 
-            $.each(sasp, function (index, value) {
+            $.each(park_ranger, function (index, value) {
                 var status = "10-8"
                 var statuscolor = "green-status"
-                var radioback = "var(--color-3)"
                 var radio = "0"
                 var callsign = "000"
                 if (value.duty == 0) {
@@ -3691,99 +4189,18 @@ $(document).ready(() => {
                 } else if (value.duty == 1) {
                     PoliceCount = PoliceCount + 1
                 }
-                if (value.radio) { radio = value.radio }
-                if (value.sig100) {
-                    radioback = "#7b2c2c"
+                if (value.radio) {
+                    radio = value.radio
                 }
-                if (value.callsign) { callsign = value.callsign }
+                if (value.callsign) {
+                    callsign = value.callsign
+                }
                 $('.active-unit-list').prepend(`
                 <div class="active-unit-item" data-id="${value.cid}">
                     <div class="unit-status ${statuscolor}">${status}</div>
-                    <div class="unit-job active-info-job-sasp">SASP</div>
+                    <div class="unit-job active-info-job-lspd">SAPR</div>
                     <div class="unit-name">(${callsign}) ${value.name}</div>
-                    <div class="unit-radio" style="background-color: ${radioback};">${radio}</div>
-                </div>
-                `)
-            })
-
-            $.each(doc, function (index, value) {
-                var status = "10-8"
-                var statuscolor = "green-status"
-                var radio = "0"
-                var radioback = "var(--color-3)"
-                var callsign = "000"
-                if (value.duty == 0) {
-                    status = "10-7"
-                    statuscolor = "yellow-status"
-                } else if (value.duty == 1) {
-                    DocCount = DocCount + 1
-                }
-                if (value.radio) { radio = value.radio }
-                if (value.sig100) {
-                    radioback = "#7b2c2c"
-                }
-                if (value.callsign) { callsign = value.callsign }
-                $('.active-unit-list').prepend(`
-                <div class="active-unit-item" data-id="${value.cid}">
-                    <div class="unit-status ${statuscolor}">${status}</div>
-                    <div class="unit-job active-info-job-doc">DOC</div>
-                    <div class="unit-name">(${callsign}) ${value.name}</div>
-                    <div class="unit-radio" style="background-color: ${radioback};">${radio}</div>
-                </div>
-                `)
-            })
-
-            $.each(sapr, function (index, value) {
-                var status = "10-8"
-                var statuscolor = "green-status"
-                var radio = "0"
-                var radioback = "var(--color-3)"
-                var callsign = "000"
-                if (value.duty == 0) {
-                    status = "10-7"
-                    statuscolor = "yellow-status"
-                } else if (value.duty == 1) {
-                    PoliceCount = PoliceCount + 1
-                }
-                if (value.radio) { radio = value.radio }
-                if (value.sig100) {
-                    radioback = "#7b2c2c"
-                }
-                if (value.callsign) { callsign = value.callsign }
-                $('.active-unit-list').prepend(`
-                <div class="active-unit-item" data-id="${value.cid}">
-                    <div class="unit-status ${statuscolor}">${status}</div>
-                    <div class="unit-job active-info-job-sapr">SAPR</div>
-                    <div class="unit-name">(${callsign}) ${value.name}</div>
-                    <div class="unit-radio" style="background-color: ${radioback};">${radio}</div>
-                </div>
-                `)
-            })
-
-            $.each(PublicAffairs, function (index, value) {
-                var status = "10-8"
-                var statuscolor = "green-status"
-                var radio = "0"
-                var radioback = "var(--color-3)"
-                var callsign = "000"
-                if (value.duty == 0) {
-                    status = "10-7"
-                    statuscolor = "yellow-status"
-                } else if (value.duty == 1) {
-                    PaCount = PaCount + 1
-                }
-                if (value.radio) { radio = value.radio }
-                if (value.sig100) {
-                    radioback = "#7b2c2c"
-                }
-                if (value.callsign) { callsign = value.callsign }
-
-                $('.active-unit-list').prepend(`
-                <div class="active-unit-item" data-id="${value.cid}">
-                    <div class="unit-status ${statuscolor}">${status}</div>
-                    <div class="unit-job active-info-job-pa">DOJ</div>
-                    <div class="unit-name">(${callsign}) ${value.name}</div>
-                    <div class="unit-radio" style="background-color: ${radioback};">${radio}</div>
+                    <div class="unit-radio">${radio}</div>
                 </div>
                 `)
             })
@@ -3792,7 +4209,6 @@ $(document).ready(() => {
                 var status = "10-8"
                 var statuscolor = "green-status"
                 var radio = "0"
-                var radioback = "var(--color-3)"
                 var callsign = "000"
                 if (value.duty == 0) {
                     status = "10-7"
@@ -3800,26 +4216,56 @@ $(document).ready(() => {
                 } else if (value.duty == 1) {
                     EmsCount = EmsCount + 1
                 }
-                if (value.radio) { radio = value.radio }
-                if (value.sig100) {
-                    radioback = "#7b2c2c"
+                if (value.radio) {
+                    radio = value.radio
                 }
-                if (value.callsign) { callsign = value.callsign }
+                if (value.callsign) {
+                    callsign = value.callsign
+                }
                 $('.active-unit-list').prepend(`
                 <div class="active-unit-item" data-id="${value.cid}">
                     <div class="unit-status ${statuscolor}">${status}</div>
-                    <div class="unit-job active-info-job-ambulance">EMS</div>
+                    <div class="unit-job active-info-job-ems">EMS</div>
                     <div class="unit-name">(${callsign}) ${value.name}</div>
-                    <div class="unit-radio" style="background-color: ${radioback};">${radio}</div>
+                    <div class="unit-radio">${radio}</div>
+                </div>
+                `)
+            })
+
+            $.each(doj, function (index, value) {
+                var status = "10-8"
+                var statuscolor = "green-status"
+                var radio = "0"
+                var callsign = "000"
+                if (value.duty == 0) {
+                    status = "10-7"
+                    statuscolor = "yellow-status"
+                } else if (value.duty == 1) {
+                    DojCount = DojCount + 1
+                }
+                if (value.radio) {
+                    radio = value.radio
+                }
+                if (value.callsign) {
+                    callsign = value.callsign
+                }
+                $('.active-unit-list').prepend(`
+                <div class="active-unit-item" data-id="${value.cid}">
+                    <div class="unit-status ${statuscolor}">${status}</div>
+                    <div class="unit-job active-info-job-doj">DOJ</div>
+                    <div class="unit-name">(${callsign}) ${value.name}</div>
+                    <div class="unit-radio">${radio}</div>
                 </div>
                 `)
             })
 
             $("#police-count").html(PoliceCount)
             $("#ems-count").html(EmsCount)
-            $("#doc-count").html(DocCount)
-            $("#pa-count").html(PaCount)
-
+            $("#doj-count").html(DojCount)
+        } else if (e.type == "UpdatePoliceRoster") {
+            PoliceRoster = e.data
+        } else if (e.type == "UpdateEMSRoster") {
+            EMSRoster = e.data
         }
     });
 })
@@ -3827,8 +4273,14 @@ $(document).ready(() => {
 function fidgetSpinner(page) {
     $(".close-all").fadeOut(0)
     $(".container-load").fadeIn(0);
+    if (page == '.profile-page-container') {
+        $.post('https://caue-mdt/getAllProfiles', JSON.stringify({}));
+    }
     if (page == '.bolos-page-container') {
         $.post('https://caue-mdt/getAllBolos', JSON.stringify({}));
+    }
+    if (page == '.missing-page-container') {
+        $.post('https://caue-mdt/getAllMissing', JSON.stringify({}));
     }
     if (page == '.reports-page-container') {
         $.post('https://caue-mdt/getAllReports', JSON.stringify({}));
@@ -3842,19 +4294,21 @@ function fidgetSpinner(page) {
     if (page == '.dmv-page-container') {
         $.post('https://caue-mdt/getAllVehicles', JSON.stringify({}));
     }
-    if (page == '.profile-page-container') {
-        $.post('https://caue-mdt/getAllProfiles', JSON.stringify({}));
+    if (page == '.weapons-page-container') {
+        $.post('https://caue-mdt/getAllWeapons', JSON.stringify({}));
     }
-    setTimeout(() => {
-        $(".container-load").fadeOut(0);
-        $(page).fadeIn(0)
-    }, 1250);
+    $(".container-load").fadeOut(0);
+    $(page).fadeIn(0)
 }
 
 function timeShit() {
     let localDate = new Date();
-    date = localDate.toLocaleDateString('pt-br', { timeZone: 'America/Sao_Paulo' });
-    time = localDate.toLocaleTimeString('pt-br', { timeZone: 'America/Sao_Paulo' });
+    date = localDate.toLocaleDateString('pt-br', {
+        timeZone: 'America/Sao_Paulo'
+    });
+    time = localDate.toLocaleTimeString('pt-br', {
+        timeZone: 'America/Sao_Paulo'
+    });
     $(".date").html(date)
     $(".time").html(time)
 }
@@ -3863,12 +4317,18 @@ setInterval(timeShit, 1000)
 
 function addTag(tagInput) {
     $('.tags-holder').prepend(`<div class="tag">${tagInput}</div>`);
-
     $.post('https://caue-mdt/newTag', JSON.stringify({
         id: $(".manage-profile-citizenid-input").val(),
         tag: tagInput
     }));
+}
 
+function addWeapon(Input) {
+    $('.weapons-holder').prepend(`<div class="tag">${Input}</div>`);
+    $.post('https://caue-mdt/newWeapon', JSON.stringify({
+        id: $(".manage-profile-citizenid-input").val(),
+        serialnumber: Input
+    }));
 }
 
 // Context menu
@@ -3891,24 +4351,26 @@ function onMouseDown(e) {
 }
 
 function openContextMenu(e, args) {
-    e.preventDefault();
-    showMenu(e.pageX, e.pageY);
-    $(".contextmenu").empty();
-    $.each(args, function (index, value) {
-        if (value.status !== "blur(5px)") {
-            $(".contextmenu").prepend(
-                `
-                <li class="contextmenu-item ${value.className}" data-info="${value.info}" data-status="${value.status}">
-                    <a href="#" class="contextmenu-btn">
-                        <i class="${value.icon}"></i>
-                        <span class="contextmenu-text">${value.text}</span>
-                    </a>
-                </li>
-                `
-            );
-        }
-    })
-    document.addEventListener('mouseup', onMouseDown);
+    if (isPublicRecords == false) {
+        e.preventDefault();
+        showMenu(e.pageX, e.pageY);
+        $(".contextmenu").empty();
+        $.each(args, function (index, value) {
+            if (value.status !== "blur(5px)") {
+                $(".contextmenu").prepend(
+                    `
+                    <li class="contextmenu-item ${value.className}" data-info="${value.info}" data-status="${value.status}">
+                        <a href="#" class="contextmenu-btn">
+                            <i class="${value.icon}"></i>
+                            <span class="contextmenu-text">${value.text}</span>
+                        </a>
+                    </li>
+                    `
+                );
+            }
+        })
+        document.addEventListener('mouseup', onMouseDown);
+    }
 }
 
 function expandImage(url) {
@@ -3928,7 +4390,7 @@ function removeImage(url) {
 }
 
 function hideIcidentsMenu() {
-    if ($(".icidents-person-search-container").css("display") != "none" && ! mouse_is_inside) {
+    if ($(".icidents-person-search-container").css("display") != "none" && !mouse_is_inside) {
         $(".icidents-person-search-container").fadeOut(250);
         $(".close-all").css("filter", "none");
     }
@@ -3939,25 +4401,25 @@ function onMouseDownIcidents(e) {
     document.removeEventListener('mouseup', onMouseDownIcidents);
 }
 
-window.addEventListener("load", function(){
-    document.getElementById("offenses-search").addEventListener("keyup", function(){
-      var search = this.value.toLowerCase();
-          if (search.length > 1) {
-              $.each($(".offense-item"), function(i, d) {
-                  const Name = $(this).find(".offense-item-offense").html().toLowerCase();
-                  const Number = $(this).find(".offense-item-id").html().toLowerCase();
-                  if (Name.includes(search)) {
-                      $(this).show()
-                  } else if (Number.includes(search)) {
-                      $(this).show()
-                  } else {
-                      $(this).hide()
-                  }
-              })
-          } else {
-              $.each($(".offense-item"), function(i, d) {
-                  $(this).show()
-              })
-          }
+window.addEventListener("load", function () {
+    document.getElementById("offenses-search").addEventListener("keyup", function () {
+        var search = this.value.toLowerCase();
+        if (search.length > 1) {
+            $.each($(".offense-item"), function (i, d) {
+                const Name = $(this).find(".offense-item-offense").html().toLowerCase();
+                const Number = $(this).find(".offense-item-id").html().toLowerCase();
+                if (Name.includes(search)) {
+                    $(this).show()
+                } else if (Number.includes(search)) {
+                    $(this).show()
+                } else {
+                    $(this).hide()
+                }
+            })
+        } else {
+            $.each($(".offense-item"), function (i, d) {
+                $(this).show()
+            })
+        }
     });
-  });
+});

@@ -80,25 +80,25 @@ Entries[#Entries + 1] = {
     }
 }
 
-Entries[#Entries + 1] = {
-    type = "entity",
-    group = { 2 },
-    data = {
-        {
-            id = "vehicle_inspectvin",
-            label = "Checar VIN",
-            icon = "sim-card",
-            event = "vehicle:checkVIN",
-            parameters = {}
-        }
-    },
-    options = {
-        distance = { radius = 3.0 },
-        isEnabled = function(pEntity, pContext)
-            return isCloseToHood(pEntity, PlayerPedId()) and (exports["caue-jobs"]:getJob(false, "is_police") or exports["caue-jobs"]:getJob(false, "is_medic")) and not IsPedInAnyVehicle(PlayerPedId(), false)
-        end
-    }
-}
+-- Entries[#Entries + 1] = {
+--     type = "entity",
+--     group = { 2 },
+--     data = {
+--         {
+--             id = "vehicle_inspectvin",
+--             label = "Checar VIN",
+--             icon = "sim-card",
+--             event = "vehicle:checkVIN",
+--             parameters = {}
+--         }
+--     },
+--     options = {
+--         distance = { radius = 3.0 },
+--         isEnabled = function(pEntity, pContext)
+--             return isCloseToHood(pEntity, PlayerPedId()) and (exports["caue-jobs"]:getJob(false, "is_police") or exports["caue-jobs"]:getJob(false, "is_medic")) and not IsPedInAnyVehicle(PlayerPedId(), false)
+--         end
+--     }
+-- }
 
 Entries[#Entries + 1] = {
     type = "entity",

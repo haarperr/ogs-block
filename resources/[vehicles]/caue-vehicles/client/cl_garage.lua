@@ -96,11 +96,7 @@ AddEventHandler("caue-vehicles:garage", function(params)
         return
     end
 
-    print(json.encode(garage))
-
     if garage["houseid"] and not exports["caue-housing"]:hasKey(garage["houseid"]) then
-        print(exports["caue-housing"]:hasKey(garage["houseid"]))
-        print(garage["houseid"])
         TriggerEvent("DoLongHudText", "You can't use this garage", 2)
         return
     end

@@ -45,20 +45,20 @@ local MenuOptions = {
     },
 }
 
-Citizen.CreateThread(function()
-    for index, data in ipairs(MenuOptions) do
-        SubMenu[index] = data.id
-        MenuItems[data.id] = {data = data}
-    end
-    GeneralEntries[#GeneralEntries+1] = {
-        data = {
-            id = "radio:switchChannel",
-            icon = "#general-door-keyFob",
-            title = "Radio",
-        },
-        subMenus = SubMenu,
-        isEnabled = function()
-            return exports["caue-jobs"]:getJob(CurrentJob, "is_police") and not exports["caue-base"]:getVar("dead")
-        end,
-    }
-end)
+-- Citizen.CreateThread(function()
+--     for index, data in ipairs(MenuOptions) do
+--         SubMenu[index] = data.id
+--         MenuItems[data.id] = {data = data}
+--     end
+--     GeneralEntries[#GeneralEntries+1] = {
+--         data = {
+--             id = "radio:switchChannel",
+--             icon = "#general-door-keyFob",
+--             title = "Radio",
+--         },
+--         subMenus = SubMenu,
+--         isEnabled = function()
+--             return exports["caue-jobs"]:getJob(CurrentJob, "is_police") and not exports["caue-base"]:getVar("dead")
+--         end,
+--     }
+-- end)

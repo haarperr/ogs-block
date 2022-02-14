@@ -372,29 +372,30 @@ local ColorInformation = {
 ]]
 
 function EnableGUI(enable)
-    local jobRank = {}
+    local job = exports["caue-base"]:getChar("job")
+    if job == "judge" or job == "defender" or job == "district attorney" then
+        job = "doj"
+    end
+
+    local jobRank = RPC.execute("caue-groups:rankInfos", job, exports["caue-groups"]:GroupRank(job))
 
     if enable then
-        TriggerServerEvent("caue-mdt:opendashboard")
-
-        if currentJob == "ems" then
-            TriggerServerEvent("caue-mdt:getAllReports")
-        end
-
-        local job = exports["caue-base"]:getChar("job")
-        if job == "judge" or job == "defender" or job == "district attorney" then
-            job = "doj"
-        end
-
-        jobRank = RPC.execute("caue-groups:rankInfos", job, exports["caue-groups"]:GroupRank(job))
+        SendNUIMessage({type = "bulletin", data = RPC.execute("caue-mdt:dashboardBulletin")})
+        SendNUIMessage({type = "dispatchmessages", data = RPC.execute("caue-mdt:dashboardMessages")})
+        local police, sheriff, state_police, park_ranger, ems, doj = RPC.execute("caue-mdt:getActiveUnits")
+        SendNUIMessage({type = "getActiveUnits", police = police, sheriff = sheriff, state_police = state_police, park_ranger = park_ranger, ems = ems, doj = doj})
+        SendNUIMessage({type = "UpdatePoliceRoster", data = "https://docs.google.com/spreadsheets/d/1DCW_5vRmRCBPwMo9fRPdBy6N-PiLfyFqrFLpdp9Jcbs/edit#gid=0"})
+        SendNUIMessage({type = "UpdateEMSRoster", data = ""})
+        SendNUIMessage({type = "warrants", data = RPC.execute("caue-mdt:getWarrants")})
+        SendNUIMessage({type = "calls", data = RPC.execute("caue-mdt:getCalls")})
     end
 
     SetNuiFocus(enable, enable)
     SendNUIMessage({
         type = "show",
         enable = enable,
-        job = currentJob,
-        rank = jobRank
+        job = job,
+        isAdmin = jobRank.hire
     })
 
     isOpen = enable
@@ -402,15 +403,65 @@ function EnableGUI(enable)
 end
 
 function RefreshGUI()
+    local job = exports["caue-base"]:getChar("job")
+    if job == "judge" or job == "defender" or job == "district attorney" then
+        job = "doj"
+    end
+
+    local jobRank = RPC.execute("caue-groups:rankInfos", job, exports["caue-groups"]:GroupRank(job))
+
     SetNuiFocus(false, false)
     SendNUIMessage({
         type = "show",
         enable = false,
-        job = currentJob
+        job = job,
+        isAdmin = jobRank.hire
     })
 
     isOpen = false
 end
+
+AddEventHandler("caue-mdt:publicRecords", function()
+    isOpen = true
+
+    SetNuiFocus(true, true)
+    SendNUIMessage({
+        type = "PublicRecords",
+        settings = {
+            ["AllowImageChange"] = false
+        }
+    })
+
+    TriggerEvent("caue-mdt:animation")
+
+    local x, y, z = table.unpack(GetEntityCoords(PlayerPedId()))
+
+    local currentStreetHash, intersectStreetHash = GetStreetNameAtCoord(x, y, z)
+    local currentStreetName = GetStreetNameFromHashKey(currentStreetHash)
+    local intersectStreetName = GetStreetNameFromHashKey(intersectStreetHash)
+    local zone = tostring(GetNameOfZone(x, y, z))
+    local area = GetLabelText(zone)
+    local playerStreetsLocation = area
+
+    if not zone then zone = "UNKNOWN" end
+
+    if intersectStreetName ~= nil and intersectStreetName ~= "" then
+        playerStreetsLocation = currentStreetName .. ", " .. intersectStreetName .. ", " .. area
+    elseif currentStreetName ~= nil and currentStreetName ~= "" then
+        playerStreetsLocation = currentStreetName .. ", " .. area
+    else
+        playerStreetsLocation = area
+    end
+
+    local fullName = exports["caue-base"]:getChar("first_name") .. " " .. exports["caue-base"]:getChar("last_name")
+
+    SendNUIMessage({
+        type = "data",
+        name = "Bem-vindo, " .. fullName,
+        location = playerStreetsLocation,
+        fullname = fullName
+    })
+end)
 
 RegisterNetEvent("caue-jobs:jobChanged")
 AddEventHandler("caue-jobs:jobChanged", function(job)
@@ -453,7 +504,9 @@ AddEventHandler("caue-mdt:open", function()
 
     SendNUIMessage({
         type = "data",
-        name = "Bem-vindo, " .. fullName, location = playerStreetsLocation, fullname = fullName
+        name = "Bem-vindo, " .. fullName,
+        location = playerStreetsLocation,
+        fullname = fullName
     })
 end)
 
@@ -588,7 +641,6 @@ AddEventHandler("caue-mdt:dashboardMessage", function(sentData, job)
     end
 end)
 
-
 --[[
 
     Units
@@ -664,6 +716,19 @@ AddEventHandler("dispatch:clNotify", function(sNotificationData, sNotificationId
     })
 end)
 
+RegisterNUICallback("removeCall", function(data, cb)
+    TriggerServerEvent("caue-mdt:removeCall", data.callid)
+
+    cb(true)
+end)
+
+RegisterNetEvent("caue-mdt:removeCall", function(pCallId)
+    SendNUIMessage({
+        type = "removeCall",
+        callid = pCallId
+    })
+end)
+
 RegisterNUICallback("setWaypoint", function(data, cb)
     local call = RPC.execute("caue-dispatch:getCall", data.callid)
 
@@ -710,18 +775,15 @@ AddEventHandler("caue-mdt:callDetach", function(callid, sentData)
 end)
 
 RegisterNUICallback("attachedUnits", function(data, cb)
-    TriggerServerEvent("caue-mdt:attachedUnits", data.callid)
+    local units, callid = RPC.execute("caue-mdt:attachedUnits", data.callid)
 
-    cb(true)
-end)
-
-RegisterNetEvent("caue-mdt:attachedUnits")
-AddEventHandler("caue-mdt:attachedUnits", function(sentData, callid)
     SendNUIMessage({
         type = "attachedUnits",
-        data = sentData,
-        callid = callid
+        data = units,
+        callid = data.callid
     })
+
+    cb(true)
 end)
 
 RegisterNUICallback("callDragAttach", function(data, cb)
@@ -799,54 +861,58 @@ end)
 ]]
 
 RegisterNUICallback("getAllProfiles", function(data, cb)
-    TriggerServerEvent("caue-mdt:getAllProfiles", data.name)
+    local is_police = exports["caue-jobs"]:getJob(false, "is_police")
+    local is_doj = exports["caue-jobs"]:getJob(false, "is_doj")
+
+    SendNUIMessage({
+        type = "profiles",
+        data = RPC.execute("caue-mdt:searchProfile", ""),
+        isLimited = (is_police == false and is_doj == false)
+    })
+
     cb(true)
 end)
 
-RegisterNetEvent("caue-mdt:searchProfile")
-AddEventHandler("caue-mdt:searchProfile", function(sentData, isLimited)
+RegisterNUICallback("searchProfiles", function(data, cb)
+    local is_police = exports["caue-jobs"]:getJob(false, "is_police")
+    local is_doj = exports["caue-jobs"]:getJob(false, "is_doj")
+
     SendNUIMessage({
         type = "profiles",
-        data = sentData,
-        isLimited = isLimited
+        data = RPC.execute("caue-mdt:searchProfile", data.name),
+        isLimited = (is_police == false and is_doj == false)
     })
-end)
 
-RegisterNUICallback("searchProfiles", function(data, cb)
-    TriggerServerEvent("caue-mdt:searchProfile", data.name)
     cb(true)
 end)
 
 RegisterNUICallback("getProfileData", function(data, cb)
-    TriggerServerEvent("caue-mdt:getProfileData", data.id)
-    cb(true)
-end)
+    local is_police = exports["caue-jobs"]:getJob(false, "is_police")
+    local is_doj = exports["caue-jobs"]:getJob(false, "is_doj")
+    local isLimited = (is_police == false and is_doj == false)
 
-RegisterNetEvent("caue-mdt:getProfileData")
-AddEventHandler("caue-mdt:getProfileData", function(sentData)
-    local vehicles = sentData["vehicles"]
-
-    for i = 1, #vehicles do
-        sentData["vehicles"][i]["plate"] = string.upper(sentData["vehicles"][i]["plate"])
-
-        local tempModel = vehicles[i]["model"]
-
-        if tempModel and tempModel ~= "Unknown" then
-            local DisplayNameModel = GetDisplayNameFromVehicleModel(tempModel)
-            local LabelText = GetLabelText(DisplayNameModel)
-
-            if LabelText == "NULL" then
-                LabelText = DisplayNameModel
+    local ProfileData = RPC.execute("caue-mdt:getProfileData", data.id)
+    if not isLimited then
+        local vehicles = ProfileData["vehicles"]
+        for i = 1, #vehicles do
+            ProfileData["vehicles"][i]["plate"] = string.upper(ProfileData["vehicles"][i]["plate"])
+            local tempModel = vehicles[i]["model"]
+            if tempModel and tempModel ~= "Unknown" then
+                local DisplayNameModel = GetDisplayNameFromVehicleModel(tempModel)
+                local LabelText = GetLabelText(DisplayNameModel)
+                if LabelText == "NULL" then LabelText = DisplayNameModel end
+                ProfileData["vehicles"][i]["model"] = LabelText
             end
-
-            sentData["vehicles"][i]["model"] = LabelText
         end
     end
 
     SendNUIMessage({
         type = "profileData",
-        data = sentData
+        data = ProfileData,
+        isLimited = isLimited
     })
+
+    cb(true)
 end)
 
 RegisterNUICallback("saveProfile", function(data, cb)
@@ -879,6 +945,13 @@ RegisterNUICallback("removeGalleryImg", function(data, cb)
     cb(true)
 end)
 
+RegisterNUICallback("searchHouse", function(data, cb)
+    local houseInfo = exports["caue-housing"]:getHouse(data.house_id)
+    TriggerEvent("DoLongHudText", "GPS marcado!")
+    SetNewWaypoint(houseInfo["pos"].x, houseInfo["pos"].y)
+    cb(true)
+end)
+
 --[[
 
     Incidents
@@ -886,78 +959,55 @@ end)
 ]]
 
 RegisterNUICallback("getAllIncidents", function(data, cb)
-    TriggerServerEvent("caue-mdt:getAllIncidents")
-    cb(true)
-end)
-
-RegisterNetEvent("caue-mdt:getAllIncidents")
-AddEventHandler("caue-mdt:getAllIncidents", function(sentData)
     SendNUIMessage({
         type = "incidents",
-        data = sentData
+        data = RPC.execute("caue-mdt:getAllIncidents")
     })
+
+    cb(true)
 end)
 
 RegisterNUICallback("searchIncidents", function(data, cb)
-    TriggerServerEvent("caue-mdt:searchIncidents", data.incident)
-    cb(true)
-end)
-
-RegisterNetEvent("caue-mdt:getIncidents")
-AddEventHandler("caue-mdt:getIncidents", function(sentData)
     SendNUIMessage({
         type = "incidents",
-        data = sentData
+        data = RPC.execute("caue-mdt:searchIncidents", data.incident)
     })
+
+    cb(true)
 end)
 
 RegisterNUICallback("getIncidentData", function(data, cb)
-    TriggerServerEvent("caue-mdt:getIncidentData", data.id)
-    cb(true)
-end)
+    local sentData, sentConvictions = RPC.execute("caue-mdt:getIncidentData", data.id)
 
-RegisterNetEvent("caue-mdt:updateIncidentDbId")
-AddEventHandler("caue-mdt:updateIncidentDbId", function(sentData)
-    SendNUIMessage({
-        type = "updateIncidentDbId",
-        data = sentData
-    })
-end)
-
-RegisterNetEvent("caue-mdt:getIncidentData")
-AddEventHandler("caue-mdt:getIncidentData", function(sentData, sentConvictions)
     SendNUIMessage({
         type = "incidentData",
         data = sentData,
         convictions = sentConvictions
     })
+
+    cb(true)
 end)
 
 RegisterNUICallback("incidentSearchPerson", function(data, cb)
-    TriggerServerEvent("caue-mdt:incidentSearchPerson", data.name)
-    cb(true)
-end)
-
-RegisterNetEvent("caue-mdt:incidentSearchPerson")
-AddEventHandler("caue-mdt:incidentSearchPerson", function(sentData)
     SendNUIMessage({
         type = "incidentSearchPerson",
-        data = sentData
+        data = RPC.execute("caue-mdt:incidentSearchPerson", data.name)
     })
+
+    cb(true)
 end)
 
 RegisterNUICallback("getPenalCode", function(data, cb)
-    TriggerServerEvent("caue-mdt:getPenalCode")
-    cb(true)
-end)
+    local titles, penalcode, job = RPC.execute("caue-mdt:getPenalCode")
 
-RegisterNetEvent("caue-mdt:getPenalCode")
-AddEventHandler("caue-mdt:getPenalCode", function(titles, penalcode)
     SendNUIMessage({
         type = "getPenalCode",
         titles = titles,
-        penalcode = penalcode
+        penalcode = penalcode,
+        job = job
     })
+
+    cb(true)
 end)
 
 RegisterNUICallback("saveIncident", function(data, cb)
@@ -970,6 +1020,10 @@ RegisterNUICallback("removeIncidentCriminal", function(data, cb)
     cb(true)
 end)
 
+RegisterNUICallback("deleteIncident", function(data, cb)
+    TriggerServerEvent("caue-mdt:deleteIncident", data.id, data.time)
+end)
+
 --[[
 
     Reports
@@ -977,34 +1031,30 @@ end)
 ]]
 
 RegisterNUICallback("getAllReports", function(data, cb)
-    TriggerServerEvent("caue-mdt:getAllReports")
+    SendNUIMessage({
+        type = "reports",
+        data = RPC.execute("caue-mdt:searchReports", "")
+    })
+
     cb(true)
 end)
 
-RegisterNetEvent("caue-mdt:getAllReports")
-AddEventHandler("caue-mdt:getAllReports", function(sentData)
+RegisterNUICallback("searchReports", function(data, cb)
     SendNUIMessage({
         type = "reports",
-        data = sentData
+        data = RPC.execute("caue-mdt:searchReports", data.name)
     })
-end)
 
-RegisterNUICallback("searchReports", function(data, cb)
-    TriggerServerEvent("caue-mdt:searchReports", data.name)
     cb(true)
 end)
 
 RegisterNUICallback("getReportData", function(data, cb)
-    TriggerServerEvent("caue-mdt:getReportData", data.id)
-    cb(true)
-end)
-
-RegisterNetEvent("caue-mdt:getReportData")
-AddEventHandler("caue-mdt:getReportData", function(sentData)
     SendNUIMessage({
         type = "reportData",
-        data = sentData
+        data = RPC.execute("caue-mdt:getReportData", data.id)
     })
+
+    cb(true)
 end)
 
 RegisterNUICallback("newReport", function(data, cb)
@@ -1020,6 +1070,10 @@ AddEventHandler("caue-mdt:reportComplete", function(sentData)
     })
 end)
 
+RegisterNUICallback("deleteReport", function(data, cb)
+    TriggerServerEvent("caue-mdt:deleteReport", data.id, data.time)
+end)
+
 --[[
 
     BOLOs
@@ -1027,35 +1081,30 @@ end)
 ]]
 
 RegisterNUICallback("getAllBolos", function(data, cb)
-    TriggerServerEvent("caue-mdt:getAllBolos")
+    SendNUIMessage({
+        type = "bolos",
+        data = RPC.execute("caue-mdt:searchBolos", "")
+    })
+
     cb(true)
 end)
 
-RegisterNetEvent("caue-mdt:getBolos")
-AddEventHandler("caue-mdt:getBolos", function(sentData)
+RegisterNUICallback("searchBolos", function(data, cb)
     SendNUIMessage({
         type = "bolos",
-        data = sentData
+        data = RPC.execute("caue-mdt:searchBolos", data.searchVal)
     })
-end)
 
-RegisterNUICallback("searchBolos", function(data, cb)
-    local searchVal = data.searchVal
-    TriggerServerEvent("caue-mdt:searchBolos", searchVal)
     cb(true)
 end)
 
 RegisterNUICallback("getBoloData", function(data, cb)
-    TriggerServerEvent("caue-mdt:getBoloData", data.id)
-    cb(true)
-end)
-
-RegisterNetEvent("caue-mdt:getBoloData")
-AddEventHandler("caue-mdt:getBoloData", function(sentData)
     SendNUIMessage({
         type = "boloData",
-        data = sentData
+        data = RPC.execute("caue-mdt:getBoloData", data.id)
     })
+
+    cb(true)
 end)
 
 RegisterNUICallback("newBolo", function(data, cb)
@@ -1063,8 +1112,7 @@ RegisterNUICallback("newBolo", function(data, cb)
     cb(true)
 end)
 
-RegisterNetEvent("caue-mdt:boloComplete")
-AddEventHandler("caue-mdt:boloComplete", function(sentData)
+RegisterNetEvent("caue-mdt:boloComplete", function(sentData)
     SendNUIMessage({
         type = "boloComplete",
         data = sentData
@@ -1088,19 +1136,8 @@ end)
 ]]
 
 RegisterNUICallback("getAllVehicles", function(data, cb)
-    TriggerServerEvent("caue-mdt:getAllVehicles")
-    cb(true)
-end)
+    local sentData = RPC.execute("caue-mdt:searchVehicles", "")
 
-RegisterNUICallback("searchHouse", function(data, cb)
-    local houseInfo = exports["caue-housing"]:getHouse(data.house_id)
-    TriggerEvent("DoLongHudText", "GPS marcado!")
-    SetNewWaypoint(houseInfo["pos"].x, houseInfo["pos"].y)
-    cb(true)
-end)
-
-RegisterNetEvent("caue-mdt:searchVehicles")
-AddEventHandler("caue-mdt:searchVehicles", function(sentData)
     for i, v in ipairs(sentData) do
         sentData[i].color = ColorInformation[v.color1]
         sentData[i].colorName = ColorNames[v.color1]
@@ -1111,23 +1148,30 @@ AddEventHandler("caue-mdt:searchVehicles", function(sentData)
         type = "searchedVehicles",
         data = sentData
     })
-end)
 
-RegisterNUICallback("getVehicleData", function(data, cb)
-    TriggerServerEvent("caue-mdt:getVehicleData", data.plate)
     cb(true)
 end)
 
-RegisterNetEvent("caue-mdt:updateVehicleDbId")
-AddEventHandler("caue-mdt:updateVehicleDbId", function(sentData)
+RegisterNUICallback("searchVehicles", function(data, cb)
+    local sentData = RPC.execute("caue-mdt:searchVehicles", data.name)
+
+    for i, v in ipairs(sentData) do
+        sentData[i].color = ColorInformation[v.color1]
+        sentData[i].colorName = ColorNames[v.color1]
+        sentData[i].model = GetLabelText(GetDisplayNameFromVehicleModel(v.model))
+    end
+
     SendNUIMessage({
-        type = "updateVehicleDbId",
+        type = "searchedVehicles",
         data = sentData
     })
+
+    cb(true)
 end)
 
-RegisterNetEvent("caue-mdt:getVehicleData")
-AddEventHandler("caue-mdt:getVehicleData", function(sentData)
+RegisterNUICallback("getVehicleData", function(data, cb)
+    local sentData = RPC.execute("caue-mdt:getVehicleData", data.plate)
+
     sentData["color"] = ColorInformation[sentData["color1"]]
     sentData["colorName"] = ColorNames[sentData["color1"]]
     sentData["model"] = GetLabelText(GetDisplayNameFromVehicleModel(sentData["model"]))
@@ -1137,15 +1181,127 @@ AddEventHandler("caue-mdt:getVehicleData", function(sentData)
         type = "getVehicleData",
         data = sentData
     })
+
+    cb(true)
 end)
 
 RegisterNUICallback("saveVehicleInfo", function(data, cb)
     TriggerServerEvent("caue-mdt:saveVehicleInfo", data.dbid, data.plate, data.imageurl, data.notes)
+
     cb(true)
 end)
 
 RegisterNUICallback("knownInformation", function(data, cb)
     TriggerServerEvent("caue-mdt:knownInformation", data.dbid, data.type, data.status, data.plate)
+
+    cb(true)
+end)
+
+--[[
+
+    Weapons
+
+]]
+
+RegisterNUICallback("getAllWeapons", function(data, cb)
+    local sentData = RPC.execute("caue-mdt:searchWeapon", "")
+
+    SendNUIMessage({
+        type = "searchedWeapons",
+        data = sentData
+    })
+
+    cb(true)
+end)
+
+RegisterNUICallback("searchWeapon", function(data, cb)
+    local sentData = RPC.execute("caue-mdt:searchWeapon", data.name)
+
+    SendNUIMessage({
+        type = "searchedWeapons",
+        data = sentData
+    })
+
+    cb(true)
+end)
+
+RegisterNUICallback("getWeaponData", function(data, cb)
+    local sentData = RPC.execute("caue-mdt:getWeaponData", data.serialnumber)
+
+    SendNUIMessage({
+        type = "getWeaponData",
+        data = sentData
+    })
+
+    cb(true)
+end)
+
+RegisterNUICallback("newWeapon", function(data, cb)
+    TriggerServerEvent("caue-mdt:addWeapon", data.id, data.serialnumber)
+
+    cb(true)
+end)
+
+RegisterNUICallback("saveWeaponInfo", function(data, cb)
+    TriggerServerEvent("caue-mdt:saveWeapon", data.serialnumber, data.imageurl, data.brand, data.type, data.notes)
+
+    cb(true)
+end)
+
+--[[
+
+    Missing
+
+]]
+
+RegisterNUICallback("getAllMissing", function(data, cb)
+    local sentData = RPC.execute("caue-mdt:searchMissing", "")
+
+    SendNUIMessage({
+        type = "searchedMissing",
+        data = sentData
+    })
+
+    cb(true)
+end)
+
+RegisterNUICallback("searchMissing", function(data, cb)
+    local sentData = RPC.execute("caue-mdt:searchMissing", data.name)
+
+    SendNUIMessage({
+        type = "searchedMissing",
+        data = sentData
+    })
+
+    cb(true)
+end)
+
+RegisterNUICallback("getMissingData", function(data, cb)
+    local sentData = RPC.execute("caue-mdt:getMissingData", data.id)
+
+    SendNUIMessage({
+        type = "getMissingData",
+        data = sentData
+    })
+
+    cb(true)
+end)
+
+RegisterNUICallback("missingCitizen", function(data, cb)
+    TriggerServerEvent("caue-mdt:missingCitizen", data.cid, data.time)
+
+    cb(true)
+end)
+
+RegisterNUICallback("saveMissingInfo", function(data, cb)
+    TriggerServerEvent("caue-mdt:saveMissing", data.id, data.last_seen, data.imageurl, data.notes)
+
+    cb(true)
+end)
+
+RegisterNUICallback("deleteMissing", function(data, cb)
+    TriggerServerEvent("caue-mdt:deleteMissing", data.id, data.time)
+
     cb(true)
 end)
 
@@ -1156,14 +1312,33 @@ end)
 ]]
 
 RegisterNUICallback("getAllLogs", function(data, cb)
-    TriggerServerEvent("caue-mdt:getAllLogs")
+    SendNUIMessage({
+        type = "getAllLogs",
+        data = RPC.execute("caue-mdt:getAllLogs")
+    })
+
     cb(true)
 end)
 
-RegisterNetEvent("caue-mdt:getAllLogs")
-AddEventHandler("caue-mdt:getAllLogs", function(sentData)
-    SendNUIMessage({
-        type = "getAllLogs",
-        data = sentData
-    })
+--[[
+
+    Misc
+
+]]
+
+RegisterNetEvent("clientcheckLicensePlate")
+AddEventHandler("clientcheckLicensePlate", function(pDummy, pEntity)
+    local licensePlate = GetVehicleNumberPlateText(pEntity)
+    if licensePlate == nil then
+    	TriggerEvent("DoLongHudText", "Can not target vehicle", 2)
+    else
+        EnableGUI(true)
+
+        Citizen.Wait(250)
+
+        SendNUIMessage({
+            type = "checkPlate",
+            plate = licensePlate
+        })
+    end
 end)

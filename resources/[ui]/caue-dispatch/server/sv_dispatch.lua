@@ -16,6 +16,14 @@ function getCalls()
     return calls
 end
 
+function removeCall(pCallId)
+    if calls and calls[pCallId] then
+        calls[pCallId] = nil
+        return true
+    end
+    return false
+end
+
 function addUnit(player, callid)
     if not calls[callid] then return end
 
@@ -99,6 +107,7 @@ end
 ]]
 
 exports("getCalls", getCalls)
+exports("removeCall", removeCall)
 exports("addUnit", addUnit)
 exports("removeUnit", removeUnit)
 exports("getUnits", getUnits)
