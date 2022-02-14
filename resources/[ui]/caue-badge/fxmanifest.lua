@@ -1,13 +1,16 @@
 fx_version "cerulean"
 games { "gta5" }
 
-ui_page "html/ui.html"
+ui_page "html/index.html"
 
 files {
-	"html/ui.html",
-	"html/assets/*.png",
-	"html/css/*.css",
-	"html/js/*.js",
+	"html/*.html",
+	"html/*.css",
+	"html/*.js",
+	"html/images/*.png",
+	"html/fonts/roboto/*.woff",
+	"html/fonts/roboto/*.woff2",
+	"html/fonts/justsignature/JustSignature.woff",
 }
 
 shared_scripts {
@@ -19,5 +22,6 @@ server_scripts {
 }
 
 client_scripts {
+	"@caue-lib/client/cl_animTask.lua",
     "client/*",
 }

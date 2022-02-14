@@ -396,7 +396,7 @@ Citizen.CreateThread(function()
         {
             id = "jail",
             label = "Prender",
-            icon = "user-police",
+            icon = "link",
             event = "caue-jail:sendToJail",
             parameters = {},
         }

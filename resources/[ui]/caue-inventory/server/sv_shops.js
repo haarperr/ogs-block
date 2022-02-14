@@ -42,8 +42,8 @@ shopList["2"] = [
     { item_id: "potato", amount: 50 },
     { item_id: "strawberry", amount: 50 },
     { item_id: "watermelon", amount: 50 },
-   
-  
+
+
 ];
 
 // Gun Store
@@ -61,11 +61,13 @@ shopList["5"] = [
 
 // Police Armory
 shopList["10"] = [
+    { item_id: "rubberslugs", amount: 50 },
     { item_id: "pistolammoPD", amount: 50 },
     { item_id: "taserammo", amount: 50 },
     { item_id: "repairkit", amount: 50 },
     { item_id: "binoculars", amount: 50 },
     { item_id: "armor", amount: 50 },
+    { item_id: "218362403", amount: 1 },
     { item_id: "-120179019", amount: 1 },
     { item_id: "-820634585", amount: 1 },
     { item_id: "1737195953", amount: 1 },
@@ -73,8 +75,7 @@ shopList["10"] = [
     { item_id: "camera", amount: 50 },
     { item_id: "2343591895", amount: 1 },
     { item_id: "IFAK", amount: 50 },
-    { item_id: "watch", amount: 50 },
-    { item_id: "treat", amount: 50 },
+    { item_id: "pdbadge", amount: 1 }
 ];
 
 // Courthouse

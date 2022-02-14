@@ -3,18 +3,26 @@ AddEventHandler("caue-police:showBadge", function(pSource, pInventoryData)
 	local veh = GetVehiclePedIsIn(PlayerPedId(), false)
     local isInCar = veh ~= 0 and veh ~= nil
 
-	if GetPlayerServerId(PlayerId()) ~= pSource then
+	-- if GetPlayerServerId(PlayerId()) ~= pSource then
     	Citizen.CreateThread(function()
        		Citizen.Wait(isInCar and 1000 or 4500)
 
 			SendNUIMessage({
 				action = "open",
-				img = pInventoryData.Image,
-				grade = pInventoryData.Rank,
-				name = pInventoryData.Name
+				img = pInventoryData.image,
+				job = pInventoryData.job,
+				rank = pInventoryData.Rank,
+				callsign = pInventoryData.Callsign,
+				name = pInventoryData.Nome .. " " .. pInventoryData.Sobrenome,
+			})
+
+			Citizen.Wait(5600)
+
+			SendNUIMessage({
+				action = "close"
 			})
       	end)
-    else
+	if GetPlayerServerId(PlayerId()) == pSource then
         if isInCar then return end
 
         TriggerEvent("attachItem", "police_badge")

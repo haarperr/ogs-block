@@ -982,7 +982,7 @@ on('player:receiveItem', async (id, amount, generateInformation, itemdata, retur
 
     let combined = parseFloat(itemList[id].weight) * parseFloat(amount);
     if ((parseFloat(personalWeight) > maxPlayerWeight || parseFloat(personalWeight) + combined > maxPlayerWeight) && !devItem) {
-        emit('DoLongHudText', id + ' caiu no chão porque você está com sobrepeso.', 2);
+        emit('DoLongHudText', itemList[id].displayname + ' caiu no chão porque você está com sobrepeso.', 2);
         let droppedItem = {
             slot: 3,
             itemid: id,
@@ -992,9 +992,7 @@ on('player:receiveItem', async (id, amount, generateInformation, itemdata, retur
             returnData: returnData
         };
         cid = exports["caue-base"].getChar("id");
-        emitNet('server-inventory-open', GetEntityCoords(PlayerPedId()), cid, '42069', "Drop-Overweight", {
-            "items": [droppedItem]
-        });
+        emitNet('server-inventory-open', GetEntityCoords(PlayerPedId()), cid, '42069', "Drop-Overweight", droppedItem);
         return;
     }
     SendNuiMessage(

@@ -385,7 +385,7 @@ AddEventHandler("RunUseItem", function(itemid, slot, inventoryName, isWeapon, pa
     end
 
     if (itemid == "pdbadge") then
-        RPC.execute("caue-gov:police:showBadge", json.decode(ItemInfo.information))
+        TriggerServerEvent("caue-police:showBadge", json.decode(ItemInfo.information))
     end
 
     if (itemid == "weedq") then

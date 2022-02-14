@@ -1,5 +1,4 @@
-RegisterServerEvent("caue-police:showBadge")
-AddEventHandler("caue-police:showBadge", function(pInventoryData)
+RegisterServerEvent("caue-police:showBadge", function(pInventoryData)
 	local src = source
 
 	local coords = GetEntityCoords(GetPlayerPed(src))

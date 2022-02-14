@@ -98,17 +98,22 @@ function GenerateInformation(player, itemid, itemdata) {
                     }
                     break;
                 case "pdbadge":
-                    let string = `SELECT first_name, last_name FROM characters WHERE id = '${player}'`;
+                    let string = `SELECT c.first_name, c.last_name, c.job, (CASE WHEN m.image IS NULL THEN "0" ELSE m.image END) AS image, gr.name AS rank_name, (CASE WHEN j.callsign IS NULL THEN "000" ELSE j.callsign END) AS callsign FROM characters c INNER JOIN groups_members gm ON (gm.cid = c.id AND gm.group = c.job) INNER JOIN groups_ranks gr ON (gr.group = c.job AND gr.rank = gm.rank) LEFT JOIN mdt_profiles m ON m.cid = c.id LEFT JOIN jobs_callsigns j ON (j.cid = c.id AND j.job = c.job) WHERE c.id = '${player}'`;
                     exports.ghmattimysql.execute(string, {}, function (result) {
                         returnInfo = JSON.stringify({
-                            ["Name"]: exports["caue-base"].getChar(src),
-                            ["Surname"]: result[0].last_name.replace(/[^\w\s]/gi, ''),
-                            ["Sex"]: gender,
+                            ["_hideKeys"]: ["image", "job"],
+                            ["Nome"]: result[0].first_name.replace(/[^\w\s]/gi, ''),
+                            ["Sobrenome"]: result[0].last_name.replace(/[^\w\s]/gi, ''),
+                            ["Rank"]: result[0].rank_name,
+                            ["Callsign"]: result[0].callsign,
+                            ["image"]: result[0].image,
+                            ["job"]: result[0].job,
                         })
                         timeout = 1
                         clearTimeout(timeout)
                         return resolve(returnInfo);
                     });
+                    break;
                 case "casing":
                     returnInfo = JSON.stringify({
                         Identifier: itemdata.identifier,
@@ -309,7 +314,7 @@ onNet("server-inventory-open", async (coords, player, secondInventory, targetNam
         }
     }
 
-    exports.ghmattimysql.execute(`SELECT count(item_id) as amount, id, name, item_id, information, slot, dropped, creationDate FROM inventory where name= '${playerinvname}' group by slot`, {}, function (inventory) {
+    exports.ghmattimysql.execute(`SELECT count(item_id) as amount, id, name, item_id, information, slot, dropped, creationDate FROM inventory where name= '${playerinvname}' group by slot`, {}, async function (inventory) {
         var invArray = inventory;
         var i;
         var arrayCount = 0;
@@ -370,6 +375,33 @@ onNet("server-inventory-open", async (coords, player, secondInventory, targetNam
                 lastUpdated: Date.now()
             }
             emitNet("Inventory-Dropped-Addition", -1, DroppedInventories[NewDroppedName])
+        } else if (secondInventory == "42069") {
+            let Key = "" + DataEntries + "";
+            let NewDroppedName = 'Drop-' + Key;
+
+            DataEntries = DataEntries + 1
+
+            DroppedInventories[NewDroppedName] = {
+                position: {
+                    x: coords[0],
+                    y: coords[1],
+                    z: coords[2]
+                },
+                name: NewDroppedName,
+                used: true,
+                lastUpdated: Date.now()
+            }
+
+            emitNet("Inventory-Dropped-Addition", -1, DroppedInventories[NewDroppedName])
+
+            let creationDate = Date.now()
+            let information = "{}";
+
+            if (itemToDropArray.generateInformation || itemToDropArray.data) {
+                information = await GenerateInformation(player, itemToDropArray.itemid, itemToDropArray.data);
+            }
+
+            db(`INSERT INTO inventory (item_id, name, information, slot, dropped, creationDate) VALUES ('${itemToDropArray.itemid}','${NewDroppedName}','${information}','${itemToDropArray.slot}', '1', '${creationDate}' );`);
         } else if (shopList[secondInventory]) {
             var targetinvname = targetName;
             var shopArray = shopList[secondInventory];
@@ -421,9 +453,12 @@ onNet("server-inventory-close", async (player, targetInventoryName) => {
     let src = source
 
     //line 647
-    if (targetInventoryName.startsWith("Trunk"))
+    if (targetInventoryName.startsWith("Trunk")) {
         emitNet("toggle-animation", src, false);
+    }
+
     InUseInventories = InUseInventories.filter(item => item != player);
+
     if (targetInventoryName.indexOf("Drop") > -1 && DroppedInventories[targetInventoryName]) {
         if (DroppedInventories[targetInventoryName].used === false) {
             delete DroppedInventories[targetInventoryName];
@@ -437,6 +472,7 @@ onNet("server-inventory-close", async (player, targetInventoryName) => {
             });
         }
     }
+
     emit("server-request-update-src", player, source)
 });
 

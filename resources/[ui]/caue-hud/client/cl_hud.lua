@@ -17,7 +17,7 @@ local wasUnderWater = false
 local wasInVehicle = false
 
 display = false
-isCircle = false
+isCircle = true
 mapPos = {
     x = 0,
     y = 0,
@@ -27,9 +27,9 @@ mapPos = {
 }
 
 hudSettings = {
-    opacity = 0.5,
+    opacity = 1.0,
     hidden = {},
-    map = "rect"
+    map = "circle"
 }
 
 local options = {
@@ -67,12 +67,12 @@ function setHudSettings()
         hudSettings.hidden = json.decode(hidden)
         setStatusHidden(hudSettings.hidden)
     end
-    local opacity = GetResourceKvpString("caue-hud:opacity") -- float returns 0.0 if not found -_- -_-
+    local opacity = GetResourceKvpString("caue-hud:opacity2") -- float returns 0.0 if not found -_- -_-
     if opacity and tonumber(opacity) then
         hudSettings.opacity = tonumber(opacity)
         setOpacity(hudSettings.opacity)
     end
-    local map = GetResourceKvpString("caue-hud:map")
+    local map = GetResourceKvpString("caue-hud:map2")
     if map then
         hudSettings.map = map
         toggleMap()
@@ -381,18 +381,15 @@ AddEventHandler("caue:voice:proximity", function(proximity)
 end)
 
 AddEventHandler("caue:voice:transmissionStarted", function(data)
-    -- SendNUIMessage({
-    --     action = "talking",
-    --     talking = true,
-    --     radio = data.radio,
-    -- })
+    if data.radio then
+        updateStatus("voiceTalking", "255, 0, 0")
+    else
+        updateStatus("voiceTalking", "255, 255, 0")
+    end
 end)
 
 AddEventHandler("caue:voice:transmissionFinished", function()
-    -- SendNUIMessage({
-    --     action = "talking",
-    --     talking = false,
-    -- })
+    updateStatus("voiceTalking", "255, 255, 255")
 end)
 
 AddEventHandler("caue-admin:currentDevmode", function(devmode)
@@ -451,7 +448,7 @@ AddEventHandler("caue-hud:settings", function(args)
         TriggerEvent("DoLongHudText", "Set opacity to " .. hudSettings.opacity)
     elseif option == "map" then
         hudSettings.map = value
-        SetResourceKvp("caue-hud:map", hudSettings.map)
+        SetResourceKvp("caue-hud:map2", hudSettings.map)
         toggleMap()
     end
 end)
