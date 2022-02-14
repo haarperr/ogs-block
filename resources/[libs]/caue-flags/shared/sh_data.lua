@@ -54,8 +54,6 @@ Flags["PedFlags"] = {
     isPoliceVehicleSeller = prevPedFlag(),
     isPetshopSeller = prevPedFlag(),
     isWeedShopKeeper = prevPedFlag(),
-    isSupplier = prevPedFlag(),
-    isTijoloGiver = prevPedFlag(),
 }
 
 Flags["ObjectFlags"] = {}

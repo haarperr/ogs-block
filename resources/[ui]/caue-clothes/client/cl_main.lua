@@ -591,6 +591,7 @@ function Save(save, close, newFadeStyle)
     TriggerEvent("inmenu", false)
     TriggerEvent("ressurection:relationships:norevive")
     TriggerEvent("caue-ai:setDefaultRelations")
+    TriggerEvent("AnimSet:Set")
     CustomCamera("torso", true)
     startingMenu = false
 end
@@ -788,7 +789,6 @@ function setFacialDecoration(pFadeStyle)
     if fadeStyle and fadeStyle > 0 and fadeStyle ~= 255 and isFreemodeModel(playerModel) then
         local facialDecoration = FADE_CONFIGURATIONS[playerModel == `mp_m_freemode_01` and "male" or "female"][fadeStyle]
         Wait(1)
-        print(playerPed, facialDecoration[1], facialDecoration[2])
         SetPedFacialDecoration(playerPed, facialDecoration[1], facialDecoration[2])
     end
 end

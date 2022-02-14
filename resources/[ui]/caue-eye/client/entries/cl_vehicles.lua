@@ -6,7 +6,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_flip",
-            label = "Desvirar veiculo",
+            label = "Desvirar Veiculo",
             icon = "car-crash",
             event = "FlipVehicle",
             parameters = {}
@@ -26,7 +26,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "carry_bike",
-            label = "Carregar bicicleta",
+            label = "Carregar Bicicleta",
             icon = "spinner",
             event = "carryEntity",
             parameters = {}
@@ -46,7 +46,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_getintrunk",
-            label = "Entrar malas",
+            label = "Entrar no Porta-malas",
             icon = "user-secret",
             event = "vehicle:getInTrunk",
             parameters = {}
@@ -66,7 +66,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_runplate",
-            label = "Checar placa",
+            label = "Checar Placa",
             icon = "money-check",
             event = "clientcheckLicensePlate",
             parameters = {}
@@ -106,7 +106,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_add_fakeplate",
-            label = "Adicionar Placa Falsa",
+            label = "Colocar Placa Falsa",
             icon = "screwdriver",
             event = "vehicle:addFakePlate",
             parameters = {}
@@ -209,14 +209,14 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_putinvehicle",
-            label = "Colocar Veiculo",
+            label = "Colocar no Veiculo",
             icon = "chevron-circle-left",
             event = "police:forceEnter",
             parameters = {}
         },
         {
             id = "vehicle_unseatnearest",
-            label = "Remover Veiculo",
+            label = "Remover do Veiculo",
             icon = "chevron-circle-right",
             event = "unseatPlayer",
             parameters = {}
@@ -236,7 +236,7 @@ Entries[#Entries + 1] = {
     data = {
         {
             id = "vehicle_keysgive",
-            label = "Dar chave",
+            label = "Dar Chave",
             icon = "key",
             event = "vehicle:giveKey",
             parameters = {}

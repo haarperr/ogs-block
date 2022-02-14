@@ -3604,6 +3604,19 @@ itemList['jacket'] = {
   information: '',
 };
 
+itemList['shirt'] = {
+  fullyDegrades: false,
+  decayrate: 0.0,
+  displayname: 'Camisa',
+  craft: [],
+  price: 10,
+  weight: 1,
+  nonStack: true,
+  model: '',
+  image: 'ogs_shirt.png',
+  information: '',
+};
+
 itemList['backpack'] = {
   fullyDegrades: false,
   decayrate: 0.0,
@@ -3640,6 +3653,45 @@ itemList['shoes'] = {
   nonStack: true,
   model: '',
   image: 'np_stolenshoes.png',
+  information: '',
+};
+
+itemList['watch'] = {
+  fullyDegrades: false,
+  decayrate: 0.0,
+  displayname: 'Relógio',
+  craft: [],
+  price: 10,
+  weight: 1,
+  nonStack: true,
+  model: '',
+  image: 'np_casio-watch.png',
+  information: '',
+};
+
+itemList['braclets'] = {
+  fullyDegrades: false,
+  decayrate: 0.0,
+  displayname: 'Pulseira',
+  craft: [],
+  price: 10,
+  weight: 1,
+  nonStack: true,
+  model: '',
+  image: 'ogs_braclets.png',
+  information: '',
+};
+
+itemList['earrings'] = {
+  fullyDegrades: false,
+  decayrate: 0.0,
+  displayname: 'Brincos',
+  craft: [],
+  price: 10,
+  weight: 1,
+  nonStack: true,
+  model: '',
+  image: 'ogs_earrings.png',
   information: '',
 };
 

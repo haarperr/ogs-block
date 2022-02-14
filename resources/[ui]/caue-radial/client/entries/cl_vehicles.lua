@@ -29,7 +29,7 @@ VehicleEntries[#VehicleEntries+1] = {
         id = "impound-vehicle",
         title = "Pedir reboque",
         icon = "#vehicle-impound",
-        event = "caue-jobs:impound:openImpoundRequestMenu",
+        event = "caue-towtruck:callNPC",
         parameters = {}
     },
     isEnabled = function(pEntity, pContext)

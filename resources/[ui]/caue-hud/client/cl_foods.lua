@@ -191,6 +191,16 @@ local items = {
         remove = true,
         prop = "cola",
     },
+    ["sprunk"] = {
+        dictionary = "amb@world_human_drinking@beer@female@idle_a",
+        animation = "idle_e",
+        typeAnim = 49,
+        timer = 6000,
+        message = "🥤",
+        func = "changethirst",
+        remove = true,
+        prop = "cola",
+    },
     ["hamburger"] = {
         dictionary = "mp_player_inteat@burger",
         animation = "mp_player_int_eat_burger",
@@ -377,6 +387,15 @@ local items = {
         timer = 6000,
         message = "🍱",
         func = "inv:wellfed",
+        remove = true,
+    },
+    ["jaildrink"] = {
+        dictionary = "amb@world_human_drinking@beer@female@idle_a",
+        animation = "idle_e",
+        typeAnim = 49,
+        timer = 6000,
+        message = "💧",
+        func = "changethirst",
         remove = true,
     },
     ["bleederburger"] = {

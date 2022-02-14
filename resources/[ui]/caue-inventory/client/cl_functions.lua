@@ -411,24 +411,3 @@ AddEventHandler("animation:load", function(dict)
         Citizen.Wait( 5 )
     end
 end)
-
-RegisterNetEvent("animation:repair")
-AddEventHandler("animation:repair", function(veh)
-    SetVehicleDoorOpen(veh, 4, 0, 0)
-    RequestAnimDict("mini@repair")
-    while not HasAnimDictLoaded("mini@repair") do
-        Citizen.Wait(0)
-    end
-
-    TaskTurnPedToFaceEntity(PlayerPedId(), veh, 1.0)
-    Citizen.Wait(1000)
-
-    while fixingvehicle do
-        local anim3 = IsEntityPlayingAnim(PlayerPedId(), "mini@repair", "fixing_a_player", 3)
-        if not anim3 then
-            TaskPlayAnim(PlayerPedId(), "mini@repair", "fixing_a_player", 8.0, -8, -1, 16, 0, 0, 0, 0)
-        end
-        Citizen.Wait(1)
-    end
-    SetVehicleDoorShut(veh, 4, 1, 1)
-end)

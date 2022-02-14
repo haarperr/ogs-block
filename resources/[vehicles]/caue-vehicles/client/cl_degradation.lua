@@ -17,6 +17,14 @@ local oldPos = nil
 
 ]]
 
+function ShowFloatingHelpNotification(msg, coords)
+    AddTextEntry("FloatingHelpNotification", msg)
+    SetFloatingHelpTextWorldPosition(1, coords)
+    SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
+    BeginTextCommandDisplayHelp("FloatingHelpNotification")
+    EndTextCommandDisplayHelp(2, false, false, -1)
+end
+
 function updateVehicleHealth()
 	if currentVehicle == 0 or IsEntityDead(currentVehicle) then return end
 
@@ -523,6 +531,125 @@ AddEventHandler("caue-vehicles:repairVehicle", function(type)
     ClearPedTasks(PlayerPedId())
 end)
 
+AddEventHandler("caue-vehicles:repairKit", function(pItemDBID)
+    local vehicle = nil
+
+    local target = exports["caue-target"]:GetCurrentEntity()
+    if DoesEntityExist(target) and GetEntityType(target) == 2 and #(GetEntityCoords(PlayerPedId()) - GetEntityCoords(target)) < 5 then
+        vehicle = target
+    end
+
+    if not vehicle then return end
+
+    local d1, d2 = GetModelDimensions(GetEntityModel(vehicle))
+    local moveto = GetOffsetFromEntityInWorldCoords(vehicle, 0.0, d2.y + 0.5, 0.0)
+    local dist = #(vector3(moveto.x, moveto.y, moveto.z) - GetEntityCoords(PlayerPedId()))
+
+    for i=1, 1000 do
+        dist = #(vector3(moveto.x, moveto.y, moveto.z) - GetEntityCoords(PlayerPedId()))
+
+        if dist < 1.0 then
+            break
+        end
+
+        ShowFloatingHelpNotification("Mova-se até aqui para reparar", vector3(moveto.x, moveto.y, moveto.z))
+
+        Citizen.Wait(1)
+    end
+
+    if fixingvehicle or dist >= 1.0 then return end
+
+    fixingvehicle = true
+
+    TriggerEvent("animation:repair", vehicle)
+
+    local finished = exports["caue-taskbarskill"]:taskBarSkill(50000, 10)
+    if finished ~= 100 then
+        ClearPedTasks(PlayerPedId())
+        fixingvehicle = false
+        return
+    end
+
+    Citizen.Wait(1000)
+
+    local finished = exports["caue-taskbarskill"]:taskBarSkill(40000, 10)
+    if finished ~= 100 then
+        ClearPedTasks(PlayerPedId())
+        fixingvehicle = false
+        return
+    end
+
+    Citizen.Wait(1000)
+
+    local finished = exports["caue-taskbarskill"]:taskBarSkill(30000, math.random(5, 10))
+    if finished ~= 100 then
+        ClearPedTasks(PlayerPedId())
+        fixingvehicle = false
+        return
+    end
+
+    Citizen.Wait(1000)
+
+    local finished = exports["caue-taskbarskill"]:taskBarSkill(20000, math.random(5, 10))
+    if finished ~= 100 then
+        ClearPedTasks(PlayerPedId())
+        fixingvehicle = false
+        return
+    end
+
+    Citizen.Wait(1000)
+
+    local finished = exports["caue-taskbarskill"]:taskBarSkill(10000, math.random(5, 10))
+    if finished ~= 100 then
+        ClearPedTasks(PlayerPedId())
+        fixingvehicle = false
+        return
+    end
+
+    TriggerServerEvent("inventory:degItem", pItemDBID, 50, "repairkit", exports["caue-base"]:getChar("id"))
+
+    if GetVehicleEngineHealth(vehicle) < 200.0 then
+        SetVehicleEngineHealth(vehicle, 200.0)
+    end
+
+    for i = 0, 5 do
+        SetVehicleTyreFixed(vehicle, i)
+    end
+
+    ClearPedTasks(PlayerPedId())
+
+    fixingvehicle = false
+end)
+
+AddEventHandler("animation:repair", function(pVehicle)
+    Sync.SetVehicleDoorOpen(pVehicle, 4, 0, 0)
+
+    RequestAnimDict("mini@repair")
+    while not HasAnimDictLoaded("mini@repair") do
+        Citizen.Wait(0)
+    end
+
+    TaskTurnPedToFaceEntity(PlayerPedId(), pVehicle, 1.0)
+
+    Citizen.Wait(1000)
+
+    while fixingvehicle do
+        local anim = IsEntityPlayingAnim(PlayerPedId(), "mini@repair", "fixing_a_player", 3)
+        if not anim then
+            TaskPlayAnim(PlayerPedId(), "mini@repair", "fixing_a_player", 8.0, -8, -1, 16, 0, 0, 0, 0)
+        end
+        Citizen.Wait(1)
+    end
+
+    Sync.SetVehicleDoorShut(pVehicle, 4, 1, 1)
+end)
+
+AddEventHandler("caue-inventory:itemUsed", function(item, info, inventory, slot, dbid)
+    if item == "repairkit" then
+        TriggerEvent("caue-vehicles:repairKit", dbid)
+    end
+end)
+
 AddEventHandler("baseevents:enteredVehicle", function(pCurrentVehicle, pCurrentSeat, vehicleDisplayName)
     if pCurrentSeat == -1 then
         currentVehicle = pCurrentVehicle
@@ -607,7 +734,6 @@ Citizen.CreateThread(function()
                     local update = GetEntitySpeed(currentVehicle) * 1.0 / 100
                     TriggerServerEvent("caue-vehicles:updateVehicleMileage", vid, plate, update)
                 end
-
             end
         else
             Citizen.Wait(1000)

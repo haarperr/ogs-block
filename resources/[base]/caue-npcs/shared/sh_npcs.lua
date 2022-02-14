@@ -38,12 +38,6 @@ Generic.WeaponShopLocations = {
     vector4(2571.79,298.1,107.74,84.22),
     vector4(-3169.53,1089.59,19.84,237.35),
 }
-Generic.NancyLocations = {
-    vector4(-625.89, -1629.21, 32.0, 263.88),
-}
-Generic.SupplyLocations = {
-    vector4(-71.57, -1820.56, 26.95, 229.51),
-}
 
 Generic.NPCS[#Generic.NPCS + 1] = {
     id = "pawnshop",
@@ -141,7 +135,6 @@ Generic.NPCS[#Generic.NPCS + 1] = {
     },
     flags = {
         ["isNPC"] = true,
-        ["isSupplier"] = true,
     },
     scenario = "WORLD_HUMAN_AA_COFFEE",
 }

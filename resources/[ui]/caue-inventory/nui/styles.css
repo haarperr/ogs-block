@@ -182,7 +182,7 @@ input[type='number']::-webkit-inner-spin-button {
 	align-items: center;
 	flex-direction: column-reverse;
 	justify-content: space-evenly;
-	border-bottom: 2px solid #00f8b9;
+	border-bottom: 2px solid #f8b900;
 	background: rgba(34, 35, 51, 0.80);
 }
 
@@ -275,9 +275,9 @@ input[type='number']::-webkit-inner-spin-button {
     position: absolute;
     left: 0;
     bottom: 0;
-    background: linear-gradient(to bottom, #00f8b9, #1b1844 100%);
+    background: linear-gradient(to bottom, #f8b900, #1b1844 100%);
     background-size: 1000% 1000%;
-    background-color: #00f8b9;
+    background-color: #f8b900;
     background-position: 0% 0%;
     pointer-events: none;
     /* border-bottom-left-radius: 0.5vh; */
@@ -292,7 +292,7 @@ input[type='number']::-webkit-inner-spin-button {
     position: absolute;
     left: 0;
     bottom: 0;
-    background: #00f8b9;
+    background: #f8b900;
     background-size: 100000% 100000%;
     pointer-events: none;
     /* border-bottom-left-radius: 4px;
@@ -418,7 +418,7 @@ input[type='number']::-webkit-inner-spin-button {
 .cashcontainer {
     display: none;
     color: #fff;
-    font-size: 1.3vh; 
+    font-size: 1.3vh;
 }
 
 .itemcost {
@@ -426,7 +426,7 @@ input[type='number']::-webkit-inner-spin-button {
     left: 0;
     bottom: 0;
     right: 0;
-    padding: 2% 1%; 
+    padding: 2% 1%;
     background-color: #1114199f;
     font-size: 1.25vh;
     color: #95ef77;
@@ -629,7 +629,7 @@ h2 {
 }
 
 .weightfill {
-    background: #00f8b9;
+    background: #f8b900;
     display: inline-block;
     height: 100%;
     line-height: 2.2vh;

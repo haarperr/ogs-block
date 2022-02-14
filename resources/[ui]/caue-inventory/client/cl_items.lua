@@ -510,8 +510,6 @@ AddEventHandler("RunUseItem", function(itemid, slot, inventoryName, isWeapon, pa
         TaskItem("switch@trevor@trev_smoking_meth", "trev_smoking_meth_loop", 49, 5000, "Fumando Crack", "hadcrack", true,itemid,playerVeh)
     end
 
-
-
     if (itemid == "IFAK") then
         TaskItem("amb@world_human_clipboard@male@idle_a", "idle_c", 49,2000,"Usando IFAK","healed:useOxy",true,itemid,playerVeh)
     end

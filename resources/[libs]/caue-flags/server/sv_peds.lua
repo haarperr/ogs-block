@@ -30,7 +30,6 @@ defaultpedsFlags = {
     isToolShopKeeper = false,
     isSportShopKeeper = false,
     isCasinoChipSeller = false,
-    isSupplier = false,
 }
 
 --[[

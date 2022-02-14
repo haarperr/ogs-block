@@ -443,19 +443,12 @@ function CreateBlip(pLocation)
     EndTextCommandSetBlipName(deliveryBlip)
 end
 
-function DrawText3D(x,y,z, text)
-    local onScreen,_x,_y=World3dToScreen2d(x,y,z)
-    local px,py,pz=table.unpack(GetGameplayCamCoords())
-    SetTextScale(0.35, 0.35)
-    SetTextFont(4)
-    SetTextProportional(1)
-    SetTextColour(255, 255, 255, 215)
-    SetTextEntry("STRING")
-    SetTextCentre(1)
-    AddTextComponentString(text)
-    DrawText(_x,_y)
-    local factor = (string.len(text)) / 370
-    DrawRect(_x,_y+0.0125, 0.015+ factor, 0.03, 41, 11, 41, 68)
+function ShowFloatingHelpNotification(msg, coords)
+    AddTextEntry("FloatingHelpNotification", msg)
+    SetFloatingHelpTextWorldPosition(1, coords)
+    SetFloatingHelpTextStyle(1, 1, 2, -1, 3, 0)
+    BeginTextCommandDisplayHelp("FloatingHelpNotification")
+    EndTextCommandDisplayHelp(2, false, false, -1)
 end
 
 --[[
@@ -490,7 +483,7 @@ AddEventHandler("caue-tacoshop:deliveryStart", function()
 		local distance = #(plyCoords - location["pos"]["xyz"])
 
 		if distance < 25.0 then
-			DrawText3D(location["pos"]["x"], location["pos"]["y"], location["pos"]["z"], "[~g~E~s~] Ponto de entrega")
+			ShowFloatingHelpNotification("~INPUT_FRONTEND_RB~ Ponto de entrega", location["pos"]["xyz"])
 
 			if IsControlJustReleased(0, 38) and distance < 2.0 then
 				break

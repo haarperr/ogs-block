@@ -198,19 +198,19 @@ Entries["purchasemethkey"] = {
 }
 Entries[#Entries + 1] = {
     type = "flag",
-    group = { "isSupplier" },
+    group = { "isNPC" },
     data = {
         {
             id = "supply",
             label = "Entregas",
             icon = "circle",
-            event = "caue-npcs:ped:keeper",
+            event = "caue-tacoshop:supplyStation",
             parameters = {}
         },
     },
-
     options = {
-        distance = { radius = 2.5 }
+        distance = { radius = 2.5 },
+        npcIds = {"hunting_market"}
     }
 }
 

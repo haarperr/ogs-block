@@ -1850,22 +1850,6 @@ DP.Emotes = {
      EmoteMoving = true,
      EmoteLoop = false,
     }},
-    ["readmes"] = {"anim@amb@carmeet@take_photos@male_a@base", "base", "Read Messages ~y~New", AnimationOptions =
-    {
-        EmoteMoving = false,
-        Prop = "prop_npc_phone_02",
-        PropBone = 28422,
-        PropPlacement = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-        EmoteLoop = true,
-    }},
-    ["readmes2"] = {"anim@amb@carmeet@take_photos@female_b@base", "base", "Read Messages 2 ~y~New", AnimationOptions =
-    {
-        EmoteMoving = false,
-        Prop = "prop_npc_phone_02",
-        PropBone = 28422,
-        PropPlacement = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-        EmoteLoop = true,
-    }},
     ["headbutt"] = {"melee@unarmed@streamed_variations", "plyr_takedown_front_headbutt", "Headbutt"},
     ["fishdance"] = {"anim@mp_player_intupperfind_the_fish", "idle_a", "Fish Dance", AnimationOptions =
     {
@@ -2178,6 +2162,28 @@ DP.Emotes = {
         PtfxPlacement = {-0.05, 0.3, 0.0, 0.0, 90.0, 90.0, 1.0},
         PtfxInfo = "[G] to pee.",
         PtfxWait = 3000,
+    }},
+    ["janitor2"] = {"amb@world_human_janitor@male@idle_a", "idle_a", "Janitor 2 ~y~New", AnimationOptions =
+    {
+        Prop = "prop_tool_broom",
+        PropBone = 28422,
+        PropPlacement = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+        EmoteLoop = true,
+        EmoteMoving = true,
+    }},
+    ["janitor3"] = {"amb@world_human_janitor@male@idle_a", "idle_b", "Janitor 3 ~y~New", AnimationOptions =
+    {
+        Prop = "prop_tool_broom",
+        PropBone = 28422,
+        PropPlacement = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+        EmoteLoop = true,
+    }},
+    ["janitor4"] = {"amb@world_human_janitor@male@idle_a", "idle_a", "Janitor 4 ~y~New", AnimationOptions =
+    {
+        Prop = "prop_tool_broom",
+        PropBone = 28422,
+        PropPlacement = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+        EmoteLoop = true,
     }},
 
     -----------------------------------------------------------------------------------------------------------

@@ -14,9 +14,13 @@ local items = {
     "chain",
     "vest",
     "jacket",
+    "shirt",
     "backpack",
     "pants",
-    "shoes"
+    "shoes",
+    "watch",
+    "braclets",
+    "earrings",
 }
 
 --[[
@@ -25,6 +29,20 @@ local items = {
 
 ]]
 
+function GetSkinSex(pEntity)
+    for i, v in ipairs(frm_skins) do
+        if (GetHashKey(v) == GetEntityModel(pEntity)) then
+            return "male"
+        end
+    end
+    for i, v in ipairs(fr_skins) do
+        if (GetHashKey(v) == GetEntityModel(pEntity)) then
+            return "female"
+        end
+    end
+    return "male"
+end
+
 function toggleFaceWear(pType, pRemove, pInfo, pSteal)
     local AnimSet = "clothingtie"
     local Animation = "try_tie_neutral_c"
@@ -32,7 +50,7 @@ function toggleFaceWear(pType, pRemove, pInfo, pSteal)
     local Wait = 1000
     local ItemHandler = false
     local ItemMeta = {}
-    local IsMale = GetSkin().name == "skin_male"
+    local IsMale = GetSkinSex(PlayerPedId()) == "male"
 
     if not pRemove then
         if pInfo.gender == "male" and not IsMale then
@@ -65,10 +83,21 @@ function toggleFaceWear(pType, pRemove, pInfo, pSteal)
         PropIndex = 9
     elseif pType == "jacket" then
         PropIndex = 11
+    elseif pType == "shirt" then
+        PropIndex = 8
     elseif pType == "backpack" then
         PropIndex = 5
     elseif pType == "pants" then
         PropIndex = 4
+    elseif pType == "watch" then
+        PropIndex = 6
+    elseif pType == "braclets" then
+        PropIndex = 7
+    elseif pType == "earrings" then
+        PropIndex = 2
+        AnimSet = "clothingspecs"
+        Animation = "take_off"
+        Wait = 1200
     elseif pType == "shoes" then
         PropIndex = 6
         AnimSet = "random@domestic"
@@ -89,7 +118,7 @@ function toggleFaceWear(pType, pRemove, pInfo, pSteal)
 
     Citizen.Wait(Wait)
 
-    if pType == "hat" or pType == "googles" then
+    if pType == "hat" or pType == "googles" or pType == "watch" or pType == "braclets" or pType == "earrings" then
         local texture = GetPedPropTextureIndex(PlayerPedId(), PropIndex) or 0
 
         if pRemove then
@@ -177,6 +206,46 @@ function toggleFaceWear(pType, pRemove, pInfo, pSteal)
                     txd = texture,
                     palette = pal,
                     arms = arm
+                }
+                TriggerEvent("player:receiveItem", pType, 1, false, _itemMeta)
+            end
+
+            SetPedComponentVariation(PlayerPedId(), PropIndex, pInfo.prop, pInfo.txd, pInfo.palette)
+            SetPedComponentVariation(PlayerPedId(), 3, pInfo.arms, 0, -1)
+
+            ItemHandler = true
+        end
+    elseif pType == "shirt" then
+        local texture = GetPedTextureVariation(PlayerPedId(), PropIndex) or 0
+        local pal = GetPedPaletteVariation(PlayerPedId(), PropIndex) or -1
+
+        local bareTorsoIndex = 15
+
+        if not IsMale then
+            bareTorsoIndex = 18
+        end
+
+        if pRemove then
+            if currentDrawable ~= -1 and currentDrawable ~= bareTorsoIndex then
+                SetPedComponentVariation(PlayerPedId(), PropIndex, bareTorsoIndex, 0, -1)
+
+                ItemHandler = true
+                ItemMeta = {
+                    _hideKeys = { "_remove_id" },
+                    _remove_id = math.random(10000000, 999999999),
+                    prop = currentDrawable,
+                    txd = texture,
+                    palette = pal
+                }
+            end
+        else
+            if currentDrawable ~= -1 and currentDrawable ~= bareTorsoIndex then
+                local _itemMeta = {
+                    _hideKeys = { "_remove_id" },
+                    _remove_id = math.random(10000000, 999999999),
+                    prop = currentDrawable,
+                    txd = texture,
+                    palette = pal
                 }
                 TriggerEvent("player:receiveItem", pType, 1, false, _itemMeta)
             end
@@ -339,13 +408,13 @@ AddEventHandler("facewear:adjust",function(pType, pRemove, pIsSteal)
     end
 end)
 
-AddEventHandler("caue-facewear:steal", function(pArgs, pEntity)
+AddEventHandler("caue-facewear:steal", function(pArgs)
     loadAnimDict("random@domestic")
-  	TaskTurnPedToFaceEntity(PlayerPedId(), pEntity, -1)
+  	TaskTurnPedToFaceEntity(PlayerPedId(), pArgs.entity, -1)
   	TaskPlayAnim(PlayerPedId(),"random@domestic", "pickup_low",5.0, 1.0, 1.0, 48, 0.0, 0, 0, 0)
   	Citizen.Wait(1600)
   	ClearPedTasks(PlayerPedId())
-  	TriggerServerEvent("facewear:adjust", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pEntity)), pArgs, true, true)
+  	TriggerServerEvent("facewear:adjust", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pArgs.entity)), pArgs.type, true, true)
 end)
 
 AddEventHandler("caue-facewear:radial", function(pArgs)
@@ -356,7 +425,236 @@ AddEventHandler("caue-facewear:radial", function(pArgs)
 
     antispam = GetCloudTimeAsInt() + 1
 
-    toggleFaceWear(pArgs, true, {}, false)
+    toggleFaceWear(pArgs.type, true, {}, false)
+end)
+
+AddEventHandler("caue-facewear:clothesMenu", function(pArgs, pEntity)
+    local context = {}
+    local text = "Retirar"
+    local event = "caue-facewear:radial"
+
+    if pArgs == "steal" then
+        text = "Roubar"
+        event = "caue-facewear:steal"
+    else
+        pEntity = PlayerPedId()
+    end
+
+    local sex = GetSkinSex(pEntity)
+
+    -- Hat
+    local currentProp = GetPedPropIndex(pEntity, 0) or -1
+    local disabled = currentProp == -1
+
+    context[#context+1] = {
+        title = text .. " Chapéu",
+        action = event,
+        params = {
+            type = "hat",
+            entity = pEntity,
+        },
+        disabled = disabled,
+    }
+
+    -- Googles
+    local currentProp = GetPedPropIndex(pEntity, 1) or -1
+    local disabled = currentProp == -1
+
+    context[#context+1] = {
+        title = text .. " Óculos",
+        action = event,
+        params = {
+            type = "googles",
+            entity = pEntity,
+        },
+        disabled = disabled,
+    }
+
+    -- Mask
+    local currentDrawable = GetPedDrawableVariation(pEntity, 1) or -1
+    local disabled = currentDrawable == -1
+
+    context[#context+1] = {
+        title = text .. " Máscara",
+        action = event,
+        params = {
+            type = "mask",
+            entity = pEntity,
+        },
+        disabled = disabled,
+    }
+
+    -- Chain
+    local currentDrawable = GetPedDrawableVariation(pEntity, 7) or -1
+    local disabled = currentDrawable == -1
+
+    context[#context+1] = {
+        title = text .. " Colar",
+        action = event,
+        params = {
+            type = "chain",
+            entity = pEntity,
+        },
+        disabled = disabled,
+    }
+
+    -- Jacket
+    local currentDrawable = GetPedDrawableVariation(pEntity, 11) or -1
+    local arm = GetPedDrawableVariation(pEntity, 3) or 0
+
+    local bareTorsoIndex = 15
+    local bareArmsIndex = 15
+
+    if sex == "female" then
+        bareTorsoIndex = 18
+    end
+
+    local disabled = currentDrawable == -1 or currentDrawable == bareTorsoIndex
+
+    context[#context+1] = {
+        title = text .. " Jaqueta",
+        action = event,
+        params = {
+            type = "jacket",
+            entity = pEntity,
+        },
+        disabled = disabled,
+    }
+
+    -- Shirt
+    local currentDrawable = GetPedDrawableVariation(pEntity, 8) or -1
+
+    local bareTorsoIndex = 15
+
+    if sex == "female" then
+        bareTorsoIndex = 18
+    end
+
+    local disabled = currentDrawable == -1 or currentDrawable == bareTorsoIndex
+
+    context[#context+1] = {
+        title = text .. " Camisa",
+        action = event,
+        params = {
+            type = "shirt",
+            entity = pEntity,
+        },
+        disabled = disabled,
+    }
+
+    -- Vest
+    local currentDrawable = GetPedDrawableVariation(pEntity, 9) or -1
+    local disabled = currentDrawable == -1
+
+    context[#context+1] = {
+        title = text .. " Colete",
+        action = event,
+        params = {
+            type = "vest",
+            entity = pEntity,
+        },
+        disabled = disabled,
+    }
+
+    -- Backpack
+    local currentDrawable = GetPedDrawableVariation(pEntity, 5) or -1
+    local disabled = currentDrawable == -1
+
+    context[#context+1] = {
+        title = text .. " Mochila",
+        action = event,
+        params = {
+            type = "backpack",
+            entity = pEntity,
+        },
+        disabled = disabled,
+    }
+
+    -- Pants
+    local currentDrawable = GetPedDrawableVariation(pEntity, 4) or -1
+
+    local bareLegsIndex = 61
+
+    if sex == "female" then
+        bareLegsIndex = 17
+    end
+
+    local disabled = currentDrawable == -1 or currentDrawable == bareLegsIndex
+
+    context[#context+1] = {
+        title = text .. " Calça",
+        action = event,
+        params = {
+            type = "pants",
+            entity = pEntity,
+        },
+        disabled = disabled,
+    }
+
+    -- Shoes
+    local currentDrawable = GetPedDrawableVariation(pEntity, 6) or -1
+
+    local bareFootIndex = 34
+
+    if sex == "female" then
+        bareFootIndex = 35
+    end
+
+    local disabled = currentDrawable == -1 or currentDrawable == bareFootIndex
+
+    context[#context+1] = {
+        title = text .. " Tênis",
+        action = event,
+        params = {
+            type = "shoes",
+            entity = pEntity,
+        },
+        disabled = disabled,
+    }
+
+    -- Watch
+    local currentProp = GetPedPropIndex(pEntity, 6) or -1
+    local disabled = currentProp == -1
+
+    context[#context+1] = {
+        title = text .. " Relógio",
+        action = event,
+        params = {
+            type = "watch",
+            entity = pEntity,
+        },
+        disabled = disabled,
+    }
+
+    -- Braclets
+    local currentProp = GetPedPropIndex(pEntity, 7) or -1
+    local disabled = currentProp == -1
+
+    context[#context+1] = {
+        title = text .. " Pulseira",
+        action = event,
+        params = {
+            type = "braclets",
+            entity = pEntity,
+        },
+        disabled = disabled,
+    }
+
+    -- Braclets
+    local currentProp = GetPedPropIndex(pEntity, 2) or -1
+    local disabled = currentProp == -1
+
+    context[#context+1] = {
+        title = text .. " Brincos",
+        action = event,
+        params = {
+            type = "earrings",
+            entity = pEntity,
+        },
+        disabled = disabled,
+    }
+
+    exports["caue-context"]:showContext(context)
 end)
 
 --[[
@@ -371,66 +669,10 @@ Citizen.CreateThread(function()
     local data = {
         {
             id = "steal_shoes",
-            label = "Steal Shoes",
-            icon = "hand-paper",
-            event = "caue-facewear:steal",
-            parameters = "shoes",
-        },
-        {
-            id = "steal_pants",
-            label = "Steal Pants",
-            icon = "hand-paper",
-            event = "caue-facewear:steal",
-            parameters = "pants",
-        },
-        {
-            id = "steal_backpack",
-            label = "Steal Backpack",
-            icon = "hand-paper",
-            event = "caue-facewear:steal",
-            parameters = "backpack",
-        },
-        {
-            id = "steal_vest",
-            label = "Steal Vest",
-            icon = "hand-paper",
-            event = "caue-facewear:steal",
-            parameters = "vest",
-        },
-        {
-            id = "steal_jacket",
-            label = "Steal Jacket",
-            icon = "hand-paper",
-            event = "caue-facewear:steal",
-            parameters = "jacket",
-        },
-        {
-            id = "steal_mask",
-            label = "Steal Mask",
-            icon = "hand-paper",
-            event = "caue-facewear:steal",
-            parameters = "mask",
-        },
-        {
-            id = "steal_googles",
-            label = "Steal Googles",
-            icon = "hand-paper",
-            event = "caue-facewear:steal",
-            parameters = "googles",
-        },
-        {
-            id = "steal_hat",
-            label = "Steal Hat",
-            icon = "hand-paper",
-            event = "caue-facewear:steal",
-            parameters = "hat",
-        },
-        {
-            id = "steal_chain",
-            label = "Steal Chain",
-            icon = "hand-paper",
-            event = "caue-facewear:steal",
-            parameters = "chain",
+            label = "Roubar Roupas",
+            icon = "tshirt",
+            event = "caue-facewear:clothesMenu",
+            parameters = "steal"
         },
     }
 

@@ -76,9 +76,10 @@ Citizen.CreateThread(function()
         data = {
             id = "clothing",
             icon = "#clothing",
-            title = "Roupas"
+            title = "Roupas",
+            event = "caue-facewear:clothesMenu",
         },
-        subMenus = SubMenu,
+        -- subMenus = SubMenu,
         isEnabled = function()
             return not exports["caue-base"]:getVar("dead")
         end,

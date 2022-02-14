@@ -97,3 +97,12 @@ body::-webkit-scrollbar {
     left: -100%;
     top: -15%;
 }
+
+.disabled {
+    background-color: #727272;
+    cursor: not-allowed;
+}
+
+.disabled:hover {
+    background-color: #727272;
+}

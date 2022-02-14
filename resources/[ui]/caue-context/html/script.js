@@ -69,6 +69,11 @@ const DrawButtons = (data, back) => {
             $("#images").append(elementImage);
         }
 
+        if (ButtonsData[i].disabled === true) {
+            $("#" + id).prop("disabled", true);
+            $("#" + id).attr("class", "button disabled");
+        }
+
         Buttons[id] = ButtonsData[i];
     };
 
@@ -95,9 +100,9 @@ $(document).click(function (event) {
     if ($target.closest(".button").length && $(".button").is(":visible")) {
         let id = event.target.id;
 
-        if (Buttons[id].action) {
+        if (Buttons[id].action && Buttons[id].disabled !== true) {
             PostData(Buttons[id])
-        } else if (Buttons[id].children) {
+        } else if (Buttons[id].children && Buttons[id].disabled !== true) {
             Menus.push(Buttons[id].children)
             DrawButtons(Buttons[id].children, MenuCurrent)
             MenuCurrent = Menus.length - 1
