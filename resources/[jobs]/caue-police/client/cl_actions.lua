@@ -1,18 +1,19 @@
 --[[
 
-    Variables
+	Functions
 
 ]]
 
-
-
---[[
-
-    Functions
-
-]]
-
-
+function IsNearPlayer(player)
+    local ply = PlayerPedId()
+    local plyCoords = GetEntityCoords(ply, 0)
+    local ply2 = GetPlayerPed(GetPlayerFromServerId(player))
+    local ply2Coords = GetEntityCoords(ply2, 0)
+    local distance = Vdist2(plyCoords, ply2Coords)
+    if(distance <= 5) then
+        return true
+    end
+end
 
 --[[
 
@@ -105,7 +106,7 @@ end)
 
 RegisterNetEvent("police:gsr")
 AddEventHandler("police:gsr", function(pArgs, pEntity)
-	
+
 	local finished = exports["caue-taskbar"]:taskBar(10000, "Teste de GSR")
 	if finished == 100 then
 		TriggerServerEvent("police:gsr", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pEntity)))
@@ -129,9 +130,56 @@ AddEventHandler("police:checkBank", function(pArgs, pEntity)
 	end
 end)
 
+AddEventHandler("caue-police:giveTicket", function(pParams, pEntity, pContext)
+	local input = exports["caue-input"]:showInput({
+		{
+            icon = "hand-holding-usd",
+            label = "Valor",
+            name = "amount",
+        },
+		{
+            icon = "comment",
+            label = "Comentário",
+            name = "comment",
+        },
+	})
+
+	if input["amount"] and input["comment"] then
+		local amount = tonumber(input["amount"])
+		if not amount or amount < 1 then
+			TriggerEvent("DoLongHudText", "Valor inválido", 2)
+			return
+		end
+
+        if not IsNearPlayer(pEntity) then
+            TriggerEvent("DoLongHudText", "Você não está próximo do player!", 2)
+            return
+        end
+
+        TriggerEvent("animation:PlayAnimation","id")
+		TriggerServerEvent("caue-jail:giveTicket", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pEntity)), amount, input["comment"])
+	end
+end)
+
 --[[
 
-    RPCs
+    Threads
 
 ]]
 
+Citizen.CreateThread(function()
+    exports["caue-eye"]:AddPeekEntryByEntityType({ 1 }, {
+        {
+            id = "ticket",
+            label = "Multar",
+            icon = "clipboard-list",
+            event = "caue-police:giveTicket",
+            parameters = {},
+        }
+    }, {
+        distance = { radius = 1.5 },
+        isEnabled = function(pEntity, pContext)
+            return pContext.flags["isPlayer"] and pContext.distance <= 1.2 and exports["caue-jobs"]:getJob(CurrentJob, "is_police")
+        end
+    })
+end)

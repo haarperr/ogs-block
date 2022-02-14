@@ -76,3 +76,23 @@ AddEventHandler("police:checkBank", function(pTarget)
     local bank = exports["caue-financials"]:getBalance(accountId)
     TriggerClientEvent("DoLongHudText", src, "Tem $ " .. bank .. " na conta " .. accountId)
 end)
+
+RegisterNetEvent("caue-jail:giveTicket", function(pTarget, pAmount, pComment)
+    local src = source
+
+    local cid = exports["caue-base"]:getChar(pTarget, "id")
+    if not cid then
+        TriggerClientEvent("DoLongHudText", src, "cid not found?", 2)
+        return
+    end
+
+    local accountId = exports["caue-base"]:getChar(pTarget, "bankid")
+
+    local success, message = exports["caue-financials"]:transaction(accountId, 1, pAmount, pComment, cid, 8)
+    if not success then
+        return false, TriggerClientEvent("DoLongHudText", src, message, 2)
+    end
+
+    TriggerClientEvent("DoLongHudText", src, "Multa enviada com sucesso!")
+    TriggerClientEvent("caue-phone:notification", pTarget, "fas fa-university", "Bank", "Você recebeu uma multa de $" .. pAmount, 5000)
+end)

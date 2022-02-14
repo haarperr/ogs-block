@@ -4,7 +4,7 @@
 
 ]]
 
-local negativeTransactions = { "transfer", "purchase", "payslip", "financing" }
+local negativeTransactions = { "transfer", "purchase", "payslip", "financing", "ticket" }
 
 --[[
 
