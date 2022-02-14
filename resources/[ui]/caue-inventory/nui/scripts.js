@@ -1048,6 +1048,10 @@ function DisplayInventoryMultiple(playerinventory, itemCount, invName, targetinv
         secondaryMaxWeight = 500.0;
         slotLimitTarget = 5;
         displayName = 'Tailgate';
+    } else if (targetinvName.startsWith('tcg_binder_')) {
+        secondaryMaxWeight = 5000.0;
+        slotLimitTarget = 200;
+        displayName = 'Binder';
     } else if (targetinvName.startsWith('comic_shop_appraisal_')) {
         secondaryMaxWeight = 10.0;
         slotLimitTarget = 50;
@@ -2481,6 +2485,10 @@ function AttemptDropInFilledSlot(slot) {
         result = 'Não é possível colocar em caixas de correio.'
     }
 
+    if (TargetInventoryName.startsWith('tcg_binder_') && ((inventoryDropName == 'wrapsecondary') && itemidsent != "tcgcard" || (inventoryReturnItemDropName == 'wrapsecondary') && !stacking)) {
+        result = 'Só é possível colocar cartas aqui.'
+    }
+
     if (result == 'Success' && result2 == 'Success') {
         // Here we are moving from player inventory to the secondary inventory
         if (currentInventory == 1 && inventoryDropName == 'wrapsecondary') {
@@ -2959,6 +2967,10 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
 
     if (TargetInventoryName.startsWith('mailbox') && inventoryDropName == 'wrapsecondary') {
         result = 'Não é possível colocar em caixas de correio.'
+    }
+
+    if (TargetInventoryName.startsWith('tcg_binder_') && inventoryDropName == 'wrapsecondary' && itemidsent != "tcgcard") {
+        result = 'Só é possível colocar cartas aqui.'
     }
 
     if (result == 'Success') {

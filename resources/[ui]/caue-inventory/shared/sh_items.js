@@ -3711,39 +3711,39 @@ itemList['tcgcard'] = {
   _name: 'tcgcard',
   fullyDegrades: false,
   decayrate: 0.0,
-  displayname: 'Trading Card',
+  displayname: 'Carta',
   price: 1,
   weight: 0.0,
   nonStack: true,
   model: '',
-  image: 'np_tcgcard.png',
-  information: 'A single trading card.',
+  image: 'ogs_tcgcard.png',
+  information: 'Um cartão colecionável.',
   deg: false,
 };
 
-itemList['tcgtestpack'] = {
+itemList['tcgpack_ogs'] = {
   fullyDegrades: false,
   decayrate: 0.0,
-  displayname: 'Booster Pack',
+  displayname: 'Pacote de Cartas',
   price: 1,
   weight: 0.0,
   nonStack: false,
   model: '',
-  image: 'np_tcgpromobooster.png',
-  information: 'Promo set booster pack containing 1 card.',
+  image: 'ogs_tcgbooster.png',
+  information: 'Pacote containing 5 cartas colecionáveis.',
   deg: false,
 };
 
 itemList['tcgbinder'] = {
   fullyDegrades: false,
   decayrate: 0.0,
-  displayname: 'Trading Card Binder',
+  displayname: 'Fichário',
   price: 1,
   weight: 10.0,
   nonStack: true,
   model: '',
-  image: 'np_tcgbinder.png',
-  information: 'A binder for all your trading cards.',
+  image: 'ogs_tcgbinder.png',
+  information: 'Um fichário para guardar todas as suas cartas colecionáveis.',
   deg: false,
 };
 

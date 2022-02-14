@@ -1,5 +1,14 @@
 TCG = {}
 
+TCG.Items = {
+    ["tcgbinder"] = {
+        price = 250,
+    },
+    ["tcgpack_ogs"] = {
+        price = 50,
+    },
+}
+
 TCG.Cards = {
     ["playboicarti"] = {
         name = "Playboi Carti",
@@ -269,7 +278,7 @@ TCG.Cards = {
 }
 
 TCG.Packs = {
-    ["tcgtestpack"] = {
+    ["tcgpack_ogs"] = {
         "playboicarti",
         "kanyewest",
         "ghostfacekillah",

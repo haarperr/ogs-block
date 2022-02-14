@@ -217,6 +217,7 @@ local Config = {
             { ["text"] = "Smoke On The Water", ["sprite"] = 469, ["scale"] = 0.7, ["colour"] = 25, ["pos"] = vector3(-1171.17, -1571.09, 3.67) },
             { ["text"] = "Taco Libre", ["sprite"] = 543, ["scale"] = 0.7, ["colour"] = 25, ["pos"] = vector3(409.89, -1915.49, 25.11) },
             { ["text"] = "Supplier", ["sprite"] = 628, ["scale"] = 0.7, ["colour"] = 5, ["pos"] = vector3(-72.07, -1821.95, 26.94) },
+            { ["text"] = "Trading Card Game", ["sprite"] = 614, ["scale"] = 0.7, ["colour"] = 50, ["pos"] = vector3(256.66, -1598.44, 30.54) },
         },
     },
 }
