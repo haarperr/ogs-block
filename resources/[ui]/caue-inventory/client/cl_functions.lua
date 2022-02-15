@@ -33,6 +33,16 @@ end
 
 ]]
 
+RegisterCommand("nui", function(src, args)
+    if args[1] then
+        if args[1] == "true" then
+            SetNuiFocus(true, true)
+        elseif args[1] == "false" then
+            SetNuiFocus(false, false)
+        end
+    end
+end)
+
 AddEventHandler("caue-inventory:lockpick", function(isForced, inventoryName, slot)
     TriggerEvent("robbery:scanLock", true)
 
