@@ -184,10 +184,12 @@ GeneralEntries[#GeneralEntries+1] = {
         id = "property-enter",
         title = "Entrar propriedade",
         icon = "#property-enter",
-        event = "housing:interactionTriggered"
+        event = "housing:interactionTriggered",
+        parameters = false,
     },
     isEnabled = function(pEntity, pContext)
-        return not exports["caue-base"]:getVar("dead") and exports["caue-housing"]:isNearProperty()
+        local isNear, propertyId = exports["caue-housing"]:isNearProperty()
+        return not exports["caue-base"]:getVar("dead") and isNear
     end
 }
 
@@ -199,7 +201,23 @@ GeneralEntries[#GeneralEntries+1] = {
         event = "housing:toggleClosestLock"
     },
     isEnabled = function(pEntity, pContext)
-        return not exports["caue-base"]:getVar("dead") and exports["caue-housing"]:isNearProperty(true)
+        local isNear, propertyId = exports["caue-housing"]:isNearProperty()
+        return not exports["caue-base"]:getVar("dead") and isNear
+    end
+}
+
+GeneralEntries[#GeneralEntries+1] = {
+    data = {
+        id = "property-invade",
+        title = "Invadir propriedade",
+        icon = "#property-enter",
+        event = "housing:interactionTriggered",
+        parameters = true,
+    },
+    isEnabled = function(pEntity, pContext)
+        local isNear, propertyId = exports["caue-housing"]:isNearProperty()
+        print(isNear, propertyId)
+        return not exports["caue-base"]:getVar("dead") and isNear and exports["caue-housing"]:isBeingRobbed(propertyId)
     end
 }
 

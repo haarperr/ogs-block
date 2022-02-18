@@ -45,7 +45,7 @@ Citizen.CreateThread(function()
     end
 end)
 
-if GetConvar("sv_environment", "production") == "debug" then
+if GetConvar("sv_environment", "live") == "debug" then
     local debug = false
 
     RegisterCommand("toggleHotSpotDebug", function()

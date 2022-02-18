@@ -2,17 +2,17 @@ VehiclesConfig = {
     {
         ["Job"] = "police",
         ["Label"] = "Veiculos Policiais",
-        ["Spawn"] = vector4(437.87, -986.39, 25.7, 80.48),
+        ["Spawn"] = vector4(435.76, -976.08, 25.52, 90.85),
         ["Garage"] = "MRPD",
 
         ["Vehicles"] = {
-            { name = "Sheriff", model = "sheriff", price = 1, first_free = true },
-            { name = "Sheriff2", model = "sheriff2", price = 1, first_free = true },
-            { name = "Alamo", model = "sheriffalamo", price = 1, first_free = true },
-            { name = "Foss", model = "sheriffoss", price = 1, first_free = true },
-            { name = "Rumpo", model = "sheriffrumpo", price = 1, first_free = true },
-            { name = "Scout", model = "sheriffscout", price = 1, first_free = true },
-            { name = "Scout2", model = "sheriffscoutnew", price = 1, first_free = true },
+            { name = "Sheriff", model = "sheriff", price = 5000, first_free = true },
+            { name = "Sheriff2", model = "sheriff2", price = 5000, first_free = true },
+            { name = "Alamo", model = "sheriffalamo", price = 5000, first_free = true },
+            { name = "Foss", model = "sheriffoss", price = 5000, first_free = true },
+            { name = "Rumpo", model = "sheriffrumpo", price = 5000, first_free = true },
+            { name = "Scout", model = "sheriffscout", price = 5000, first_free = true },
+            { name = "Scout2", model = "sheriffscoutnew", price = 5000, first_free = true },
         },
 
         ["NPC"] = {

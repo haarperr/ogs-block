@@ -9,7 +9,7 @@ local LastStroke = 0
 local HasNuiFocus = false
 local IsFocusThreadRunning = false
 
-local playerPed = PlayerPedId()
+playerPed = PlayerPedId()
 local oldHealth
 local oldArmor
 local oldOxygen
@@ -172,6 +172,7 @@ function setUnderWater(value)
 end
 
 function setDirectionAndStreetName(direction, streetName)
+    print(direction, streetName)
     SendNUIMessage({
         component = "vehicle",
         payload = {

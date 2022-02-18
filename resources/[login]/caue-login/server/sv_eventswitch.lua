@@ -12,7 +12,7 @@ AddEventHandler("caue-login:switchCharacter", function()
     TriggerClientEvent("caue-evidence:reset", src)
     TriggerClientEvent("caue-jail:reset", src)
 
-    TriggerEvent("caue-apartments:deSpawn", cid)
+    TriggerEvent("caue-apartments:deSpawn", src)
 
     TriggerClientEvent("robbing", src, false)
     TriggerClientEvent("inhouse", src, false)

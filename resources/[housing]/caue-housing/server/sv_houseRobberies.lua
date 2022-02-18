@@ -12,6 +12,17 @@ Housing.robPosLocations = {}
 
 --[[
 
+    Events
+
+]]
+
+RegisterNetEvent("caue-base:sessionStarted", function()
+    local src = source
+    TriggerClientEvent("caue-housing:beingRobbed", src, Housing.housingBeingRobbed)
+end)
+
+--[[
+
     RPCs
 
 ]]
@@ -22,6 +33,7 @@ RPC.register("housing:robbery:pickedLock", function(src, pHouseId)
     end
 
     Housing.housingBeingRobbed[pHouseId] = true
+    TriggerClientEvent("caue-housing:beingRobbed", -1, pHouseId)
 
     local model = Housing.info[pHouseId]["model"]
     local counterpart = Housing.typeInfo[model]["robberyCounterpart"]

@@ -239,20 +239,20 @@ function isNearProperty(isOwned)
 
     if isComplete and dist <= 3.0 then
         if Housing.typeInfo[Housing.info[propertyId].model].cat == "buisness" then
-            return false
+            return false, nil
         end
 
         if isOwned then
             if Housing.currentOwned[propertyId] == nil and Housing.currentKeys[propertyId] == nil and Housing.currentHousingLocks[propertyId] == nil then
-                return false
+                return false, nil
             end
-            return true
+            return true, propertyId
         end
 
-        return true
+        return true, propertyId
     end
 
-    return false
+    return false, nil
 end
 
 function canRent()

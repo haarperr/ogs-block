@@ -73,4 +73,7 @@ AddEventHandler("caue-phone:callEnd", function(pCallId)
 
     TriggerClientEvent("phone:call:inactive", callerID)
     TriggerClientEvent("phone:call:inactive", receiverID)
+
+    activeCallsBySource[callerID] = nil
+    activeCallsBySource[receiverID] = nil
 end)

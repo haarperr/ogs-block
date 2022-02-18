@@ -340,6 +340,14 @@ function interactRob()
     end
 end
 
+function isBeingRobbed(pPropertyId)
+    if Housing.housingBeingRobbedClient and Housing.housingBeingRobbedClient[pPropertyId] then
+        return true
+    else
+        return false
+    end
+end
+
 --[[
 
     Exports
@@ -347,6 +355,7 @@ end
 ]]
 
 exports("isInRobbery", isInRobbery)
+exports("isBeingRobbed", isBeingRobbed)
 
 --[[
 
@@ -463,6 +472,14 @@ AddEventHandler("caue-housing:alarm", function(pHouseId)
             TriggerEvent("InteractSound_CL:PlayAudioAtPosition", alarmOffset, 70.0, "vault-alarm", 0.2, false, 20.0, 0.1)
             Citizen.Wait(3000)
         end
+    end
+end)
+
+RegisterNetEvent("caue-housing:beingRobbed", function(pPropertyId)
+    if type(pPropertyId) == "table" then
+        Housing.housingBeingRobbedClient = pPropertyId
+    else
+        Housing.housingBeingRobbedClient[pPropertyId] = true
     end
 end)
 

@@ -27,7 +27,7 @@ function DoctorNPC()
     ClearPedTasks(entityPed)
 	Citizen.Wait(500)
     TriggerEvent("reviveFunction")
-	TriggerEvent("DoLongHudText", "Seu tratamento acabou, foi cobrado o valor de: $" .. 750)
+	TriggerEvent("DoLongHudText", "Seu tratamento acabou, foi cobrado o valor de: $" .. 500)
 
     if entityVehicle then
         TaskVehicleDriveToCoord(entityPed, entityVehicle, 307.93, -594.99, 43.29, 20.0, 0, GetEntityModel(entityVehicle), 524863, 2.0)

@@ -4,10 +4,9 @@
 
 ]]
 
-local whitelistTagsArray = {
-    "924862182187995156", -- Dev
-    "925760894380703825", -- Staff
-    -- "925237446986301450", -- Insider
+local developers = {
+    "228659194771800065",
+    "578438412936151040"
 }
 
 --[[
@@ -24,6 +23,14 @@ function haveWhitelist(src)
     end
 
     local discordid = string.sub(ids.discord, 9)
+
+    if has_value(developers, discordid) then
+        return true, ""
+    end
+
+    if GetConvar("sv_environment", "live") == "debug" then
+        return false, "devserver"
+    end
 
     local user = DiscordRequest("GET", "guilds/" .. Config["BOT_GUILDID"] .. "/members/" .. discordid, {})
 
@@ -45,7 +52,7 @@ function haveWhitelist(src)
 
     for i, v in pairs(userdata.roles) do
         if has_value(json.decode(whitelistTags), v) then
-            return true, "have whitelist"
+            return true, ""
         end
     end
 

@@ -139,12 +139,18 @@ end
 
 function RefreshConnection(pIsForced)
     if InitialConnection or pIsForced then
-      local a, b = GetInfo()
+        local a, b = GetInfo()
 
-      MumbleSetServerAddress("176.97.196.40", b)
+        print(a, b)
 
-      NativeAudio = GetConvar("voice_useNativeAudio", "false") == "true"
-      InitialConnection = pIsForced and InitialConnection or false
+        if GetConvar("sv_environment", "live") == "debug" then
+            MumbleSetServerAddress(a, b)
+        else
+            MumbleSetServerAddress("176.97.196.40", b)
+        end
+
+        NativeAudio = GetConvar("voice_useNativeAudio", "false") == "true"
+        InitialConnection = pIsForced and InitialConnection or false
     end
 end
 
@@ -188,3 +194,18 @@ RegisterCommand("+mumble", function()
 end)
 
 RegisterCommand("-mumble", function() end)
+
+Citizen.CreateThread(function()
+    Citizen.Wait(10000)
+
+    while true do
+        Citizen.Wait(1000)
+
+        local isConnected = MumbleIsConnected()
+
+        if not isConnected then
+            print("Reconnecting to Mumble")
+            RefreshConnection(true)
+        end
+    end
+end)

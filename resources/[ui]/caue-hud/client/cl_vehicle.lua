@@ -31,37 +31,31 @@ local appliedTextureChange = false
 function toggleMap()
     SetBlipAlpha(GetNorthRadarBlip(), 0.0)
 
-    if hudSettings.map == "circle" then
-        if not appliedTextureChange then
-            RequestStreamedTextureDict("circlemap", false)
-            while not HasStreamedTextureDictLoaded("circlemap") do
-                Citizen.Wait(0)
-            end
-            AddReplaceTexture("platform:/textures/graphics", "radarmasksm", "circlemap", "radarmasksm")
-
-            appliedTextureChange = true
+    if not appliedTextureChange then
+        RequestStreamedTextureDict("circlemap", false)
+        while not HasStreamedTextureDictLoaded("circlemap") do
+            Citizen.Wait(0)
         end
+        AddReplaceTexture("platform:/textures/graphics", "radarmasksm", "circlemap", "radarmasksm")
 
-        SetMinimapComponentPosition("minimap", "L", "B", -0.01, -0.050, 0.12, 0.19)
-        SetMinimapComponentPosition("minimap_mask", "L", "B", -0.017, 0.014, 1.203, 0.305)
-        SetMinimapComponentPosition("minimap_blur", "L", "B", -0.015, 0.020, 0.200, 0.295)
-
-        SetMinimapClipType(1)
-        SetRadarZoom(1200)
-    else
-        if appliedTextureChange then
-            RemoveReplaceTexture("platform:/textures/graphics", "radarmasksm")
-
-            appliedTextureChange = false
-        end
-
-        SetMinimapComponentPosition("minimap", "L", "B", -0.0045, -0.0245, 0.150, 0.18888)
-        SetMinimapComponentPosition("minimap_mask", "L", "B", 0.020, 0.022, 0.111, 0.159)
-        SetMinimapComponentPosition("minimap_blur", "L", "B", -0.03, 0.002, 0.266, 0.237)
-
-        SetMinimapClipType(0)
-        SetRadarZoom(1000)
+        appliedTextureChange = true
     end
+
+    local defaultAspectRatio = 1920/1080 -- Don"t change this.
+    local resolutionX, resolutionY = GetActiveScreenResolution()
+    local aspectRatio = resolutionX/resolutionY
+    local minimapOffset = 0
+
+    if aspectRatio > defaultAspectRatio then
+        minimapOffset = ((defaultAspectRatio-aspectRatio)/3.6)-0.008
+    end
+
+    SetMinimapComponentPosition("minimap", "L", "B",  0.0 + minimapOffset, -0.047, 0.12, 0.19)
+    SetMinimapComponentPosition("minimap_mask", "L", "B", 0.0 + minimapOffset, 0.0, 1.203, 0.305)
+    SetMinimapComponentPosition("minimap_blur", "L", "B", -0.01 + minimapOffset, 0.025, 0.200, 0.295)
+
+    SetMinimapClipType(1)
+    SetRadarZoom(1200)
 
     DisplayRadar(0)
     SetRadarBigmapEnabled(true, false)

@@ -11,7 +11,7 @@ AddEventHandler("caue-death:medicNPC", function()
     local groupBank = exports["caue-groups"]:groupBank("ems")
 
     local comment = "Despesas com assistência médica"
-    exports["caue-financials"]:transaction(accountId, groupBank, 750, comment, cid, 1)
+    exports["caue-financials"]:transaction(accountId, groupBank, 500, comment, cid, 1)
 
     TriggerClientEvent("caue-death:medicNPC", src)
 end)

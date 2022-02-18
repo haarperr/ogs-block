@@ -64,7 +64,17 @@ Queue.OnJoin(function(source, allow)
 
 		allow()
 	else
-		allow("\xE2\x9D\x97[Fila] Você deve estar na whitelist para entrar neste servidor")
+		if message == "devserver" then
+			allow("\xE2\x9D\x97[Fila] Esse servidor e so pra desenvolvimento seu 🐒, entra no servidor certo ae")
+		elseif message == "discord id not found" then
+			allow("\xE2\x9D\x97[Fila] Erro: Não foi possível encontrar seu Discord ID, tente reiniciar o FiveM.")
+		elseif message == "user data not found" then
+			allow("\xE2\x9D\x97[Fila] Erro: Não foi possível encontrar seu usuario no servidor do discord. Você esta no discord?")
+		elseif message == "user roles not found" then
+			allow("\xE2\x9D\x97[Fila] Erro: Não foi possível encontrar suas tags no servidor do discord. Você esta no discord?")
+		else
+			allow("\xE2\x9D\x97[Fila] Você deve estar na whitelist para entrar neste servidor")
+		end
 	end
 end)
 

@@ -70,18 +70,25 @@ end)
 ]]
 
 Citizen.CreateThread(function()
+    local updated = false
+
     while true do
         Citizen.Wait(1000)
 
-        if #PlayersCoords > 0 then
-            for k, v in pairs(PlayersCoords) do
-                if v ~= nil then
-                    local ped = GetPlayerPed(k)
-                    local coords = GetEntityCoords(ped)
-                    PlayersCoords[k] = coords
-                end
-            end
+        updated = false
 
+        for k, v in pairs(PlayersCoords) do
+            local ped = GetPlayerPed(k)
+            local coords = GetEntityCoords(ped)
+
+            PlayersCoords[k] = coords
+
+            if not updated then
+                updated = true
+            end
+        end
+
+        if updated then
             TriggerClientEvent("caue:infinity:player:coords", -1, PlayersCoords)
         end
     end

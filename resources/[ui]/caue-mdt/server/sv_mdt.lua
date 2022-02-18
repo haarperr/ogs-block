@@ -1038,7 +1038,7 @@ RegisterNetEvent("caue-mdt:newReport", function(pData)
     local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
     local job = getJob(src)
 
-    if pData.id ~= nil and pData.id ~= 0 then
+    if pData.existing then
         exports.ghmattimysql:executeSync([[
             UPDATE mdt_reports
             SET cid = ?, title = ?, type = ?, detail = ?, tags = ?, gallery = ?, officers = ?, civilians = ?, time = ?

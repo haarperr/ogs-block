@@ -108,7 +108,7 @@ local function toggleDebug(state)
   end
 end
 
-if GetConvar("sv_environment", "prod") == "debug" then
+if GetConvar("sv_environment", "live") == "debug" then
   RegisterCommand("caue-polyzone:debug", function (src, args)
     toggleDebug(not debugEnabled)
   end)

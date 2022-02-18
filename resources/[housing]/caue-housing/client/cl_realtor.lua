@@ -16,7 +16,7 @@ local timeout = 0
 
 ]]
 
-function InteractionPressed()
+function InteractionPressed(pRadial)
     local curTime = GetGameTimer()
 
     if Housing.lockpicking then
@@ -81,7 +81,7 @@ function InteractionPressed()
     local max = Housing.max[cat]
 
     local hasBeenRobbed = false
-    if Housing.housingBeingRobbedClient and Housing.housingBeingRobbedClient[propertyID] then
+    if Housing.housingBeingRobbedClient and Housing.housingBeingRobbedClient[propertyID] and pRadial then
         hasBeenRobbed = true
     end
 
@@ -719,8 +719,8 @@ exports("canEdit", canEdit)
 ]]
 
 RegisterNetEvent("housing:interactionTriggered")
-AddEventHandler("housing:interactionTriggered", function()
-    InteractionPressed()
+AddEventHandler("housing:interactionTriggered", function(pInvade)
+    InteractionPressed(pInvade)
 end)
 
 AddEventHandler("caue-housing:sell", function()

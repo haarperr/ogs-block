@@ -121,7 +121,7 @@ function sendSMS(number, message, _src)
 
     local receiver = exports["caue-base"]:getSidWithPhone(number)
     if receiver ~= 0 then
-        TriggerClientEvent("phone:newSMS", receiver, phone)
+        TriggerClientEvent("caue-phone:newSMS", receiver, phone, message)
     end
 
     return true

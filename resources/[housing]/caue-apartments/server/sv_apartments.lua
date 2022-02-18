@@ -8,15 +8,6 @@ local Apartments = {}
 
 --[[
 
-    Functions
-
-]]
-
-
-
-
---[[
-
     Events
 
 ]]
@@ -34,11 +25,14 @@ AddEventHandler("SpawnEventsServer", function()
     for i, v in ipairs(Apartments[type]) do
         if v == 0 then
             Apartments[type][i] = {
+                src = src,
                 cid = cid,
                 type = type,
                 room = i,
             }
+
             room = i
+
             break
         end
     end
@@ -46,18 +40,31 @@ AddEventHandler("SpawnEventsServer", function()
     TriggerClientEvent("apartments:apartmentSpawn", src, hotel, room)
 end)
 
-AddEventHandler("caue-apartments:deSpawn", function(cid)
-    local src = source
-
+AddEventHandler("caue-apartments:deSpawn", function(src)
     for i, v in ipairs(Apartments) do
         for i2, v2 in ipairs(v) do
-            if v2 == cid then
-                Apartments[i][i2] = 0
+            if v2 ~= 0 then
+                if v2.src == src then
+                    Apartments[i][i2] = 0
+                end
             end
         end
     end
 end)
 
+AddEventHandler("playerDropped", function()
+	local src = source
+
+    for i, v in ipairs(Apartments) do
+        for i2, v2 in ipairs(v) do
+            if v2 ~= 0 then
+                if v2.src == src then
+                    Apartments[i][i2] = 0
+                end
+            end
+        end
+    end
+end)
 
 --[[
 
@@ -68,9 +75,6 @@ end)
 RPC.register("GetMotelInformation", function(src, type, room)
     return Apartments[type][room]
 end)
-
-
-
 
 --[[
 

@@ -15,5 +15,4 @@ server_scripts {
 client_scripts {
     "client/cl_variables.lua",
     "client/cl_init.lua",
-    "client/cl_gameplay.lua",
 }

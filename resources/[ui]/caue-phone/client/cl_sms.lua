@@ -55,7 +55,7 @@ end
 ]]
 
 RegisterNetEvent("caue-phone:newSMS")
-AddEventHandler("caue-phone:newSMS", function(number)
+AddEventHandler("caue-phone:newSMS", function(number, message)
     if hasPhone() then
         SendNUIMessage({
             openSection = "newsms",
@@ -63,7 +63,7 @@ AddEventHandler("caue-phone:newSMS", function(number)
         })
 
         if phoneNotifications then
-            TriggerEvent("DoLongHudText", "Você acabou de receber um novo SMS")
+            phoneNotification("fas fa-comment", "SMS", message, 5000)
             PlaySound(-1, "Event_Start_Text", "GTAO_FM_Events_Soundset", 0, 0, 1)
         end
     end

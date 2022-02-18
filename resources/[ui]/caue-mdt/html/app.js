@@ -1941,7 +1941,7 @@ $(document).ready(() => {
     });
 
     $(".manage-reports-title-holder").on("click", ".manage-reports-save", function () {
-        let existing = !($(".manage-reports-editing-title").html() == 'You are currently creating a new report')
+        let existing = !($(".manage-reports-editing-title").html() == 'Você está criando um novo relatório')
         let id = $(".manage-reports-editing-title").data("id");
         let title = $("#reporttitle").val()
         let type = $("#reporttype").val()
