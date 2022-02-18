@@ -16,6 +16,12 @@ $(document).ready(function () {
                 case "police":
                     background = 'url("images/police.png")'
                     break;
+                case "sheriff":
+                    background = 'url("images/sheriff.png")'
+                    break;
+                case "park_ranger":
+                    background = 'url("images/park_ranger.png")'
+                    break;
                 case "state_police":
                     background = 'url("images/state_police.png")'
                     break;

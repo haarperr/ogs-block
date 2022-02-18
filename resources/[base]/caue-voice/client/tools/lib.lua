@@ -141,8 +141,6 @@ function RefreshConnection(pIsForced)
     if InitialConnection or pIsForced then
         local a, b = GetInfo()
 
-        print(a, b)
-
         if GetConvar("sv_environment", "live") == "debug" then
             MumbleSetServerAddress(a, b)
         else
