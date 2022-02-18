@@ -399,6 +399,10 @@ AddEventHandler("RunUseItem", function(itemid, slot, inventoryName, isWeapon, pa
         CreateCraftOption("lean", 10, true)
     end
 
+    if (itemid == "anfetamina") then
+        CreateCraftOption("1gmeta", 10, true)
+    end
+
     if (itemid == "lighter") then
         TriggerEvent("animation:PlayAnimation","lighter")
         local finished = exports["caue-taskbar"]:taskBar(2000,"Tacando fogo",false,false,playerVeh)
@@ -503,11 +507,11 @@ AddEventHandler("RunUseItem", function(itemid, slot, inventoryName, isWeapon, pa
         TaskItem("anim@amb@nightclub@peds@", "missfbi3_party_snort_coke_b_male3", 49, 5000, "Cheirando Cocaína", "hadcocaine", true,itemid,playerVeh)
     end
 
-    if (itemid == "1gcrack") then
+    if (itemid == "1gmeta") then
         TriggerEvent("attachItemObjectnoanim","crackpipe01")
         TriggerEvent("Evidence:StateSet",2,1200)
         TriggerEvent("Evidence:StateSet",6,1200)
-        TaskItem("switch@trevor@trev_smoking_meth", "trev_smoking_meth_loop", 49, 5000, "Fumando Crack", "hadcrack", true,itemid,playerVeh)
+        TaskItem("switch@trevor@trev_smoking_meth", "trev_smoking_meth_loop", 49, 5000, "Usando Metafetamina", "hadcrack", true,itemid,playerVeh)
     end
 
     if (itemid == "IFAK") then

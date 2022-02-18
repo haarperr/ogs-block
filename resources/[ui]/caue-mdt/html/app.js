@@ -2765,9 +2765,9 @@ $(document).ready(() => {
             $(".manage-profile-save").show()
 
             if (["police", "sheriff", "state_police", "park_ranger"].includes(sentJob)) {
-                $(".badge-logo").attr('src', 'https://cdn.discordapp.com/attachments/770324167894761522/912602343483260958/sasp_badge.png');
-                $(".header-title").html("SAN ANDREAS STATE POLICE");
-                $(".quote-span").html("In Caue we belive 🐒");
+                $(".badge-logo").attr('src', 'https://i.imgur.com/WMIc5GB.png');
+                $(".header-title").html("Los Santos County Sheriff's");
+                $(".quote-span").html("Law above All");
                 $(".dispatch-title-ofsomesort").html("Mensagens");
 
                 document.documentElement.style.setProperty('--color-1', '#1E3955');
@@ -4087,7 +4087,7 @@ $(document).ready(() => {
                 $('.active-unit-list').prepend(`
                 <div class="active-unit-item" data-id="${value.cid}">
                     <div class="unit-status ${statuscolor}">${status}</div>
-                    <div class="unit-job active-info-job-lspd">LSPD</div>
+                    <div class="unit-job active-info-job-lspd">LSSD</div>
                     <div class="unit-name">(${callsign}) ${value.name}</div>
                     <div class="unit-radio">${radio}</div>
                 </div>

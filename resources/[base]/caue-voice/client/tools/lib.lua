@@ -141,7 +141,7 @@ function RefreshConnection(pIsForced)
     if InitialConnection or pIsForced then
       local a, b = GetInfo()
 
-      MumbleSetServerAddress(a, b)
+      MumbleSetServerAddress("176.97.196.40", b)
 
       NativeAudio = GetConvar("voice_useNativeAudio", "false") == "true"
       InitialConnection = pIsForced and InitialConnection or false

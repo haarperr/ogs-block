@@ -244,7 +244,7 @@ GeneralEntries[#GeneralEntries+1] = {
 local hasDrugs = function()
     return exports["caue-inventory"]:hasEnoughOfItem("joint", 1, false) or
         exports["caue-inventory"]:hasEnoughOfItem("1gcocaine", 1, false) or
-        exports["caue-inventory"]:hasEnoughOfItem("1gcrack", 1, false) or
+        exports["caue-inventory"]:hasEnoughOfItem("1gmeta", 1, false) or
         exports["caue-inventory"]:hasEnoughOfItem("lean", 1, false)
 end
 

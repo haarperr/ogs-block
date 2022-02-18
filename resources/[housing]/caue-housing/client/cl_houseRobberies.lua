@@ -310,7 +310,7 @@ function interactRob()
             elseif euemeusmanosodiamosoartmike >= 36 then
                 items = {"lockpick"}
             elseif euemeusmanosodiamosoartmike >= 21 then
-                items = {"joint", "lean", "1gcocaine", "1gcrack"}
+                items = {"joint", "lean", "1gcocaine", "1gmeta"}
             elseif euemeusmanosodiamosoartmike >= 14 then
                 TriggerEvent("DoLongHudText", "Você não encontrou nada")
             elseif euemeusmanosodiamosoartmike >= 7 then

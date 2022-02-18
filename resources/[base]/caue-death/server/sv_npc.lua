@@ -23,7 +23,7 @@ RPC.register("caue-death:canCallMedicNPC", function(src)
     local accountId = exports["caue-base"]:getChar(src, "bankid")
     local bank = exports["caue-financials"]:getBalance(accountId)
 
-    if bank >= 750 then
+    if bank >= 500 then
         return true
     else
         return false

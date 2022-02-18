@@ -2871,6 +2871,20 @@ itemList['codein'] = {
   contraband: true,
 };
 
+itemList['anfetamina'] = {
+  fullyDegrades: true,
+  illegal: true,
+  decayrate: 0.3,
+  displayname: 'Anfetamina',
+  price: 200,
+  weight: 1,
+  nonStack: false,
+  model: '',
+  image: 'ogs-anfetamina.png',
+  information: 'Isso me parece químico.',
+  contraband: true,
+};
+
 itemList['lean'] = {
   fullyDegrades: true,
   illegal: true,
@@ -2903,11 +2917,11 @@ itemList['1gcocaine'] = {
   contraband: true,
 };
 
-itemList['1gcrack'] = {
+itemList['1gmeta'] = {
   fullyDegrades: true,
   illegal: true,
   decayrate: 0.5,
-  displayname: 'Crack 1g',
+  displayname: 'Metafetamina 1g',
   price: 100,
   weight: 0,
   nonStack: false,
@@ -2915,6 +2929,10 @@ itemList['1gcrack'] = {
   image: 'np_crack.png',
   information: 'Faz mal experimentar?',
   contraband: true,
+  craft: [[
+    { itemid: 'anfetamina', amount: 1 },
+    { itemid: 'coffee', amount: 1 },
+  ]],
 };
 
 itemList['maleseed'] = {
@@ -3203,11 +3221,23 @@ itemList['repairkit'] = {
   decayrate: 0.25,
   displayname: 'Kit de reparo',
   craft: [[{ itemid: 'electronics', amount: 25 }]],
-  price: 150,
+  price: 100,
   weight: 10,
   nonStack: false,
   model: '',
   image: 'np_basic_repair-kit.png',
+};
+
+itemList['repairkitbennys'] = {
+  fullyDegrades: true,
+  decayrate: 0.25,
+  displayname: 'Kit de reparo (Bennys)',
+  craft: [[{ itemid: 'electronics', amount: 25 }]],
+  price: 150,
+  weight: 5,
+  nonStack: false,
+  model: '',
+  image: 'np_basic_repair-kit-bennys.png',
 };
 
 itemList['wheelchair'] = {
@@ -3413,7 +3443,7 @@ itemList['lockpick'] = {
       { itemid: 'refinedaluminium', amount: 2 },
     ]
   ],
-  price: 25,
+  price: 80,
   weight: 1,
   nonStack: false,
   model: '',
@@ -3493,7 +3523,7 @@ itemList['megaphone'] = {
   fullyDegrades: true,
   decayrate: 1.0,
   displayname: 'Megaphone',
-  price: 500,
+  price: 25,
   weight: 1,
   nonStack: true,
   model: '',

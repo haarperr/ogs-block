@@ -377,7 +377,7 @@ AddEventHandler("doTimer", function()
         deathText = ("~w~VOCÊ MORREU (~r~CK~w~)! Aguarde ~r~%d ~w~segundos")
         respawnText = ("~w~Segure ~r~E ~w~(%d) ~w~para voltar à tela de personagens")
     else
-        deathText = ("~w~Você está ferido! Aguarde ~r~%d ~w~segundos para chamar a assistência médica (~g~$750~w~)")
+        deathText = ("~w~Você está ferido! Aguarde ~r~%d ~w~segundos para chamar a assistência médica (~g~$500~w~)")
         respawnText = ("~w~Segure ~r~E ~w~(%d) ~w~para chamar a assistência médica")
     end
 

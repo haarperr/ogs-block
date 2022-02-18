@@ -14257,7 +14257,7 @@
       </SubHandlingData>
     </Item>
     <Item type="CHandlingData">
-      <handlingName>SABREGT</handlingName>
+      <handlingName>SABREGT3</handlingName>
       <fMass value="1500.000000" />
       <fInitialDragCoeff value="3.500000" />
       <fPercentSubmerged value="85.000000" />

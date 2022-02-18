@@ -7,7 +7,7 @@
 function kickAllPlayers()
     local players = GetPlayers()
     for i, v in ipairs(players) do
-        DropPlayer(v, "RESTART 🐒")
+        DropPlayer(v, "Servidor Reiniciando...")
     end
 end
 

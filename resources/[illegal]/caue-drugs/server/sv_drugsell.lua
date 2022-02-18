@@ -18,7 +18,7 @@ Config = {
             minamount = 1,
             maxamount = 3
         },
-        ["1gcrack"] = {
+        ["1gmeta"] = {
             minprice = 25,
             maxprice = 55,
             minamount = 1,

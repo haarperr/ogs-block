@@ -6,19 +6,13 @@ VehiclesConfig = {
         ["Garage"] = "MRPD",
 
         ["Vehicles"] = {
-            { name = "Viatura Merda 1", model = "sheriff", price = 1, first_free = true },
-            { name = "Viatura Merda 2", model = "sheriff2", price = 1, first_free = true },
-            { name = "Viatura Merda 3", model = "sheriffalamo", price = 1, first_free = true },
-            { name = "Viatura Merda 4", model = "sheriffcq4", price = 1, first_free = true },
-            { name = "Viatura Merda 5", model = "sherifffug", price = 1, first_free = true },
-            { name = "Viatura Merda 6", model = "sheriffinsurgent", price = 1, first_free = true },
-            { name = "Viatura Merda 7", model = "sheriffoss", price = 1, first_free = true },
-            { name = "Viatura Merda 8", model = "sheriffroamer", price = 1, first_free = true },
-            { name = "Viatura Merda 9", model = "sheriffrumpo", price = 1, first_free = true },
-            { name = "Viatura Merda 10", model = "sheriffscout", price = 1, first_free = true },
-            { name = "Viatura Merda 11", model = "sheriffscoutnew", price = 1, first_free = true },
-            { name = "Viatura Merda 12", model = "sheriffstalker", price = 1, first_free = true },
-            { name = "Viatura Merda 13", model = "sheriffthrust", price = 1, first_free = true },
+            { name = "Sheriff", model = "sheriff", price = 1, first_free = true },
+            { name = "Sheriff2", model = "sheriff2", price = 1, first_free = true },
+            { name = "Alamo", model = "sheriffalamo", price = 1, first_free = true },
+            { name = "Foss", model = "sheriffoss", price = 1, first_free = true },
+            { name = "Rumpo", model = "sheriffrumpo", price = 1, first_free = true },
+            { name = "Scout", model = "sheriffscout", price = 1, first_free = true },
+            { name = "Scout2", model = "sheriffscoutnew", price = 1, first_free = true },
         },
 
         ["NPC"] = {

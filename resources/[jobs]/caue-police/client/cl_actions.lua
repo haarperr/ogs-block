@@ -84,7 +84,7 @@ AddEventHandler("police:rob", function(pArgs, pEntity)
     ClearPedTasksImmediately(PlayerPedId())
 
     TaskPlayAnim(PlayerPedId(), "random@shop_robbery", "robbery_action_b", 8.0, -8, -1, 16, 0, 0, 0, 0)
-    local finished = exports["caue-taskbar"]:taskBar(60000, "Robbing", true, true, nil, false, nil, 5)
+    local finished = exports["caue-taskbar"]:taskBar(60000, "Roubando", true, true, nil, false, nil, 5)
 
     ClearPedTasksImmediately(PlayerPedId())
 
