@@ -130,7 +130,7 @@ function showPlantMenu(pPlantId)
         }
     end
 
-    if growth >= 95 or myjob == "police" or myjob == "judge" then
+    if growth >= 95 or exports["caue-jobs"]:getJob(myjob, "is_police") or myjob == "judge" then
         context[#context+1] = {
             title = "Destruir a Planta",
             action = "caue-weed:removePlant",

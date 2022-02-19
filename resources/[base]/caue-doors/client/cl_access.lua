@@ -50,9 +50,17 @@ function hasSecuredAccess(pId, pType)
         return false
     end
 
-    if      (secured.access.job and has_value(secured.access.job, CurrentJob) or false)
-        or  (secured.access.cid ~= nil and has_value(secured.access.cid, characterId))
-    then
+    if (secured.access.job and has_value(secured.access.job, "is_police") and exports["caue-jobs"]:getJob(CurrentJob, "is_police")) then
+        accessCheckCache[pType][pId] = true
+        return true
+    end
+
+    if (secured.access.job and has_value(secured.access.job, "is_ems") and exports["caue-jobs"]:getJob(CurrentJob, "is_ems")) then
+        accessCheckCache[pType][pId] = true
+        return true
+    end
+
+    if (secured.access.job and has_value(secured.access.job, CurrentJob) or false) or (secured.access.cid ~= nil and has_value(secured.access.cid, characterId)) then
         accessCheckCache[pType][pId] = true
         return true
     end

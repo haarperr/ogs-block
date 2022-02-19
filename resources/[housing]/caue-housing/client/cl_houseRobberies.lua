@@ -135,7 +135,7 @@ end
 
 function canRobProperty()
     local myjob = exports["caue-base"]:getChar("job")
-    if myjob == "police" or myjob == "judge" then
+    if exports["caue-base"]:getJob(myjob, "is_police") or myjob == "judge" then
         return true
     end
 

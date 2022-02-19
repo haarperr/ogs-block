@@ -116,12 +116,6 @@ Citizen.CreateThread(function()
 		maxZ=9.34
 	})
 
-	exports["caue-polyzone"]:AddBoxZone("clothing_shop", vector3(-1086.98, -831.58, 19.3), 9.2, 5.4, {
-		heading=38,
-		minZ=18.3,
-		maxZ=21.7
-	})
-
 	exports["caue-polyzone"]:AddBoxZone("clothing_shop", vector3(107.71, -1305.32, 28.77), 3.0, 4.2, {
 		heading=35,
 		minZ=27.77,

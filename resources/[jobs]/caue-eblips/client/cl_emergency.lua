@@ -48,6 +48,9 @@ function GetBlipSettings(pJobId, pCallSign)
     elseif pJobId == "doc" then
 		settings.color = 38
         settings.text = ("DOC | %s"):format(pCallSign)
+	elseif pJobId == "cid" then
+		settings.color = 63
+        settings.text = ("Detetive | %s"):format(pCallSign)
     elseif pJobId == "doctor" then
         settings.color = 19
 		settings.text = ("Doctor | %s"):format(pCallSign)

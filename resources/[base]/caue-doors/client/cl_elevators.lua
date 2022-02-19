@@ -43,13 +43,14 @@ function OpenElevatorMenu(pElevator, pCurrentFloor)
             description = floor.description,
             action = (not isCurrentFloor and not isRestricted) and "caue-doors:elevator:teleport" or "",
             params = floor.teleport,
+            disabled = isRestricted == true,
         }
 
         if hasAccess then
             access[#access+1] = {
                 title = floor.name .. (floor.locked and " | Restricted" or " | Unrestricted"),
                 action = "caue-doors:elevator:access",
-                params = { elevatorId = pElevator, floorId = floorId, locked = floor.locked }
+                params = { elevatorId = pElevator, floorId = floorId, locked = floor.locked },
             }
         end
     end

@@ -93,4 +93,11 @@ Citizen.CreateThread(function()
         minZ=186.67,
         maxZ=190.67
     })
+
+    -- Criminal Investagtion
+    exports["caue-polyzone"]:AddBoxZone("bennys", vector3(-1115.67, -807.11, 3.75), 8.0, 3.8, {
+        heading=36,
+        minZ=2.75,
+        maxZ=5.75
+    })
 end)

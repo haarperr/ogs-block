@@ -647,7 +647,7 @@ end
 
 function isGov()
     local myjob = exports["caue-base"]:getChar("job")
-    if myjob == "police" or myjob == "judge" then
+    if exports["caue-jobs"]:getJob(myjob, "is_police") or myjob == "judge" then
         return true
     end
     return false
@@ -695,7 +695,7 @@ function lockdownCheck(propertyID)
         return true
     end
 
-    if Housing.currentHousingLockdown[propertyID] and (myjob == "police" or myjob == "judge") then
+    if Housing.currentHousingLockdown[propertyID] and (exports["caue-jobs"]:getJob(myjob, "is_police") or myjob == "judge") then
         return true
     end
 
@@ -992,7 +992,7 @@ AddEventHandler("housing:inventory", function()
             end
 
             local myjob = exports["caue-base"]:getChar("job")
-            if Housing.currentHousingLockdown[propertyID] and (myjob == "police" or  myjob == "judge") then
+            if Housing.currentHousingLockdown[propertyID] and (exports["caue-jobs"]:getJob(myjob, "is_police") or  myjob == "judge") then
                 Housing.func.OpenStash(propertyID,cat)
             end
         end

@@ -2,7 +2,7 @@ ELEVATORS = ELEVATORS or {}
 
 ELEVATORS[#ELEVATORS + 1] = {
     ["access"] = {
-        ["job"] = { "ems", "police" },
+        ["job"] = { "ems", "is_police" },
     },
     ["floors"] = {
         {

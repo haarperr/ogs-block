@@ -55,6 +55,53 @@ local zoneData = {
         }
     },
 
+    vbpd_armory_evidence = {
+        promptText = "[E] Arsenal & Evidencias",
+        menuData = {
+            {
+                title = "Arsenal",
+                description = "AED - Armas, Equipamentos, Diversão!",
+                action = "caue-police:handler",
+                params = EVENTS.LOCKERS
+            },
+            {
+                title = "Evidencias",
+                description = "Armario de evidências (Temporário)",
+                action = "caue-police:handler",
+                params = EVENTS.EVIDENCE
+            },
+            {
+                title = "Lixo",
+                description = 'Onde o "Spaghetti Code" remanesce',
+                action = "caue-police:handler",
+                params = EVENTS.TRASH
+            },
+        }
+    },
+    vbpd_lockers_clothing = {
+        promptText = "[E] Armário & Roupas",
+        menuData = {
+            {
+                title = "Armário",
+                description = "Acessar armário pessoal",
+                action = "caue-police:handler",
+                params = EVENTS.LOCKERS
+            },
+            {
+                title = "Roupas",
+                description = "Trocar de roupa",
+                action = "caue-police:handler",
+                params = EVENTS.CLOTHING
+            },
+            {
+                title = "Mudar de Personagem",
+                description = "O bahianinho vai dar uma descasada na rede 😴",
+                action = "caue-police:handler",
+                params = EVENTS.SWITCHER
+            },
+        }
+    },
+
     doc_lockers = {
         promptText = "[E] Armário & Roupas",
         menuData = {
@@ -310,6 +357,30 @@ Citizen.CreateThread(function()
             job = "police",
             action = "context",
             zone = "mrpd_character_switcher",
+        },
+    })
+
+    -- VBPD Armory & Evidence
+    exports["caue-polyzone"]:AddBoxZone("caue-police:zone", vector3(-1076.71, -828.81, 19.3), 6.6, 4.6, {
+        heading=38,
+        minZ=18.3,
+        maxZ=21.5,
+        data = {
+            job = "cid",
+            action = "context",
+            zone = "vbpd_armory_evidence",
+        },
+    })
+
+    -- VBPD Lockers & Clothing
+    exports["caue-polyzone"]:AddBoxZone("caue-police:zone", vector3(-1086.98, -831.58, 19.3), 9.2, 5.4, {
+        heading=38,
+		minZ=18.3,
+		maxZ=21.7,
+        data = {
+            job = "cid",
+            action = "context",
+            zone = "vbpd_lockers_clothing",
         },
     })
 

@@ -121,7 +121,7 @@ $(document).ready(() => {
                 "status": ""
             },
         ]
-        if (["police", "sheriff", "state_police", "park_ranger"].includes(currentJob)) {
+        if (["police", "sheriff", "state_police", "park_ranger", "cid"].includes(currentJob)) {
             openContextMenu(e, args);
         }
     })
@@ -2764,7 +2764,7 @@ $(document).ready(() => {
             $(".manage-profile-editing-title").show()
             $(".manage-profile-save").show()
 
-            if (["police", "sheriff", "state_police", "park_ranger"].includes(sentJob)) {
+            if (["police", "sheriff", "state_police", "park_ranger", "cid"].includes(sentJob)) {
                 $(".badge-logo").attr('src', 'https://i.imgur.com/WMIc5GB.png');
                 $(".header-title").html("Los Santos County Sheriff's");
                 $(".quote-span").html("Law above All");
@@ -4087,7 +4087,7 @@ $(document).ready(() => {
                 $('.active-unit-list').prepend(`
                 <div class="active-unit-item" data-id="${value.cid}">
                     <div class="unit-status ${statuscolor}">${status}</div>
-                    <div class="unit-job active-info-job-lspd">LSSD</div>
+                    <div class="unit-job active-info-job-lspd">LSPD</div>
                     <div class="unit-name">(${callsign}) ${value.name}</div>
                     <div class="unit-radio">${radio}</div>
                 </div>
@@ -4114,7 +4114,7 @@ $(document).ready(() => {
                 $('.active-unit-list').prepend(`
                 <div class="active-unit-item" data-id="${value.cid}">
                     <div class="unit-status ${statuscolor}">${status}</div>
-                    <div class="unit-job active-info-job-lspd">BCSO</div>
+                    <div class="unit-job active-info-job-lspd">LSSD</div>
                     <div class="unit-name">(${callsign}) ${value.name}</div>
                     <div class="unit-radio">${radio}</div>
                 </div>

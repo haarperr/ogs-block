@@ -11,7 +11,7 @@ $(document).ready(function () {
                 $("#pic").attr("src", event.data.img);
             }
 
-            let background = 'url("images/lspd.png")'
+            let background = 'url("images/police.png")'
             switch (event.data.job) {
                 case "police":
                     background = 'url("images/police.png")'

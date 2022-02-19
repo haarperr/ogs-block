@@ -46,7 +46,7 @@ function megaphoneUp()
     local plyPed = PlayerPedId()
     local plyVeh = GetVehiclePedIsIn(plyPed, false)
     local currentJob = exports["caue-base"]:getChar("job")
-    if (plyVeh ~= 0 and policeVehicles[GetEntityModel(plyVeh)] and currentJob == "police") then
+    if (plyVeh ~= 0 and policeVehicles[GetEntityModel(plyVeh)] and exports["caue-jobs"]:getJob(currentJob, "is_police")) then
         MumbleSetAudioInputIntent(`music`)
         TriggerEvent("caue:voice:proximity:override", "megaphone", megaphoneRanges)
         TriggerServerEvent("caue:voice:transmission:state", -1, "megaphone", true, "megaphone")

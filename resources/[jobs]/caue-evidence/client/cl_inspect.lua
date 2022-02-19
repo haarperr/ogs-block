@@ -160,11 +160,11 @@ RegisterCommand("-collectEvidence", function ()
     local myjob = exports["caue-base"]:getChar("job")
     local hasGatheringKit = exports["caue-inventory"]:hasEnoughOfItem("gatheringkit", 1, false)
 
-    if myjob ~= "police" and not hasGatheringKit then return end
+    if not exports["caue-jobs"]:getJob(myjob, "is_police") and not hasGatheringKit then return end
 
     local timer = 5000
 
-    if myjob ~= "police" and hasGatheringKit then
+    if not exports["caue-jobs"]:getJob(myjob, "is_police") and hasGatheringKit then
         timer = 45000
     end
 

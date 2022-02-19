@@ -41,6 +41,11 @@ local bennysLocations = {
         heading = 90.0,
         access = "emergency"
     },
+    ["bennysvbpd"] = {
+        pos = vector3(-1115.58, -806.78, 3.24),
+        heading = 218.62,
+        access = "emergency"
+    },
     ["bennyshospital"] = {
         pos = vector3(339.92, -572.08, 28.57),
         heading = 160.31,

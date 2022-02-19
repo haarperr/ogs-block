@@ -7,7 +7,7 @@ DOORS[5001] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
 }
@@ -19,7 +19,7 @@ DOORS[5002] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
 }
@@ -31,7 +31,7 @@ DOORS[5003] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
 }
@@ -43,7 +43,7 @@ DOORS[5004] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
 }
@@ -55,7 +55,7 @@ DOORS[5005] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
 }
@@ -67,7 +67,7 @@ DOORS[5006] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5007,
@@ -80,7 +80,7 @@ DOORS[5007] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5006,
@@ -93,7 +93,7 @@ DOORS[5008] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5009,
@@ -106,7 +106,7 @@ DOORS[5009] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5008,
@@ -119,7 +119,7 @@ DOORS[5010] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5011,
@@ -132,7 +132,7 @@ DOORS[5011] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5012,
@@ -145,7 +145,7 @@ DOORS[5012] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5013,
@@ -158,7 +158,7 @@ DOORS[5013] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5012,
@@ -171,7 +171,7 @@ DOORS[5014] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5015,
@@ -184,7 +184,7 @@ DOORS[5015] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5014,
@@ -197,7 +197,7 @@ DOORS[5016] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5017,
@@ -210,7 +210,7 @@ DOORS[5017] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5016,
@@ -223,7 +223,7 @@ DOORS[5018] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5019,
@@ -236,7 +236,7 @@ DOORS[5019] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5018,
@@ -249,7 +249,7 @@ DOORS[5020] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5021,
@@ -262,7 +262,7 @@ DOORS[5021] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
     ["double"] = 5020,
@@ -275,7 +275,7 @@ DOORS[5022] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
 }
@@ -287,7 +287,7 @@ DOORS[5023] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
 }
@@ -299,7 +299,7 @@ DOORS[5024] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
 }
@@ -311,7 +311,7 @@ DOORS[5025] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["keyFob"] = true,
 }
@@ -323,7 +323,7 @@ DOORS[5026] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
 }
 
@@ -334,7 +334,7 @@ DOORS[5027] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
 }
 
@@ -347,7 +347,7 @@ DOORS[5028] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
 }
 
@@ -358,7 +358,7 @@ DOORS[5029] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
 }
 
@@ -369,7 +369,7 @@ DOORS[5030] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
 }
 
@@ -380,7 +380,7 @@ DOORS[5031] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
 }
 
@@ -391,7 +391,7 @@ DOORS[5032] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
 }
 
@@ -411,7 +411,7 @@ DOORS[5034] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["double"] = 5035,
 }
@@ -423,7 +423,7 @@ DOORS[5035] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["double"] = 5034,
 }
@@ -435,7 +435,7 @@ DOORS[5036] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["double"] = 5037,
 }
@@ -447,7 +447,7 @@ DOORS[5037] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["double"] = 5036,
 }
@@ -459,7 +459,7 @@ DOORS[5038] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
 }
 
@@ -470,7 +470,7 @@ DOORS[5039] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["double"] = 5040,
 }
@@ -482,7 +482,7 @@ DOORS[5040] = {
     ["lock"] = 1,
     ["automatic"] = {},
     ["access"] = {
-        ["job"] = { "police" },
+        ["job"] = { "is_police" },
     },
     ["double"] = 5039,
 }

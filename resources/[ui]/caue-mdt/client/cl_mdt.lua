@@ -463,19 +463,6 @@ AddEventHandler("caue-mdt:publicRecords", function()
     })
 end)
 
-RegisterNetEvent("caue-jobs:jobChanged")
-AddEventHandler("caue-jobs:jobChanged", function(job)
-    if exports["caue-jobs"]:getJob(job, "is_police") then
-        currentJob = "police"
-    elseif exports["caue-jobs"]:getJob(job, "is_medic") then
-        currentJob = "ems"
-    elseif exports["caue-jobs"]:getJob(job, "is_doj") then
-        currentJob = "doj"
-    elseif currentJob ~= "unemployed" then
-        currentJob =  "unemployed"
-    end
-end)
-
 RegisterNetEvent("caue-mdt:open")
 AddEventHandler("caue-mdt:open", function()
     open = true
@@ -748,13 +735,11 @@ end)
 
 RegisterNetEvent("caue-mdt:callAttach")
 AddEventHandler("caue-mdt:callAttach", function(callid, sentData)
-    if currentJob == "police" or currentJob == "ems" then
-        SendNUIMessage({
-            type = "callAttach",
-            callid = callid,
-            data = tonumber(sentData)
-        })
-    end
+    SendNUIMessage({
+        type = "callAttach",
+        callid = callid,
+        data = tonumber(sentData)
+    })
 end)
 
 RegisterNUICallback("callDetach", function(data, cb)
@@ -765,13 +750,11 @@ end)
 
 RegisterNetEvent("caue-mdt:callDetach")
 AddEventHandler("caue-mdt:callDetach", function(callid, sentData)
-    if currentJob == "police" or currentJob == "ems" then
-        SendNUIMessage({
-            type = "callDetach",
-            callid = callid,
-            data = tonumber(sentData)
-        })
-    end
+    SendNUIMessage({
+        type = "callDetach",
+        callid = callid,
+        data = tonumber(sentData)
+    })
 end)
 
 RegisterNUICallback("attachedUnits", function(data, cb)

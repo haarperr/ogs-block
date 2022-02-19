@@ -23,9 +23,9 @@ MenuData = {
             }
         },
     },
-    lssd_sign_in = {
+    lspd_sign_in = {
         {
-            title = "Los Santos County Sheriff",
+            title = "Police Officer",
             description = "Entrar ou Sair de serviço",
             children = {
                 { title = "Entrar", action = "caue-signin:handler", params = { sign_in = true, job = "police" } },
@@ -137,6 +137,16 @@ MenuData = {
             }
         },
     },
+    cid_sign_in = {
+        {
+            title = "Investigador Criminal",
+            description = "Entrar ou Sair de serviço",
+            children = {
+                { title = "Entrar", action = "caue-signin:handler", params = { sign_in = true, job = "cid" } },
+                { title = "Sair", action = "caue-signin:handler", params = { sign_off = true } }
+            }
+        },
+    },
 }
 
 --[[
@@ -165,7 +175,7 @@ Citizen.CreateThread(function()
         minZ = 30.79,
         maxZ = 30.84,
         data = {
-            job = "lssd_sign_in",
+            job = "lspd_sign_in",
         },
     })
 
@@ -212,4 +222,12 @@ Citizen.CreateThread(function()
     --         job = "yb14_sign_in",
     --     },
     -- })
+
+    -- CID VBPD
+    exports["caue-polytarget"]:AddCircleZone("job_sign_in",vector3(-1087.07, -814.18, 19.55), 0.3, {
+        useZ = true,
+        data = {
+            job = "cid_sign_in",
+        },
+    })
 end)

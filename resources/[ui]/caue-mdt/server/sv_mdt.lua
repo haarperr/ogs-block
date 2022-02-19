@@ -203,7 +203,7 @@ RPC.register("caue-mdt:getActiveUnits", function(src)
                 local name = character.first_name .. " " .. character.last_name
                 local callSign = exports["caue-jobs"]:getCallsign(user, job)
 
-                if job == "police" then
+                if job == "police" or job == "cid" then
                     table.insert(police, {
                         duty = 1,
                         cid = character.id,

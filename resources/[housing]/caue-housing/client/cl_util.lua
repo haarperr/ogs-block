@@ -283,7 +283,7 @@ end
 
 function hasKey(propertyID)
     local job = exports["caue-base"]:getChar("job")
-    if job == "police" or job == "judge" then
+    if exports["caue-jobs"]:getJob(job, "is_police") or job == "judge" then
         return true
     end
 

@@ -809,6 +809,10 @@ function setTattoosAndFacial(pTattoos, pFadeStyle, pShop)
     end
 
     if pShop then
+        for i, v in ipairs(currentTattoos) do
+            table.insert(_currentTattoos, v)
+        end
+
         for i, v in ipairs(_currentTattoosTemp) do
             table.insert(_currentTattoos, v)
         end
