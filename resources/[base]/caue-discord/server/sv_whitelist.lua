@@ -9,6 +9,10 @@ local developers = {
     "578438412936151040"
 }
 
+local hexWhitelist = {
+    "steam:1100001120b094c",
+}
+
 --[[
 
     Functions
@@ -19,6 +23,10 @@ function haveWhitelist(src)
     local ids = GetIds(src)
 
     if not ids.discord then
+        if GetConvar("sv_environment", "live") == "live" and has_value(hexWhitelist, ids.hex) then
+            return true, ""
+        end
+
         return false, "discord id not found"
     end
 
