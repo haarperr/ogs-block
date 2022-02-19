@@ -117,13 +117,22 @@ MenuData = {
             }
         },
     },
-
     vanilla_unicorn_sign_in = {
         {
             title = "Vanilla Unicorn",
             description = "Entrar ou Sair de serviço",
             children = {
                 { title = "Entrar", action = "caue-signin:handler", params = { sign_in = true, job = "vanilla_unicorn" } },
+                { title = "Sair", action = "caue-signin:handler", params = { sign_off = true } },
+            }
+        },
+    },
+    yb14_sign_in = {
+        {
+            title = "Young Boys Drip",
+            description = "Entrar ou Sair de serviço",
+            children = {
+                { title = "Entrar", action = "caue-signin:handler", params = { sign_in = true, job = "yb14" } },
                 { title = "Sair", action = "caue-signin:handler", params = { sign_off = true } },
             }
         },
@@ -194,4 +203,13 @@ Citizen.CreateThread(function()
         },
     })
 
+    -- Young Boys
+    -- exports["caue-polytarget"]:AddBoxZone("job_sign_in", vector3(71.76, -1392.47, 29.38), 0.45, 1.6, {
+    --     heading=0,
+    --     minZ=28.38,
+    --     maxZ=30.58,
+    --     data = {
+    --         job = "yb14_sign_in",
+    --     },
+    -- })
 end)

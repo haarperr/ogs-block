@@ -204,7 +204,7 @@ RPC.register("caue-financials:bankTransfer", function(src, pSenderAccount, pRece
 
     local receiverSid = exports["caue-base"]:getSidWithAccountId(pReceiverAccount)
     if receiverSid ~= 0 then
-        TriggerClientEvent("caue-phone:notification", receiverSid, "fas fa-university", "Bank", "Vpcê recebeu uma transferência de $" .. pAmount .. " da conta de ID: " .. pSenderAccount, 3000)
+        TriggerClientEvent("caue-phone:notification", receiverSid, "fas fa-university", "Bank", "Você recebeu uma transferência de $" .. pAmount .. " da conta de ID: " .. pSenderAccount, 3000)
     end
 
     return true, "Sucesso ao transferir $" .. pAmount .. " para a conta de ID:" .. pReceiverAccount
