@@ -202,8 +202,15 @@ Citizen.CreateThread(function()
         local isConnected = MumbleIsConnected()
 
         if not isConnected then
-            print("Reconnecting to Mumble")
+            print("Trying to reconnect to Mumble")
+            
             RefreshConnection(true)
+            
+            Citizen.Wait(2000)
+            
+            if MumbleIsConnected() then
+                print("Mumble Reconected")
+            end
         end
     end
 end)
