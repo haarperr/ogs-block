@@ -81,6 +81,7 @@ AddEventHandler("caue-death:medicNPC", function()
 
         local mechPed = CreatePedInsideVehicle(mechVeh, 26, GetHashKey("s_m_m_paramedic_01"), -1, true, false)
         SetPedRelationshipGroupHash(mechPed, -1533126372)
+        DecorSetBool(mechVeh, "ScriptedPed", true)
 
         local mechBlip = AddBlipForEntity(mechVeh)
         SetBlipFlashes(mechBlip, true)

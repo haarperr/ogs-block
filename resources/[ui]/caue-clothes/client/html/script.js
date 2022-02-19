@@ -6,31 +6,115 @@ var hairColors = null;
 var makeupColors = null;
 let headBlend = {};
 
-var isService = false;
+var currentJob = "unemployed";
 
 let whitelisted = {
-    male:[
-    ],
-    female:[
-    ]
+    police:[],
+    ems:[],
+    yb14: [],
 };
 
-// whitelisted["male"] = {
-//     jackets:[19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,35,67,68,70,71,73,74,76,81,82,83,105,149,205],
-//     undershirts:[16,17,19,20,22,24,25,26,28,29,33,34,35,36,39,40,42,57,58,102,115,116,166,173,174],
-//     pants:[21,22,23,24,25,28,35],
-//     decals:[1,2,3,4,5,6,58],
-//     vest:[1,2,7,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
-//     hats:[20,21,24,25,26,27,30,33,34,50,90,166],
-// }
+whitelisted["police"]["male"] = {
+    hats:[],
+    jackets:[],
+    undershirts:[],
+    legs:[],
+    shoes:[],
+    decals:[],
+    masks:[],
+    glasses:[],
+    earrings:[],
+    neck:[],
+    watches:[],
+    braclets:[],
+    vest:[],
+    bags:[],
+}
 
-// whitelisted["female"] = {
-//     jackets:[17,18,19,20,21,22,23,24,25,26,27,28,29,30,67,68,102,157],
-//     undershirts:[16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,66,67,68,70,71,72,78,79,105,143,198],
-//     pants:[18,19,20,21,22,23,24,39],
-//     vest:[8,9,11,12,13,14,15,16,17,18,19,21,22],
-//     hats:[20,21,23,24,25,26,28,29,31,37,39,75,77,153],
-// }
+whitelisted["police"]["female"] = {
+    hats:[],
+    jackets:[],
+    undershirts:[],
+    legs:[],
+    shoes:[],
+    decals:[],
+    masks:[],
+    glasses:[],
+    earrings:[],
+    neck:[],
+    watches:[],
+    braclets:[],
+    vest:[],
+    bags:[],
+}
+
+whitelisted["ems"]["male"] = {
+    hats:[],
+    jackets:[],
+    undershirts:[],
+    legs:[],
+    shoes:[],
+    decals:[],
+    masks:[],
+    glasses:[],
+    earrings:[],
+    neck:[],
+    watches:[],
+    braclets:[],
+    vest:[],
+    bags:[],
+}
+
+whitelisted["ems"]["female"] = {
+    hats:[],
+    jackets:[],
+    undershirts:[],
+    legs:[],
+    shoes:[],
+    decals:[],
+    masks:[],
+    glasses:[],
+    earrings:[],
+    neck:[],
+    watches:[],
+    braclets:[],
+    vest:[],
+    bags:[],
+}
+
+whitelisted["yb14"]["male"] = {
+    hats:[],
+    jackets:[2],
+    undershirts:[],
+    legs:[],
+    shoes:[],
+    decals:[],
+    masks:[],
+    glasses:[],
+    earrings:[],
+    neck:[],
+    watches:[],
+    braclets:[],
+    vest:[],
+    bags:[],
+}
+
+whitelisted["yb14"]["female"] = {
+    hats:[],
+    jackets:[],
+    undershirts:[],
+    legs:[],
+    shoes:[],
+    decals:[],
+    masks:[],
+    glasses:[],
+    earrings:[],
+    neck:[],
+    watches:[],
+    braclets:[],
+    vest:[],
+    bags:[],
+}
 
 const throttle = (func, limit) => {
     let inThrottle
@@ -50,7 +134,7 @@ $(function () {
             open = event.data.enable;
             if (open) {
                 currentMenu = $('#'+event.data.menu);
-                isService = event.data.isService;
+                currentJob = event.data.currentJob;
                 if (event.data.price && event.data.price > 0) {
                     $("#totalPriceWithTax").text(`$${event.data.priceText}`);
                 } else {
@@ -132,7 +216,10 @@ $(function () {
     };
 
     $('#save').on('click', function() {
-        CloseMenu(true)
+        CloseMenu(true, 'cash')
+    })
+    $('#save-bank').on('click', function() {
+        CloseMenu(true, 'bank')
     })
     $('#discard').on('click', function() {
         CloseMenu(false)
@@ -233,6 +320,12 @@ $(function () {
         input.val(parseInt(input.val()) + 1)
         inputChange(input,true)
     })
+    $('.button-applytattoo').on('click', function () {
+        $.post('https://caue-clothes/applytattoo', JSON.stringify({
+            category: $(this).attr('id'),
+            tattoo:  $(`#${$(this).attr('id')}`).find('.input-number').val(),
+        }))
+    })
 
     $('.input-number').on('input', function () {
         inputChange($(this),true)
@@ -267,28 +360,40 @@ $(function () {
                 $(ele).val(0)
             }
 
-            if(!isService && ($('#skin_female').val() == 1 || $('#skin_male').val() == 1)) {
-                let clothingName = $(ele).parents('.panel').attr('id');
-                let clothingID = parseInt($(ele).val());
-                let isNotValid = true
-                let gender = "male";
-                if($('#skin_female').val() >= 1 && $('#skin_male').val() == 0)
-                    gender = "female";
-
-                if(ele.is(inputs.eq(0)) && whitelisted[gender][clothingName]){
-                    while (isNotValid) {
-                        if(whitelisted[gender][clothingName].indexOf(clothingID) > -1 ){
-                            isNotValid = true
-                            if(inputType){clothingID++;}else{clothingID--;}
-
-                        }
-                        else
-                        {
-                            isNotValid = false;
+            if(($('#skin_female').val() == 1 || $('#skin_male').val() == 1)) {
+                try {
+                    let clothingName = $(ele).parents('.panel').attr('id');
+                    let clothingID = parseInt($(ele).val());
+                    let isNotValid = true
+                    let gender = "male";
+                    if($('#skin_female').val() >= 1 && $('#skin_male').val() == 0)
+                        gender = "female";
+                    if(ele.is(inputs.eq(0)) && (
+                        whitelisted["police"][gender][clothingName].indexOf(clothingID) > -1
+                        || whitelisted["ems"][gender][clothingName].indexOf(clothingID) > -1
+                        || whitelisted["yb14"][gender][clothingName]
+                    )) {
+                        while (isNotValid) {
+                            if(
+                                (currentJob != "police" && whitelisted["police"][gender][clothingName] && whitelisted["police"][gender][clothingName].indexOf(clothingID) > -1)
+                                || (currentJob != "ems" && whitelisted["ems"][gender][clothingName] && whitelisted["ems"][gender][clothingName].indexOf(clothingID) > -1)
+                                || (currentJob != "yb14" && whitelisted["yb14"][gender][clothingName] && whitelisted["yb14"][gender][clothingName].indexOf(clothingID) > -1)
+                            ) {
+                                isNotValid = true
+                                if(inputType) {
+                                  clothingID++;
+                                } else {
+                                  clothingID--;
+                                }
+                            }
+                            else
+                            {
+                                isNotValid = false;
+                            }
                         }
                     }
-                }
-                $(ele).val(clothingID)
+                    $(ele).val(clothingID)
+                } catch (err) {}
             }
 
             if ($(ele).parents('.panel').attr('id') == "skins") {

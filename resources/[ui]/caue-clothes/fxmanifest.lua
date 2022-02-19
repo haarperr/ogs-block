@@ -27,7 +27,6 @@ server_scripts {
 
 client_scripts {
     "@caue-lib/client/cl_rpc.lua",
-    "@caue-lib/client/cl_ui.lua",
     "@caue-lib/client/cl_state.lua",
     "client/cl_tattooshop.lua",
     "client/cl_*.lua",

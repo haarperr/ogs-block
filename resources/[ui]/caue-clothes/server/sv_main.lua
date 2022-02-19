@@ -153,23 +153,43 @@ end)
 
 ]]
 
-RPC.register("caue-clothes:purchase", function(src, price, tax)
+RPC.register("caue-clothes:purchase", function(src, price, tax, paymentType)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return false end
 
-    local cash = exports["caue-financials"]:getCash(src)
+    if paymentType == "cash" then
+        local cash = exports["caue-financials"]:getCash(src)
 
-    if price > cash then
-        return false
+        if price > cash then
+            return false
+        end
+
+        if not exports["caue-financials"]:updateCash(src, "-", price) then
+            return false
+        end
+
+        exports["caue-financials"]:updateBalance(13, "+", price)
+        exports["caue-financials"]:transactionLog(13, 13, price, "", cid, 7)
+        exports["caue-financials"]:addTax("Services", tax)
+    else
+        local accountId = exports["caue-base"]:getChar(src, "bankid")
+        local bank = exports["caue-financials"]:getBalance(accountId)
+
+        if price > bank then
+            return false
+        end
+
+        local comment = "Roupas"
+        local success, message = exports["caue-financials"]:transaction(accountId, 13, price, comment, cid, 5)
+        if not success then
+            TriggerClientEvent("caue-phone:notification", src, "fas fa-exclamation-circle", "Error", message, 5000)
+            return false
+        end
+
+        TriggerClientEvent("caue-phone:notification", src, "fas fa-university", "Banco", "Você transferiu $" .. price .. " para a conta de ID: " .. 13, 3000)
+
+        exports["caue-financials"]:addTax("Services", tax)
     end
-
-    if not exports["caue-financials"]:updateCash(src, "-", price) then
-        return false
-    end
-
-    exports["caue-financials"]:updateBalance(13, "+", price)
-    exports["caue-financials"]:transactionLog(13, 13, price, "", cid, 7)
-    exports["caue-financials"]:addTax("Services", tax)
 
     return true
 end)

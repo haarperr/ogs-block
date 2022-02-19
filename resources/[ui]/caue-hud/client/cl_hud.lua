@@ -172,7 +172,6 @@ function setUnderWater(value)
 end
 
 function setDirectionAndStreetName(direction, streetName)
-    print(direction, streetName)
     SendNUIMessage({
         component = "vehicle",
         payload = {
@@ -268,7 +267,7 @@ RegisterNUICallback("ready", function(_, cb)
         setHealthAndArmor()
         setHudSettings()
     end
-    -- toggleMap()
+    toggleMap()
     mapChangeListener()
     cb("ok")
 end)

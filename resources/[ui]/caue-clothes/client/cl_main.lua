@@ -12,6 +12,9 @@ local customCam = false
 local oldPed = false
 local startingMenu = false
 local currentFadeStyle = 255
+local currentTattoos = {}
+local _currentTattoos = {}
+local _currentTattoosTemp = {}
 
 local drawable_names = {"face", "masks", "hair", "torsos", "legs", "bags", "shoes", "neck", "undershirts", "vest", "decals", "jackets"}
 local prop_names = {"hats", "glasses", "earrings", "mouth", "lhand", "rhand", "watches", "braclets"}
@@ -27,7 +30,7 @@ local currentTax = 0
 
 local MenuData = {
     clothing_shop = {
-        text = "Para Comprar Roupas",
+        text = "Comprar Roupas",
         displayName = "Clothing Store",
         basePrice = 5
     },
@@ -37,7 +40,7 @@ local MenuData = {
         basePrice = 5
     },
     tattoo_shop = {
-        text = "Rabiscar você mesmo",
+        text = "Rabiscar Você Mesmo",
         displayName = "Tattoo Parlor",
         basePrice = 5
     }
@@ -55,6 +58,7 @@ local supportedModels = {
 }
 
 local currentShop = false
+local currentJob = "unemployed"
 
 --[[
 
@@ -114,7 +118,7 @@ function RefreshUI()
     SendNUIMessage({
         type = "tattoo_shop",
         totals = tatCategory,
-        values = GetTats()
+        values = GetTattoos()
     })
 end
 
@@ -331,7 +335,7 @@ function LoadPed(data)
     SetPedHeadBlend(data.headBlend)
     SetHeadStructure(data.headStructure)
     SetHeadOverlayData(data.headOverlay)
-    setFacialDecoration(data.fadeStyle)
+    setTattoosAndFacial(nil, data.fadeStyle)
     return
 end
 
@@ -435,7 +439,8 @@ function EnableGUI(enable, menu, pPriceText, pPrice,disableDestroyCams)
         enable = enable,
         menu = menu,
         priceText = pPriceText,
-        price = pPrice
+        price = pPrice,
+        currentJob = currentJob
     })
 
     if (not enable and not startingMenu) then
@@ -562,6 +567,7 @@ function Save(save, close, newFadeStyle)
         data.fadeStyle = newFadeStyle
 
         currentFadeStyle = newFadeStyle
+        currentTattoos = _currentTattoos
 
         if (GetCurrentPed().model == GetHashKey("mp_f_freemode_01") or GetCurrentPed().model == GetHashKey("mp_m_freemode_01")) and startingMenu then
             -- nothing
@@ -570,7 +576,7 @@ function Save(save, close, newFadeStyle)
         end
 
         if not startingMenu or passedClothing then
-            TriggerServerEvent("caue-clothes:updateClothes", data, currentTats)
+            TriggerServerEvent("caue-clothes:updateClothes", data, currentTattoos)
             TriggerEvent("caue-login:finishedClothing","Finished")
         elseif not passedClothing then
             EnableGUI(false, false)
@@ -720,40 +726,19 @@ end
 
 ]]
 
--- currentTats [[collectionHash, tatHash], [collectionHash, tatHash]]
--- loop tattooHashList [categ] find [tatHash, collectionHash]
-
-function GetTats()
-    local tempTats = {}
-    if currentTats == nil then return {} end
-    for i = 1, #currentTats do
+function GetTattoos()
+    local tempTattoos = {}
+    if currentTattoos == nil then return {} end
+    for i = 1, #currentTattoos do
         for key in pairs(tattooHashList) do
             for j = 1, #tattooHashList[key] do
-                if tattooHashList[key][j][1] == currentTats[i][2] then
-                    tempTats[key] = j
+                if tattooHashList[key][j][1] == currentTattoos[i][2] then
+                    tempTattoos[key] = j
                 end
             end
         end
     end
-    return tempTats
-end
-
-function SetTats(data)
-    currentTats = {}
-    for k, v in pairs(data) do
-        for categ in pairs(tattooHashList) do
-            if k == categ then
-                local something = tattooHashList[categ][tonumber(v)]
-                if something ~= nil then
-                    table.insert(currentTats, {something[2], something[1]})
-                end
-            end
-        end
-    end
-    ClearPedDecorations(PlayerPedId())
-    for i = 1, #currentTats do
-        ApplyPedOverlay(PlayerPedId(), currentTats[i][1], currentTats[i][2])
-    end
+    return tempTattoos
 end
 
 --[[
@@ -793,6 +778,49 @@ function setFacialDecoration(pFadeStyle)
     end
 end
 
+function setTattoosAndFacial(pTattoos, pFadeStyle, pShop)
+    local fadeStyle = tonumber(pFadeStyle) or 255
+    local playerPed = PlayerPedId()
+    local playerModel = GetEntityModel(playerPed)
+
+    ClearPedFacialDecorations(playerPed)
+
+    if fadeStyle and fadeStyle > 0 and fadeStyle ~= 255 and isFreemodeModel(playerModel) then
+        local facialDecoration = FADE_CONFIGURATIONS[playerModel == `mp_m_freemode_01` and "male" or "female"][fadeStyle]
+
+        Wait(1)
+
+        SetPedFacialDecoration(playerPed, facialDecoration[1], facialDecoration[2])
+    end
+
+    if pTattoos then
+        _currentTattoos = {}
+
+        for k, v in pairs(pTattoos) do
+            for category in pairs(tattooHashList) do
+                if k == category then
+                    local tattoo = tattooHashList[category][tonumber(v)]
+                    if tattoo ~= nil then
+                        table.insert(_currentTattoos, {tattoo[2], tattoo[1]})
+                    end
+                end
+            end
+        end
+    end
+
+    if pShop then
+        for i, v in ipairs(_currentTattoosTemp) do
+            table.insert(_currentTattoos, v)
+        end
+    else
+        _currentTattoos = currentTattoos
+    end
+
+    for i = 1, #_currentTattoos do
+        ApplyPedOverlay(playerPed, _currentTattoos[i][1], _currentTattoos[i][2])
+    end
+end
+
 --[[
 
     Functions Misc
@@ -809,7 +837,7 @@ local function listenForKeypress(zoneName, zoneData, isFree)
                 if zoneName == "tattoo_shop" then
                     -- TODO: Make this not retarded, use RPC please FOR THE LOVE OF FUCKING GOD
                     TriggerServerEvent("caue-clothes:getTattoos")
-                    while currentTats == nil do
+                    while currentTattoos == nil do
                         Citizen.Wait(0)
                     end
                 end
@@ -907,7 +935,7 @@ end)
 
 RegisterNUICallback('saveheadoverlay', function(data, cb)
     if data["name"] == "fadeStyle" then
-        setFacialDecoration(tonumber(data["value"]))
+        setTattoosAndFacial(nil, tonumber(data["value"]))
     else
         local index = has_value(head_overlays, data["name"])
         SetPedHeadOverlay(player,  index, tonumber(data["value"]), tonumber(data["opacity"]) / 100)
@@ -929,8 +957,9 @@ end)
 RegisterNUICallback('escape', function(data, cb)
     local shouldSave = data['save'] or false
     local newFadeStyle = data["fadeStyle"] or 255
+    local paymentType = data["paymentType"] or "cash"
     if shouldSave and currentPrice > 0 then
-        local purchaseSuccess = RPC.execute("caue-clothes:purchase", currentPrice, currentTax)
+        local purchaseSuccess = RPC.execute("caue-clothes:purchase", currentPrice, currentTax, paymentType)
         if not purchaseSuccess then
             TriggerEvent("DoLongHudText", "Você não tem dinheiro suficiente!")
             shouldSave = false
@@ -980,7 +1009,30 @@ RegisterNUICallback('toggleclothes', function(data, cb)
 end)
 
 RegisterNUICallback('settats', function(data, cb)
-    SetTats(data["tats"])
+    setTattoosAndFacial(data["tats"], currentFadeStyle, true)
+    cb('ok')
+end)
+
+RegisterNUICallback('applytattoo', function(data, cb)
+    local pCategory = data.category
+    local pTattoo = data.tattoo
+
+    for category in pairs(tattooHashList) do
+        if pCategory == category then
+            local tattoo = tattooHashList[category][tonumber(pTattoo)]
+            if tattoo ~= nil then
+                for i, v in ipairs(_currentTattoosTemp) do
+                    if v[1] == tattoo[2] and v[2] == tattoo[1] then
+                        cb('ok')
+                        return
+                    end
+                end
+
+                table.insert(_currentTattoosTemp, {tattoo[2], tattoo[1]})
+            end
+        end
+    end
+
     cb('ok')
 end)
 
@@ -989,6 +1041,17 @@ end)
     Events Main
 
 ]]
+
+RegisterNetEvent("caue-jobs:jobChanged")
+AddEventHandler("caue-jobs:jobChanged", function(job)
+    if exports["caue-jobs"]:getJob(job, "is_police") then
+        currentJob = "police"
+    elseif exports["caue-jobs"]:getJob(job, "is_medic") then
+        currentJob = "ems"
+    else
+        currentJob =  "unemployed"
+    end
+end)
 
 AddEventHandler("raid_clothes:inSpawn", function(pInSpawn)
     inSpawn = pInSpawn
@@ -1031,15 +1094,11 @@ AddEventHandler("caue-clothes:setClothes", function(data)
         SetHeadOverlayData(data.headOverlay)
 
         currentFadeStyle = data.fadeStyle
+        currentTattoos = data.tattoos
 
-        Citizen.Wait(500)
+        Citizen.Wait(1000)
 
-        if data.tattoos then
-            currentTats = playerTattoosList
-            SetTats(GetTats())
-        end
-
-        setFacialDecoration(currentFadeStyle)
+        setTattoosAndFacial(nil, currentFadeStyle)
     end
 
 	TriggerServerEvent("caue-hud:getData")
@@ -1048,8 +1107,8 @@ end)
 
 RegisterNetEvent("raid_clothes:settattoos")
 AddEventHandler("raid_clothes:settattoos", function(playerTattoosList)
-    currentTats = playerTattoosList
-    SetTats(GetTats())
+    currentTattoos = playerTattoosList
+    setTattoosAndFacial(nil, currentFadeStyle)
 end)
 
 RegisterNetEvent('raid_clothes:openClothing')
@@ -1078,7 +1137,7 @@ end)
 RegisterNetEvent("caue-clothes:saveCurrentClothes")
 AddEventHandler("caue-clothes:saveCurrentClothes", function()
     local data = GetCurrentPed()
-    TriggerServerEvent("caue-clothes:updateClothes", data, currentTats)
+    TriggerServerEvent("caue-clothes:updateClothes", data, currentTattoos)
 end)
 
 --[[

@@ -136,7 +136,7 @@ AddEventHandler("Animation:Set:Gait", function(pArgs)
     AnimSet = setGait
     TriggerServerEvent("caue-emotes:setAnimData", AnimSet)
     if setGait == "move_m@swagger" then
-      if exports["caue-inventory"]:hasEnoughOfItem("pimpcane", 1) then
+      if exports["caue-base"]:getChar("first_name") == "Ming" then
         TriggerEvent("caue-propattach:attach", "prop_cs_walking_stick")
       end
     end
