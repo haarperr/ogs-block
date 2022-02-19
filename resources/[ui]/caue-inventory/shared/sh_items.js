@@ -3544,6 +3544,28 @@ itemList['fertilizer'] = {
   information: 'Não tem instrução na embalagem.',
 };
 
+itemList['spray'] = {
+  fullyDegrades: false,
+  decayrate: 0.0,
+  displayname: 'Spray',
+  price: 2,
+  weight: 1,
+  nonStack: false,
+  model: '',
+  image: 'ogs_spray.png',
+};
+
+itemList['sprayremover'] = {
+  fullyDegrades: false,
+  decayrate: 0.0,
+  displayname: 'Removedor de Spray',
+  price: 2,
+  weight: 1,
+  nonStack: false,
+  model: '',
+  image: 'ogs_sprayremover.png',
+};
+
 /*
 
   MISC END

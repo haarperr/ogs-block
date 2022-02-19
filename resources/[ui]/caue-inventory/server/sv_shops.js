@@ -42,9 +42,9 @@ shopList["2"] = [
     { item_id: "potato", amount: 50 },
     { item_id: "strawberry", amount: 50 },
     { item_id: "watermelon", amount: 50 },
-    { item_id: "repairkit", amount: 50 }
-
-
+    { item_id: "repairkit", amount: 50 },
+    { item_id: "spray", amount: 50 },
+    { item_id: "sprayremover", amount: 50 },
 ];
 
 // Gun Store
