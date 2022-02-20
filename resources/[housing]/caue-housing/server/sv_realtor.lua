@@ -47,7 +47,7 @@ AddEventHandler("CheckFurniture", function(pData, pPropertyId)
     local src = source
 
     if housingEditing[pPropertyId] ~= nil then
-        TriggerClientEvent("DoLongHudText", src, "cu", 2)
+        TriggerClientEvent("DoLongHudText", src, "Alguém já esta decorando esta propriedade", 2)
     else
         housingEditing[pPropertyId] = true
         TriggerClientEvent("caue-editor:loadEditor", src, pData)
