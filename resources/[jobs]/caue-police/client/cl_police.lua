@@ -62,7 +62,7 @@ local zoneData = {
                 title = "Arsenal",
                 description = "AED - Armas, Equipamentos, Diversão!",
                 action = "caue-police:handler",
-                params = EVENTS.LOCKERS
+                params = EVENTS.ARMORY
             },
             {
                 title = "Evidencias",

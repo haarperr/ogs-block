@@ -84,7 +84,7 @@ whitelisted["ems"]["female"] = {
 
 whitelisted["yb14"]["male"] = {
     hats:[],
-    jackets:[2],
+    jackets:[],
     undershirts:[],
     legs:[],
     shoes:[],
