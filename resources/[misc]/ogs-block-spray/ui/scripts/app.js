@@ -9,7 +9,7 @@ $(document).ready(function(){
     let pickr;
     let isInitialized = false;
 
-    
+
     $.post("https://rcore_spray/initialize", JSON.stringify({}));
 
     function syncGraffitiColor() {
@@ -26,7 +26,7 @@ $(document).ready(function(){
         $('#nav-image').removeClass('active');
         RecomputeBlacklist()
         $('.graffiti-images').hide();
-        
+
         $('.graffiti-container').show();
         $('.graffiti-input-text').show();
 
@@ -81,7 +81,7 @@ $(document).ready(function(){
 
         if(wordBlacklist.indexOf(inputData.text) == -1) {
             if(inputData) {
-                $.post("https://" + resourceName + "/previewSpray", JSON.stringify({
+                $.post("https://" + GetParentResourceName() + "/previewSpray", JSON.stringify({
                     text: inputData.text,
                     image: inputData.image,
                     imageDict: inputData.imageDict,
@@ -123,12 +123,12 @@ $(document).ready(function(){
         $('#nav-text').removeClass('active');
 
         $('.graffiti-images').show();
-        
+
         $('.graffiti-container').hide();
         $('.graffiti-input-text').hide();
-        
+
         $('.graffiti-example').removeClass('selected');
-        
+
         $('.spray-button').hide();
         $('#click-to-select-font').show();
         $('.bl-hide').show();
@@ -160,7 +160,7 @@ $(document).ready(function(){
                 `<div class='graffiti-example' data-font-name="${graffiti.font}" style="font-family: ${graffiti.font}; font-size: ${graffiti.sizeMult*100}%">GRAFFITI</div>`
             );
         }
-        
+
         for(var idx in data.images) {
             let img = data.images[idx];
 
@@ -171,7 +171,7 @@ $(document).ready(function(){
             if(idx < (data.images.length-1)) {
                 $('.graffiti-images').append(
                     `<div class="img-sep"></div>`,
-                );  
+                );
             }
         }
 
@@ -219,7 +219,7 @@ $(document).ready(function(){
                 preview: true,
                 opacity: false,
                 hue: true,
-        
+
                 interaction: {
                     hex: true,
                     input: true,
@@ -250,7 +250,7 @@ $(document).ready(function(){
         if(isInitialized) {
             realOpen();
         } else {
-            $.post("https://" + resourceName + "/initialize", function(data) {
+            $.post("https://" + GetParentResourceName() + "/initialize", function(data) {
                 window.setData(data);
                 realOpen();
             });
@@ -265,7 +265,7 @@ $(document).ready(function(){
     window.close = function() {
         pickr.hide();
         $('.container').fadeOut();
-        $.post("https://" + resourceName + "/disableFocus");
+        $.post("https://" + GetParentResourceName() + "/disableFocus");
     }
 
     window.setError = function(data) {
@@ -273,7 +273,7 @@ $(document).ready(function(){
         $('.container-keybind .error').show();
         $('.container-keybind .error').text(data.message);
     }
-    
+
     window.clearError = function(data) {
         $('.container-keybind').removeClass('has-error');
         $('.container-keybind .error').hide();
@@ -294,7 +294,7 @@ $(document).ready(function(){
             }
         }
     });
-      
+
 
     window.addEventListener("message", function(event) {
         if (window[event.data.type]) {
@@ -312,14 +312,14 @@ $(document).ready(function(){
         let rgbColor = [Math.round(rgbaArray[0]), Math.round(rgbaArray[1]), Math.round(rgbaArray[2])];
 
         let mode = $('.top-button.active').data('mode');
-        
+
         if(mode === 'text') {
             let selectedGraffiti = $('.graffiti-example.selected');
 
             if(selectedGraffiti.length > 0) {
                 let text = selectedGraffiti.text();
                 let fontName = selectedGraffiti.data('font-name');
-                
+
                 return {
                     text: text,
                     fontName: fontName,
@@ -345,5 +345,5 @@ $(document).ready(function(){
             }
         }
     }
-    
+
 });
