@@ -12,6 +12,7 @@ server_scripts {
 }
 
 client_scripts {
+    "@caue-sync/client/cl_lib.lua",
     "@caue-lib/client/cl_rpc.lua",
     "@caue-lib/client/cl_state.lua",
     "client/*",

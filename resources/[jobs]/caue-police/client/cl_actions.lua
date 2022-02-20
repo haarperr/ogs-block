@@ -161,6 +161,24 @@ AddEventHandler("caue-police:giveTicket", function(pParams, pEntity, pContext)
 	end
 end)
 
+AddEventHandler("caue-police:impound", function(pParams, pVehicle)
+	print(pVehicle)
+
+	TriggerEvent("animation:PlayAnimation", "phone")
+    local finished = exports["caue-taskbar"]:taskBar(math.random(5000, 10000), "Chamando o reboque")
+    TriggerEvent("animation:PlayAnimation", "cancel")
+
+	local vid = exports["caue-vehicles"]:GetVehicleIdentifier(pVehicle)
+    if vid then
+		RPC.execute("caue-vehicles:updateVehicle", vid, "garage", "state", "In")
+	end
+
+	Sync.DeleteVehicle(pVehicle)
+	Sync.DeleteEntity(pVehicle)
+
+	exports["caue-phone"]:phoneNotification("fas fa-truck-pickup", "Reboque", "O veiculo foi rebocado!", 10000)
+end)
+
 --[[
 
     Threads

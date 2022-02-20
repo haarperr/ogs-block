@@ -216,7 +216,6 @@ GeneralEntries[#GeneralEntries+1] = {
     },
     isEnabled = function(pEntity, pContext)
         local isNear, propertyId = exports["caue-housing"]:isNearProperty()
-        print(isNear, propertyId)
         return not exports["caue-base"]:getVar("dead") and isNear and exports["caue-housing"]:isBeingRobbed(propertyId)
     end
 }

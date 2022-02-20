@@ -27,13 +27,13 @@ VehicleEntries[#VehicleEntries+1] = {
 VehicleEntries[#VehicleEntries+1] = {
     data = {
         id = "impound-vehicle",
-        title = "Pedir reboque",
+        title = "Pedir Reboque",
         icon = "#vehicle-impound",
-        event = "caue-towtruck:callNPC",
+        event = "caue-police:impound",
         parameters = {}
     },
     isEnabled = function(pEntity, pContext)
-        return not isDisabled() and pContext.distance <= 2.5 and not IsPedInAnyVehicle(PlayerPedId(), false)
+        return not isDisabled() and pContext.distance <= 2.5 and not IsPedInAnyVehicle(PlayerPedId(), false) and exports["caue-jobs"]:getJob(CurrentJob, "is_emergency")
     end
 }
 
