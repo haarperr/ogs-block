@@ -49,7 +49,7 @@ AddEventHandler("CheckFurniture", function(pData, pPropertyId)
     if housingEditing[pPropertyId] ~= nil then
         TriggerClientEvent("DoLongHudText", src, "Alguém já esta decorando esta propriedade", 2)
     else
-        housingEditing[pPropertyId] = true
+        housingEditing[pPropertyId] = src
         TriggerClientEvent("caue-editor:loadEditor", src, pData)
     end
 end)
@@ -61,6 +61,16 @@ AddEventHandler("exitFurniture", function(pPropertyId)
     end
 end)
 
+AddEventHandler("playerDropped", function()
+	local src = source
+
+
+    for k, v in pairs(housingEditing) do
+        if v == src then
+            housingEditing[k] = nil
+        end
+    end
+end)
 --[[
 
     RPCs
