@@ -9,27 +9,30 @@ AddEventHandler("e-blips:updateBlips", function(pJob)
 
         if EmergencyPlayers[src] then
             for k, v in pairs(EmergencyPlayers) do
-                if k == src then
+                local serverId = tonumber(k)
+
+                if serverId == src then
                     TriggerClientEvent("e-blips:deleteHandlers", src)
                 else
-                    TriggerClientEvent("e-blips:removeHandler", k, src)
+                    TriggerClientEvent("e-blips:removeHandler", serverId, src)
                 end
             end
         end
 
-        EmergencyPlayers[src] = {
+        local data = {
             netId = src,
             job = pJob,
             callsign = callSign or "CALLSIGN NOT DEFINED"
         }
 
         for k, v in pairs(EmergencyPlayers) do
-            if k == src then
-                TriggerClientEvent("e-blips:setHandlers", src, EmergencyPlayers)
-            else
-                TriggerClientEvent("e-blips:addHandler", k, EmergencyPlayers[src])
-            end
+            local serverId = tonumber(k)
+            TriggerClientEvent("e-blips:addHandler", serverId, data)
         end
+
+        EmergencyPlayers[src] = data
+
+        TriggerClientEvent("e-blips:setHandlers", src, EmergencyPlayers)
     elseif EmergencyPlayers[src] then
         for k, v in pairs(EmergencyPlayers) do
             if k == src then
