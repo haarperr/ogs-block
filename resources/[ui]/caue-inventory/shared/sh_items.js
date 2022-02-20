@@ -3109,6 +3109,17 @@ itemList['np_evidence_marker_purple'] = {
   image: 'np_evidence_marker_purple.png',
 };
 
+itemList['pdevidencebag'] = {
+  fullyDegrades: false,
+  decayrate: 0,
+  displayname: 'Evidence Bag',
+  price: 10,
+  weight: 10,
+  nonStack: true,
+  model: '',
+  image: 'np_evidence_bag.png',
+};
+
 /*
 
   POLICE END

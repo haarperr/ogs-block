@@ -18,6 +18,41 @@ AddEventHandler("SpawnEventsClient", function ()
     Ped.characterId = exports["caue-base"]:getChar("id")
 end)
 
+AddEventHandler("caue-inventory:itemUsed", function(itemId, itemInfo, inventoryName, slot)
+    if itemId == "pdevidencebag" then
+        local metaData = json.decode(itemInfo)
+
+        if not metaData.inventoryId then
+            local input = exports["caue-input"]:showInput({
+                {
+                    icon = "circle",
+                    label = "Nome",
+                    name = "name",
+                },
+            })
+
+            if input["name"] then
+                local genId = tostring(math.random(10000, 99999999))
+                local invId = "container-" .. genId .. "-evidence bag"
+
+                metaData = json.encode({
+                    inventoryId = invId,
+                    Nome = input["name"],
+                    slots = 15,
+                    weight = 15,
+                    _hideKeys = {"inventoryId", "slots", "weight"},
+                })
+
+                TriggerEvent("inventory:updateItem", "pdevidencebag", slot, metaData)
+            end
+
+            return
+        end
+
+        TriggerEvent("inventory-open-container", metaData.inventoryId, metaData.slots, metaData.weight)
+    end
+end)
+
 -- Player Ped loop
 Citizen.CreateThread(function ()
     while true do

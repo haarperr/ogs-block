@@ -162,8 +162,6 @@ AddEventHandler("caue-police:giveTicket", function(pParams, pEntity, pContext)
 end)
 
 AddEventHandler("caue-police:impound", function(pParams, pVehicle)
-	print(pVehicle)
-
 	TriggerEvent("animation:PlayAnimation", "phone")
     local finished = exports["caue-taskbar"]:taskBar(math.random(5000, 10000), "Chamando o reboque")
     TriggerEvent("animation:PlayAnimation", "cancel")

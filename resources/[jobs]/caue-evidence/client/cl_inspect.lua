@@ -160,12 +160,12 @@ RegisterCommand("-collectEvidence", function ()
     local myjob = exports["caue-base"]:getChar("job")
     local hasGatheringKit = exports["caue-inventory"]:hasEnoughOfItem("gatheringkit", 1, false)
 
-    if not exports["caue-jobs"]:getJob(myjob, "is_police") and not hasGatheringKit then return end
+    if myjob ~= "cid" and not hasGatheringKit then return end
 
     local timer = 5000
 
-    if not exports["caue-jobs"]:getJob(myjob, "is_police") and hasGatheringKit then
-        timer = 45000
+    if myjob ~= "cid" and hasGatheringKit then
+        timer = 60000
     end
 
     local finished = exports["caue-taskbar"]:taskBar(timer, "Pegando Evidencia", "What?", true)

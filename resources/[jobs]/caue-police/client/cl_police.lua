@@ -66,7 +66,7 @@ local zoneData = {
             },
             {
                 title = "Evidencias",
-                description = "Armario de evidências (Temporário)",
+                description = "Armario de evidências",
                 action = "caue-police:handler",
                 params = EVENTS.EVIDENCE
             },
@@ -221,9 +221,11 @@ AddEventHandler("caue-polyzone:exit", function(pZoneName, pZoneData)
 end)
 
 AddEventHandler("caue-police:handler", function(eventData)
+    local job = exports["caue-base"]:getChar("job")
+
     local location = currentPrompt ~= nil and string.match(currentPrompt, "(.-)_") or ""
 
-    if eventData == EVENTS.LOCKERS and exports["caue-jobs"]:getJob(false, "is_police") then
+    if eventData == EVENTS.LOCKERS and exports["caue-jobs"]:getJob(job, "is_police") then
         local cid = exports["caue-base"]:getChar("id")
         TriggerEvent("server-inventory-open", "1", ("personalStorage-%s-%s"):format(location, cid))
         TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 3.0, "LockerOpen", 0.4)
@@ -233,12 +235,36 @@ AddEventHandler("caue-police:handler", function(eventData)
         TriggerEvent("raid_clothes:openClothing", true, true)
     elseif eventData == EVENTS.SWITCHER then
         TriggerEvent("apartments:Logout")
-    elseif eventData == EVENTS.EVIDENCE and exports["caue-jobs"]:getJob(false, "is_police") then
-        TriggerEvent("server-inventory-open", "1", ("%s_evidence"):format(location))
-    elseif eventData == EVENTS.TRASH and exports["caue-jobs"]:getJob(false, "is_police") then
+    elseif eventData == EVENTS.EVIDENCE and exports["caue-jobs"]:getJob(job, "is_police") then
+        if job == "cid" then
+            local input = exports["caue-input"]:showInput({
+                {
+                    icon = "hashtag",
+                    label = "ID do Caso",
+                    name = "id",
+                },
+            })
+
+            if input["id"] then
+                local id = tonumber(input["id"])
+                if not id or id < 1 then
+                    TriggerEvent("DoLongHudText", "Número inválido", 2)
+                    return
+                end
+
+                TriggerEvent("server-inventory-open", "1", ("%s_evidence"):format(id))
+            end
+        else
+            TriggerEvent("server-inventory-open", "1", ("%s_evidence"):format(location))
+        end
+    elseif eventData == EVENTS.TRASH and exports["caue-jobs"]:getJob(job, "is_police") then
         TriggerEvent("server-inventory-open", "1", ("%s_trash"):format(location))
-    elseif eventData == EVENTS.ARMORY and exports["caue-jobs"]:getJob(false, "is_police") then
-        TriggerEvent("server-inventory-open", "10", "Shop")
+    elseif eventData == EVENTS.ARMORY and exports["caue-jobs"]:getJob(job, "is_police") then
+        if job == "cid" then
+            TriggerEvent("server-inventory-open", "11", "Shop")
+        else
+            TriggerEvent("server-inventory-open", "10", "Shop")
+        end
     end
 end)
 
