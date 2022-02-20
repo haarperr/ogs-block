@@ -525,10 +525,13 @@ custom_skins = {
     "ig_bennyB",
     "ig_tarantino",
     "ig_ming",
+    "ig_miguelangel",
+    "ig_decio",
 }
 
 whitelisted_to_use_custom_skins = {
-    ["steam:11000010c523e98"] = { "ig_ming", "ig_tarantino", "ig_bennyB" },
+    ["steam:11000010c523e98"] = { "ig_ming" },
+    ["steam:11000010ac51e06"] = { "ig_decio" },
 }
 
 function isCustomSkin(skin)
