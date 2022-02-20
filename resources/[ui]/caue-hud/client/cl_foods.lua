@@ -602,7 +602,6 @@ AddEventHandler("food:Condiment", function()
     end
 
     -- SetRunSprintMultiplierForPlayer(PlayerId(), 1.0)
-    RevertToStressMultiplier()
 end)
 
 RegisterNetEvent("food:Taco")
@@ -696,7 +695,6 @@ AddEventHandler("food:SoftDrink", function()
     end
 
     -- SetRunSprintMultiplierForPlayer(PlayerId(), 1.0)
-    RevertToStressMultiplier()
 end)
 
 RegisterNetEvent("food:Fruit")
