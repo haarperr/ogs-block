@@ -147,8 +147,10 @@ function Apart.openHotelStash()
 end
 
 function Apart.OpenStash()
+    local cid = exports["caue-base"]:getChar("id")
+
     TriggerEvent("InteractSound_CL:PlayOnOne","StashOpen", 0.6)
-    TriggerEvent("server-inventory-open", "1", "motel" .. Apart.currentHotelInformation.type .. "-" .. Apart.currentHotelInformation.cid)
+    TriggerEvent("server-inventory-open", "1", "motel" .. Apart.currentHotelInformation.type .. "-" .. cid)
     TriggerEvent("actionbar:setEmptyHanded")
 end
 
