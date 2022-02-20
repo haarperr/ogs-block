@@ -133,7 +133,7 @@ RPC.register("caue-weed:addFertilizer", function(src, pPlantId, pType)
     return true
 end)
 
-RPC.register("caue-weed:addFertilizer", function(src, pPlantId)
+RPC.register("caue-weed:addMaleSeed", function(src, pPlantId)
     local plant = getPlantById(pPlantId)
 
     if plant == nil then
