@@ -143,6 +143,23 @@ AddEventHandler("caue-vehicles:storeVehicle", function(params, vehicle)
     local canStore = RPC.execute("caue-vehicles:canStoreVehicle", garage, vid)
     if not canStore then return end
 
+    local garageData = Garages[nearGarage["garage"]]
+
+    if garageData["houseid"] then
+        if exports["caue-housing"]:hasKey(garageData["houseid"]) then
+            local cid = exports["caue-base"]:getChar("id")
+            local owner = RPC.execute("caue-vehicles:selectVehicle", vid, "vehicles", "cid")
+
+            if owner ~= cid then
+                TriggerEvent("DoLongHudText", "You cant't use this garage", 2)
+                return
+            end
+        else
+            TriggerEvent("DoLongHudText", "You can't use this garage", 2)
+            return
+        end
+    end
+
     local store1 = RPC.execute("caue-vehicles:updateVehicle", vid, "garage", "garage", garage)
     if store1 then
         local store2 = RPC.execute("caue-vehicles:updateVehicle", vid, "garage", "state", "In")

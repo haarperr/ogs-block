@@ -261,6 +261,10 @@ RPC.register("caue-vehicles:updateVehicle", function(src, id, type, var, data)
     return updateVehicle(id, type, var, data)
 end)
 
+RPC.register("caue-vehicles:selectVehicle", function(src, id, type, var)
+    return selectVehicle(id, type, var)
+end)
+
 RPC.register("caue-vehicles:GetVehicleMetadata", function(src, vid, data)
     return getVehicleMetadata(vid, data)
 end)
