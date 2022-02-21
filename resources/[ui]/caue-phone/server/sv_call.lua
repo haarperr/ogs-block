@@ -58,7 +58,10 @@ AddEventHandler("caue-phone:callDecline", function(pCallId)
     local src = source
 
     TriggerClientEvent("phone:call:inactive", src)
-    TriggerClientEvent("phone:call:inactive", pCallId)
+
+    if pCallId ~= nil and GetPlayerPing(pCallId) > 0 then
+        TriggerClientEvent("dispatch:getCallResponse", player, message)
+    end
 end)
 
 RegisterNetEvent("caue-phone:callEnd")

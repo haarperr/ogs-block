@@ -391,7 +391,7 @@ AddEventHandler("RunUseItem", function(itemid, slot, inventoryName, isWeapon, pa
     if (itemid == "weedq") then
         local finished = exports["caue-taskbar"]:taskBar(1000,"Enrolando baseados",false,false,playerVeh)
         if (finished == 100) then
-            CreateCraftOption("joint", 2, true)
+            CreateCraftOption("joint", 999, true)
         end
     end
 

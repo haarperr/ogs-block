@@ -72,6 +72,6 @@ RegisterNetEvent("caue-evidence:dnaSwab", function(pTarget)
         ["_hideKeys"] = { "identifier" },
     }
 
-    TriggerEvent("player:receiveItem", src, "dnaswab", 1, true, data)
+    TriggerClientEvent("player:receiveItem", src, "dnaswab", 1, true, data)
     TriggerClientEvent("DoLongHudText", pTarget, "Uma amostra de DNA foi coletada!")
 end)
