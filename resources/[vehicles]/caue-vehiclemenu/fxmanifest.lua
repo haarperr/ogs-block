@@ -33,5 +33,6 @@ server_scripts {
 }
 
 client_scripts {
+    "@caue-sync/client/cl_lib.lua",
     "client/*",
 }

@@ -111,6 +111,13 @@ function SetCustomNuiFocus(hasKeyboard, hasMouse)
     TriggerEvent("caue-voice:focus:set", HasNuiFocus, hasKeyboard, hasMouse)
 end
 
+function loadAnimDict(dict)
+    while (not HasAnimDictLoaded(dict)) do
+        RequestAnimDict(dict)
+        Citizen.Wait(0)
+    end
+end
+
 --[[
 
     Events
@@ -120,6 +127,26 @@ end
 RegisterNetEvent("veh:options")
 AddEventHandler("veh:options", function()
     EnableGUI(true)
+end)
+
+AddEventHandler("car:doors", function(pArgs, pEntity)
+    local lockStatus = GetVehicleDoorLockStatus(pEntity)
+    if lockStatus ~= 1 and lockStatus ~= 0 then
+        TriggerEvent("DoLongHudText", "The vehicle is locked!", 2)
+        return
+    end
+
+    loadAnimDict("anim@narcotics@trash")
+    TaskPlayAnim(PlayerPedId(), "anim@narcotics@trash", "drop_front", 0.9, -8, 1500, 49, 3.0, 0, 0, 0)
+    TaskTurnPedToFaceEntity(PlayerPedId(), pEntity, 1.0)
+    Citizen.Wait(1600)
+    ClearPedTasks(PlayerPedId())
+
+    if (GetVehicleDoorAngleRatio(pEntity, pArgs) == 0) then
+        Sync.SetVehicleDoorOpen(pEntity, pArgs, false, false)
+    else
+        Sync.SetVehicleDoorShut(pEntity, pArgs, false)
+    end
 end)
 
 --[[
@@ -139,9 +166,9 @@ RegisterNUICallback("openDoor", function(data, cb)
         local lockStatus = GetVehicleDoorLockStatus(veh)
         if lockStatus == 1 or lockStatus == 0 then
             if (GetVehicleDoorAngleRatio(veh, doorIndex) == 0) then
-                SetVehicleDoorOpen(veh, doorIndex, false, false)
+                Sync.SetVehicleDoorOpen(veh, doorIndex, false, false)
             else
-                SetVehicleDoorShut(veh, doorIndex, false)
+                Sync.SetVehicleDoorShut(veh, doorIndex, false)
             end
         end
     end

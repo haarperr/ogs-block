@@ -510,7 +510,113 @@ Entries[#Entries + 1] = {
     }
 }
 
+Entries[#Entries + 1] = {
+    type = "entity",
+    group = { 2 },
+    data = {
+        {
+            id = "vehicle_door_df",
+            label = "Abrir/Fechar Porta da Frente Esquerda",
+            icon = "door-open",
+            event = "car:doors",
+            parameters = 0
+        }
+    },
+    options = {
+        distance = { radius = 1.0, boneId = "door_dside_f" },
+    }
+}
 
+Entries[#Entries + 1] = {
+    type = "entity",
+    group = { 2 },
+    data = {
+        {
+            id = "vehicle_door_dr",
+            label = "Abrir/Fechar Porta de Trás Esquerda",
+            icon = "door-open",
+            event = "car:doors",
+            parameters = 2
+        }
+    },
+    options = {
+        distance = { radius = 1.0, boneId = "door_dside_r" },
+    }
+}
+
+Entries[#Entries + 1] = {
+    type = "entity",
+    group = { 2 },
+    data = {
+        {
+            id = "vehicle_door_pf",
+            label = "Abrir/Fechar Porta da Frente Direita",
+            icon = "door-open",
+            event = "car:doors",
+            parameters = 1
+        }
+    },
+    options = {
+        distance = { radius = 1.0, boneId = "door_pside_f" },
+    }
+}
+
+Entries[#Entries + 1] = {
+    type = "entity",
+    group = { 2 },
+    data = {
+        {
+            id = "vehicle_door_pr",
+            label = "Abrir/Fechar Porta de Trás Direita",
+            icon = "door-open",
+            event = "car:doors",
+            parameters = 3
+        }
+    },
+    options = {
+        distance = { radius = 1.0, boneId = "door_pside_r" },
+    }
+}
+
+Entries[#Entries + 1] = {
+    type = "entity",
+    group = { 2 },
+    data = {
+        {
+            id = "vehicle_door_backdoor",
+            label = "Abrir/Fechar Porta-malas",
+            icon = "door-open",
+            event = "car:doors",
+            parameters = 5
+        }
+    },
+    options = {
+        distance = { radius = 3.0 },
+        isEnabled = function(pEntity, pContext)
+            return isCloseToBoot(pEntity, PlayerPedId(), 1.8, pContext.model)
+        end
+    }
+}
+
+Entries[#Entries + 1] = {
+    type = "entity",
+    group = { 2 },
+    data = {
+        {
+            id = "vehicle_door_engine",
+            label = "Abrir/Fechar Capô",
+            icon = "door-open",
+            event = "car:doors",
+            parameters = 4
+        }
+    },
+    options = {
+        distance = { radius = 1.8, boneId = "engine" },
+        isEnabled = function(pEntity, pContext)
+            return isCloseToEngine(pEntity, PlayerPedId(), 1.8, pContext.model)
+        end
+    }
+}
 
 Citizen.CreateThread(function()
     for _, entry in ipairs(Entries) do
