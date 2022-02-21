@@ -7,7 +7,7 @@
 local WeedPlants = {}
 local ActivePlants = {}
 
-local inZone = 0
+local inZone = false
 local setDeleteAll = false
 
 --[[
@@ -156,8 +156,8 @@ end)
 
 AddEventHandler("caue-polyzone:enter", function(zone, data)
     if zone == "caue-weed:area" then
-        inZone = inZone + 1
-        if inZone == 1 then
+        if inZone == false then
+            inZone = true
             RPC.execute("caue-weed:getPlants")
         end
     end
@@ -165,9 +165,8 @@ end)
 
 AddEventHandler("caue-polyzone:exit", function(zone, data)
     if zone == "caue-weed:area" then
-        inZone = inZone - 1
-        if inZone < 0 then inZone = 0 end
-        if inZone == 0 then
+        if inZone == true then
+            inZone = false
             setDeleteAll = true
         end
     end
@@ -175,7 +174,7 @@ end)
 
 AddEventHandler("caue-inventory:itemUsed", function(item)
     if item == "femaleseed" then
-        if inZone > 0 then
+        if inZone == true then
             local plyCoords = GetEntityCoords(PlayerPedId())
             local offsetCoords = GetOffsetFromEntityInWorldCoords(PlayerPedId(), 0, 0.7, 0)
             local rayHandle = StartExpensiveSynchronousShapeTestLosProbe(offsetCoords.x, offsetCoords.y, offsetCoords.z, offsetCoords.x, offsetCoords.y, offsetCoords.z - 2, 1, 0, 4)
@@ -416,6 +415,6 @@ Citizen.CreateThread(function()
             setDeleteAll = false
         end
 
-        Wait(inZone > 0 and 5000 or 10000)
+        Wait(inZone == true and 5000 or 10000)
     end
 end)
