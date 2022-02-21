@@ -83,20 +83,20 @@ whitelisted["ems"]["female"] = {
 }
 
 whitelisted["yb14"]["male"] = {
-    hats:[],
-    jackets:[],
-    undershirts:[],
-    legs:[],
-    shoes:[],
+    hats:[20,114,116,117,161],
+    jackets:[370,388,401,405,407,416,418,449,456,457,465,468,441,438,419],
+    undershirts:[187,171],
+    legs:[2,10,54,55,76,97],
+    shoes:[14,13,36,47,72,85,44],
     decals:[],
-    masks:[],
-    glasses:[],
+    masks:[1,3,57,58,117],
+    glasses:[35],
     earrings:[],
-    neck:[],
+    neck:[153,170,173,180,186,188,195,225],
     watches:[],
     braclets:[],
-    vest:[],
-    bags:[],
+    vest:[58,57,56],
+    bags:[117,116,110,109,108],
 }
 
 whitelisted["yb14"]["female"] = {
