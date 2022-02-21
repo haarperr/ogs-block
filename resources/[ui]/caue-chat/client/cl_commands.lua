@@ -21,6 +21,11 @@ AddEventHandler("caue-chat:me", function(id, name, message, coords)
 	local monid = PlayerId()
 	local sonid = GetPlayerFromServerId(id)
 
+	local hasFinalPoint = string.sub(message, string.len(message)) == "."
+	if not hasFinalPoint then
+		message = message .. "."
+	end
+
 	if sonid == monid then
 		TriggerEvent("chatMessage", "", {170, 102, 204}, "*" .. name .." " .. message)
 	elseif #(GetEntityCoords(PlayerPedId()) - coords) < 20 then
@@ -33,9 +38,11 @@ AddEventHandler("caue-chat:do", function(id, name, message, coords)
 	local monid = PlayerId()
 	local sonid = GetPlayerFromServerId(id)
 
+	local message = (message:gsub("^%l", string.upper))
+
     if sonid == monid then
-		TriggerEvent("chatMessage", "", {170, 102, 204}, "*" .. message .. " (( " .. name .. " ))")
+		TriggerEvent("chatMessage", "", {170, 102, 204}, "*" .. message .. ". (( " .. name .. " ))")
 	elseif #(GetEntityCoords(PlayerPedId()) - coords) < 20 then
-		TriggerEvent("chatMessage", "", {170, 102, 204}, "*" .. message .. " (( " .. name .. " ))")
+		TriggerEvent("chatMessage", "", {170, 102, 204}, "*" .. message .. ". (( " .. name .. " ))")
 	end
 end)
