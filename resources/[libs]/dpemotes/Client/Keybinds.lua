@@ -40,7 +40,7 @@ end)
 
 RegisterNetEvent("emote:setEmotesFromDB")
 AddEventHandler("emote:setEmotesFromDB", function(pEmotes)
-    if pEmotes and pEmotes[1] then
+    if pEmotes and type(pEmotes) == "table" then
         for k, v in pairs(pEmotes) do
             KeysEmotes[k] = v
         end
@@ -67,7 +67,7 @@ function EmoteBindStart(source, args, raw)
         local emote = string.lower(args[2])
 
         if Keys[key] ~= nil then
-        	if DP.Emotes[emote] ~= nil or DP.Dances[emote] ~= nil or DP.PropEmotes[emote] ~= nil then
+        	if DP.Emotes[emote] ~= nil or DP.Dances[emote] ~= nil or DP.PropEmotes[emote] ~= nil or emote ~= "c" or emote ~= "cancel" then
                 KeysEmotes[key] = emote
                 TriggerServerEvent("caue-emotes:setEmoteData", KeysEmotes)
                 TriggerEvent("DoLongHudText", "Bound " .. emote .. " to " .. firstToUpper(key))

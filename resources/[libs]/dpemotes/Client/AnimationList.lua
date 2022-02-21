@@ -461,6 +461,14 @@ DP.Dances = {
 }
 
 DP.Emotes = {
+    ["tattoo"] = {"anim@heists@humane_labs@finale@keycards", "ped_a_enter_loop", "Tattoo ~y~New", AnimationOptions =
+    {
+        Prop = 'v_ilev_ta_tatgun',
+        PropBone = 60309,
+        PropPlacement = {-0.075, -0.03, 0.069, 55.0, 88.0, 80.0},
+        EmoteMoving = true,
+        EmoteLoop = true
+    }},
     ["drink"] = {"mp_player_inteat@pnq", "loop", "Drink", AnimationOptions =
     {
         EmoteMoving = true,
