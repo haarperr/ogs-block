@@ -36,7 +36,8 @@ end
 
 function generalEscapeMenu()
     if guiEnabled and not focusTaken then
-        closeGuiFail()
+        currentTask = 2
+        closeGui()
     end
 end
 

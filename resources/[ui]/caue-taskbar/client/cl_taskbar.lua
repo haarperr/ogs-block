@@ -5,9 +5,7 @@
 ]]
 
 guiEnabled = false
-local taskInProcessId = 0
-local activeTasks = {}
-local taskInProcess = false
+currentTask = 0
 local coffeetimer = 0
 
 --[[
@@ -16,76 +14,24 @@ local coffeetimer = 0
 
 ]]
 
-function openGui(sentLength, taskID, label, keepWeapon)
-    if not keepWeapon then
-        TriggerEvent("actionbar:setEmptyHanded")
-    end
-
-    guiEnabled = true
-
-    SendNUIMessage({
-        runProgress = true,
-        Length = sentLength,
-        Task = taskID,
-        name = namesent
-    })
-end
-
-function updateGui(sentLength,taskID,namesent)
-    SendNUIMessage({
-        runUpdate = true,
-        Length = sentLength,
-        Task = taskID,
-        name = namesent
-    })
-end
-
 function closeGui()
-    guiEnabled = false
-
-    -- maybe we let the task clear the anims etc.
-    -- ClearPedTasks(PlayerPedId())
-
     SendNUIMessage({
-        closeProgress = true
+        stop = true
     })
-end
 
-function closeGuiFail()
-    guiEnabled = false
-
-    -- maybe we let the task clear the anims etc.
-    -- ClearPedTasks(PlayerPedId())
-
-    SendNUIMessage({
-        closeProgress = true
-    })
-end
-
-function closeNormalGui()
     guiEnabled = false
 end
 
 function taskCancel()
+    currentTask = 2
     closeGui()
-
-    local taskIdentifier = taskInProcessId
-    activeTasks[taskIdentifier] = 2
-end
-
-function taskBarFail(maxcount,curTime,length)
-    local totaldone = math.ceil(100 - (((maxcount - curTime) / length) * 100))
-    totaldone = math.min(100, totaldone)
-    taskInProcess = false
-    closeGuiFail()
-    return totaldone
 end
 
 function taskBar(length, name, runCheck, keepWeapon, vehicle, vehCheck, cb, moveCheck)
     local playerPed = PlayerPedId()
     local firstPosition = GetEntityCoords(playerPed)
 
-    if taskInProcess then
+    if guiEnabled then
         if cb then cb(0) end
         return 0
     end
@@ -94,61 +40,56 @@ function taskBar(length, name, runCheck, keepWeapon, vehicle, vehCheck, cb, move
         length = math.ceil(length * 0.66)
     end
 
-    taskInProcess = true
-    local taskIdentifier = "taskid" .. math.random(1000000)
-    taskInProcessId = taskIdentifier
-    openGui(length,taskIdentifier,name,keepWeapon)
-    activeTasks[taskIdentifier] = 1
+    Config.display = true
+    Config.Duration = length
+    Config.Label = name
 
-    local maxcount = GetGameTimer() + length
-    local curTime
-    local playerPed = PlayerPedId()
+    SendNUIMessage(Config)
 
-    while activeTasks[taskIdentifier] == 1 do
-        Citizen.Wait(0)
+    guiEnabled = true
 
-        curTime = GetGameTimer()
+    if not keepWeapon then
+        TriggerEvent("actionbar:setEmptyHanded")
+    end
 
-        if curTime > maxcount or not guiEnabled then
-            activeTasks[taskIdentifier] = 2
-        end
+    currentTask = 0
 
-        local fuck = 100 - (((maxcount - curTime) / length) * 100)
-        fuck = math.min(100, fuck)
+    while currentTask == 0 do
+        Citizen.Wait(1)
 
-        updateGui(fuck,taskIdentifier,name)
+        local playerPed = PlayerPedId()
 
-        if not keepWeapon and GetSelectedPedWeapon(PlayerPedId()) ~= GetHashKey("WEAPON_UNARMED") then
-            local totaldone = taskBarFail(maxcount,curTime,length)
-            if cb then cb(totaldone) end
-            return totaldone
+        if not keepWeapon and GetSelectedPedWeapon(playerPed) ~= GetHashKey("WEAPON_UNARMED") then
+            closeGui()
+            if cb then cb(0) end
+            return 0
         end
 
         if runCheck then
             if IsPedClimbing(playerPed) or IsPedJumping(playerPed) or IsPedSwimming(playerPed) or IsPedRagdoll(playerPed) then
                 SetPlayerControl(PlayerId(), 0, 0)
-                local totaldone = taskBarFail(maxcount,curTime,length)
+                closeGui()
                 Citizen.Wait(1000)
                 SetPlayerControl(PlayerId(), 1, 1)
-                if cb then cb(totaldone) end
-                return totaldone
+                if cb then cb(0) end
+                return 0
             end
         end
 
         if moveCheck then
-          if #(firstPosition-GetEntityCoords(playerPed)) > moveCheck then
-              local totaldone = taskBarFail(maxcount,curTime,length)
-              if cb then cb(totaldone) end
-              return totaldone
-          end
+            if #(firstPosition-GetEntityCoords(playerPed)) > moveCheck then
+                closeGui()
+                if cb then cb(0) end
+                return 0
+            end
         end
 
         if vehicle ~= nil and vehicle ~= 0 then
             local driverPed = GetPedInVehicleSeat(vehicle, -1)
             if driverPed ~= playerPed and vehCheck then
-                local totaldone = taskBarFail(maxcount,curTime,length)
-                if cb then cb(totaldone) end
-                return totaldone
+                closeGui()
+                if cb then cb(0) end
+                return 0
             end
 
             local model = GetEntityModel(vehicle)
@@ -156,25 +97,19 @@ function taskBar(length, name, runCheck, keepWeapon, vehicle, vehCheck, cb, move
                 if IsEntityInAir(vehicle) then
                     Wait(1000)
                     if IsEntityInAir(vehicle) then
-                        local totaldone = taskBarFail(maxcount,curTime,length)
-                        if cb then cb(totaldone) end
-                        return totaldone
+                        closeGui()
+                        if cb then cb(0) end
+                        return 0
                     end
                 end
             end
         end
     end
 
-    local resultTask = activeTasks[taskIdentifier]
-    if resultTask == 2 then
-        local totaldone = taskBarFail(maxcount,curTime,length)
-        if cb then cb(totaldone) end
-        return totaldone
-
-    else
-        closeGui()
-        taskInProcess = false
-
+    if currentTask == 2 then
+        if cb then cb(0) end
+        return 0
+    elseif currentTask == 1 then
         if cb then cb(100) end
         return 100
     end
@@ -188,7 +123,6 @@ end
 
 exports("taskBar", taskBar)
 exports("taskCancel", taskCancel)
-exports("closeGuiFail", closeGuiFail)
 
 --[[
 
@@ -196,18 +130,18 @@ exports("closeGuiFail", closeGuiFail)
 
 ]]
 
-RegisterNUICallback("taskEnd", function(data, cb)
-    closeNormalGui()
+RegisterNUICallback("progress_complete", function(data, cb)
+    currentTask = 1
+    guiEnabled = false
 
-    local taskIdentifier = data.tasknum
-    activeTasks[taskIdentifier] = 3
+    cb("ok")
 end)
 
-RegisterNUICallback("taskCancel", function(data, cb)
-    closeGui()
+RegisterNUICallback("progress_stop", function(data, cb)
+    currentTask = 2
+    guiEnabled = false
 
-    local taskIdentifier = data.tasknum
-    activeTasks[taskIdentifier] = 2
+    cb("ok")
 end)
 
 --[[

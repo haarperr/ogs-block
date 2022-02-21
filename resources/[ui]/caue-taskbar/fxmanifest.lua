@@ -1,22 +1,23 @@
 fx_version "cerulean"
 games { "gta5" }
 
-ui_page "html/index.html"
+ui_page "html/ui.html"
 
 files {
-    "html/*.html",
-    "html/*.js",
-    "html/*.css",
+    "html/ui.html",
+    "html/fonts/*.ttf",
+    "html/css/*.css",
+    "html/js/*.js",
 }
 
 shared_scripts {
-    "shared/sh_*.lua",
+    "shared/*",
 }
 
 server_scripts {
-    "server/sv_*.lua",
+    "server/*",
 }
 
 client_scripts {
-    "client/cl_*.lua",
+    "client/*",
 }
