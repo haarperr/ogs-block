@@ -147,6 +147,16 @@ MenuData = {
             }
         },
     },
+    bennys_sign_in = {
+        {
+            title = "Benny's Original Motor Works",
+            description = "Entrar ou Sair de serviço",
+            children = {
+                { title = "Entrar", action = "caue-signin:handler", params = { sign_in = true, job = "bennys" } },
+                { title = "Sair", action = "caue-signin:handler", params = { sign_off = true } },
+            }
+        },
+    },
 }
 
 --[[

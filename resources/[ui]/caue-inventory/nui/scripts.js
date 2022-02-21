@@ -977,7 +977,7 @@ function DisplayInventoryMultiple(playerinventory, itemCount, invName, targetinv
     } else if (targetinvName.indexOf('Shop') > -1) {
         displayName = 'Shop';
         secondaryMaxWeight = 2000.0;
-        slotLimitTarget = 40;
+        slotLimitTarget = 100;
     } else if (targetinvName.startsWith('ply')) {
         secondaryMaxWeight = 250.0;
         slotLimitTarget = 40;
