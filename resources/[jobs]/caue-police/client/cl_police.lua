@@ -246,12 +246,6 @@ AddEventHandler("caue-police:handler", function(eventData)
             })
 
             if input["id"] then
-                local id = tonumber(input["id"])
-                if not id or id < 1 then
-                    TriggerEvent("DoLongHudText", "Número inválido", 2)
-                    return
-                end
-
                 TriggerEvent("server-inventory-open", "1", ("%s_evidence"):format(id))
             end
         else

@@ -3,7 +3,9 @@ DroppedEvidence, IsAccumulating = {}, false
 AddEventHandler("caue-evidence:dropEvidence", function (pCoords, pMeta, pSuffix)
     local uid = pCoords.x .. "-" .. pCoords.y .. "-" .. pCoords.z
 
-    if pSuffix then uid = uid .. "-" .. pSuffix end
+    if pSuffix then
+        uid = uid .. "-" .. pSuffix
+    end
 
     DroppedEvidence[uid] = {
         ["x"] = pCoords.x,

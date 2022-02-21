@@ -935,6 +935,12 @@ RegisterNUICallback("searchHouse", function(data, cb)
     cb(true)
 end)
 
+RegisterNUICallback("dnaEdit", function(data, cb)
+    TriggerServerEvent("caue-mdt:dnaEdit", data.cid, data.dna)
+
+    cb(true)
+end)
+
 --[[
 
     Incidents

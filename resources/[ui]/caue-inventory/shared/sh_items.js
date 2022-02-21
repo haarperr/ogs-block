@@ -3120,6 +3120,17 @@ itemList['pdevidencebag'] = {
   image: 'np_evidence_bag.png',
 };
 
+itemList['dnaswab'] = {
+  fullyDegrades: false,
+  decayrate: 0,
+  displayname: 'DNA Swab',
+  price: 10,
+  weight: 1,
+  nonStack: true,
+  model: '',
+  image: 'ogs_cotonete.png',
+};
+
 /*
 
   POLICE END

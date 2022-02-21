@@ -102,7 +102,7 @@ PedEntries[#PedEntries+1] = {
         title = "Ações Policiais",
         icon = "#police-action",
     },
-    subMenus = {"police:frisk", "police:search", "police:fingerprint", "police:checkBank", "police:gsr", "medic:checktargetstates" },
+    subMenus = {"police:frisk", "police:search", "police:dnaSwab", "police:checkBank", "police:gsr", "medic:checktargetstates" },
     isEnabled = function(pEntity, pContext)
         return not isDisabled() and pEntity and pContext.flags["isPlayer"] and (exports["caue-jobs"]:getJob(CurrentJob, "is_police") or CurrentJob == "doc") and pContext.distance <= 1.2
     end
@@ -221,15 +221,15 @@ MenuItems["medic:stomachpump"] = {
 --     }
 -- }
 
-MenuItems["police:fingerprint"] = {
+MenuItems["police:dnaSwab"] = {
     data = {
-        id = "police:fingerprint",
+        id = "police:dnaSwab",
         icon = "#police-action-fingerprint",
-        title = "Checar Digitais",
-        event = "police:fingerprint"
+        title = "Coletar DNA",
+        event = "caue-evidence:dnaSwab"
     },
     isEnabled = function(pEntity, pContext)
-        return not exports["caue-base"]:getVar("dead") and pContext.flags and exports["caue-jobs"]:getJob(CurrentJob, "is_police")
+        return not exports["caue-base"]:getVar("dead") and pContext.flags and CurrentJob == "cid"
     end
 }
 

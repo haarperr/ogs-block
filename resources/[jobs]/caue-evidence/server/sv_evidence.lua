@@ -1,5 +1,66 @@
 local DroppedEvidences = {}
 
+function GetRandomString(lenght)
+    local chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    local randomString, stringLenght = '', lenght or 10
+    local charTable = {}
+
+    for char in chars:gmatch"." do
+        table.insert(charTable, char)
+    end
+
+    for i = 1, stringLenght do
+        randomString = randomString .. charTable[math.random(1, #charTable)]
+    end
+    return randomString
+end
+
+local function generateDNA()
+    for i = 1, 10 do
+        local dna = GetRandomString(7)
+
+        local exist = exports.ghmattimysql:scalarSync([[
+            SELECT dna
+            FROM characters
+            WHERE dna = ?
+        ]],
+        { dna })
+
+        if not exist then
+            return dna
+        end
+
+        Citizen.Wait(500)
+    end
+end
+
+RPC.register("caue-evidence:getDNA", function(src)
+    local cid = exports["caue-base"]:getChar(src, "id")
+    if not cid then
+        return "ERROR"
+    end
+
+    local dna = exports.ghmattimysql:scalarSync([[
+        SELECT dna
+        FROM characters
+        WHERE id = ?
+    ]],
+    { cid })
+
+    if not dna then
+        dna = generateDNA()
+
+        exports.ghmattimysql:executeSync([[
+            UPDATE characters
+            SET dna = ?
+            WHERE id = ?
+        ]],
+        { dna, cid })
+    end
+
+    return dna
+end)
+
 RPC.register("caue-evidence:fetchEvidence", function(src)
     return true, DroppedEvidences
 end)

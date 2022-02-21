@@ -59,15 +59,6 @@ AddEventHandler("police:gsr", function(pTarget)
     end
 end)
 
-RegisterNetEvent("police:fingerprint")
-AddEventHandler("police:fingerprint", function(pTarget)
-	local src = source
-
-    local cid = exports["caue-base"]:getChar(pTarget, "id")
-
-    TriggerClientEvent("DoLongHudText", src, "DNA-" .. cid)
-end)
-
 RegisterNetEvent("police:checkBank")
 AddEventHandler("police:checkBank", function(pTarget)
 	local src = source

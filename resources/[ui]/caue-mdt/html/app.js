@@ -121,6 +121,17 @@ $(document).ready(() => {
                 "status": ""
             },
         ]
+
+        if (currentJob == "cid") {
+            args.push({
+                "className": "profile-dna",
+                "icon": "fas fa-dna",
+                "text": "Alterar DNA",
+                "info": $(this).data("id"),
+                "status": ""
+            })
+        }
+
         if (["police", "sheriff", "state_police", "park_ranger", "cid"].includes(currentJob)) {
             openContextMenu(e, args);
         }
@@ -1208,12 +1219,18 @@ $(document).ready(() => {
         }));
     });
 
-
     $(".contextmenu").on("click", ".profile-jail", function () {
         $(".jail-container").fadeIn(0)
         $(".jail-inner-container").slideDown(500)
         $(".jail-inner-container").fadeIn(500)
         $(".jail-container").data("id", $(this).data("info"))
+    });
+
+    $(".contextmenu").on("click", ".profile-dna", function () {
+        $(".dna-container").fadeIn(0)
+        $(".dna-inner-container").slideDown(500)
+        $(".dna-inner-container").fadeIn(500)
+        $(".dna-container").data("id", $(this).data("info"))
     });
 
     $(".contextmenu").on("click", ".profile-missing", function () {
@@ -2668,6 +2685,34 @@ $(document).ready(() => {
         }
     })
 
+    $(".dna-buttons").on("click", ".dna-cancel", function () {
+        $(".dna-inner-container").slideUp(500)
+        $(".dna-inner-container").fadeOut(500)
+        setTimeout(() => {
+            $(".dna-container").slideUp(500)
+            $(".dna-container").fadeOut(500)
+            $(".dna-input").val("")
+        }, 500)
+    })
+
+    $(".dna-buttons").on("click", ".dna-submit", function () {
+        const dna = $(".dna-input").val()
+        if (dna.length == 7) {
+            let cid = $(".dna-container").data("id")
+            $.post('https://caue-mdt/dnaEdit', JSON.stringify({
+                cid: cid,
+                dna: dna
+            }));
+            $(".dna-inner-container").slideUp(500)
+            $(".dna-inner-container").fadeOut(500)
+            setTimeout(() => {
+                $(".dna-container").slideUp(500)
+                $(".dna-container").fadeOut(500)
+                $(".dna-input").val("")
+            }, 500)
+        }
+    })
+
     $(".callsign-buttons").on("click", ".callsign-submit", function () {
         const callsign = $(".callsign-input").val()
         if (callsign.length > 2) {
@@ -3010,6 +3055,7 @@ $(document).ready(() => {
             $(".manage-profile-dob-input").val(table["dateofbirth"]);
             $(".manage-profile-job-input").val(table["job"]);
             $(".manage-profile-phone-input").val(phoneNumber);
+            $(".manage-profile-dna-input").val(table["dna"]);
             $(".manage-profile-url-input").val(table["profilepic"]);
             $(".manage-profile-info").val(table["policemdtinfo"]);
             if (isPublicRecords == false) {

@@ -15,7 +15,7 @@ RegisterNetEvent("evidence:bulletInformation", function(information)
 end)
 
 AddEventHandler("SpawnEventsClient", function ()
-    Ped.characterId = exports["caue-base"]:getChar("id")
+    Ped.characterDNA = RPC.execute("caue-evidence:getDNA")
 end)
 
 AddEventHandler("caue-inventory:itemUsed", function(itemId, itemInfo, inventoryName, slot)

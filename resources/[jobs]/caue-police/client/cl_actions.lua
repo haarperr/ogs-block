@@ -113,15 +113,6 @@ AddEventHandler("police:gsr", function(pArgs, pEntity)
 	end
 end)
 
-RegisterNetEvent("police:fingerprint")
-AddEventHandler("police:fingerprint", function(pArgs, pEntity)
-
-	local finished = exports["caue-taskbar"]:taskBar(10000, "Examinando Digitais")
-	if finished == 100 then
-		TriggerServerEvent("police:fingerprint", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pEntity)))
-	end
-end)
-
 RegisterNetEvent("police:checkBank")
 AddEventHandler("police:checkBank", function(pArgs, pEntity)
 	local finished = exports["caue-taskbar"]:taskBar(10000, "Checando o Banco do Individuo")

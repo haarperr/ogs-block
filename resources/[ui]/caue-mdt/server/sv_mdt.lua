@@ -475,10 +475,10 @@ RPC.register("caue-mdt:searchProfile", function(src, pName)
         SELECT c.id, c.first_name, c.last_name, c.gender, c.licenses, p.image, p.description
         FROM characters c
         LEFT JOIN mdt_profiles p ON p.cid = c.id
-        WHERE LOWER(c.first_name) LIKE ? OR LOWER(c.id) LIKE ? OR LOWER(c.last_name) LIKE ? OR CONCAT(LOWER(c.first_name), " ", LOWER(c.last_name), " ", LOWER(c.id)) LIKE ?
+        WHERE LOWER(c.first_name) LIKE ? OR LOWER(c.id) LIKE ? OR LOWER(c.last_name) LIKE ? OR CONCAT(LOWER(c.first_name), " ", LOWER(c.last_name), " ", LOWER(c.id)) LIKE ? OR LOWER(p.dna) LIKE ?
         ORDER BY c.first_name DESC
     ]],
-    { queryData, queryData, queryData, queryData })
+    { queryData, queryData, queryData, queryData, queryData })
 
 	for i, v in ipairs(result) do
         result[i].identifier  = v.id
@@ -523,7 +523,7 @@ end)
 
 RPC.register("caue-mdt:getProfileData", function(src, pCid)
     local result = exports.ghmattimysql:executeSync([[
-        SELECT c.id, c.first_name, c.last_name, c.dob, c.phone, c.gender, c.job, c.licenses, p.image, p.description, p.tags, p.gallery
+        SELECT c.id, c.first_name, c.last_name, c.dob, c.phone, c.gender, c.job, c.licenses, p.dna, p.image, p.description, p.tags, p.gallery
         FROM characters c
         LEFT JOIN mdt_profiles p ON p.cid = c.id
         WHERE c.id = ?
@@ -576,6 +576,7 @@ RPC.register("caue-mdt:getProfileData", function(src, pCid)
         job = exports["caue-jobs"]:getJob(result[1].job, "name"),
         dateofbirth = result[1]["dob"],
         phone = result[1]["phone"],
+        dna = "Desconhecido",
         profilepic = profilePic(result[1].gender, result[1].image),
         policemdtinfo = "",
         Weapon = false,
@@ -592,6 +593,10 @@ RPC.register("caue-mdt:getProfileData", function(src, pCid)
         gallery = {},
         convictions = {}
     }
+
+    if result[1].dna ~= nil then
+        object.dna = result[1].dna
+    end
 
     if result[1].description ~= nil then
         object.policemdtinfo = result[1].description
@@ -825,6 +830,30 @@ AddEventHandler("caue-mdt:removeGalleryImg", function(cid, url)
             WHERE cid = ?
         ]],
         { json.encode(gallery), cid })
+    end
+end)
+
+RegisterNetEvent("caue-mdt:dnaEdit", function(cid, dna)
+    local result = exports.ghmattimysql:scalarSync([[
+        SELECT cid
+        FROM mdt_profiles
+        WHERE cid = ?
+    ]],
+    { cid })
+
+    if result then
+        exports.ghmattimysql:executeSync([[
+            UPDATE mdt_profiles
+            SET dna = ?
+            WHERE cid = ?
+        ]],
+        { dna, cid })
+    else
+        exports.ghmattimysql:executeSync([[
+            INSERT INTO mdt_profiles (cid, image, description, tags, gallery, dna)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ]],
+        { cid, "", "", "{}", "{}", dna })
     end
 end)
 

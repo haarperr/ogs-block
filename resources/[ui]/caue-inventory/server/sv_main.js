@@ -52,6 +52,7 @@ function GenerateInformation(player, itemid, itemdata) {
             // should I remove that?
             let cartridgeCreated = makeid(3) + "-" + Math.floor((Math.random() * 999) + 1);
             returnInfo = JSON.stringify({
+                _hideKeys: ["cartridge"],
                 cartridge: cartridgeCreated,
                 serial: identifier,
                 ammo: ammo,
@@ -114,78 +115,6 @@ function GenerateInformation(player, itemid, itemdata) {
                         return resolve(returnInfo);
                     });
                     break;
-                case "casing":
-                    returnInfo = JSON.stringify({
-                        Identifier: itemdata.identifier,
-                        type: itemdata.eType,
-                        other: itemdata.other
-                    })
-                    timeout = 1
-                    clearTimeout(timeout)
-                    return resolve(returnInfo);
-                case "evidence":
-                    returnInfo = JSON.stringify({
-                        Identifier: itemdata.identifier,
-                        type: itemdata.eType,
-                        other: itemdata.other
-                    })
-                    timeout = 1;
-                    clearTimeout(timeout)
-                    return resolve(returnInfo);
-                case "np_evidence_marker_yellow":
-                    returnInfo = JSON.stringify({
-                        Identifier: itemdata.identifier,
-                        type: itemdata.eType,
-                        other: itemdata.other
-                    })
-                    timeout = 1;
-                    clearTimeout(timeout)
-                    return resolve(returnInfo);
-                case "np_evidence_marker_red":
-                    returnInfo = JSON.stringify({
-                        Identifier: itemdata.identifier,
-                        type: itemdata.eType,
-                        other: itemdata.other
-                    })
-                    timeout = 1;
-                    clearTimeout(timeout)
-                    return resolve(returnInfo);
-                case "np_evidence_marker_white":
-                    returnInfo = JSON.stringify({
-                        Identifier: itemdata.identifier,
-                        type: itemdata.eType,
-                        other: itemdata.other
-                    })
-                    timeout = 1;
-                    clearTimeout(timeout)
-                    return resolve(returnInfo);
-                case "np_evidence_marker_orange":
-                    returnInfo = JSON.stringify({
-                        Identifier: itemdata.identifier,
-                        type: itemdata.eType,
-                        other: itemdata.other
-                    })
-                    timeout = 1;
-                    clearTimeout(timeout)
-                    return resolve(returnInfo);
-                case "np_evidence_marker_light_blue":
-                    returnInfo = JSON.stringify({
-                        Identifier: itemdata.identifier,
-                        type: itemdata.eType,
-                        other: itemdata.other
-                    })
-                    timeout = 1;
-                    clearTimeout(timeout)
-                    return resolve(returnInfo);
-                case "np_evidence_marker_purple":
-                    returnInfo = JSON.stringify({
-                        Identifier: itemdata.identifier,
-                        type: itemdata.eType,
-                        other: itemdata.other
-                    })
-                    timeout = 1;
-                    clearTimeout(timeout);
-                    return resolve(returnInfo);
                 case "drivingtest":
                     if (data.id) {
                         let string = `SELECT * FROM driving_tests WHERE id = '${data.id}'`;
