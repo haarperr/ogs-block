@@ -1053,7 +1053,7 @@ AddEventHandler("caue-jobs:jobChanged", function(job)
     elseif exports["caue-jobs"]:getJob(job, "is_medic") then
         currentJob = "ems"
     else
-        currentJob =  "unemployed"
+        currentJob = job
     end
 end)
 
