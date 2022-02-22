@@ -24,6 +24,8 @@ RegisterNetEvent("e-blips:updateBlips", function(pJob, pSelfUpdate)
             callsign = callSign or "CALLSIGN NOT DEFINED"
         }
 
+        Citizen.Wait(1000)
+
         for k, v in pairs(EmergencyPlayers) do
             local serverId = tonumber(k)
             TriggerClientEvent("e-blips:addHandler", serverId, data)

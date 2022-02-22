@@ -19,12 +19,12 @@ end
 function EntityBlip:setSettings()
     if not self.settings then return end
 
-    if self.settings.color then
-        SetBlipColour(self.handle, self.settings.color)
-    end
-
     if self.settings.sprite then
         SetBlipSprite(self.handle, self.settings.sprite)
+    end
+
+    if self.settings.color then
+        SetBlipColour(self.handle, self.settings.color)
     end
 
     if self.settings.route then
