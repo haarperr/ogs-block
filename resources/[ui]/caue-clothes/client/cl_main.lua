@@ -599,6 +599,7 @@ function Save(save, close, newFadeStyle)
     TriggerEvent("caue-ai:setDefaultRelations")
     TriggerEvent("AnimSet:Set")
     CustomCamera("torso", true)
+    TriggerEvent("e-blips:updateAfterPedChange")
     startingMenu = false
 end
 

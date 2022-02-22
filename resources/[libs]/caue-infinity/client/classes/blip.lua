@@ -23,6 +23,10 @@ function EntityBlip:setSettings()
         SetBlipColour(self.handle, self.settings.color)
     end
 
+    if self.settings.sprite then
+        SetBlipSprite(self.handle, self.settings.sprite)
+    end
+
     if self.settings.route then
         SetBlipRoute(self.handle, self.settings.route)
     end

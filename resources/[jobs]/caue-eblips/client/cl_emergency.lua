@@ -71,25 +71,6 @@ end
 
 ]]
 
-RegisterNetEvent("onPlayerJoining")
-AddEventHandler("onPlayerJoining", function(player)
-	if BlipHandlers[player] then
-		BlipHandlers[player]["inScope"] = true
-		Citizen.Wait(1000)
-		if BlipHandlers[player]["inScope"] then
-			BlipHandlers[player]:onModeChange("entity")
-		end
-	end
-end)
-
-RegisterNetEvent("onPlayerDropped")
-AddEventHandler("onPlayerDropped", function(player)
-	if BlipHandlers[player] then
-		BlipHandlers[player]["inScope"] = false
-		BlipHandlers[player]:onModeChange("coords")
-	end
-end)
-
 RegisterNetEvent("caue:infinity:player:coords")
 AddEventHandler("caue:infinity:player:coords", function(pCoords)
 	for serverId, handler in pairs(BlipHandlers) do
@@ -108,10 +89,10 @@ AddEventHandler("caue-jobs:jobChanged", function(pJob)
     TriggerServerEvent("e-blips:updateBlips", pJob, true)
 end)
 
--- RegisterNetEvent("e-blips:updateAfterPedChange")
--- AddEventHandler("e-blips:updateAfterPedChange", function(pJob)
--- 	TriggerServerEvent("e-blips:updateBlips", pJob, false)
--- end)
+RegisterNetEvent("e-blips:updateAfterPedChange")
+AddEventHandler("e-blips:updateAfterPedChange", function(pJob)
+	TriggerServerEvent("e-blips:updateBlips", pJob, false)
+end)
 
 RegisterNetEvent("e-blips:setHandlers")
 AddEventHandler("e-blips:setHandlers", function(pHandlers)
