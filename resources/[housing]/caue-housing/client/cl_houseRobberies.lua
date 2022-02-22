@@ -315,8 +315,9 @@ function interactRob()
                 TriggerEvent("DoLongHudText", "Você não encontrou nada")
             elseif euemeusmanosodiamosoartmike >= 7 then
                 TriggerServerEvent("caue-heists:complete", math.random(30, 50))
-            elseif euemeusmanosodiamosoartmike >= 3 then
+            elseif euemeusmanosodiamosoartmike >= 1 then
                 items = {"3638508604", "-1024456158"}
+            --[[
             elseif euemeusmanosodiamosoartmike >= 1 then
                 local _items = {"148457251", "-2012211169"}
                 local information = {
@@ -324,6 +325,7 @@ function interactRob()
                 }
 
                 TriggerEvent("player:receiveItem", _items[math.random(#_items)], 1, true, information)
+            ]]--
             end
 
             if #items > 0 then
