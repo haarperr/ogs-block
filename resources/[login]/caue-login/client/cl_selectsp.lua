@@ -17,6 +17,7 @@ Spawn.motel = {
 	[3] = { ["pos"] = vector4(173.96, -631.29, 47.08, 303.12), ["info"] = " Apartments 3"}
 }
 
+Spawn.Crash = nil
 Spawn.housingCoords = nil
 Spawn.isNew = false
 
@@ -94,6 +95,20 @@ function Spawn.selectedSpawn(spawnInfo)
 	else
 		local pos = Spawn.obtainWorldSpawnPos(spawnInfo)
 		if pos then
+			SetEntityCoords(PlayerPedId(),pos.x,pos.y,pos.z)
+			SetEntityHeading(PlayerPedId(),pos.w)
+
+			doCamera(pos.x,pos.y,pos.z)
+			DoScreenFadeOut(2)
+
+			Login.DeleteCamera()
+
+			Wait(200)
+
+			DoScreenFadeIn(2500)
+		elseif spawnInfo == "Última Localização" then
+			local pos = Spawn.Crash
+
 			SetEntityCoords(PlayerPedId(),pos.x,pos.y,pos.z)
 			SetEntityHeading(PlayerPedId(),pos.w)
 
@@ -190,6 +205,26 @@ function doCamera(x,y,z)
 	end
 end
 
+function Spawn.getCrash(exitData)
+	local spawn = nil
+	if exitData then
+		local vec3 = vector3(exitData.x,exitData.y,exitData.z)
+		local newPos = vector4(exitData.x,exitData.y,exitData.z,0.0)
+		local canUse = true
+
+		if #(vec3-vector3(0.0,0.0,0.0)) < 10 then canUse = false end
+		-- if vec3.z < 0.0 then canUse = false end
+		-- if GetInteriorAtCoords(vec3) ~= 0 then canUse = false end
+
+		if canUse then
+			spawn = { ["pos"] = newPos, ["info"] = "Última Localização"}
+			Spawn.Crash = exitData
+		end
+	end
+
+	return spawn
+end
+
 --[[
 
 	Events
@@ -249,6 +284,7 @@ AddEventHandler("spawn:clientSpawnData", function(spawnData)
 	local currentSpawns = Spawn.shallowCopy(Spawn.defaultSpawns)
 	local currentCheckList = {}
 
+	currentSpawns[#currentSpawns + 1] = Spawn.getCrash(spawnData.crash)
 	currentSpawns[#currentSpawns + 1] = Spawn.getDevSpawn()
 	currentSpawns[#currentSpawns + 1] = Spawn.motel[spawnData.motelRoom.roomType]
 	Spawn.defaultApartmentSpawn = spawnData.motelRoom

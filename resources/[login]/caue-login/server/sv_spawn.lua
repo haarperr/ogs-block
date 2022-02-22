@@ -1,3 +1,5 @@
+local charactersCoords = {}
+
 RegisterNetEvent("caue-login:spawnCharacter")
 AddEventHandler("caue-login:spawnCharacter", function()
     local src = source
@@ -16,6 +18,7 @@ AddEventHandler("caue-login:spawnCharacter", function()
         ["houses"] = {},
         ["keys"] = {},
         ["groups"] = {},
+        ["crash"] = vector4(0.0, 0.0, 0.0, 0.0),
     }
 
     local groups = exports.ghmattimysql:executeSync([[
@@ -55,5 +58,27 @@ AddEventHandler("caue-login:spawnCharacter", function()
         spawnData["overwrites"] = "new"
     end
 
+    if charactersCoords[cid] then
+        spawnData["crash"] = charactersCoords[cid]
+    end
+
     TriggerClientEvent("spawn:clientSpawnData", src, spawnData)
+end)
+
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(2000)
+
+        local users = exports["caue-base"]:getUsers()
+
+        for user, vars in pairs(users) do
+            if vars["char"] and vars["char"]["id"] then
+                local ped = GetPlayerPed(user)
+                local coords = GetEntityCoords(ped)
+                local heading = GetEntityHeading(ped)
+
+                charactersCoords[vars["char"]["id"]] = vector4(coords.x, coords.y, coords.z, heading)
+            end
+        end
+	end
 end)

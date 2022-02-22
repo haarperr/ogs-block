@@ -854,6 +854,10 @@ body {
   color: lightskyblue;
 }
 
+.crash {
+  color: pink;
+}
+
 .homeIcon {
   color: wheat;
 }
