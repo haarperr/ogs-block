@@ -6,19 +6,11 @@ RegisterNetEvent("e-blips:updateBlips", function(pJob, pSelfUpdate)
     if exports["caue-jobs"]:getJob(pJob, "is_emergency") then
         local callSign = exports["caue-jobs"]:getCallsign(src, pJob)
 
-        if EmergencyPlayers[src] then
-            for k, v in pairs(EmergencyPlayers) do
-                local serverId = tonumber(k)
-
-                if serverId == src and pSelfUpdate then
-                    TriggerClientEvent("e-blips:deleteHandlers", src)
-                else
-                    TriggerClientEvent("e-blips:removeHandler", serverId, src)
-                end
-            end
+        for k, v in pairs(EmergencyPlayers) do
+            TriggerClientEvent("e-blips:deleteHandlers", k)
         end
 
-        local data = {
+        EmergencyPlayers[src] = {
             netId = src,
             job = pJob,
             callsign = callSign or "CALLSIGN NOT DEFINED"
@@ -27,25 +19,15 @@ RegisterNetEvent("e-blips:updateBlips", function(pJob, pSelfUpdate)
         Citizen.Wait(1000)
 
         for k, v in pairs(EmergencyPlayers) do
-            local serverId = tonumber(k)
-            TriggerClientEvent("e-blips:addHandler", serverId, data)
-        end
-
-        EmergencyPlayers[src] = data
-
-        if pSelfUpdate then
-            TriggerClientEvent("e-blips:setHandlers", src, EmergencyPlayers)
+            TriggerClientEvent("e-blips:setHandlers", k, EmergencyPlayers)
         end
     elseif EmergencyPlayers[src] then
-        for k, v in pairs(EmergencyPlayers) do
-            if k == src and pSelfUpdate then
-                TriggerClientEvent("e-blips:deleteHandlers", src)
-            else
-                TriggerClientEvent("e-blips:removeHandler", k, src)
-            end
-        end
-
         EmergencyPlayers[src] = nil
+        TriggerClientEvent("e-blips:deleteHandlers", src)
+
+        for k, v in pairs(EmergencyPlayers) do
+            TriggerClientEvent("e-blips:removeHandler", k, src)
+        end
     end
 end)
 
@@ -53,16 +35,10 @@ AddEventHandler("playerDropped", function()
 	local src = source
 
     if EmergencyPlayers[src] then
-        for k, v in pairs(EmergencyPlayers) do
-            local serverId = tonumber(k)
-
-            if serverId == src and pSelfUpdate then
-                TriggerClientEvent("e-blips:deleteHandlers", src)
-            else
-                TriggerClientEvent("e-blips:removeHandler", serverId, src)
-            end
-        end
-
         EmergencyPlayers[src] = nil
+
+        for k, v in pairs(EmergencyPlayers) do
+            TriggerClientEvent("e-blips:removeHandler", k, src)
+        end
     end
 end)

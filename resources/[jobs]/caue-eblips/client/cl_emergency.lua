@@ -90,7 +90,8 @@ AddEventHandler("caue-jobs:jobChanged", function(pJob)
 end)
 
 RegisterNetEvent("e-blips:updateAfterPedChange")
-AddEventHandler("e-blips:updateAfterPedChange", function(pJob)
+AddEventHandler("e-blips:updateAfterPedChange", function()
+	local pJob = exports["caue-base"]:getChar("job")
 	TriggerServerEvent("e-blips:updateBlips", pJob, false)
 end)
 
