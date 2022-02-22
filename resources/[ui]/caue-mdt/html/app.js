@@ -4160,7 +4160,7 @@ $(document).ready(() => {
                 $('.active-unit-list').prepend(`
                 <div class="active-unit-item" data-id="${value.cid}">
                     <div class="unit-status ${statuscolor}">${status}</div>
-                    <div class="unit-job active-info-job-lspd">LSSD</div>
+                    <div class="unit-job active-info-job-lspd">BCSO</div>
                     <div class="unit-name">(${callsign}) ${value.name}</div>
                     <div class="unit-radio">${radio}</div>
                 </div>

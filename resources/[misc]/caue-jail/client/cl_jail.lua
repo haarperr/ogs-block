@@ -171,7 +171,7 @@ function scaleformPaste(scaleform, obj, name, years, cid, date)
     end
 
     PushScaleformMovieFunction(scaleform, "SET_BOARD")
-    PushScaleformMovieFunctionParameterString("LOS SANTOS SHERIFF DEPARTMENT")
+    PushScaleformMovieFunctionParameterString("LOS SANTOS POLICE DEPARTMENT")
     PushScaleformMovieFunctionParameterString(date)
     PushScaleformMovieFunctionParameterString("Sentenciado a " .. years .. " Meses")
     PushScaleformMovieFunctionParameterString(name)

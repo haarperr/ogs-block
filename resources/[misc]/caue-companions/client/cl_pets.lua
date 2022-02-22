@@ -173,7 +173,7 @@ local k9types = {
 
 local k9Depts = {
     [1] = {
-      key = "lssd",
+      key = "lspd",
     },
     [2] = {
       key = "bcso",
@@ -200,9 +200,9 @@ local k9Depts = {
 
 local function supportedAnimals()
     return {
-        ["chop_lssd"] = {
-            id = "chop_lssd",
-            name = "lssd Chop",
+        ["chop_lspd"] = {
+            id = "chop_lspd",
+            name = "lspd Chop",
             appearance = {
                 model = "a_c_chop",
                 components = {
@@ -302,9 +302,9 @@ local function supportedAnimals()
         speedModifier = 1.2,
         maxHealth = 1000,
       },
-      ["husky_lssd"] = {
-        id = "husky_lssd",
-        name = "lssd Husky",
+      ["husky_lspd"] = {
+        id = "husky_lspd",
+        name = "lspd Husky",
         appearance = {
           model = "a_c_husky_np",
           components = {
@@ -440,9 +440,9 @@ local function supportedAnimals()
         speedModifier = 1.2,
         maxHealth = 1000,
       },
-      ["retriever_lssd"] = {
-        id = "retriever_lssd",
-        name = "lssd Retriever",
+      ["retriever_lspd"] = {
+        id = "retriever_lspd",
+        name = "lspd Retriever",
         appearance = {
           model = "a_c_retriever_np",
           components = {
@@ -578,9 +578,9 @@ local function supportedAnimals()
         speedModifier = 1.2,
         maxHealth = 1000,
       },
-      ["shepherd_lssd"] = {
-        id = "shepherd_lssd",
-        name = "lssd Shepherd",
+      ["shepherd_lspd"] = {
+        id = "shepherd_lspd",
+        name = "lspd Shepherd",
         appearance = {
           model = "a_c_shepherd_np",
           components = {
@@ -716,9 +716,9 @@ local function supportedAnimals()
         speedModifier = 1.2,
         maxHealth = 1000,
       },
-      ["pit_lssd"] = {
-        id = "pit_lssd",
-        name = "lssd Pit",
+      ["pit_lspd"] = {
+        id = "pit_lspd",
+        name = "lspd Pit",
         appearance = {
           model = "a_c_pit_np",
           components = {
