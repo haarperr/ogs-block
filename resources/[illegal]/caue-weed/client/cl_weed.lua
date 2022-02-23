@@ -322,9 +322,14 @@ AddEventHandler("caue-weed:pickPlant", function(pContext, pEntity)
     if not plantId then return end
 
     local plant = getPlantById(plantId)
-    local timeSinceHarvest = GetCloudTimeAsInt() - plant.last_harvest
-    if getPlantGrowthPercent(plant) < PlantConfig.HarvestPercent or timeSinceHarvest <= (PlantConfig.TimeBetweenHarvest * 60) then
+    if getPlantGrowthPercent(plant) < PlantConfig.HarvestPercent then
         TriggerEvent("DoLongHudText", "Esta planta ainda não esta pronta.", 2)
+        return
+    end
+
+    local timeSinceHarvest = GetCloudTimeAsInt() - plant.last_harvest
+    if timeSinceHarvest <= (PlantConfig.TimeBetweenHarvest * 60) then
+        TriggerEvent("DoLongHudText", "Esta planta já foi colhida recentemente! Melhor voltar mais tarde para tentar colher de novo.", 2)
         return
     end
 
