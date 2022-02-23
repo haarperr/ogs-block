@@ -461,6 +461,14 @@ DP.Dances = {
 }
 
 DP.Emotes = {
+    ["tattoo"] = {"anim@amb@clubhouse@tutorial@bkr_tut_ig3@", "mechanic_loop_mechandplayer", "Tattoo2 ~y~New", AnimationOptions =
+    {
+        Prop = 'v_ilev_ta_tatgun',
+        PropBone = 28422,
+        PropPlacement = {0.03, 0.03, 0.0, -29.0, 73.0, 0.0},
+        EmoteMoving = true,
+        EmoteLoop = true
+    }},
     ["tattoo"] = {"anim@heists@humane_labs@finale@keycards", "ped_a_enter_loop", "Tattoo ~y~New", AnimationOptions =
     {
         Prop = 'v_ilev_ta_tatgun',
