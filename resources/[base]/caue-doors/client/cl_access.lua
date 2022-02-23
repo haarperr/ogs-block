@@ -55,7 +55,7 @@ function hasSecuredAccess(pId, pType)
         return true
     end
 
-    if (secured.access.job and has_value(secured.access.job, "is_ems") and exports["caue-jobs"]:getJob(CurrentJob, "is_ems")) then
+    if (secured.access.job and has_value(secured.access.job, "is_medic") and exports["caue-jobs"]:getJob(CurrentJob, "is_medic")) then
         accessCheckCache[pType][pId] = true
         return true
     end

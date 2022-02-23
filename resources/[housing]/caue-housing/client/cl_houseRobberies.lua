@@ -279,7 +279,7 @@ function interactRob()
         ClearPedTasks(PlayerPedId())
     else
         TriggerEvent("animation:PlayAnimation","search")
-        local finished = exports["caue-taskbar"]:taskBar(15000,"Procurando...")
+        local finished = exports["caue-taskbar"]:taskBar(15000,"Procurando")
         ClearPedTasks(PlayerPedId())
         if finished ~= 100 then
             return

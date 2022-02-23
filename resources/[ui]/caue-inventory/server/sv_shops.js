@@ -110,9 +110,7 @@ shopList["15"] = [
     { item_id: "water", amount: 10 },
     { item_id: "101631238", amount: 1 },
     { item_id: "radio", amount: 10 },
-    { item_id: "flowers", amount: 10 },
     { item_id: "sandwich", amount: 10 },
-    { item_id: "bandage", amount: 10 },
     { item_id: "2343591895", amount: 1 },
 ];
 

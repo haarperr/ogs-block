@@ -425,7 +425,7 @@ GeneralEntries[#GeneralEntries+1] = {
 }
 
 AddEventHandler("vehicle:openRifleRack", function()
-    local finished = exports["caue-taskbar"]:taskBar(2500, "Destrancando...")
+    local finished = exports["caue-taskbar"]:taskBar(2500, "Destrancando")
     if finished ~= 100 then return end
     local veh = GetVehiclePedIsIn(PlayerPedId())
     if veh == 0 then return end

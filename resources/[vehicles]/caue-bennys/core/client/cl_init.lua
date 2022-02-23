@@ -100,4 +100,11 @@ Citizen.CreateThread(function()
         minZ=2.75,
         maxZ=5.75
     })
+
+    -- Fire Department
+    exports["caue-polyzone"]:AddBoxZone("bennys", vector3(-637.76, -100.33, 38.0), 9.8, 4.8, {
+        heading=340,
+        minZ=37.0,
+        maxZ=41.0
+    })
 end)

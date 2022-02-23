@@ -239,7 +239,9 @@ function spawnVehicle(model, coords, id, plate, fuel, mods, fakeplate, harness, 
 	SetEntityInvincible(veh, false)
 	SetVehicleModKit(veh, 0)
 	SetVehicleHasBeenOwnedByPlayer(veh, true)
-	--SetEntityAsMissionEntity(veh, true, true)
+	SetEntityAsMissionEntity(veh, true, true)
+	SetVehicleIsWanted(veh, false)
+	SetVehicleIsStolen(veh, false)
 
 	NetworkRegisterEntityAsNetworked(veh)
 	local netid = NetworkGetNetworkIdFromEntity(veh)

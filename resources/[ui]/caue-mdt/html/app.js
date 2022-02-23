@@ -2855,7 +2855,7 @@ $(document).ready(() => {
                 $("#boloindividual").attr('placeholder', 'Coloque o indivíduo aqui...');
 
                 $(".roster-iframe").attr("src", PoliceRoster)
-            } else if (["ems", "doctor"].includes(sentJob)) {
+            } else if (["ems", "doctor", "fire_department"].includes(sentJob)) {
                 $(".badge-logo").attr('src', 'https://cdn.discordapp.com/attachments/770324167894761522/912602342275301396/ems_badge.png');
                 $(".header-title").html("SAN ANDREAS MEDICAL DEPARTMENT");
                 $(".quote-span").html("In Caue we belive 🐒");

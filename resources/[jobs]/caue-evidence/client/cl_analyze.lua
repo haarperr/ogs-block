@@ -3,7 +3,7 @@ AddEventHandler("caue-evidence:analyze", function(pParameters, pEntity, pContext
         TriggerEvent("inventory-open-container", "analyze_evidence", 1, 1)
     elseif pParameters.actionId == 2 then
         TriggerEvent("dpemotes:e", {"parkingmeter"})
-        local finished = exports["caue-taskbar"]:taskBar(15000, "Analisando...")
+        local finished = exports["caue-taskbar"]:taskBar(15000, "Analisando")
         TriggerEvent("dpemotes:e", {"c"})
         if finished == 100 then
             TriggerServerEvent("caue-evidence:analyze")

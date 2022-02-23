@@ -157,6 +157,16 @@ MenuData = {
             }
         },
     },
+    fire_department_sign_in = {
+        {
+            title = "Los Santos Fire Department",
+            description = "Entrar ou Sair de serviço",
+            children = {
+                { title = "Entrar", action = "caue-signin:handler", params = { sign_in = true, job = "fire_department" } },
+                { title = "Sair", action = "caue-signin:handler", params = { sign_off = true } },
+            }
+        },
+    },
 }
 
 --[[
@@ -238,6 +248,14 @@ Citizen.CreateThread(function()
         useZ = true,
         data = {
             job = "cid_sign_in",
+        },
+    })
+
+    -- FIRE DEPARTMENT
+    exports["caue-polytarget"]:AddCircleZone("job_sign_in",vector3(-653.74, -87.25, 38.94), 0.25, {
+        useZ = true,
+        data = {
+            job = "fire_department_sign_in",
         },
     })
 end)

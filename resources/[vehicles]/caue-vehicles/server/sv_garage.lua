@@ -94,6 +94,17 @@ local garagesConfig = {
             vector4(321.05, -565.23, 28.4, 248.56),
         },
     },
+    ["LSFD"] = {
+        ["type"] = "fire_department",
+        ["jobGarage"] = true,
+        ["pos"] = vector4(-633.42, -77.89, 39.73, 354.06),
+        ["distance"] = 150,
+        ["spaces"] = {
+            vector4(-641.23, -76.73, 39.72, 354.57),
+            vector4(-633.42, -77.89, 39.73, 354.06),
+            vector4(-625.4, -79.59, 39.72, 357.03),
+        },
+    },
     ["Motel"] = {
         ["type"] = "car",
         ["pos"] = vector4(370.36, -1814.68, 28.38, 355.37),
