@@ -8,7 +8,6 @@ local WeedPlants = {}
 local ActivePlants = {}
 
 local inZone = false
-local setDeleteAll = false
 
 --[[
 
@@ -156,19 +155,13 @@ end)
 
 AddEventHandler("caue-polyzone:enter", function(zone, data)
     if zone == "caue-weed:area" then
-        if inZone == false then
-            inZone = true
-            RPC.execute("caue-weed:getPlants")
-        end
+        inZone = true
     end
 end)
 
 AddEventHandler("caue-polyzone:exit", function(zone, data)
     if zone == "caue-weed:area" then
-        if inZone == true then
-            inZone = false
-            setDeleteAll = true
-        end
+        inZone = false
     end
 end)
 
@@ -383,6 +376,10 @@ Citizen.CreateThread(function()
         maxZ = 500.0,
     })
 
+    Citizen.Wait(1000)
+
+    RPC.execute("caue-weed:getPlants")
+
     while true do
         local plyCoords = GetEntityCoords(PlayerPedId())
 
@@ -395,7 +392,7 @@ Citizen.CreateThread(function()
 
             --convert timestamp -> growth percent
             local plantGrowth = getPlantGrowthPercent(plant)
-            if #(plyCoords - plant.coords) < (50.0 + plantGrowth) and not setDeleteAll then
+            if #(plyCoords - plant.coords) < (50.0 + plantGrowth) then
                 local curStage = getStageFromPercent(plantGrowth)
                 local isChanged = (ActivePlants[plant.id] and ActivePlants[plant.id].stage ~= curStage)
 
@@ -413,11 +410,6 @@ Citizen.CreateThread(function()
             else
                 removeWeed(plant.id)
             end
-        end
-
-        if setDeleteAll then
-            WeedPlants = {}
-            setDeleteAll = false
         end
 
         Wait(inZone == true and 5000 or 10000)
