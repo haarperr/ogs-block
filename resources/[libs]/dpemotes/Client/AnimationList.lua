@@ -461,7 +461,7 @@ DP.Dances = {
 }
 
 DP.Emotes = {
-    ["tattoo"] = {"anim@amb@clubhouse@tutorial@bkr_tut_ig3@", "mechanic_loop_mechandplayer", "Tattoo2 ~y~New", AnimationOptions =
+    ["tattoo2"] = {"anim@amb@clubhouse@tutorial@bkr_tut_ig3@", "mechanic_loop_mechandplayer", "Tattoo2 ~y~New", AnimationOptions =
     {
         Prop = 'v_ilev_ta_tatgun',
         PropBone = 28422,
