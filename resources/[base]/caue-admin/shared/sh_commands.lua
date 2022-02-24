@@ -1050,11 +1050,11 @@ function cmd.RunCommand(caller, args)
     local src = caller:getVar("source")
 
     if args.time ~= nil and args.time ~= 0 then
-        TriggerEvent("weather:time",src,args.time)
+        TriggerEvent("caue-weathersync:setTime",src,args.time)
     end
 
     if args.weather ~= nil and args.weather ~= "" then
-        TriggerEvent("weather:setWeather",src,args.weather)
+        TriggerEvent("caue-weathersync:setWeather",src,args.weather)
     end
 
     if args.light ~= nil and args.light ~= "" then

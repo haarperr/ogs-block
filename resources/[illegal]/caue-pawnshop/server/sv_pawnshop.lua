@@ -4,6 +4,8 @@
 
 ]]
 
+local pawnshoptime = false
+
 local pawnshopItems = {
     ["stolnerolexwatch"] = 75,
     ["stolen10ctchain"] = 70,
@@ -43,13 +45,20 @@ local currentLocation = vector4(0.0, 0.0, -100.0, 0.0)
 
 ]]
 
-RegisterNetEvent("caue-pawnshop:refreshLocation")
-AddEventHandler("caue-pawnshop:refreshLocation", function()
-    currentLocation = pawnshopLocations[math.random(#pawnshopLocations)]
+RegisterNetEvent("caue-weathersync:server:time", function(pTime)
+    local pHour = math.floor(pTime / 60)
+    local pMinute = pTime % 60
+
+    if pHour == 14 and pMinute == 59 and not pawnshoptime then
+		pawnshoptime = true
+        currentLocation = pawnshopLocations[math.random(#pawnshopLocations)]
+	elseif pHour ~= 14 and pMinute ~= 59 and pawnshoptime then
+		pawnshoptime = false
+	end
 end)
 
 RegisterNetEvent("caue-pawnshop:requestLocation")
-AddEventHandler("caue-pawnshop:requestLocation", function()
+RegisterNetEvent("caue-pawnshop:requestLocation", function()
     local src = source
     TriggerClientEvent("caue-npcs:set:position", src, "pawnshop", vector3(currentLocation[1], currentLocation[2], currentLocation[3] - 1), currentLocation[4])
 end)

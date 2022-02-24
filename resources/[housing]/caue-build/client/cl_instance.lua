@@ -133,7 +133,7 @@ function Build.func.enterInstancedBuilding(plan,genID)
 
 	if plan.darken then
 		Build.func.CleanUpPeds()
-		TriggerEvent("inhotel",true)
+		TriggerEvent("insideShell",true)
 	end
 
     return false
@@ -143,7 +143,7 @@ function Build.func.exitInstancedBuilding(plan)
 	TriggerServerEvent("Instance:removeFromInstance")
 
 	if plan.darken then
-		TriggerEvent("inhotel",false)
+		TriggerEvent("insideShell",false)
 	end
 
 	if Build.InstanceEnterPos ~= nil then

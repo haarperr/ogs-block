@@ -67,7 +67,7 @@ end
 function Apart.processBuildType(numMultiplier, roomType, isSpawn)
     DoScreenFadeOut(1)
 
-    TriggerEvent("inhotel", true)
+    TriggerEvent("insideShell", true)
 
     local name = ""
     name = Apart.FindCurrentRoom(roomType)

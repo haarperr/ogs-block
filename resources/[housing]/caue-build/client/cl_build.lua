@@ -194,7 +194,7 @@ function Build.func.buildRoom(planName,positionGen,isBackdoor,destroyedObjects,s
 
     Build.func.CleanUpArea()
     Build.func.CleanUpPeds()
-    --TriggerEvent("inhotel",true)
+    --TriggerEvent("insideShell",true)
 
     local building = CreateObject(GetHashKey(plan.shell),objectSpawnCoords.x+mainPos.x,objectSpawnCoords.y+mainPos.y,objectSpawnCoords.z,false,false,false)
     Build.func.placeObjectCorrectZ(building,(objectSpawnCoords.z+mainPos.z))
@@ -252,7 +252,7 @@ function Build.func.buildRoom(planName,positionGen,isBackdoor,destroyedObjects,s
             return objectSpawnCoords, false
         end
     else
-        TriggerEvent("inhotel",false)
+        TriggerEvent("insideShell",false)
         SetEntityCoords(player,Build.StartingPos)
         Build.CurrentRoomPlan = nil
         Build.StartingPos = nil
@@ -276,7 +276,7 @@ function Build.func.exitCurrentRoom(overrideVector)
 
         Build.func.CleanUpPeds()
         Build.func.CleanUpArea()
-        TriggerEvent("inhotel", false)
+        TriggerEvent("insideShell", false)
 
 
         if overrideVector ~= nil then

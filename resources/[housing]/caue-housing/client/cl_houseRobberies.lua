@@ -365,9 +365,13 @@ exports("isBeingRobbed", isBeingRobbed)
 
 ]]
 
-RegisterNetEvent("daytime")
-AddEventHandler("daytime", function(euodeiominhavida)
-    daytime = euodeiominhavida
+RegisterNetEvent("caue-weathersync:currentTime")
+AddEventHandler("caue-weathersync:currentTime", function(pHour, pMinute)
+    if (pHour > 19 or pHour < 7) and daytime then
+		daytime = false
+	elseif (pHour <= 19 and pHour >= 7) and not daytime then
+		daytime = true
+	end
 end)
 
 RegisterNetEvent("housing:attemptToLockPick")

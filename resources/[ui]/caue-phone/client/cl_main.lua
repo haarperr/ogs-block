@@ -103,8 +103,8 @@ exports("phoneNotification", phoneNotification)
 
 ]]
 
-RegisterNetEvent("timeheader")
-AddEventHandler("timeheader", function(hrs, mins)
+RegisterNetEvent("caue-weathersync:currentTime")
+AddEventHandler("caue-weathersync:currentTime", function(hrs, mins)
   	if hrs < 10 then hrs = "0" .. hrs end
   	if mins < 10 then mins = "0" .. mins end
 
@@ -134,8 +134,8 @@ AddEventHandler("caue-phone:phoneList", phoneList)
 RegisterNetEvent("caue-phone:notification")
 AddEventHandler("caue-phone:notification", phoneNotification)
 
-RegisterNetEvent("kWeatherSync")
-AddEventHandler("kWeatherSync", function(pWeather)
+RegisterNetEvent("caue-weathersync:currentWeather")
+AddEventHandler("caue-weathersync:currentWeather", function(pWeather)
     weather = pWeather
 end)
 

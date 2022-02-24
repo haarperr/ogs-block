@@ -51,7 +51,7 @@ Login.spawnLoc = {
 function Login.Init()
 	CreateThread(function()
 		Login.HidePlayer(true)
-		TriggerEvent("inSpawn",true)
+		TriggerEvent("insideSpawn",true)
 		SetEntityCoordsNoOffset(PlayerPedId(), vector3(-3972.28, 2017.22, 500.92), false, false, false, false)
 		FreezeEntityPosition(PlayerPedId(), true)
 

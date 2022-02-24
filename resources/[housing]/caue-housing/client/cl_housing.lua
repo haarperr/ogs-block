@@ -77,7 +77,7 @@ function Housing.func.enterBuilding(propertyID,enterOverride,counterPart)
     Housing.currentlyInsideBuilding = true
     DoScreenFadeOut(1)
 
-    TriggerEvent("inhotel", true)
+    TriggerEvent("insideShell", true)
 
     local finished, housingInformation, currentHousingLocks, isResult, housingLockdown, housingRobbed, robTargets, robLocations, alarm, currentAccess = RPC.execute("getCurrentSelected", propertyID)
 

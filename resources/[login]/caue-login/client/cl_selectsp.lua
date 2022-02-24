@@ -85,7 +85,7 @@ function Spawn.selectedSpawn(spawnInfo)
 	Login.DeleteCamera()
 	SetNuiFocus(false,false)
 
-	TriggerEvent("inSpawn", false)
+	TriggerEvent("insideSpawn", false)
 	TriggerEvent("caue-hud:toggle", true)
 
 	local apartment = Spawn.obtainApartmentType(spawnInfo)
@@ -173,7 +173,7 @@ function Spawn.overwriteSpawn(overwrite)
 
 	DoScreenFadeIn(2500)
 
-	TriggerEvent("inSpawn", false)
+	TriggerEvent("insideSpawn", false)
 	TriggerEvent("caue-hud:toggle", true)
 end
 

@@ -1167,9 +1167,13 @@ AddEventHandler("caue-jobs:jobChanged", function(job)
     end
 end)
 
-RegisterNetEvent("daytime")
-AddEventHandler("daytime",function(passedTime)
-    daytime = passedTime
+RegisterNetEvent("caue-weathersync:currentTime")
+AddEventHandler("caue-weathersync:currentTime", function(pHour, pMinute)
+    if (pHour > 19 or pHour < 7) and daytime then
+		daytime = false
+	elseif (pHour <= 19 and pHour >= 7) and not daytime then
+		daytime = true
+	end
 end)
 
 RegisterNetEvent("caue-dispatch:manageNotifs")

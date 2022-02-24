@@ -14,9 +14,7 @@ AddEventHandler("caue-login:switchCharacter", function()
 
     TriggerEvent("caue-apartments:deSpawn", src)
 
-    TriggerClientEvent("robbing", src, false)
-    TriggerClientEvent("inhouse", src, false)
-    TriggerClientEvent("inhotel", src, false)
+    TriggerClientEvent("insideShell", src, false)
 
     exports["caue-base"]:setUser(src, "char", nil)
     TriggerClientEvent("caue-base:setVar", src, "char", nil)

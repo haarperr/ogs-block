@@ -1,15 +1,23 @@
 --[[
 
+    Variables
+
+]]
+
+local pawnshoptime = false
+
+--[[
+
     Events
 
 ]]
 
-AddEventHandler("pawnshoptime", function(time)
-    if time then
-        TriggerServerEvent("caue-pawnshop:requestLocation")
-    else
-        TriggerEvent("caue-npcs:set:position", "pawnshop", vector3(0, 0, -100), 0)
-    end
+AddEventHandler("caue-weathersync:currentTime", function(pHour, pMinute)
+    if (pHour > 15 or pHour < 7) and not pawnshoptime then
+		TriggerServerEvent("caue-pawnshop:requestLocation")
+	elseif (pHour <= 15 and pHour >= 7) and pawnshoptime then
+		TriggerEvent("caue-npcs:set:position", "pawnshop", vector3(0, 0, -100), 0)
+	end
 end)
 
 AddEventHandler("caue-pawnshop:buy", function()
