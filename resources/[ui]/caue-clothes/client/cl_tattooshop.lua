@@ -29,6 +29,13 @@ Citizen.CreateThread(function()
 		minZ=19.83,
 		maxZ=24.03
 	})
+
+	-- Julio Garcia House
+	exports["caue-polyzone"]:AddBoxZone("tattoo_shop", vector3(330.52, -1947.36, -34.17), 2.7, 4.0, {
+		heading=0,
+		minZ=-35.17,
+  		maxZ=-32.37
+	})
 end)
 
 
