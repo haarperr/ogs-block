@@ -246,7 +246,7 @@ AddEventHandler("caue-police:handler", function(eventData)
             })
 
             if input["id"] then
-                TriggerEvent("server-inventory-open", "1", ("%s_evidence"):format(id))
+                TriggerEvent("server-inventory-open", "1", ("%s_evidence"):format(input["id"]))
             end
         else
             TriggerEvent("server-inventory-open", "1", ("%s_evidence"):format(location))
