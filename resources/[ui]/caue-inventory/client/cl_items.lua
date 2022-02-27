@@ -380,6 +380,14 @@ AddEventHandler("RunUseItem", function(itemid, slot, inventoryName, isWeapon, pa
 
     local remove = false
 
+    if (itemid == "custommiscitem") then
+        local info = json.decode(ItemInfo.information)
+
+        if info["_type"] == "tvbox" then
+            TriggerEvent("DoLongHudText", "Essa TV Box esta quebrada! Quem te vendeu isso?")
+        end
+    end
+    
     if (itemid == "idcard") then
         TriggerServerEvent("caue-idcard:show", json.decode(ItemInfo.information))
     end

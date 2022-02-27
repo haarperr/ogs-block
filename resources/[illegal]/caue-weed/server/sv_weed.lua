@@ -226,7 +226,7 @@ RPC.register("caue-weed:harvestPlant", function(src, pPlantId)
     TriggerClientEvent("caue-weed:trigger_zone", -1, 3, data)
 
     if data["gender"] == 0 then
-        TriggerClientEvent("player:receiveItem", src, "weedq", 1)
+        TriggerClientEvent("player:receiveItem", src, "weedq", 5)
     elseif data["gender"] == 1 then
         if PlantConfig.RemoveMaleOnHarvest then
             local result = exports.ghmattimysql:executeSync([[

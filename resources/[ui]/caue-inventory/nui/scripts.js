@@ -42,6 +42,7 @@ let showTooltips = true;
 let enableBlur = true;
 
 let customImageItems = [
+    "custommiscitem",
     "musicmerch",
     "customfooditem",
     "customwateritem",
@@ -63,6 +64,7 @@ let customImageItems = [
     "resalcoholitem",
 ];
 let customNameItems = [
+    "custommiscitem",
     "customfooditem",
     "customwateritem",
     "customjointitem",
@@ -93,6 +95,7 @@ let customNameItemsDescriptions = {
     "book": "(B) ",
 };
 let customDescriptionItems = [
+    "custommiscitem",
     "customfooditem",
     "customwateritem",
     "customjointitem",

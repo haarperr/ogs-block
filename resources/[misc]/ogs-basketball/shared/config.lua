@@ -27,7 +27,7 @@ Config = {
 
             queue = {
                 minimum = 1, -- minimum users per team for a match to start
-                timer = 1, -- how long (in seconds) until the match starts, after "minimum" users are in queue per team
+                timer = 15, -- how long (in seconds) until the match starts, after "minimum" users are in queue per team
                 game = 300, -- how long (in seconds) a game lasts
             },
 

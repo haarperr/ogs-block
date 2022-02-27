@@ -3588,6 +3588,20 @@ itemList['sprayremover'] = {
   image: 'ogs_sprayremover.png',
 };
 
+itemList['custommiscitem'] = {
+  _name: 'custommiscitem',
+  fullyDegrades: false,
+  decayrate: 0.0,
+  displayname: 'Item',
+  price: 1,
+  weight: 1.0,
+  nonStack: false,
+  model: '',
+  image: 'np_placeholder.png',
+  information: '',
+  deg: false,
+};
+
 /*
 
   MISC END
