@@ -2810,8 +2810,8 @@ $(document).ready(() => {
             $(".manage-profile-save").show()
 
             if (["police", "sheriff", "state_police", "park_ranger", "cid"].includes(sentJob)) {
-                $(".badge-logo").attr('src', 'https://i.imgur.com/WMIc5GB.png');
-                $(".header-title").html("Los Santos County Sheriff's");
+                $(".badge-logo").attr('src', 'img/lspd.png');
+                $(".header-title").html("Los Santos Police Department");
                 $(".quote-span").html("Law above All");
                 $(".dispatch-title-ofsomesort").html("Mensagens");
 
@@ -3152,7 +3152,7 @@ $(document).ready(() => {
                     $('.gallery-inner-container').prepend(`<img src="${value}" class="gallery-img" onerror="this.src='https://cdn.discordapp.com/attachments/770324167894761522/912602343164502096/not-found.jpg'">`);
                 })
             }
-            if ($(".badge-logo").attr('src') == 'https://cdn.discordapp.com/attachments/770324167894761522/912602343483260958/sasp_badge.png') {
+            if ($(".badge-logo").attr('src') == 'img/lspd.png') {
                 if (table["convictions"]) {
                     $.each(table["convictions"], function (index, value) {
                         $('.convictions-holder').prepend(`<div class="white-tag">${value} </div>`);
