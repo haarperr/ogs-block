@@ -122,6 +122,7 @@ end)
 
 
 function rebuildCurrent(name)
+
     cleanUpArea(name)
 
     if CURRENT_OBJECTS and CURRENT_OBJECTS[name] then
@@ -129,7 +130,8 @@ function rebuildCurrent(name)
             local modelHash = v.model
             if IsModelValid(modelHash) and LoadModel(modelHash) then
                 local modelHashName = GetHashName(modelHash)
-                local entityId = CreateObject(modelHash, v.coords.x, v.coords.y, v.coords.z, false, false, false, true, true)
+                local coords = applyOffsets(v.coords)
+                local entityId = CreateObject(modelHash, coords.x, coords.y, coords.z, false, false, false, true, true)
                 if entityId then
                     FreezeEntityPosition(entityId, true)
                     SetEntityQuaternion(entityId,v.quat)
@@ -146,9 +148,15 @@ AddEventHandler("caue-editor:buildName", function(name, objects)
         BANNED_ENTITY[name] = objects
     end
 
+    if offsets then
+        CURRENT_OFFSETS = offsets
+    end
+
     loadObjects(name)
     rebuildCurrent(name)
     ObjectToNui(name,true)
+
+
 end)
 
 RegisterNetEvent("caue-editor:destroyName")
@@ -190,7 +198,7 @@ function cleanUpArea(name)
                         DeleteObject(ObjectFound)
                     end
                 else
-                    if not IsEntityAVehicle(ObjectFound) and not IsEntityAttached(ObjectFound) then
+                    if not IsEntityAVehicle(ObjectFound) and not IsEntityAttached(ObjectFound) and not DecorGetBool(ObjectFound, "DontClear") then
                         DeleteObject(ObjectFound)
                     end
                 end
@@ -205,7 +213,6 @@ function cleanUpArea(name)
 end
 
 function removeObject(entityId,forcedId)
-
     if CURRENT_NAME == nil then return end
     if CURRENT_OBJECTS == nil then return end
     if CURRENT_OBJECTS[CURRENT_NAME] == nil then return end
@@ -222,8 +229,14 @@ function removeObject(entityId,forcedId)
                 CURRENT_OBJECTS[CURRENT_NAME][k].quat = vector4(x,y,z,w)
 
                 if v.model == modelHash then
+                    if(CURRENT_OFFSETS.zone.x == 0.0 and CURRENT_OFFSETS.zone.y == 0.0) then
                     if #(v.coords - coords) < 1 then
                         foundID = k
+                    end
+                    else
+                        if #(applyOffsets(v.coords) - coords) < 1 then
+                            foundID = k
+                        end
                     end
                 end
             end
@@ -296,7 +309,7 @@ function addItemToCurrent(data)
     local object = {
         model = data.modelHash,
         coords = data.coords,
-        quat = data.quat,
+        quat = type(data.quat) == 'vector4' and data.quat or vector4(data.quat.x, data.quat.y, data.quat.z, data.quat.w),
         realName = data.realName,
         id = -1,
         changed = false
@@ -307,6 +320,8 @@ function addItemToCurrent(data)
     return true
 
 end
+
+exports('addItemToCurrent', addItemToCurrent)
 
 
 function saveObjects(name)
@@ -324,7 +339,7 @@ function saveObjects(name)
 
     local jsonObject = nil
     for k,data in pairs(CURRENT_OBJECTS[name]) do
-        local coord = vector3Conversion(data.coords)
+        local coord = vector3Conversion(removeOffsets(data.coords))
         local quat = vector4Conversion(data.quat)
         if quat == nil or coord == nil then return end
 
@@ -423,15 +438,15 @@ function recompileObjects(data,name)
 end
 
 function loadObjects(name)
-    local data = RPC.execute("objects:getObjects", name)
+    local data = RPC.execute("objects:getObjects",name)
     if data.name ~= name then return end
 
     if data.objects == nil then return end
-    recompileObjects(data, name)
+    recompileObjects(data,name)
 
     CURRENT_DELETED = {}
     rebuildCurrent(name)
-    ObjectToNui(name, true)
+    ObjectToNui(name,true)
 
     return true
 end
@@ -535,4 +550,20 @@ function autoSave()
             end
         end
     end)
+end
+
+function applyOffsets(vec3)
+    if CURRENT_OFFSETS then
+        vec3 = vector3(vec3.x + CURRENT_OFFSETS.zone.x, vec3.y + CURRENT_OFFSETS.zone.y, vec3.z + CURRENT_OFFSETS.z)
+        vec3 = vec3 + CURRENT_OFFSETS.origin
+    end
+    return vec3
+end
+
+function removeOffsets(vec3)
+    if CURRENT_OFFSETS then
+        vec3 = vector3(vec3.x - CURRENT_OFFSETS.zone.x, vec3.y - CURRENT_OFFSETS.zone.y, vec3.z - CURRENT_OFFSETS.z)
+        vec3 = vec3 - CURRENT_OFFSETS.origin
+    end
+    return vec3
 end

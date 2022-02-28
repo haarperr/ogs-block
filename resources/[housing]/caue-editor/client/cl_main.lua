@@ -3,6 +3,11 @@ local camera = false
 local CURRENT_MODULES = {
     ["objects"] = false
 }
+CURRENT_OFFSETS = {
+    zone = vector3(0, 0, 0),
+    z = 0,
+    origin = vector3(0, 0, 0),
+}
 
 -- Resource Cleanup
 AddEventHandler('onResourceStop', function(resourceName)
@@ -108,6 +113,36 @@ function loadEditor(data)
     SendNuiMessage(json.encode({ action = 'rebuild_valid' }))
 end
 
+--[[
+RegisterCommand('edit', function()
+    local data = {
+        name = "housing-180",
+        special = {"gr_prop_gr_bench_02b"},
+        autosave = true,
+        zone = {
+            pos = GetEntityCoords(PlayerPedId()),
+            length = 40.0,
+            width = 30.0,
+            minZ = 10.0,
+            maxZ = 10.0,
+            heading = 340.0
+        },
+        modules = {
+            "objects",
+        }
+    }
+    loadEditor(data)
+end)
+
+RegisterCommand('save', function()
+    TriggerServerEvent("SaveRemovedObjects",CURRENT_REMOVED)
+end)
+
+RegisterCommand('check', function()
+    check()
+end)
+]]
+
 RegisterNuiCallbackType('close_ui')
 AddEventHandler('__cfx_nui:close_ui', function(data, callback)
     SetNuiFocus(false)
@@ -123,6 +158,8 @@ AddEventHandler('__cfx_nui:close_ui', function(data, callback)
     callback({})
 end)
 
+
+
 RegisterNuiCallbackType('valid_objects')
 AddEventHandler('__cfx_nui:valid_objects', function(data, callback)
     getCurrentFav()
@@ -136,6 +173,8 @@ AddEventHandler('__cfx_nui:valid_objects', function(data, callback)
 
     callback(callbackTable)
 end)
+
+
 
 local drawLineToEntity = false
 
@@ -342,7 +381,6 @@ end)
 
 local spawnGhost = false
 local currentModel = nil
-
 RegisterNuiCallbackType('start_entity_placement')
 AddEventHandler('__cfx_nui:start_entity_placement', function(data, callback)
     --print('data.model', data.model)
@@ -389,6 +427,7 @@ AddEventHandler('__cfx_nui:start_entity_placement', function(data, callback)
         entity = spawnGhost
     })
 end)
+
 
 RegisterNuiCallbackType('end_entity_placement')
 AddEventHandler('__cfx_nui:end_entity_placement', function(data, callback)
