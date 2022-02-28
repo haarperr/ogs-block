@@ -394,21 +394,21 @@ AddEventHandler("caue-housing:alarmEnter", function()
     if not Housing.alarm then return end
 
     for i = 1, 6 do
-        local unitygordolamamaco = {5000, math.random(10, 15)}
+        local unitygordolamamaco = {5000, 15}
 
         if i == 2 then
-            unitygordolamamaco = {4500, math.random(10, 12)}
+            unitygordolamamaco = {4500, 13}
         elseif i == 3 then
-            unitygordolamamaco = {4000, math.random(8, 10)}
+            unitygordolamamaco = {4000, 13}
         elseif i == 4 then
-            unitygordolamamaco = {3500, math.random(7, 9)}
+            unitygordolamamaco = {3500, 10}
         elseif i == 5 then
-            unitygordolamamaco = {3000, math.random(5, 10)}
+            unitygordolamamaco = {3000, 10}
         elseif i == 6 then
-            unitygordolamamaco = {3000, math.random(3, 5)}
+            unitygordolamamaco = {3000, 7}
         end
 
-        local finished = exports["caue-taskbarskill"]:taskBarSkill(3200,  math.random(10, 14))
+        local finished = exports["caue-taskbarskill"]:taskBarSkill(unitygordolamamaco[1],  unitygordolamamaco[2])
         if finished ~= 100 then
             failedAlarm = true
             break

@@ -16,6 +16,7 @@ local unholsteringactive = false
 local lastWeaponDeg = 0
 local shotRecently = false
 local lastShot = 0
+local isActionBarDisabled = false
 
 local throwableWeapons = {
 	["741814745"] = true,
@@ -448,6 +449,17 @@ end
 
 --[[
 
+    Exports
+
+]]
+
+exports("disableActionBar", function(pState)
+    isActionBarDisabled = pState
+end)
+
+
+--[[
+
 	Events
 
 ]]
@@ -602,19 +614,19 @@ Citizen.CreateThread(function()
 
 		prevupdate = prevupdate - 1
 
-		if (IsControlJustReleased(0,157) or IsDisabledControlJustReleased(0,157)) and not focusTaken then
+		if (IsControlJustReleased(0,157) or IsDisabledControlJustReleased(0,157)) and not focusTaken and not isActionBarDisabled then
 			TriggerEvent("inventory-bind",1)
 		end
 
-		if (IsControlJustReleased(0,158) or IsDisabledControlJustReleased(0,158)) and not focusTaken then
+		if (IsControlJustReleased(0,158) or IsDisabledControlJustReleased(0,158)) and not focusTaken and not isActionBarDisabled then
 			TriggerEvent("inventory-bind",2)
 		end
 
-		if (IsControlJustReleased(0,160) or IsDisabledControlJustReleased(0,160)) and not focusTaken then
+		if (IsControlJustReleased(0,160) or IsDisabledControlJustReleased(0,160)) and not focusTaken and not isActionBarDisabled then
 			TriggerEvent("inventory-bind",3)
 		end
 
-		if (IsControlJustReleased(0,164) or IsDisabledControlJustReleased(0,164)) and not focusTaken then
+		if (IsControlJustReleased(0,164) or IsDisabledControlJustReleased(0,164)) and not focusTaken and not isActionBarDisabled then
 			TriggerEvent("inventory-bind",4)
 		end
 

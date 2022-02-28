@@ -102,28 +102,22 @@ AddEventHandler("caue-inventory:lockpick", function(isForced, inventoryName, slo
         TriggerEvent("animation:lockpickinvtestoutside")
         TriggerServerEvent("InteractSound_SV:PlayWithinDistance", 3.0, "lockpick", 0.4)
 
-        local finished = exports["caue-taskbarskill"]:taskBarSkill(25000, 10)
-        if finished ~= 100 then
-            lockpicking = false
-            return
-        end
+        for i = 1, 4 do
+            local skill = {25000, 15}
 
-        local finished = exports["caue-taskbarskill"]:taskBarSkill(15000, 10)
-        if finished ~= 100 then
-            lockpicking = false
-            return
-        end
+            if i == 2 then
+                skill = {4500, 13}
+            elseif i == 3 then
+                skill = {4000, 13}
+            elseif i == 4 then
+                skill = {3500, 10}
+            end
 
-        local finished = exports["caue-taskbarskill"]:taskBarSkill(10000, math.random(5, 10))
-        if finished ~= 100 then
-            lockpicking = false
-            return
-        end
-
-        local finished = exports["caue-taskbarskill"]:taskBarSkill(5000, math.random(5, 10))
-        if finished ~= 100 then
-            lockpicking = false
-            return
+            local finished = exports["caue-taskbarskill"]:taskBarSkill(skill[1],  skill[2])
+            if finished ~= 100 then
+                lockpicking = false
+                return
+            end
         end
 
         if triggerAlarm then

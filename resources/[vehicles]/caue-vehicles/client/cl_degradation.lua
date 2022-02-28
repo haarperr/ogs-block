@@ -563,47 +563,25 @@ AddEventHandler("caue-vehicles:repairKitbennys", function(pItemDBID)
 
     TriggerEvent("animation:repair", vehicle)
 
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(50000, 10)
-    if finished ~= 100 then
-        ClearPedTasks(PlayerPedId())
-        fixingvehicle = false
-        return
-    end
+    for i = 1, 5 do
+        local skill = {50000, 20}
 
-    Citizen.Wait(1000)
+        if i == 2 then
+            skill = {40000, 20}
+        elseif i == 3 then
+            skill = {30000, 18}
+        elseif i == 4 then
+            skill = {20000, 18}
+        elseif i == 5 then
+            skill = {10000, 15}
+        end
 
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(40000, 10)
-    if finished ~= 100 then
-        ClearPedTasks(PlayerPedId())
-        fixingvehicle = false
-        return
-    end
-
-    Citizen.Wait(1000)
-
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(30000, math.random(5, 10))
-    if finished ~= 100 then
-        ClearPedTasks(PlayerPedId())
-        fixingvehicle = false
-        return
-    end
-
-    Citizen.Wait(1000)
-
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(20000, math.random(5, 10))
-    if finished ~= 100 then
-        ClearPedTasks(PlayerPedId())
-        fixingvehicle = false
-        return
-    end
-
-    Citizen.Wait(1000)
-
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(10000, math.random(5, 10))
-    if finished ~= 100 then
-        ClearPedTasks(PlayerPedId())
-        fixingvehicle = false
-        return
+        local finished = exports["caue-taskbarskill"]:taskBarSkill(skill[1],  skill[2])
+        if finished ~= 100 then
+            ClearPedTasks(PlayerPedId())
+            fixingvehicle = false
+            return
+        end
     end
 
     TriggerServerEvent("inventory:degItem", pItemDBID, 50, "repairkitbennys", exports["caue-base"]:getChar("id"))
@@ -754,47 +732,25 @@ AddEventHandler("caue-vehicles:repairKit", function(pItemDBID)
 
     TriggerEvent("animation:repair", vehicle)
 
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(50000, 10)
-    if finished ~= 100 then
-        ClearPedTasks(PlayerPedId())
-        fixingvehicle = false
-        return
-    end
+    for i = 1, 5 do
+        local skill = {50000, 20}
 
-    Citizen.Wait(1000)
+        if i == 2 then
+            skill = {40000, 20}
+        elseif i == 3 then
+            skill = {30000, 18}
+        elseif i == 4 then
+            skill = {20000, 18}
+        elseif i == 5 then
+            skill = {10000, 15}
+        end
 
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(40000, 10)
-    if finished ~= 100 then
-        ClearPedTasks(PlayerPedId())
-        fixingvehicle = false
-        return
-    end
-
-    Citizen.Wait(1000)
-
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(30000, math.random(5, 10))
-    if finished ~= 100 then
-        ClearPedTasks(PlayerPedId())
-        fixingvehicle = false
-        return
-    end
-
-    Citizen.Wait(1000)
-
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(20000, math.random(5, 10))
-    if finished ~= 100 then
-        ClearPedTasks(PlayerPedId())
-        fixingvehicle = false
-        return
-    end
-
-    Citizen.Wait(1000)
-
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(10000, math.random(5, 10))
-    if finished ~= 100 then
-        ClearPedTasks(PlayerPedId())
-        fixingvehicle = false
-        return
+        local finished = exports["caue-taskbarskill"]:taskBarSkill(skill[1],  skill[2])
+        if finished ~= 100 then
+            ClearPedTasks(PlayerPedId())
+            fixingvehicle = false
+            return
+        end
     end
 
     TriggerServerEvent("inventory:degItem", pItemDBID, 50, "repairkit", exports["caue-base"]:getChar("id"))

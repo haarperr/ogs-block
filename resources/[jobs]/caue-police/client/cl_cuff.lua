@@ -111,16 +111,22 @@ AddEventHandler("caue-police:getArrested", function(cuffer)
 	local cuffPed = GetPlayerPed(GetPlayerFromServerId(tonumber(cuffer)))
 	local finished = 0
 
-	if lastCuffAttemptTime + 60000 < GetGameTimer() then
+	if lastCuffAttemptTime + 180000 < GetGameTimer() then
 		cuffAttemptCount = 0
 		lastCuffAttemptTime = 0
 	end
 
-    if not exports["caue-base"]:getVar("dead") and cuffAttemptCount < 2 then
+    if not exports["caue-base"]:getVar("dead") and cuffAttemptCount < 4 then
 		cuffAttemptCount = cuffAttemptCount + 1
 		lastCuffAttemptTime = GetGameTimer()
         exports["caue-base"]:setVar("recentcuff", GetGameTimer())
-		finished = exports["caue-taskbarskill"]:taskBarSkill(1000, 15)
+        local cuffAttemptTbl = {
+			[1] = { 1000, 15 },
+			[2] = { 900, 13 },
+			[3] = { 800, 11 },
+			[4] = { 700, 9 },
+		}
+		finished = exports["caue-taskbarskill"]:taskBarSkill(cuffAttemptTbl[cuffAttemptCount][1], cuffAttemptTbl[cuffAttemptCount][2])
 	end
 
 	if #(GetEntityCoords(PlayerPedId()) - GetEntityCoords(cuffPed)) < 2.5 and finished ~= 100 then

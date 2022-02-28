@@ -68,39 +68,29 @@ function HotwireVehicle(cb)
         return
     end
 
-    hotwire.stage = 5
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(30000, math.random(5, 15))
-    if finished ~= 100 then
-        cb(hotwire)
-        return
-    end
+    for i = 1, 5 do
+        local skill = {30000, 20}
+        hotwire.stage = 5
 
-    hotwire.stage = 4
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(math.random(25000, 30000), math.random(5, 15))
-    if finished ~= 100 then
-        cb(hotwire)
-        return
-    end
+        if i == 2 then
+            hotwire.stage = 4
+            skill = {math.random(25000, 30000), 18}
+        elseif i == 3 then
+            hotwire.stage = 3
+            skill = {math.random(15000, 20000), 15}
+        elseif i == 4 then
+            hotwire.stage = 2
+            skill = {math.random(10000, 15000), 13}
+        elseif i == 5 then
+            hotwire.stage = 1
+            skill = {math.random(5000, 7000), 10}
+        end
 
-    hotwire.stage = 3
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(math.random(15000, 20000), math.random(5, 10))
-    if finished ~= 100 then
-        cb(hotwire)
-        return
-    end
-
-    hotwire.stage = 2
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(math.random(10000, 15000), 5)
-    if finished ~= 100 then
-        cb(hotwire)
-        return
-    end
-
-    hotwire.stage = 1
-    local finished = exports["caue-taskbarskill"]:taskBarSkill(math.random(5000, 7000), math.random(5, 7))
-    if finished ~= 100 then
-        cb(hotwire)
-        return
+        local finished = exports["caue-taskbarskill"]:taskBarSkill(skill[1],  skill[2])
+        if finished ~= 100 then
+            cb(hotwire)
+            return
+        end
     end
 
     hotwire.stage = 0
