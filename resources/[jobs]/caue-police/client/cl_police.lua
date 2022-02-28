@@ -445,10 +445,10 @@ Citizen.CreateThread(function()
         maxZ=36.17
     })
 
-    exports["caue-polytarget"]:AddBoxZone("mrpd_meetingroom_screen", vector3(474.02, -1001.79, 30.69), 3.6, 2.8, {
-        heading=1,
+    exports["caue-polytarget"]:AddBoxZone("mrpd_meetingroom_screen", vector3(474.02, -1000.06, 30.69), 0.05, 2.6, {
+        heading=0,
         minZ=30.54,
-        maxZ=32.54
+        maxZ=32.49
     })
 
     exports["caue-eye"]:AddPeekEntryByPolyTarget("mrdp_change_picture", {{
