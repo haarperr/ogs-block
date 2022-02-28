@@ -20,7 +20,7 @@ local bennysLocations = {
     ["bennyspdm"] = {
         pos = vector3(-211.55, -1324.55, 30.90),
         heading = 320.0,
-        access = "pdm"
+        access = "bennys"
     },
     ["bennystuner"] = {
         pos = vector3(938.37, -970.82, 39.76),
@@ -1016,8 +1016,7 @@ AddEventHandler("bennys:enter", function()
     if bennysAccess then
         if bennysAccess == "emergency" and exports["caue-jobs"]:getJob(false, "is_emergency") then
             goto hasAccess
-        elseif bennysAccess ~= "emergency" then
-            -- baianagem do ogsblock
+        elseif exports["caue-groups"]:GroupRank(bennysAccess) > 0 then
             fullAccess = true
             goto hasAccess
         end

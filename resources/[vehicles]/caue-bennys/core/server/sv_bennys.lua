@@ -13,11 +13,21 @@ local repairPrices = {}
 
 ]]
 
+AddEventHandler("playerDropped", function()
+	local src = source
+
+    for k, v in pairs(inUseBennys) do
+        if v == src then
+            inUseBennys[k] = nil
+        end
+    end
+end)
+
 RegisterNetEvent("caue-bennys:addToInUse")
 AddEventHandler("caue-bennys:addToInUse", function(currentBennys)
     local src = source
 
-    inUseBennys[currentBennys] = true
+    inUseBennys[currentBennys] = src
 end)
 
 RegisterNetEvent("caue-bennys:removeFromInUse")
