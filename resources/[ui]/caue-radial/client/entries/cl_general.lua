@@ -201,8 +201,7 @@ GeneralEntries[#GeneralEntries+1] = {
         event = "housing:toggleClosestLock"
     },
     isEnabled = function(pEntity, pContext)
-        local isNear, propertyId = exports["caue-housing"]:isNearProperty()
-        return not exports["caue-base"]:getVar("dead") and isNear
+        return not exports["caue-base"]:getVar("dead") and exports["caue-housing"]:canEdit()
     end
 }
 

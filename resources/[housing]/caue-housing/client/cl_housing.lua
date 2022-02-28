@@ -362,17 +362,29 @@ end)
 
 RegisterNetEvent('housing:toggleClosestLock')
 AddEventHandler('housing:toggleClosestLock', function()
-    local isComplete, propertyID, dist, zone = Housing.func.findClosestProperty()
+    local propertyId = "penis"
 
-    if isComplete and dist <= 3.0 then
-        if Housing.currentOwned[propertyID] == nil and Housing.currentKeys[propertyID] == nil then
+    if Housing.currentHousingInteractions ~= nil and Housing.currentHousingInteractions.id ~= nil then
+        propertyId = Housing.currentHousingInteractions.id
+    else
+        local isComplete, _propertyId, dist, zone = Housing.func.findClosestProperty()
+
+        if not isComplete then
+            TriggerEvent("DoLongHudText", "Muito distante da propriedade.", 2)
             return
         end
 
-        if isLocked(propertyID, true) then
-            unlock(propertyID)
-        else
-            lock(propertyID)
-        end
+        propertyId = _propertyId
+    end
+
+    if Housing.currentOwned[propertyId] == nil and Housing.currentKeys[propertyId] == nil then
+        TriggerEvent("DoLongHudText", "Você não possui essa propriedade.", 2)
+        return
+    end
+
+    if isLocked(propertyId, true) then
+        unlock(propertyId)
+    else
+        lock(propertyId)
     end
 end)
