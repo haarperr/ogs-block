@@ -4,12 +4,12 @@
 
 ]]
 
-local sceneStarted = false
-local scenesEnabled = true
-local activePos = nil
-local activeScenes = {}
-local drawnScenes = {}
-local playerCoords = nil
+local showMenu = false
+local scenes = {}
+local closestScenes = {}
+
+local creationLaser = false
+local deletionLaser = false
 
 --[[
 
@@ -17,17 +17,125 @@ local playerCoords = nil
 
 ]]
 
-function drawScene(scene)
-    if drawnScenes[scene.id] then return end
+function OpenMenu()
+    showMenu = true
+    SetNuiFocus(true, true)
+    SendNUIMessage({ action = "open"})
+end
 
-    drawnScenes[scene.id] = true
+function CloseMenu()
+    showMenu = false
+    SetNuiFocus(false, false)
+end
 
-    Citizen.CreateThread(function()
-        while scenesEnabled and drawnScenes[scene.id] do
-            DrawText3D(scene.coords.x, scene.coords.y, scene.coords.z, scene.text, scene.color)
-            Citizen.Wait(0)
+function ToggleCreationLaser(data)
+    deletionLaser = false
+    creationLaser = not creationLaser
+
+    if creationLaser then
+        CreateThread(function()
+            while creationLaser do
+                local hit, coords = DrawLaser("APERTE ~g~E~w~ PARA COLOCAR\nAPERTE ~g~G~w~ PARA EDITAR", {r = 2, g = 241, b = 181, a = 200})
+
+                data.coords = coords
+                DrawScene(data)
+
+                if IsControlJustReleased(0, 38) then
+                    creationLaser = false
+                    if hit then
+                        TriggerServerEvent("caue-scenes:server:CreateScene", data)
+                    else
+                        TriggerEvent("DoLongHudText", "Laser não atingiu nada.", 2)
+                    end
+                elseif IsControlJustReleased(0, 47) then
+                    creationLaser = false
+                    OpenMenu()
+                end
+
+                Wait(0)
+            end
+        end)
+    end
+end
+
+function ToggleDeletionLaser()
+    creationLaser = false
+    deletionLaser = not deletionLaser
+
+    if deletionLaser then
+        CreateThread(function()
+            while deletionLaser do
+                local hit, coords = DrawLaser("APERTE ~r~E~w~ PARA EXCLUIR\nAPERTE ~r~G~w~ PARA CANCELAR", {r = 255, g = 0, b = 0, a = 200})
+
+                if IsControlJustReleased(0, 38) then
+                    deletionLaser = false
+                    if hit then
+                        DeleteScene(coords)
+                    else
+                        TriggerEvent("DoLongHudText", "Laser não atingiu nada.", 2)
+                    end
+                elseif IsControlJustReleased(0, 47) then
+                    deletionLaser = false
+                end
+
+                Wait(0)
+            end
+        end)
+    end
+end
+
+function DeleteScene(coords)
+    local closestScene = nil
+    local shortestDistance = nil
+    for i=1,#scenes do
+        local currentScene = scenes[i]
+        local distance =  #(coords - currentScene.coords)
+        if distance < 1 and (closestDistance == nil or distance < shortestDistance) then
+            closestScene = currentScene.id
+            shortestDistance = distance
         end
-    end)
+    end
+
+    if closestScene then
+        TriggerEvent("DoLongHudText", "Cena deletada!")
+        TriggerServerEvent("caue-scenes:server:DeleteScene", closestScene)
+    else
+        TriggerEvent("DoLongHudText", "Nenhuma cena estava perto o suficiente.", 2)
+    end
+end
+
+function DrawLaser(message, color)
+    local hit, coords = RayCastGamePlayCamera(Config.MaxPlacementDistance)
+    Draw2DText(message, 4, {255, 255, 255}, 0.4, 0.43, 0.888 + 0.025)
+
+    if hit then
+        local position = GetEntityCoords(PlayerPedId())
+        DrawLine(position.x, position.y, position.z, coords.x, coords.y, coords.z, color.r, color.g, color.b, color.a)
+        DrawMarker(28, coords.x, coords.y, coords.z, 0.0, 0.0, 0.0, 0.0, 180.0, 0.0, 0.1, 0.1, 0.1, color.r, color.g, color.b, color.a, false, true, 2, nil, nil, false)
+    end
+
+    return hit, coords
+end
+
+function DrawScene(currentScene)
+    local onScreen, screenX, screenY = World3dToScreen2d(currentScene.coords.x, currentScene.coords.y, currentScene.coords.z)
+    if onScreen then
+        local camCoords = GetGameplayCamCoords()
+        local distance = #(currentScene.coords - camCoords)
+        local fov = (1 / GetGameplayCamFov()) * 75
+        local scale = (1 / distance) * (4) * fov * (currentScene.fontsize)
+        local r,g,b=rgbToHex(currentScene.color)
+
+        SetTextScale(0.0, scale)
+        SetTextFont(currentScene.fontstyle)
+        SetTextProportional(true)
+        SetTextColour(r, g, b, 255)
+        SetTextOutline()
+        SetTextEntry("STRING")
+        SetTextCentre(true)
+        AddTextComponentString(currentScene.text)
+        DrawText(screenX, screenY)
+    end
 end
 
 --[[
@@ -36,94 +144,38 @@ end
 
 ]]
 
-RegisterNetEvent("caue-scenes:refreshScenes")
-AddEventHandler("caue-scenes:refreshScenes", function(data, removeId)
-    activeScenes = data
-    if removeId then
-        drawnScenes[removeId] = nil
+RegisterNetEvent("caue-scenes:client:UpdateAllScenes", function(_scenes)
+    scenes = _scenes
+end)
+
+AddEventHandler("onResourceStart", function(resourceName)
+    if resourceName == GetCurrentResourceName() then
+        Citizen.Wait(5000)
+        scenes = RPC.execute("caue-scenes:getScenes")
     end
 end)
 
 --[[
 
-    Commands
+    NUI
 
 ]]
 
-RegisterCommand("+startScene", function()
-    if sceneStarted then
-        sceneStarted = false
+RegisterNUICallback("CloseMenu", function()
+    CloseMenu()
+    TriggerServerEvent("InteractSound_SV:PlayOnSource", "catclosing", 0.05)
+end)
 
-        local input = exports["caue-input"]:showInput({
-            {
-                icon = "pencil-alt",
-                label = "Text (Max 255 characters)",
-                name = "text",
-            },
-            {
-                icon = "palette",
-                label = "Color (white, red, green, yellow, blue, purple)",
-                name = "color",
-            },
-            {
-                icon = "people-arrows",
-                label = "Distance (0.1 - 10)",
-                name = "distance",
-            },
-        })
+RegisterNUICallback("DeleteLaser", function()
+    CloseMenu()
+    ToggleDeletionLaser()
+end)
 
-        if input["text"] and input["color"] and input["distance"] then
-            local text = input["text"]
-            local color = input["color"]
-            local distance = tonumber(input["distance"])
-
-            if text == "" or string.len(text) > 255 then
-                TriggerEvent("DoLongHudText", "Not this text is not valid", 2)
-                return
-            end
-
-            if not colors[color] then
-                TriggerEvent("DoLongHudText", "Not this color is not valid", 2)
-                return
-            end
-
-            if not distance or distance < 0.1 or distance > 10 then
-                TriggerEvent("DoLongHudText", "Not this distance is not valid", 2)
-                return
-            end
-
-            distance = distance + 0.00
-
-            RPC.execute("caue-scenes:addScene", activePos, text, distance, color)
-        end
-
-        return
-    end
-
-    sceneStarted = true
-
-    Citizen.CreateThread(function()
-        while sceneStarted do
-            local hit, pos, _, _ = RayCastGamePlayCamera(10.0)
-            if hit then
-                DrawSphere(pos, 0.2, 255, 0, 0, 255)
-                activePos = pos
-            end
-
-            Citizen.Wait(0)
-        end
-    end)
-end, false)
-
-RegisterCommand("-startScene", function() end, false)
-
-RegisterCommand("+enableScene", function() scenesEnabled = not scenesEnabled end, false)
-RegisterCommand("-enableScene", function() end, false)
-
-RegisterCommand("+deleteScene", function()
-    RPC.execute("caue-scenes:deleteScene", GetEntityCoords(PlayerPedId()))
-end, false)
-RegisterCommand("-deleteScene", function() end, false)
+RegisterNUICallback("CreateScene", function(data, cb)
+    creationLaser = false
+    Wait(100)
+    ToggleCreationLaser(data)
+end)
 
 --[[
 
@@ -133,27 +185,56 @@ RegisterCommand("-deleteScene", function() end, false)
 
 Citizen.CreateThread(function()
     exports["caue-keybinds"]:registerKeyMapping("", "Scenes", "Start / Place Scene", "+startScene", "-startScene")
-    exports["caue-keybinds"]:registerKeyMapping("", "Scenes", "Enable / Disable", "+enableScene", "-enableScene")
     exports["caue-keybinds"]:registerKeyMapping("", "Scenes", "Delete Closest Scene", "+deleteScene", "-deleteScene")
 
-    Citizen.Wait(5000)
+    RegisterCommand("+startScene", function()
+        OpenMenu()
+        TriggerServerEvent("InteractSound_SV:PlayOnSource", "monkeyopening", 0.05)
+    end, false)
+    RegisterCommand("-startScene", function() end, false)
 
-    activeScenes = RPC.execute("caue-scenes:getScenes")
+    RegisterCommand("+deleteScene", function()
+        ToggleDeletionLaser()
+    end, false)
+    RegisterCommand("-deleteScene", function() end, false)
 end)
 
 Citizen.CreateThread(function()
     while true do
-        if scenesEnabled then
-            playerCoords = GetEntityCoords(PlayerPedId())
-            for _, scene in pairs(activeScenes) do
-                if #(scene.coords - playerCoords) < scene.distance then
-                    drawScene(scene)
-                else
-                    drawnScenes[scene.id] = nil
+        closestScenes = {}
+
+        for i=1, #scenes do
+            local currentScene = scenes[i]
+            local plyPosition = GetEntityCoords(PlayerPedId())
+            local distance = #(plyPosition - currentScene.coords)
+
+            if distance < Config.MaxPlacementDistance then
+                closestScenes[#closestScenes+1] = currentScene
+            end
+        end
+
+        Wait(1000)
+    end
+end)
+
+Citizen.CreateThread(function()
+    while true do
+        local wait = 1000
+
+        if #closestScenes > 0 then
+            wait = 0
+
+            for i=1, #closestScenes do
+                local currentScene = closestScenes[i]
+                local plyPosition = GetEntityCoords(PlayerPedId())
+                local distance = #(plyPosition - currentScene.coords)
+
+                if distance <= currentScene.viewdistance then
+                    DrawScene(closestScenes[i])
                 end
             end
         end
 
-        Citizen.Wait(1000)
+        Wait(wait)
     end
 end)

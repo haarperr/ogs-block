@@ -1,97 +1,87 @@
---[[
-
-    Variables
-
-]]
-
-local activeScenes = {}
-
---[[
-
-    RPCs
-
-]]
+local scenes = {}
 
 RPC.register("caue-scenes:getScenes", function(src)
-    return activeScenes
+    return scenes
 end)
 
-RPC.register("caue-scenes:addScene", function(src, coords, text, distance, color)
-    local result = exports.ghmattimysql:executeSync([[
-        INSERT INTO scenes (text, color, distance, coords, date)
-        VALUES (?, ?, ?, ?, UNIX_TIMESTAMP())
-    ]],
-    { text, color, distance, json.encode(coords) })
-
-    local data = {
-        id = result["insertId"],
-        coords = coords,
-        text = text,
-        distance = distance,
-        color = color,
-    }
-
-    table.insert(activeScenes, data)
-    TriggerClientEvent("caue-scenes:refreshScenes", -1, activeScenes)
-
-    return
-end)
-
-RPC.register("caue-scenes:deleteScene", function(src, coords)
-    local toRemove = 0
-    local toRemoveId = 0
-    local nearest = 100
-
-    for i, v in ipairs(activeScenes) do
-        local distance = #(coords - v.coords)
-        if distance < 2.0 and distance < nearest then
-            nearest = distance
-            toRemove = i
-            toRemoveId = v.id
-        end
-    end
-
-    if toRemove ~= 0 then
-        table.remove(activeScenes, toRemove)
-        TriggerClientEvent("caue-scenes:refreshScenes", -1, activeScenes, toRemoveId)
-
-        exports.ghmattimysql:executeSync([[
-            DELETE FROM scenes
-            WHERE id = ?
-        ]],
-        { toRemoveId })
-    end
-
-    return
-end)
-
---[[
-
-    Threads
-
-]]
-
-Citizen.CreateThread(function()
-    exports.ghmattimysql:executeSync([[
-        DELETE FROM scenes
-        WHERE DATEDIFF(FROM_UNIXTIME(UNIX_TIMESTAMP()), FROM_UNIXTIME(date)) > 3
-    ]],
-    { toRemoveId })
+function UpdateAllScenes()
+    scenes = {}
 
     local result = exports.ghmattimysql:executeSync([[
-        SELECT id, text, color, distance, coords
+        SELECT *
         FROM scenes
     ]])
 
-    for i, v in ipairs(result) do
-        local _coords = json.decode(v["coords"])
+    for _, v in pairs(result) do
+        local newCoords = json.decode(v.coords)
+        scenes[#scenes+1] = {
+            id = v.id,
+            text = v.text,
+            color = v.color,
+            viewdistance = v.viewdistance,
+            expiration = v.expiration,
+            fontsize = v.fontsize,
+            fontstyle = v.fontstyle,
+            coords = vector3(newCoords.x, newCoords.y, newCoords.z),
+        }
+    end
 
-        table.insert(activeScenes, {
-            id = v["id"],
-            coords = vector3(_coords.x, _coords.y, _coords.z),
-            text = v["text"],
-            distance = v["distance"],
-            color = v["color"],
-        })
+    TriggerClientEvent("caue-scenes:client:UpdateAllScenes", -1, scenes)
+end
+
+function DeleteExpiredScenes()
+    local result = exports.ghmattimysql:executeSync([[
+        DELETE FROM scenes
+        WHERE date_deletion < NOW()
+    ]])
+
+    UpdateAllScenes()
+end
+
+RegisterNetEvent("caue-scenes:server:DeleteScene", function(id)
+    local result = exports.ghmattimysql:executeSync([[
+        DELETE FROM scenes
+        WHERE id = ?
+    ]],
+    { id })
+
+    UpdateAllScenes()
+end)
+
+RegisterNetEvent("caue-scenes:server:CreateScene", function(sceneData)
+    local src = source
+
+    local cid = exports["caue-base"]:getChar(src, "id")
+    if not cid then return end
+
+    local result = exports.ghmattimysql:executeSync([[
+        INSERT INTO scenes (creator, text, color, viewdistance, expiration, fontsize, fontstyle, coords, date_creation, date_deletion)
+        VALUES (? ,?, ?, ?, ?, ?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL ? HOUR))
+    ]],
+    {
+        cid,
+        sceneData.text,
+        sceneData.color,
+        sceneData.viewdistance,
+        sceneData.expiration,
+        sceneData.fontsize,
+        sceneData.fontstyle,
+        json.encode(sceneData.coords),
+        sceneData.expiration,
+    })
+
+    if result["insertId"] < 1 then
+        return false, "Database insert eror"
+    end
+
+    UpdateAllScenes()
+end)
+
+Citizen.CreateThread(function()
+    UpdateAllScenes()
+
+    while true do
+        DeleteExpiredScenes()
+        Wait(Config.AuditInterval)
     end
 end)

@@ -2,6 +2,22 @@ local GeneralEntries = MenuEntries["general"]
 
 GeneralEntries[#GeneralEntries+1] = {
     data = {
+        id = "scenes",
+        title = "Cenas",
+        icon = "#general-scenes",
+        event = "place-scenes"
+    },
+    isEnabled = function(pEntity, pContext)
+        return true
+    end
+}
+
+AddEventHandler("place-scenes", function()
+    ExecuteCommand("+startScene")
+end)
+
+GeneralEntries[#GeneralEntries+1] = {
+    data = {
         id = "check_jail",
         title = "Jail Time",
         icon = "#general-keys-give",
