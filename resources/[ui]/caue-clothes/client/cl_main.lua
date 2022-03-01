@@ -54,7 +54,7 @@ local hairTied = false
 local currentHairStyle = nil
 local supportedModels = {
     [`mp_f_freemode_01`] = 4,
-    [`mp_m_freemode_01`] = 2,
+    [`mp_m_freemode_01`] = 0,
 }
 
 local currentShop = false
