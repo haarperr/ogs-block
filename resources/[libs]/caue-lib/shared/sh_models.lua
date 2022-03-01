@@ -178,4 +178,12 @@ ModelFlags = {
     [`bkr_prop_weed_lrg_01a`] = { "isWeedPlant" },
     [`bkr_prop_weed_lrg_01b`] = { "isLrgWeedPlant", "isWeedPlant" },
     [`prop_cementmixer_02a`] = { "isCementMixer" },
+    [`prop_tv_flat_01`] = { "isTelevision" },
+    [`prop_tv_flat_michael`] = { "isTelevision" },
+    [`prop_trev_tv_01`] = { "isTelevision" },
+    [`prop_tv_flat_03b`] = { "isTelevision" },
+    [`prop_tv_flat_03`] = { "isTelevision" },
+    [`prop_tv_flat_02b`] = { "isTelevision" },
+    [`prop_tv_flat_02`] = { "isTelevision" },
+    [`ex_prop_ex_tv_flat_01`] = { "isTelevision" },
 }

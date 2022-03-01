@@ -60,8 +60,3 @@ Config["Objects"] = {
         ["Distance"] = 7.5,
     },
 }
-
-Strings = {
-    ["VideoHelp"] = "Digite ~b~/tv ~y~youtube id~s~ para reproduzir um vídeo.\nExemplo: ~b~/tv ~y~iqUkDI-XvCM~s~",
-    ["VolumeHelp"] = "Digite ~b~/volume ~y~(0-10)~s~ para alterar o volume.\nExemplo: ~b~/volume ~y~5~s~\n\nDigite ~b~/tv ~y~youtube id~s~ para trocar o vídeo.\nExemplo: ~b~/tv ~y~iqUkDI-XvCM~s~\n\nDigite ~b~/desligar~s~ para parar o video.\n\n~INPUT_CONTEXT~ Sincronizar o tempo do vídeo",
-}

@@ -1,7 +1,29 @@
+--[[
+
+    Variables
+
+]]
+
 local data = {}
 local hasTvBox = false
 
-GenerateId = function(length, usecapital, usenumbers)
+--[[
+
+    Functions
+
+]]
+
+function isPlaying(pEntity)
+    local entityCoords = GetEntityCoords(pEntity)
+    for k, v in pairs(data) do
+        if v["Coords"] == entityCoords then
+            return true
+        end
+    end
+    return false
+end
+
+function GenerateId(length, usecapital, usenumbers)
     local result = ""
 
     for i = 1, length do
@@ -22,7 +44,7 @@ GenerateId = function(length, usecapital, usenumbers)
     return result
 end
 
-VolumeCheck = function(id)
+function VolumeCheck(id)
     if data[id]["DUI"] then
         if data[id]["ActualVolume"] ~= data[id]["Volume"] then
             local duiLong = data[id]["DUI"]["Long"]
@@ -42,7 +64,7 @@ VolumeCheck = function(id)
     end
 end
 
-CreateVideo = function(id, url, object, coords, scale, offset, time, volume)
+function CreateVideo(id, url, object, coords, scale, offset, time, volume)
     if data[id] then
         if data[id]["DUI"] then
             DestroyDui(data[id]["DUI"]["Long"])
@@ -74,8 +96,112 @@ CreateVideo = function(id, url, object, coords, scale, offset, time, volume)
     }
 end
 
-RegisterNetEvent("loaf_tv:update")
-AddEventHandler("loaf_tv:update", function(players)
+--[[
+
+    Events
+
+]]
+
+AddEventHandler("caue-inventory:itemCheck", function (item, state, quantity)
+    if item ~= "custommiscitem" then return end
+
+    if exports["caue-inventory"]:hasEnoughOfItem(item, 1, false, false, { ["_type"] = "tvbox" }) then
+        if not hasTvBox then
+            hasTvBox = true
+        end
+    else
+        if hasTvBox then
+            hasTvBox = false
+        end
+    end
+end)
+
+AddEventHandler("caue-tvbox:start", function(pArgs, pEntity)
+    local pEntityCoords = GetEntityCoords(pEntity)
+
+    for k, v in pairs(Config["Objects"]) do
+        local obj = GetClosestObjectOfType(GetEntityCoords(PlayerPedId()), 5.0, GetHashKey(v["Object"]))
+        if DoesEntityExist(obj) and obj == pEntity then
+            TriggerServerEvent("caue-tv:add", "lL5RPnXyklk", v["Object"], pEntityCoords, v["Scale"], v["Offset"])
+            break
+        end
+    end
+end)
+
+AddEventHandler("caue-tvbox:change", function(pArgs, pEntity)
+    local pEntityCoords = GetEntityCoords(pEntity)
+
+    local input = exports["caue-input"]:showInput({
+        {
+            icon = "edit",
+            label = "Youtube ID (Exemplo: lL5RPnXyklk)",
+            name = "url",
+        },
+    })
+
+    if input["url"] then
+        for k, v in pairs(Config["Objects"]) do
+            local obj = GetClosestObjectOfType(GetEntityCoords(PlayerPedId()), 5.0, GetHashKey(v["Object"]))
+            if DoesEntityExist(obj) and obj == pEntity then
+                TriggerServerEvent("caue-tv:add", input["url"], v["Object"], pEntityCoords, v["Scale"], v["Offset"])
+                break
+            end
+        end
+    end
+end)
+
+AddEventHandler("caue-tvbox:sync", function(pArgs, pEntity)
+    local pEntityCoords = GetEntityCoords(pEntity)
+
+    for k, v in pairs(data) do
+        if v["Coords"] == pEntityCoords then
+            if v["DUI"] then
+                SetDuiUrl(v["DUI"]["Long"], Config["URL"]:format(v["URL"], (math.floor(GetGameTimer() / 1000) + v["Time"]) - v["Started"]))
+            end
+        end
+    end
+end)
+
+AddEventHandler("caue-tvbox:volume", function(pArgs, pEntity)
+    local pEntityCoords = GetEntityCoords(pEntity)
+
+    local input = exports["caue-input"]:showInput({
+        {
+            icon = "volume-up",
+            label = "Volume (0-10)",
+            name = "volume",
+        },
+    })
+
+    if input["volume"] then
+        local volume = tonumber(input["volume"])
+        if not volume or volume < 0 or volume > 10 then
+            TriggerEvent("DoLongHudText", "Valor invalido", 2)
+            return
+        end
+
+        for k, v in pairs(data) do
+            if v["Coords"] == pEntityCoords then
+                if volume == 1 then volume = 1.5 end
+                TriggerServerEvent("caue-tv:setvolume", k, volume)
+                break
+            end
+        end
+    end
+end)
+
+AddEventHandler("caue-tvbox:destroy", function(pArgs, pEntity)
+    local pEntityCoords = GetEntityCoords(pEntity)
+
+    for k, v in pairs(data) do
+        if v["Coords"] == pEntityCoords then
+            TriggerServerEvent("caue-tv:destroy", k)
+            break
+        end
+    end
+end)
+
+RegisterNetEvent("caue-tv:update", function(players)
     for k, v in pairs(players) do
         if v ~= nil then
             CreateVideo(k, v["URL"], v["Object"], v["Coords"], v["Scale"], v["Offset"], v["Time"], v["Volume"])
@@ -87,85 +213,106 @@ AddEventHandler("loaf_tv:update", function(players)
     end
 end)
 
-CreateThread(function()
-    while not NetworkIsSessionStarted() do Wait(50) end
+RegisterNetEvent("caue-tv:updatevolume", function(id, volume)
+    if data[id] then
+        data[id]["Volume"] = volume
+    end
+end)
 
+RegisterNetEvent("caue-tv:delete", function(id)
+    if data[id] then
+        if data[id]["DUI"] then
+            DestroyDui(data[id]["DUI"]["Long"])
+        end
+        data[id] = nil
+    end
+end)
+
+--[[
+
+    Threads
+
+]]
+
+Citizen.CreateThread(function()
+    exports["caue-eye"]:AddPeekEntryByFlag({ "isTelevision" }, {
+        {
+            id = "tvbox-start",
+            label = "Ligar TV Box",
+            icon = "tv",
+            event = "caue-tvbox:start",
+            parameters = {}
+        }
+    }, { distance = { radius = 2.5 }, isEnabled = function(pEntity, pContext) return hasTvBox and not isPlaying(pEntity) end })
+
+    exports["caue-eye"]:AddPeekEntryByFlag({ "isTelevision" }, {
+        {
+            id = "tvbox-change",
+            label = "Mudar",
+            icon = "edit",
+            event = "caue-tvbox:change",
+            parameters = {}
+        }
+    }, { distance = { radius = 2.5 }, isEnabled = isPlaying })
+
+    exports["caue-eye"]:AddPeekEntryByFlag({ "isTelevision" }, {
+        {
+            id = "tvbox-sync",
+            label = "Sincronizar",
+            icon = "sync",
+            event = "caue-tvbox:sync",
+            parameters = {}
+        }
+    }, { distance = { radius = 2.5 }, isEnabled = isPlaying })
+
+    exports["caue-eye"]:AddPeekEntryByFlag({ "isTelevision" }, {
+        {
+            id = "tvbox-volume",
+            label = "Volume",
+            icon = "volume-up",
+            event = "caue-tvbox:volume",
+            parameters = {}
+        }
+    }, { distance = { radius = 2.5 }, isEnabled = isPlaying })
+
+    exports["caue-eye"]:AddPeekEntryByFlag({ "isTelevision" }, {
+        {
+            id = "tvbox-stop",
+            label = "Desligar",
+            icon = "power-off",
+            event = "caue-tvbox:destroy",
+            parameters = {}
+        }
+    }, { distance = { radius = 2.5 }, isEnabled = isPlaying })
+end)
+
+Citizen.CreateThread(function()
+    while true do
+        Wait(500)
+
+        for k, v in pairs(data) do
+            Wait(100)
+            local obj = GetClosestObjectOfType(GetEntityCoords(PlayerPedId()), v["Distance"], GetHashKey(v["Object"]))
+
+            if v ~= nil then
+                local obj = GetClosestObjectOfType(v["Coords"], v["Distance"], GetHashKey(v["Object"]))
+                if DoesEntityExist(obj) then
+                    Wait(2500)
+                    while #(GetEntityCoords(PlayerPedId()) - v["Coords"]) <= v["Distance"] and data[k] ~= nil and DoesEntityExist(obj) do
+                        VolumeCheck(k)
+                        Wait(500)
+                    end
+                end
+            end
+        end
+    end
+end)
+
+Citizen.CreateThread(function()
     local SFHandle = RequestScaleformMovie("generic_texture_renderer")
     while not HasScaleformMovieLoaded(SFHandle) do Wait(1000) end
 
-    TriggerServerEvent("loaf_tv:fetch")
-
-    CreateThread(function()
-        while true do
-            Wait(500)
-
-            for k, v in pairs(data) do
-                Wait(100)
-                local obj = GetClosestObjectOfType(GetEntityCoords(PlayerPedId()), v["Distance"], GetHashKey(v["Object"]))
-
-                if v ~= nil then
-                    local obj = GetClosestObjectOfType(v["Coords"], v["Distance"], GetHashKey(v["Object"]))
-                    if DoesEntityExist(obj) then
-                        Wait(2500)
-                        while #(GetEntityCoords(PlayerPedId()) - v["Coords"]) <= v["Distance"] and data[k] ~= nil and DoesEntityExist(obj) do
-                            VolumeCheck(k)
-                            Wait(500)
-                        end
-                    end
-                end
-            end
-        end
-    end)
-
-    CreateThread(function()
-        while true do
-            Wait(500)
-
-            for k, v in pairs(Config["Objects"]) do
-                Wait(100)
-                local obj = GetClosestObjectOfType(GetEntityCoords(PlayerPedId()), 2.0, GetHashKey(v["Object"]))
-                if DoesEntityExist(obj) then
-                    local playing = false
-                    local CheckPlaying = GetGameTimer()
-                    while #(GetEntityCoords(PlayerPedId()) - GetEntityCoords(obj)) <= 2.0 do
-                        if CheckPlaying <= GetGameTimer() then
-                            CheckPlaying = GetGameTimer() + 750
-                            playing = false
-                            for k, v in pairs(data) do
-                                if v["Coords"] == GetEntityCoords(obj) then
-                                    playing = true
-                                end
-                            end
-                        end
-
-                        if playing then
-                            AddTextEntry(GetCurrentResourceName(), Strings["VolumeHelp"])
-                            DisplayHelpTextThisFrame(GetCurrentResourceName(), false)
-
-                            if IsControlJustReleased(0, 51) then
-                                for k, v in pairs(data) do
-                                    if v["Coords"] == GetEntityCoords(obj) then
-                                        CreateThread(function()
-                                            if v["DUI"] then
-                                                SetDuiUrl(v["DUI"]["Long"], Config["URL"]:format(v["URL"], (math.floor(GetGameTimer() / 1000) + v["Time"]) - v["Started"]))
-                                            end
-                                        end)
-                                    end
-                                end
-                            end
-                        else
-                            if hasTvBox then
-                                AddTextEntry(GetCurrentResourceName(), Strings["VideoHelp"])
-                                DisplayHelpTextThisFrame(GetCurrentResourceName(), false)
-                            end
-                        end
-
-                        Wait(0)
-                    end
-                end
-            end
-        end
-    end)
+    TriggerServerEvent("caue-tv:fetch")
 
     while true do
         Wait(500)
@@ -228,84 +375,6 @@ CreateThread(function()
                     end
                 end
             end
-        end
-
-    end
-end)
-
-RegisterNetEvent("caue-tvbox:tv", function(args)
-    if not hasTvBox then
-        TriggerEvent("DoLongHudText", "Você precisa de uma TV Box para fazer isso.", 2)
-        return
-    end
-
-    if args[1] then
-        for k, v in pairs(Config["Objects"]) do
-            local obj = GetClosestObjectOfType(GetEntityCoords(PlayerPedId()), 5.0, GetHashKey(v["Object"]))
-            if DoesEntityExist(obj) then
-                TriggerServerEvent("loaf_tv:add", args[1], v["Object"], GetEntityCoords(obj), v["Scale"], v["Offset"])
-                break
-            end
-        end
-    end
-end)
-
-RegisterNetEvent("caue-tvbox:volume", function(args)
-    if args[1] then
-        local volume = tonumber(args[1])
-        if volume then
-            if volume >= 0 then
-
-                for k, v in pairs(data) do
-                    if #(GetEntityCoords(PlayerPedId()) - v["Coords"]) <= 5.0 then
-                        if volume == 1 then volume = 1.5 end
-                        if volume > 10 then volume = 10 end
-                        TriggerServerEvent("loaf_tv:setvolume", k, volume)
-                        break
-                    end
-                end
-
-            end
-        end
-    end
-end)
-
-RegisterNetEvent("caue-tvbox:destroy", function(args)
-    for k, v in pairs(data) do
-        if #(GetEntityCoords(PlayerPedId()) - v["Coords"]) <= 5.0 then
-            TriggerServerEvent("loaf_tv:destroy", k)
-            break
-        end
-    end
-end)
-
-RegisterNetEvent("loaf_tv:delete")
-AddEventHandler("loaf_tv:delete", function(id)
-    if data[id] then
-        if data[id]["DUI"] then
-            DestroyDui(data[id]["DUI"]["Long"])
-        end
-        data[id] = nil
-    end
-end)
-
-RegisterNetEvent("loaf_tv:updatevolume")
-AddEventHandler("loaf_tv:updatevolume", function(id, volume)
-    if data[id] then
-        data[id]["Volume"] = volume
-    end
-end)
-
-AddEventHandler("caue-inventory:itemCheck", function (item, state, quantity)
-    if item ~= "custommiscitem" then return end
-
-    if exports["caue-inventory"]:hasEnoughOfItem(item, 1, false, false, { ["_type"] = "tvbox" }) then
-        if not hasTvBox then
-            hasTvBox = true
-        end
-    else
-        if hasTvBox then
-            hasTvBox = false
         end
     end
 end)

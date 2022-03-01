@@ -1,6 +1,19 @@
+--[[
+
+    Variables
+
+]]
+
+local time
 local data = {}
 
-local GenerateId = function(length, usecapital, usenumbers)
+--[[
+
+    Functions
+
+]]
+
+function GenerateId(length, usecapital, usenumbers)
     local result = ""
 
     for i = 1, length do
@@ -21,10 +34,13 @@ local GenerateId = function(length, usecapital, usenumbers)
     return result
 end
 
-local time
+--[[
 
-RegisterServerEvent("loaf_tv:add")
-AddEventHandler("loaf_tv:add", function(url, object, coords, scale, offset)
+    Events
+
+]]
+
+RegisterNetEvent("caue-tv:add", function(url, object, coords, scale, offset)
     local id = GenerateId(20, true, true)
     for k, v in pairs(data) do
         if v["Object"] == object and v["Coords"] == coords then -- if it"s the same tv, just update the video etc
@@ -93,11 +109,10 @@ AddEventHandler("loaf_tv:add", function(url, object, coords, scale, offset)
         tosend[k]["Time"] = (os.time() - tosend[k]["Time"])
     end
 
-    TriggerClientEvent("loaf_tv:update", -1, tosend)
+    TriggerClientEvent("caue-tv:update", -1, tosend)
 end)
 
-RegisterServerEvent("loaf_tv:fetch")
-AddEventHandler("loaf_tv:fetch", function()
+RegisterNetEvent("caue-tv:fetch", function()
     local tosend = {}
 
     for k, v in pairs(data) do
@@ -116,26 +131,24 @@ AddEventHandler("loaf_tv:fetch", function()
         tosend[k]["Time"] = (os.time() - tosend[k]["Time"])
     end
 
-    TriggerClientEvent("loaf_tv:update", source, tosend)
+    TriggerClientEvent("caue-tv:update", source, tosend)
 end)
 
-RegisterServerEvent("loaf_tv:setvolume")
-AddEventHandler("loaf_tv:setvolume", function(id, volume)
+RegisterNetEvent("caue-tv:setvolume", function(id, volume)
     if volume >= 0 and volume <= 10 then
         if data[id] then
 
             data[id]["Volume"] = volume
 
-            TriggerClientEvent("loaf_tv:updatevolume", -1, id, volume)
+            TriggerClientEvent("caue-tv:updatevolume", -1, id, volume)
 
         end
     end
 end)
 
-RegisterServerEvent("loaf_tv:destroy")
-AddEventHandler("loaf_tv:destroy", function(id)
+RegisterNetEvent("caue-tv:destroy", function(id)
     if data[id] then
         data[id] = nil
-        TriggerClientEvent("loaf_tv:delete", -1, id)
+        TriggerClientEvent("caue-tv:delete", -1, id)
     end
 end)
