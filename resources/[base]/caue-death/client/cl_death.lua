@@ -381,7 +381,7 @@ AddEventHandler("doTimer", function()
         respawnText = ("~w~Segure ~r~E ~w~(%d) ~w~para chamar a assistência médica")
     end
 
-    local canPay = 69
+    local canPay = nil
 
     while imDead do
         Citizen.Wait(0)
@@ -393,8 +393,8 @@ AddEventHandler("doTimer", function()
                 drawTxt(0.89, 1.42, 1.0,1.0,0.6, deathText:format(thecount), 255, 255, 255, 255)
             end
         else
-            if not isMinor and not isBlunt and not characterKill and canPay == 69 then
-                local canPay = RPC.execute("caue-death:canCallMedicNPC")
+            if not isMinor and not isBlunt and not characterKill and canPay == nil then
+                canPay = RPC.execute("caue-death:canCallMedicNPC")
                 if not canPay then
                     characterKill = true
                     TriggerEvent("evidence:bleeding",true)
