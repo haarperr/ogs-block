@@ -45,8 +45,15 @@ end
 Citizen.CreateThread(function()
     Citizen.Wait(90000)
 
-    TriggerEvent("cron:runAt", 11, 30, gitPull)
-    TriggerEvent("cron:runAt", 11, 50, restartServer)
-    TriggerEvent("cron:runAt", 03, 30, gitPull)
-    TriggerEvent("cron:runAt", 03, 50, restartServer)
+    -- 03:00
+    TriggerEvent("cron:runAt", 02, 30, gitPull)
+    TriggerEvent("cron:runAt", 02, 50, restartServer)
+
+    -- 11:00
+    TriggerEvent("cron:runAt", 10, 30, gitPull)
+    TriggerEvent("cron:runAt", 10, 50, restartServer)
+
+    -- 19:00
+    TriggerEvent("cron:runAt", 18, 30, gitPull)
+    TriggerEvent("cron:runAt", 18, 50, restartServer)
 end)
