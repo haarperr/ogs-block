@@ -4,8 +4,7 @@
 
 ]]
 
-RegisterNetEvent("caue-chat:local")
-AddEventHandler("caue-chat:local", function(id, name, message, coords)
+RegisterNetEvent("caue-chat:local", function(id, name, message, coords)
 	local monid = PlayerId()
 	local sonid = GetPlayerFromServerId(id)
 
@@ -16,8 +15,7 @@ AddEventHandler("caue-chat:local", function(id, name, message, coords)
 	end
 end)
 
-RegisterNetEvent("caue-chat:me")
-AddEventHandler("caue-chat:me", function(id, name, message, coords)
+RegisterNetEvent("caue-chat:me", function(id, name, message, coords)
 	local monid = PlayerId()
 	local sonid = GetPlayerFromServerId(id)
 
@@ -38,8 +36,7 @@ AddEventHandler("caue-chat:me", function(id, name, message, coords)
 	end
 end)
 
-RegisterNetEvent("caue-chat:do")
-AddEventHandler("caue-chat:do", function(id, name, message, coords)
+RegisterNetEvent("caue-chat:do", function(id, name, message, coords)
 	local monid = PlayerId()
 	local sonid = GetPlayerFromServerId(id)
 
@@ -59,5 +56,28 @@ AddEventHandler("caue-chat:do", function(id, name, message, coords)
 		TriggerEvent("chatMessage", "", {170, 102, 204}, "*" .. message .. " (( " .. name .. " ))")
 	elseif #(GetEntityCoords(PlayerPedId()) - coords) < 20 then
 		TriggerEvent("chatMessage", "", {170, 102, 204}, "*" .. message .. " (( " .. name .. " ))")
+	end
+end)
+
+RegisterNetEvent("caue-chat:say", function(id, name, message, coords)
+	local monid = PlayerId()
+	local sonid = GetPlayerFromServerId(id)
+
+	local message = (message:gsub("^%l", string.upper))
+
+	local lastLetter = string.sub(message, string.len(message))
+
+	local hasFinalPoint = lastLetter == "."
+	local hasQuestionMark = lastLetter == "?"
+	local hasExclamationMark = lastLetter == "!"
+
+	if not hasFinalPoint and not hasQuestionMark and not hasExclamationMark then
+		message = message .. "."
+	end
+
+    if sonid == monid then
+		TriggerEvent("chatMessage", "", {205, 205, 205}, name .. " diz: " .. message)
+	elseif #(GetEntityCoords(PlayerPedId()) - coords) < 20 then
+		TriggerEvent("chatMessage", "", {205, 205, 205}, name .. " diz: " .. message)
 	end
 end)
