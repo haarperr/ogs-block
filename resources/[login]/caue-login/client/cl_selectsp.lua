@@ -77,8 +77,11 @@ function Spawn.selectedSpawn(spawnInfo)
 		return
 	end
 
-	SetEntityInvincible(PlayerPedId(),false)
-	FreezeEntityPosition(PlayerPedId(),false)
+	Citizen.SetTimeout(15000, function()
+		SetEntityInvincible(PlayerPedId(), false)
+	end)
+
+	FreezeEntityPosition(PlayerPedId(), false)
 	SetEntityVisible(PlayerPedId(), true)
 	EnableAllControlActions(0)
 

@@ -114,6 +114,26 @@ Commands["do"] = {
     },
 }
 
+Commands["say"] = {
+    ["function"] = function(source, args)
+        if args[1] ~= nil then
+	        local name = exports["caue-base"]:getChar(source, "first_name") .. " " .. exports["caue-base"]:getChar(source, "last_name")
+
+            TriggerClientEvent("caue-chat:say", -1, source, name, table.concat(args, " "), GetEntityCoords(GetPlayerPed(source)))
+        else
+            TriggerClientEvent("DoLongHudText", source, "Use /say [message]", 2)
+        end
+    end,
+    ["suggestion"] = {
+        ["help"] = "",
+        ["params"] = {},
+    },
+    ["condition"] = {
+        ["type"] = "ALL",
+        ["params"] = {},
+    },
+}
+
 Commands["drag"] = {
     ["function"] = function(source, args)
         TriggerClientEvent("caue-police:drag", source)

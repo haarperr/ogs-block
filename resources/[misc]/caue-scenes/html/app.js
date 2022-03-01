@@ -10,7 +10,7 @@ const app = Vue.createApp({
 		const color = ref("#ffffff")
 		const fontsize = ref(0.3)
 		const fontstyle = ref("1")
-		const expiration = ref("1 hour")
+		const expiration = ref("1 hora")
 
 		return {
 			text,
