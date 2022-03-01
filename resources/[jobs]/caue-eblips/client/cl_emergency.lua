@@ -37,7 +37,6 @@ function GetBlipSettings(pJobId, pCallSign)
 	settings.short = true
 	settings.sprite = 1
 	settings.category = 7
-    settings.heading =  true
 
 	if pJobId == "state_police" then
 		settings.color = 29
@@ -100,7 +99,7 @@ AddEventHandler("e-blips:setHandlers", function(pHandlers)
 	local serverId = GetPlayerServerId(PlayerId())
 
 	for _, pData in pairs(pHandlers) do
-		if pData --[[and pData.netId ~= serverId]] then
+		if pData then
 			CreateBlipHandler(pData.netId, pData.job, pData.callsign)
 		end
 	end

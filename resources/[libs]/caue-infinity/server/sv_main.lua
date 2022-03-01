@@ -73,7 +73,7 @@ Citizen.CreateThread(function()
     local updated = false
 
     while true do
-        Citizen.Wait(1000)
+        Citizen.Wait(500)
 
         updated = false
 

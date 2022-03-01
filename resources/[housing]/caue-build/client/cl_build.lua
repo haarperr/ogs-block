@@ -194,7 +194,7 @@ function Build.func.buildRoom(planName,positionGen,isBackdoor,destroyedObjects,s
 
     Build.func.CleanUpArea()
     Build.func.CleanUpPeds()
-    --TriggerEvent("insideShell",true)
+    TriggerEvent("insideShell",true)
 
     local building = CreateObject(GetHashKey(plan.shell),objectSpawnCoords.x+mainPos.x,objectSpawnCoords.y+mainPos.y,objectSpawnCoords.z,false,false,false)
     Build.func.placeObjectCorrectZ(building,(objectSpawnCoords.z+mainPos.z))
