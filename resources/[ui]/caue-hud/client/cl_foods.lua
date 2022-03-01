@@ -4,6 +4,7 @@
 
 ]]
 
+local lastForcedUpdate = 0
 local GodEnabled = false
 local dstamina = 0
 
@@ -507,6 +508,11 @@ function changeHunger(_value)
 
     currentValues["hunger"] = _hunger
     updateStatus("hunger", _hunger)
+
+    if GetCloudTimeAsInt() > lastForcedUpdate then
+        lastForcedUpdate = GetCloudTimeAsInt() + 60
+        TriggerServerEvent("caue-hud:updateData", GetEntityHealth(PlayerPedId()), GetPedArmour(PlayerPedId()), currentValues["thirst"], currentValues["hunger"])
+    end
 end
 
 function changeThirst(_value)
@@ -522,6 +528,11 @@ function changeThirst(_value)
 
     currentValues["thirst"] = _thirst
     updateStatus("thirst", _thirst)
+
+    if GetCloudTimeAsInt() > lastForcedUpdate then
+        lastForcedUpdate = GetCloudTimeAsInt() + 60
+        TriggerServerEvent("caue-hud:updateData", GetEntityHealth(PlayerPedId()), GetPedArmour(PlayerPedId()), currentValues["thirst"], currentValues["hunger"])
+    end
 end
 
 --[[

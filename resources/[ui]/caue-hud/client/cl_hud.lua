@@ -297,8 +297,6 @@ RegisterNetEvent("caue-hud:setData")
 AddEventHandler("caue-hud:setData", function(data)
     currentValues["hunger"] = data["hunger"]
     currentValues["thirst"] = data["thirst"]
-    updateStatus("hunger", data["hunger"])
-    updateStatus("thirst", data["thirst"])
 
     SetPedMaxHealth(PlayerPedId(), 200)
     if data["health"] < 10.0 then
@@ -309,6 +307,9 @@ AddEventHandler("caue-hud:setData", function(data)
 
     SetPlayerMaxArmour(PlayerId(), 60)
     SetPedArmour(PlayerPedId(), data["armour"])
+
+    updateStatus("hunger", currentValues["hunger"])
+    updateStatus("thirst", currentValues["thirst"])
 end)
 
 RegisterNetEvent("caue-voice:focus:set")
