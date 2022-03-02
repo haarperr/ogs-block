@@ -420,12 +420,17 @@ GeneralEntries[#GeneralEntries+1] = {
 local currentJob = nil
 local policeModels = {
     [`npolvic`] = true,
+    [`npolexp`] = true,
+    [`npolstang`] = true,
+    [`npolchar`] = true,
+    [`npolchal`] = true,
+    [`npolvette`] = true,
 }
 
 GeneralEntries[#GeneralEntries+1] = {
     data = {
         id = "open-rifle-rack",
-        title = "Suporte rifle",
+        title = "Suporte de Armas",
         icon = "#vehicle-plate-remove",
         event = "vehicle:openRifleRack"
     },
