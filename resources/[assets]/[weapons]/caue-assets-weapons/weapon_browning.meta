@@ -78,8 +78,8 @@
           <RecoilAccuracyToAllowHeadShotPlayer value="0.175000" />
           <MinHeadShotDistancePlayer value="5.000000" />
           <MaxHeadShotDistancePlayer value="40.000000" />
-          <HeadShotDamageModifierPlayer value="2.500000" />
-          <Damage value="31.000000" />
+          <HeadShotDamageModifierPlayer value="2.000000" />
+          <Damage value="35.000000" />
           <DamageTime value="0.000000" />
           <DamageTimeInVehicle value="0.000000" />
           <DamageTimeInVehicleHeadShot value="0.000000" />
@@ -205,7 +205,7 @@
           <NetworkPedDamageModifier value="1.000000" />
           <NetworkHeadShotPlayerDamageModifier value="2.000000" />
           <LockOnRange value="55.000000" />
-          <WeaponRange value="120.000000" />
+          <WeaponRange value="150.000000" />
           <BulletDirectionOffsetInDegrees value="0.000000" />
           <BulletDirectionPitchOffset value="0.000000" />
           <BulletDirectionPitchHomingOffset value="0.000000" />
@@ -321,6 +321,10 @@
               <Components>
                 <Item>
                   <Name>COMPONENT_AT_PI_SUPP_02</Name>
+                  <Default value="false" />
+                </Item>
+                <Item>
+                  <Name>COMPONENT_OIL_SUPP</Name>
                   <Default value="false" />
                 </Item>
               </Components>

@@ -1084,5 +1084,43 @@
 			<lodDist value="30"/>
 		</Item>
 		
+		<!-- new models -->
+		<Item>
+			<modelName>w_sb_uzi</modelName>
+			<txdName>w_sb_uzi</txdName>
+			<ptfxAssetName>null</ptfxAssetName>
+			<lodDist value="30"/>
+		</Item>
+		<Item>
+			<modelName>w_sb_uzi_wood</modelName>
+			<txdName>w_sb_uzi</txdName>
+			<ptfxAssetName>null</ptfxAssetName>
+			<lodDist value="30"/>
+		</Item>
+		<Item>
+			<modelName>w_sb_uzi_stock</modelName>
+			<txdName>w_sb_uzi</txdName>
+			<ptfxAssetName>null</ptfxAssetName>
+			<lodDist value="30"/>
+		</Item>
+		<Item>
+			<modelName>w_sb_uzi_mag1</modelName>
+			<txdName>w_sb_uzi</txdName>
+			<ptfxAssetName>null</ptfxAssetName>
+			<lodDist value="30"/>
+		</Item>
+		<Item>
+			<modelName>w_sb_uzi_mag2</modelName>
+			<txdName>w_sb_uzi</txdName>
+			<ptfxAssetName>null</ptfxAssetName>
+			<lodDist value="30"/>
+		</Item>
+		<Item>
+			<modelName>w_at_uzi_supp</modelName>
+			<txdName>w_sb_uzi</txdName>
+			<ptfxAssetName>null</ptfxAssetName>
+			<lodDist value="30"/>
+		</Item>
+		
 	</InitDatas>
 </CWeaponModelInfo__InitDataList>
