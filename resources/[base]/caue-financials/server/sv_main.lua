@@ -104,6 +104,6 @@ exports("transactionLog", transactionLog)
 
 ]]
 
-RPC.register("caue-financials:getBalance", function(src)
-    return getBalance(src)
+RPC.register("caue-financials:getBalance", function(src, pAccountId)
+    return getBalance(pAccountId)
 end)

@@ -26,13 +26,13 @@ function generateAccountId(type)
 end
 
 function createAccount(id, type, owner)
-    local insertId = MySQL.insert.await([[
+    local result = MySQL.query.await([[
         INSERT INTO financials_accounts (id, type, owner)
         VALUES (?, ?, ?)
     ]],
     { id, type, owner })
 
-    if insertId and insertId ~= 0 then
+    if result and result.affectedRows and result.affectedRows > 0 then
         return true
     end
 
