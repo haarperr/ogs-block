@@ -7,7 +7,6 @@ AddEventHandler("caue-death:illegal_revive", function(pArgs, pEntity, pEntityFla
             local complete = RPC.execute("caue-death:illegal", 200)
             if complete then
                 TriggerEvent("reviveFunction")
-                PlaySoundFrontend(-1, "HACKING_CLICK_GOOD", 0, 1)
             end
         else
             TriggerEvent("DoLongHudText", "Você esta muito longe, idiota!", 2)
@@ -26,8 +25,8 @@ AddEventHandler("caue-death:illegal_heal", function(pArgs, pEntity, pEntityFlags
         if #(GetEntityCoords(PlayerPedId()) - npcCoords) < 2.0 then
             local complete = RPC.execute("caue-death:illegal", 150)
             if complete then
-                SetEntityHealth(PlayerPedId(), 160)
-                PlaySoundFrontend(-1, "HACKING_CLICK_GOOD", 0, 1)
+                SetEntityMaxHealth(PlayerPedId(), 200)
+                SetEntityHealth(PlayerPedId(), 200)
             end
         else
             TriggerEvent("DoLongHudText", "Você esta muito longe, idiota!", 2)
