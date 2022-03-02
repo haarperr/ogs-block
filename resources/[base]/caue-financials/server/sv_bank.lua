@@ -266,11 +266,11 @@ RPC.register("caue-financials:bankTransactions", function(src, pAccountId)
 
         LEFT JOIN financials_accounts_names n1 ON a1.id = n1.id
         LEFT JOIN characters c1 ON a1.owner = c1.id
-        LEFT JOIN caue.groups g1 ON a1.owner = g1.id
+        LEFT JOIN `ogs-block`.groups g1 ON a1.owner = g1.id
 
         LEFT JOIN financials_accounts_names n2 ON a2.id = n2.id
         LEFT JOIN characters c2 ON a2.owner = c2.id
-        LEFT JOIN caue.groups g2 ON a2.owner = g2.id
+        LEFT JOIN `ogs-block`.groups g2 ON a2.owner = g2.id
 
         LEFT JOIN characters c3 ON tr.user = c3.id
 
