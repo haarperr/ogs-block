@@ -41,7 +41,7 @@ RegisterNetEvent("caue-evidence:analyze", function()
         end
 
         if updated then
-            exports.ghmattimysql:executeSync([[
+            MySQL.update.await([[
                 UPDATE inventory
                 SET information = ?
                 WHERE id = ?
@@ -59,7 +59,7 @@ RegisterNetEvent("caue-evidence:dnaSwab", function(pTarget)
     local cid = exports["caue-base"]:getChar(pTarget, "id")
     if not cid then return end
 
-    local dna = exports.ghmattimysql:scalarSync([[
+    local dna = MySQL.scalar.await([[
         SELECT dna
         FROM characters
         WHERE id = ?

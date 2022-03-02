@@ -15,7 +15,7 @@ local vehiclesForSale = {}
 function insertLog(vid, model, plate, price, financed, commission, tax, shop, buyer, seller)
     if not vid or not model or not plate or not price or not financed or not commission or not tax or not shop or not buyer or not seller then return end
 
-    exports.ghmattimysql:execute([[
+    MySQL.insert.await([[
         INSERT INTO carshop_logs (vid, model, price, financed, commission, tax, shop, buyer, seller)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ]],
@@ -43,7 +43,7 @@ RegisterNetEvent("caue-carshop:change")
 AddEventHandler("caue-carshop:change", function(shop, index, model)
     if not shop or not index or not model then return end
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE carshop_display
         SET ?? = ?
         WHERE ?? = ? AND ?? = ?
@@ -186,7 +186,7 @@ end)
 ]]
 
 Citizen.CreateThread(function()
-    local _vehicles = exports.ghmattimysql:executeSync([[
+    local _vehicles = MySQL.query.await([[
         SELECT *
         FROM carshop_vehicles
         ORDER BY category, model
@@ -194,7 +194,7 @@ Citizen.CreateThread(function()
 
     Config["Vehicles"] = _vehicles
 
-    local _display = exports.ghmattimysql:executeSync([[
+    local _display = MySQL.query.await([[
         SELECT *
         FROM carshop_display
     ]])

@@ -17,7 +17,7 @@ AddEventHandler("playerDropped", function()
 	if exports["caue-base"]:getUser(src, "connected") then
         local timeplayed = os.time(os.date("!*t")) - exports["caue-base"]:getUser(src, "connected")
 
-        exports.ghmattimysql:execute([[
+        MySQL.update([[
 	    	UPDATE users
 	    	SET timeplayed = timeplayed + ?
 	    	WHERE hex = ?
@@ -42,7 +42,7 @@ RPC.register("caue-login:fetchData", function(src)
         }
     end
 
-    local uid = exports.ghmattimysql:scalarSync([[
+    local uid = MySQL.scalar.await([[
 		SELECT id
 		FROM users
 		WHERE hex = ?
@@ -50,7 +50,7 @@ RPC.register("caue-login:fetchData", function(src)
 	{ ids.hex })
 
     if uid then
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE users
             SET name = ?, ip = ?
             WHERE hex = ?
@@ -63,13 +63,13 @@ RPC.register("caue-login:fetchData", function(src)
             end
         end
 
-        local _result = exports.ghmattimysql:executeSync([[
+        local insertId = MySQL.insert.await([[
             INSERT INTO users (name, hex, steamid, license, ip, discord)
             VALUES (?, ?, ?, ?, ?, ?)
         ]],
         { name, ids.hex, ids.steamid, ids.license, ids.ip, ids.discord })
 
-        uid = _result["insertId"]
+        uid = insertId
     end
 
     exports["caue-base"]:setUser(src, "uid", uid)

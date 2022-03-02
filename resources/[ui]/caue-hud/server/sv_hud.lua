@@ -13,17 +13,16 @@ AddEventHandler("caue-hud:getData", function(_src)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return end
 
-    exports.ghmattimysql:execute([[
+    local data = MySQL.single.await([[
         SELECT health, armour, hunger, thirst
         FROM characters
         WHERE id = ?
     ]],
-    { cid },
-    function(result)
-        if result[1] then
-            TriggerClientEvent("caue-hud:setData", src, result[1])
-        end
-    end)
+    { cid })
+
+    if data then
+        TriggerClientEvent("caue-hud:setData", src, data)
+    end
 end)
 
 RegisterNetEvent("caue-hud:updateData")
@@ -38,7 +37,7 @@ AddEventHandler("caue-hud:updateData", function(health, armour, hunger, thirst, 
         health = 200
     end
 
-    exports.ghmattimysql:execute([[
+    MySQL.update([[
         UPDATE characters
         SET health = ?, armour = ?, hunger = ?, thirst = ?
         WHERE id = ?

@@ -4,7 +4,7 @@
 
 ]]
 
-local negativeTransactions = { "transfer", "purchase", "payslip", "financing", "ticket" }
+local negativeTransactions = { "transfer", "purchase", "payslip", "financing" }
 
 --[[
 
@@ -14,39 +14,37 @@ local negativeTransactions = { "transfer", "purchase", "payslip", "financing", "
 
 RPC.register("caue-financials:bankWithdraw", function(src, pAccountId, pAmount, pComment)
     if not src then
-        return false, "ID do servidor incorreto"
+        return false, "Server id dont fount"
     end
 
     pAccountId = tonumber(pAccountId)
     if not pAccountId or pAccountId < 1 then
-        return false, "ID da conta incorreto: " .. pAccountId
+        return false, "Param account id incorrect: " .. pAccountId
     end
 
     pAmount = tonumber(pAmount)
     if not pAmount or pAmount < 1 then
-        return false, "Valor incorreto: " .. pAmount
+        return false, "Param amount incorrect: " .. pAmount
     end
 
     local accountExist = accountExist(pAccountId)
     if not accountExist then
-        return false, "ID da conta " .. pAccountId .. " não existe?"
+        return false, "Account id " .. pAccountId .. " dont exist?"
     end
 
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then
-        return false, "ID do sujeito não encontrada"
+        return false, "Character id dont found"
     end
 
     local cash = getCash(src)
     local bank = getBalance(pAccountId)
 
     if pAmount > bank then
-        return false, "Essa conta não tem essa quantidade de dinheiro"
+        return false, "This account dont have this amount"
     end
 
-    local uuid = uuid()
-
-    local success = exports.ghmattimysql:transactionSync({
+    local success = MySQL.transaction.await({
         {
             ["query"] = "UPDATE financials_accounts SET balance = balance - ? WHERE id = ?",
             ["values"] = { pAmount, pAccountId },
@@ -56,57 +54,60 @@ RPC.register("caue-financials:bankWithdraw", function(src, pAccountId, pAmount, 
             ["values"] = { pAmount, cid },
         },
         {
-            ["query"] = "INSERT INTO financials_transactions (sender, receiver, amount, comment, user, type, uid) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            ["values"] = { pAccountId, pAccountId, pAmount, pComment, cid, 3, uuid },
+            ["query"] = "INSERT INTO financials_transactions (sender, receiver, amount, comment, user, type, uid) VALUES (:sender, :receiver, :amount, :comment, :user, :type, :uid)",
+            ["values"] = {
+                sender = pAccountId,
+                receiver = pAccountId,
+                amount = pAmount,
+                comment = pComment,
+                user = cid,
+                type = 3,
+                uid = uuid()
+            },
         },
     })
 
     if not success then
-        return false, "Falha ao sacar $" .. pAmount
+        return false, "Failed in withdraw $" .. pAmount
     end
-
-    exports["caue-logs"]:AddLog("withdraw", src, pAmount, cash, bank, pComment, uuid, pAccountId)
 
     TriggerClientEvent("caue-financials:ui", src, "cash", "+", pAmount, (cash + pAmount))
 
-    return true, "Sucesso ao sacar $" .. pAmount
+    return true, "Succeeded in withdraw $" .. pAmount
 end)
 
 RPC.register("caue-financials:bankDeposit", function(src, pAccountId, pAmount, pComment)
     if not src then
-        return false, "ID do servidor incorreto"
+        return false, "Server id dont fount"
     end
 
     pAccountId = tonumber(pAccountId)
     if not pAccountId or pAccountId < 1 then
-        return false, "ID da conta incorreto: " .. pAccountId
+        return false, "Param account id incorrect: " .. pAccountId
     end
 
     pAmount = tonumber(pAmount)
     if not pAmount or pAmount < 1 then
-        return false, "Valor incorreto: " .. pAmount
+        return false, "Param amount incorrect: " .. pAmount
     end
 
     local accountExist = accountExist(pAccountId)
     if not accountExist then
-        return false, "ID da conta " .. pAccountId .. " não existe?"
+        return false, "Account id " .. pAccountId .. " dont exist?"
     end
 
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then
-        return false, "ID do sujeito não encontrado"
+        return false, "Character id dont found"
     end
 
     local cash = getCash(src)
-    local bank = getBalance(pAccountId)
 
     if pAmount > cash then
-        return false, "Você não tem essa quantidade"
+        return false, "You dont have this amount"
     end
 
-    local uuid = uuid()
-
-    local success = exports.ghmattimysql:transactionSync({
+    local success = MySQL.transaction.await({
         {
             ["query"] = "UPDATE characters SET cash = cash - ? WHERE id = ?",
             ["values"] = { pAmount, cid },
@@ -116,67 +117,71 @@ RPC.register("caue-financials:bankDeposit", function(src, pAccountId, pAmount, p
             ["values"] = { pAmount, pAccountId },
         },
         {
-            ["query"] = "INSERT INTO financials_transactions (sender, receiver, amount, comment, user, type, uid) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            ["values"] = { pAccountId, pAccountId, pAmount, pComment, cid, 2, uuid },
+            ["query"] = "INSERT INTO financials_transactions (sender, receiver, amount, comment, user, type, uid) VALUES (:sender, :receiver, :amount, :comment, :user, :type, :uid)",
+            ["values"] = {
+                sender = pAccountId,
+                receiver = pAccountId,
+                amount = pAmount,
+                comment = pComment,
+                user = cid,
+                type = 2,
+                uid = uuid()
+            },
         },
     })
 
     if not success then
-        return false, "Falha ao depositar $" .. pAmount
+        return false, "Failed in deposit $" .. pAmount
     end
-
-    exports["caue-logs"]:AddLog("deposit", src, pAmount, cash, bank, pComment, uuid, pAccountId)
 
     TriggerClientEvent("caue-financials:ui", src, "cash", "-", pAmount, (cash - pAmount))
 
-    return true, "Sucesso ao depositar $" .. pAmount
+    return true, "Succeeded in deposit $" .. pAmount
 end)
 
 RPC.register("caue-financials:bankTransfer", function(src, pSenderAccount, pReceiverAccount, pAmount, pComment)
     if not src then
-        return false, "ID do servidor não fonte"
+        return false, "Server id dont fount"
     end
 
     pSenderAccount = tonumber(pSenderAccount)
     if not pSenderAccount or pSenderAccount < 1 then
-        return false, "ID da conta do remetende incorreto: " .. pSenderAccount
+        return false, "Param sender account id incorrect: " .. pSenderAccount
     end
 
     pReceiverAccount = tonumber(pReceiverAccount)
     if not pReceiverAccount or pReceiverAccount < 1 then
-        return false, "ID da conta do receptor incorreto: " .. pReceiverAccount
+        return false, "Param receiver account id incorrect: " .. pReceiverAccount
     end
 
     pAmount = tonumber(pAmount)
     if not pAmount or pAmount < 1 then
-        return false, "Quantidade incorreta: " .. pAmount
+        return false, "Param amount incorrect: " .. pAmount
     end
 
     local accountSenderExist = accountExist(pSenderAccount)
     if not accountSenderExist then
-        return false, "ID da conta do remetente " .. pSenderAccount .. " não existe"
+        return false, "Sender account id " .. pSenderAccount .. " dont exist"
     end
 
     local accountReceiverExist = accountExist(pReceiverAccount)
     if not accountReceiverExist then
-        return false, "ID da conta do destinatário " .. pReceiverAccount .. " não existe"
+        return false, "Receiver account id " .. pReceiverAccount .. " dont exist"
     end
 
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then
-        return false, "ID do sujeito não encontrada"
+        return false, "Character id dont found"
     end
 
     local senderBank = getBalance(pSenderAccount)
     local receiverBank = getBalance(pReceiverAccount)
 
     if pAmount > senderBank then
-        return false, "Essa conta não possui essa quantidade"
+        return false, "This account dont have this amount"
     end
 
-    local uuid = uuid()
-
-    local success = exports.ghmattimysql:transactionSync({
+    local success = MySQL.transaction.await({
         {
             ["query"] = "UPDATE financials_accounts SET balance = balance - ? WHERE id = ?",
             ["values"] = { pAmount, pSenderAccount },
@@ -186,34 +191,40 @@ RPC.register("caue-financials:bankTransfer", function(src, pSenderAccount, pRece
             ["values"] = { pAmount, pReceiverAccount },
         },
         {
-            ["query"] = "INSERT INTO financials_transactions (sender, receiver, amount, comment, user, type, uid) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            ["values"] = { pSenderAccount, pReceiverAccount, pAmount, pComment, cid, 1, uuid },
+            ["query"] = "INSERT INTO financials_transactions (sender, receiver, amount, comment, user, type, uid) VALUES (:sender, :receiver, :amount, :comment, :user, :type, :uid)",
+            ["values"] = {
+                sender = pSenderAccount,
+                receiver = pReceiverAccount,
+                amount = pAmount,
+                comment = pComment,
+                user = cid,
+                type = 1,
+                uid = uuid()
+            },
         },
     })
 
     if not success then
-        return false, "Falha ao transferir $" .. pAmount .. " para a conta de ID: " .. pReceiverAccount
+        return false, "Failed in transfer $" .. pAmount .. " to Account ID: " .. pReceiverAccount
     end
-
-    exports["caue-logs"]:AddLog("transfer", src, pAmount, senderBank, receiverBank, pComment, uuid, pSenderAccount, pReceiverAccount)
 
     local userAccountId = exports["caue-base"]:getChar(src, "bankid")
     if pSenderAccount == userAccountId then
-        TriggerClientEvent("caue-phone:notification", src, "fas fa-university", "Bank", "Você transferiu $" .. pAmount .. " para a conta de ID: " .. pReceiverAccount, 3000)
+        TriggerClientEvent("caue-phone:notification", src, "fas fa-university", "Bank", "You transferred $" .. pAmount .. " to Account ID: " .. pReceiverAccount, 3000)
     end
 
     local receiverSid = exports["caue-base"]:getSidWithAccountId(pReceiverAccount)
     if receiverSid ~= 0 then
-        TriggerClientEvent("caue-phone:notification", receiverSid, "fas fa-university", "Bank", "Você recebeu uma transferência de $" .. pAmount .. " da conta de ID: " .. pSenderAccount, 3000)
+        TriggerClientEvent("caue-phone:notification", receiverSid, "fas fa-university", "Bank", "You received a transfer in the amount of $" .. pAmount .. " from Account ID: " .. pSenderAccount, 3000)
     end
 
-    return true, "Sucesso ao transferir $" .. pAmount .. " para a conta de ID:" .. pReceiverAccount
+    return true, "Succeeded in transfer $" .. pAmount .. " to Account ID:" .. pReceiverAccount
 end)
 
 RPC.register("caue-financials:bankTransactions", function(src, pAccountId)
     if not src then return {} end
 
-    local transactions = exports.ghmattimysql:executeSync([[
+    local transactions = MySQL.query.await([[
         SELECT
 	        t.type AS transcation_type,
             tr.amount AS transcation_amount,
@@ -236,7 +247,7 @@ RPC.register("caue-financials:bankTransactions", function(src, pAccountId)
 	        END) AS transcation_receiver_name,
 
             (CASE
-                WHEN a1.type = 4 AND (a1.id != ? OR tr.user = 0) THEN g1.name
+                WHEN a1.type = 4 AND (a1.id != :accountId OR tr.user = 0) THEN g1.name
                 WHEN tr.user = 0 THEN n1.name
                 WHEN tr.user IS NULL THEN ""
 	        	ELSE CONCAT(c3.first_name," ",c3.last_name)
@@ -263,12 +274,12 @@ RPC.register("caue-financials:bankTransactions", function(src, pAccountId)
 
         LEFT JOIN characters c3 ON tr.user = c3.id
 
-        WHERE (tr.sender = ?) OR (tr.receiver = ?)
+        WHERE (tr.sender = :accountId) OR (tr.receiver = :accountId)
 
         ORDER BY tr.id DESC
         LIMIT 50
     ]],
-    { pAccountId, pAccountId, pAccountId })
+    { accountId = pAccountId })
 
     for i, v in ipairs(transactions) do
         if (v.transcation_type == "withdraw") or (has_value(negativeTransactions, v.transcation_type) and pAccountId ~= v.transcation_receiver) then

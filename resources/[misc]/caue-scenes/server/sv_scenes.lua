@@ -7,7 +7,7 @@ end)
 function UpdateAllScenes()
     scenes = {}
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT *
         FROM scenes
     ]])
@@ -30,7 +30,7 @@ function UpdateAllScenes()
 end
 
 function DeleteExpiredScenes()
-    local result = exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         DELETE FROM scenes
         WHERE date_deletion < NOW()
     ]])
@@ -39,7 +39,7 @@ function DeleteExpiredScenes()
 end
 
 RegisterNetEvent("caue-scenes:server:DeleteScene", function(id)
-    local result = exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         DELETE FROM scenes
         WHERE id = ?
     ]],
@@ -54,23 +54,13 @@ RegisterNetEvent("caue-scenes:server:CreateScene", function(sceneData)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local insertId = MySQL.insert.await([[
         INSERT INTO scenes (creator, text, color, viewdistance, expiration, fontsize, fontstyle, coords, date_creation, date_deletion)
         VALUES (? ,?, ?, ?, ?, ?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL ? HOUR))
     ]],
-    {
-        cid,
-        sceneData.text,
-        sceneData.color,
-        sceneData.viewdistance,
-        sceneData.expiration,
-        sceneData.fontsize,
-        sceneData.fontstyle,
-        json.encode(sceneData.coords),
-        sceneData.expiration,
-    })
+    { cid, sceneData.text, sceneData.color, sceneData.viewdistance, sceneData.expiration, sceneData.fontsize, sceneData.fontstyle, json.encode(sceneData.coords), sceneData.expiration })
 
-    if result["insertId"] < 1 then
+    if not insertId or insertId < 1 then
         return false, "Database insert eror"
     end
 

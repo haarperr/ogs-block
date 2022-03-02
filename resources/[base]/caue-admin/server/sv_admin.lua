@@ -79,7 +79,7 @@ AddEventHandler("caue-base:sessionStarted", function()
         return
     end
 
-    local rank = exports.ghmattimysql:scalarSync([[
+    local rank = MySQL.scalar.await([[
         SELECT users.rank
         FROM users
         WHERE hex = ?

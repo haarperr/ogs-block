@@ -10,6 +10,7 @@ files({
 })
 
 client_script "@warmenu/warmenu.lua"
+server_script "@oxmysql/lib/MySQL.lua"
 
 client_script "@caue-lib/client/cl_infinity.lua"
 server_script "@caue-lib/server/sv_infinity.lua"

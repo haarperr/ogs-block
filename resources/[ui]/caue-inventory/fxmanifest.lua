@@ -27,6 +27,7 @@ shared_scripts {
 }
 
 server_scripts {
+    "@oxmysql/lib/MySQL.lua",
     "server/sv_clean.js",
     "server/sv_shops.js",
     "server/sv_main.js",

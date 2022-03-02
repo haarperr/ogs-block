@@ -6,7 +6,7 @@ RegisterNetEvent("caue-idcard:show", function(pInfo)
     local dob = pInfo["Data de Nascimento"]
     local gender = pInfo["Sexo"]
 
-    local image = exports.ghmattimysql:scalarSync([[
+    local image = MySQL.scalar.await([[
         SELECT image
         FROM mdt_profiles
         WHERE cid = ?

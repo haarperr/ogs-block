@@ -53,7 +53,7 @@ function haveWhitelist(src)
         return false, "user roles not found"
     end
 
-    local whitelistTags = exports.ghmattimysql:scalarSync([[
+    local whitelistTags = MySQL.scalar.await([[
         SELECT value
         FROM variables
         WHERE name = "whitelist_tags"

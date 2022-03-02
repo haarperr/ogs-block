@@ -10,7 +10,7 @@ function getCash(src)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return 0 end
 
-    local cash = exports.ghmattimysql:scalarSync([[
+    local cash = MySQL.scalar.await([[
         SELECT cash
         FROM characters
         WHERE id = ?
@@ -28,14 +28,14 @@ function updateCash(src, type, amount)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return false end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows  = MySQL.update.await([[
         UPDATE characters
         SET cash = cash ]] .. type .. [[ ?
         WHERE id = ?
     ]],
     { amount, cid })
 
-    if result["changedRows"] ~= 1 then return false end
+    if not affectedRows or affectedRows == 0 then return false end
 
     TriggerClientEvent("caue-financials:ui", src, "cash", type, amount, getCash(src))
 

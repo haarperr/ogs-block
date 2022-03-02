@@ -1,10 +1,10 @@
 function IsBanned(hex)
-	local ban = exports.ghmattimysql:executeSync([[
+	local ban = MySQL.single.await([[
 		SELECT *
 		FROM users_bans
 		WHERE hex = ?
 	]],
-	{ hex })[1]
+	{ hex })
 
 	if not ban then return false end
 
@@ -26,7 +26,7 @@ Queue.OnJoin(function(source, allow)
 		return
 	end
 
-	local priority = exports.ghmattimysql:scalarSync([[
+	local priority = MySQL.scalar.await([[
 		SELECT priority
 		FROM whitelist
 		WHERE hex = ?
@@ -48,7 +48,7 @@ Queue.OnJoin(function(source, allow)
 				allow("Você está banido | Motivo: " .. ban_reason .. " | Termina: " .. os.date("%d/%m/%Y - %X", ban_time))
 				return
 			elseif ban_time < time then
-				exports.ghmattimysql:execute([[
+				MySQL.update([[
 					DELETE FROM users_bans
 					WHERE hex = ?
 				]],

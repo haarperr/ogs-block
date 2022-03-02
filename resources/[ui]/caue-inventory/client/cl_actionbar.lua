@@ -50,6 +50,23 @@ local ammoTypes = {
 	["-1575030772"] = 6, -- taser ammo
 }
 
+local excludedWeapons = {
+	[`WEAPON_UNARMED`] = true,
+	[`WEAPON_FIREEXTINGUISHER`] = true,
+	[`WEAPON_FLARE`] = true,
+	[`WEAPON_PetrolCan`] = true,
+	[`WEAPON_STUNGUN`] = true,
+	[-2009644972] = true, -- paintball gun bruv
+	[1064738331] = true, -- bricked
+	[-828058162] = true, -- shoed
+	[571920712] = true, -- money
+	[-691061592] = true, -- book
+	[1834241177] = true, -- EMP Gun
+	[1233104067] = true, -- Flare
+	[600439132] = true, -- Lime
+	[126349499] = true, -- Snowball
+}
+
 --[[
 
 	Functions
@@ -592,7 +609,7 @@ Citizen.CreateThread(function()
 				end
 			end
 
-			if hash ~= `WEAPON_STUNGUN` and hash ~= `WEAPON_FIREEXTINGUISHER` then
+			if not excludedWeapons[hash] then
 				lastShot = GetGameTimer()
 				shotRecently = true
 			end

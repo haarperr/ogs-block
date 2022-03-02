@@ -160,7 +160,7 @@ RPC.register("caue-vehicles:getGarage", function(src, garage)
 
     local type = garagesConfig[garage]["type"]
 
-    local vehicles = exports.ghmattimysql:executeSync([[
+    local vehicles = MySQL.query.await([[
         SELECT v2.id, v2.plate, v2.model, v3.body_damage, v3.engine_damage, v3.fuel
         FROM vehicles_garage v1
         INNER JOIN vehicles v2 ON v2.id = v1.vid AND v2.cid = ? AND v2.type = ?
@@ -175,7 +175,7 @@ end)
 RPC.register("caue-vehicles:canStoreVehicle", function(src, garage, vid)
     local typeGarage = garagesConfig[garage]["type"]
 
-    local typeVehicle = exports.ghmattimysql:scalarSync([[
+    local typeVehicle = MySQL.scalar.await([[
         SELECT type
         FROM vehicles
         WHERE id = ?
@@ -202,7 +202,7 @@ end)
 ]]
 
 Citizen.CreateThread(function()
-    exports.ghmattimysql:execute([[
+    MySQL.update([[
         UPDATE vehicles_garage
         SET state = "In"
         WHERE state = "Out"

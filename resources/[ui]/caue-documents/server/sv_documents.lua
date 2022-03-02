@@ -7,7 +7,7 @@
 function getDocuments(type, data)
     if not type or not data then return {} end
 
-    local documents = exports.ghmattimysql:executeSync([[
+    local documents = MySQL.query.await([[
         SELECT *
         FROM documents
         WHERE ?? = ?
@@ -24,14 +24,14 @@ end
 function submitDocument(data, cid, group)
     if not data or (not cid and not group) then return end
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.insert.await([[
         INSERT INTO documents (cid, data)
         VALUES (?, ?)
     ]],
     { cid, json.encode(data) })
 
     if group then
-        exports.ghmattimysql:executeSync([[
+        MySQL.insert.await([[
             INSERT INTO documents (documents.group, data)
             VALUES (?, ?)
         ]],
@@ -44,7 +44,7 @@ end
 function deleteDocument(id)
     if not id then return end
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         DELETE FROM documents
         WHERE id = ?
     ]],

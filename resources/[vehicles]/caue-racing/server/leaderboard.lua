@@ -1,7 +1,7 @@
 function leaderboardAddRaces(id)
     if not id then return end
 
-    exports.ghmattimysql:execute([[
+    MySQL.update([[
         UPDATE racing_races
         SET races = races + 1
         WHERE id = ?
@@ -19,7 +19,7 @@ function leaderboardAddFastest(id, time, aliases)
         Races[id]["fastest_time"] = time
         Races[id]["fastest_name"] = aliases
 
-        exports.ghmattimysql:execute([[
+        MySQL.update([[
             UPDATE racing_races
             SET fastest_time = ?, fastest_name = ?
             WHERE id = ?
@@ -29,7 +29,7 @@ function leaderboardAddFastest(id, time, aliases)
 end
 
 RPC.register("caue-racing:getLeaderboard", function()
-    local leaderboard = exports.ghmattimysql:executeSync([[
+    local leaderboard = MySQL.query.await([[
         SELECT id, name, creator, distance, fastest_time, fastest_name, races
         FROM racing_races
         ORDER BY races

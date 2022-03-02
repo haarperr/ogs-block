@@ -44,8 +44,8 @@ function DeleteOld() {
 onNet("onResourceStart", (resource) => {
     if (resource == GetCurrentResourceName()) {
         setTimeout(() => {
-            exports.ghmattimysql.execute(`DELETE FROM inventory WHERE name like '%Drop%' OR name like '%trash%'`);
-            exports.ghmattimysql.execute(`DELETE FROM inventory WHERE dropped = "1"`);
+            exports.oxmysql.query(`DELETE FROM inventory WHERE name like '%Drop%' OR name like '%trash%'`);
+            exports.oxmysql.query(`DELETE FROM inventory WHERE dropped = "1"`);
 
             DeleteOld();
         }, 20000);

@@ -111,6 +111,8 @@ AddEventHandler('rcore_spray:addSpray', function(spray)
     if Framework.STANDALONE then
         if exports["caue-inventory"]:hasEnoughOfItem(Source, "spray", 1, false) then
             TriggerClientEvent("inventory:removeItem", Source, "spray", 1)
+            local cid = exports["caue-base"]:getChar(Source, "id")
+            spray.identifier = cid
             AddSpray(Source, spray)
         end
 

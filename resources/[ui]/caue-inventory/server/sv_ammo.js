@@ -45,8 +45,8 @@ onNet("caue-inventory:ammo", async (originInventory, targetInventory, originSlot
 
     information = JSON.stringify(information)
 
-    exports.ghmattimysql.execute(`UPDATE inventory SET information='${information}' WHERE name='${targetInventory}' AND item_id='${targetItemId}' AND slot='${targetSlot}'`, {}, function () {
-        exports.ghmattimysql.execute(`DELETE FROM inventory WHERE name='${originInventory}' AND item_id='${originItemId}' AND slot='${originSlot}' LIMIT 1`, {}, function () {
+    exports.oxmysql.update(`UPDATE inventory SET information='${information}' WHERE name='${targetInventory}' AND item_id='${targetItemId}' AND slot='${targetSlot}'`, {}, function () {
+        exports.oxmysql.query(`DELETE FROM inventory WHERE name='${originInventory}' AND item_id='${originItemId}' AND slot='${originSlot}' LIMIT 1`, {}, function () {
             emit("server-request-update-src", player, src);
         })
     });

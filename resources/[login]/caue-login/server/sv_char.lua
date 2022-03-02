@@ -5,7 +5,7 @@ local function phoneNumber()
 
         local phoneNumber = tonumber(areaCode .. number)
 
-        local exist = exports.ghmattimysql:scalarSync([[
+        local exist = MySQL.scalar.await([[
             SELECT phone
             FROM characters
             WHERE phone = ?
@@ -24,32 +24,30 @@ RegisterNetEvent("login:getCharModels")
 AddEventHandler("login:getCharModels", function(charIds, isReset)
     local src = source
 
-    exports.ghmattimysql:execute([[
+    local result = MySQL.query.await([[
         SELECT *
         FROM characters_clothes
         WHERE cid IN (]] .. charIds .. [[)
-    ]],
-    {},
-    function(result)
-        local peds = {}
+    ]])
 
-        for i,v in ipairs(result) do
-            peds[v.cid] = {
-                model = v.model,
-                drawables = json.decode(v.drawables),
-                props = json.decode(v.props),
-                drawtextures = json.decode(v.drawtextures),
-                proptextures = json.decode(v.proptextures),
-                hairColor = json.decode(v.hairColor),
-                headBlend = json.decode(v.headBlend),
-                headStructure = json.decode(v.headStructure),
-                headOverlay = json.decode(v.headOverlay),
-                tattoos = json.decode(v.tattoos)
-            }
-        end
+    local peds = {}
 
-        TriggerClientEvent("login:CreatePlayerCharacterPeds", src, peds, isReset)
-    end)
+    for i,v in ipairs(result) do
+        peds[v.cid] = {
+            model = v.model,
+            drawables = json.decode(v.drawables),
+            props = json.decode(v.props),
+            drawtextures = json.decode(v.drawtextures),
+            proptextures = json.decode(v.proptextures),
+            hairColor = json.decode(v.hairColor),
+            headBlend = json.decode(v.headBlend),
+            headStructure = json.decode(v.headStructure),
+            headOverlay = json.decode(v.headOverlay),
+            tattoos = json.decode(v.tattoos)
+        }
+    end
+
+    TriggerClientEvent("login:CreatePlayerCharacterPeds", src, peds, isReset)
 end)
 
 RPC.register("caue-char:fetchCharacters", function(src)
@@ -61,7 +59,7 @@ RPC.register("caue-char:fetchCharacters", function(src)
         }
     end
 
-    local characters = exports.ghmattimysql:executeSync([[
+    local characters = MySQL.query.await([[
         SELECT *
         FROM characters
         WHERE hex = ? AND deleted = 0
@@ -92,19 +90,19 @@ RPC.register("caue-char:createCharacter", function(src, params)
     local dob = formatDate(params.dob)
     local phone = phoneNumber()
 
-    local result = exports.ghmattimysql:executeSync([[
+    local insertId = MySQL.insert.await([[
         INSERT INTO characters (hex, first_name, last_name, gender, dob, phone)
         VALUES (?, ?, ?, ?, ?, ?)
     ]],
     { hex, fname, lname, gender, dob, phone })
 
-    exports["caue-logs"]:AddLog("character-create", src, result["insertId"])
+    exports["caue-logs"]:AddLog("character-create", src, insertId)
 
     return {}
 end)
 
 RPC.register("caue-char:deleteCharacter", function(src, cid)
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE characters
         SET deleted = 1
         WHERE id = ?
@@ -117,18 +115,17 @@ RPC.register("caue-char:deleteCharacter", function(src, cid)
 end)
 
 RPC.register("caue-char:selectCharacter", function(src, cid)
-    local char = exports.ghmattimysql:executeSync([[
+    local character = MySQL.single.await([[
         SELECT id, hex, first_name, last_name, gender, dob, cash, bankid, phone, job, job2, jail, new, hotel, aliases
         FROM characters
         WHERE id = ?
     ]],
     { cid })
 
-    if not char or not char[1] then
+    if not character then
         return nil
     end
 
-    local character = char[1]
     character["phone"] = math.ceil(character["phone"])
 
     exports["caue-base"]:setUser(src, "char", character)

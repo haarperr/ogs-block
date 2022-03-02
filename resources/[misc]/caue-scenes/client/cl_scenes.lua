@@ -148,13 +148,6 @@ RegisterNetEvent("caue-scenes:client:UpdateAllScenes", function(_scenes)
     scenes = _scenes
 end)
 
-AddEventHandler("onResourceStart", function(resourceName)
-    if resourceName == GetCurrentResourceName() then
-        Citizen.Wait(5000)
-        scenes = RPC.execute("caue-scenes:getScenes")
-    end
-end)
-
 --[[
 
     NUI
@@ -197,6 +190,10 @@ Citizen.CreateThread(function()
         ToggleDeletionLaser()
     end, false)
     RegisterCommand("-deleteScene", function() end, false)
+
+    Citizen.Wait(3000)
+
+    scenes = RPC.execute("caue-scenes:getScenes")
 end)
 
 Citizen.CreateThread(function()

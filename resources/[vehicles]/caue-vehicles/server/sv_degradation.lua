@@ -91,7 +91,7 @@ AddEventHandler("caue-vehicles:updateVehicleHealth", function(identifier, plate,
     local src = source
 
     if identifier then
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE vehicles_metadata
             SET body_damage = ?, engine_damage = ?
             WHERE vid = ?
@@ -115,7 +115,7 @@ AddEventHandler("caue-vehicles:updateVehicleDegradation", function(identifier, p
     local src = source
 
     if identifier then
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE vehicles_metadata
             SET degradation = ?
             WHERE vid = ?
@@ -141,7 +141,7 @@ AddEventHandler("caue-vehicles:adminRepair", function(target)
     local plate = string.gsub(GetVehicleNumberPlateText(vehicle), "%s+", "")
     if not plate then return end
 
-    local vid = exports.ghmattimysql:scalarSync([[
+    local vid = MySQL.scalar.await([[
         SELECT id
         FROM vehicles
         WHERE plate = ?
@@ -169,7 +169,7 @@ AddEventHandler("caue-vehicles:updateVehicleMileage", function(identifier, plate
         if not vehiclesMileage["updates"][identifier] or GetGameTimer() > vehiclesMileage["updates"][identifier] then
             vehiclesMileage["updates"][identifier] = GetGameTimer() + 300000
 
-            exports.ghmattimysql:executeSync([[
+            MySQL.update.await([[
                 UPDATE vehicles_metadata
                 SET mileage = ?
                 WHERE vid = ?

@@ -8,6 +8,7 @@ shared_script {
 }
 
 server_scripts {
+    "@oxmysql/lib/MySQL.lua",
     "@caue-lib/server/sv_rpc.lua",
     "server/*",
 }

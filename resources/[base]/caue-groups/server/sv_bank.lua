@@ -7,7 +7,7 @@
 function groupsBanks(cid)
     local groups = {}
 
-    local _groups = exports.ghmattimysql:executeSync([[
+    local _groups = MySQL.query.await([[
         SELECT g2.withdraw, g2.deposit, g3.id, g3.bank
         FROM groups_members g1
         INNER JOIN groups_ranks g2 ON g1.group = g2.group AND g1.rank = g2.rank
@@ -28,7 +28,7 @@ end
 function groupBank(group)
     if not group then return 1 end
 
-    local bank = exports.ghmattimysql:scalarSync([[
+    local bank = MySQL.scalar.await([[
         SELECT ??
         FROM ??
         WHERE ?? = ?
@@ -56,7 +56,7 @@ exports("groupBank", groupBank)
 ]]
 
 Citizen.CreateThread(function()
-    local groups = exports.ghmattimysql:executeSync([[
+    local groups = MySQL.query.await([[
         SELECT id, bank
         FROM ??
     ]],
@@ -68,7 +68,7 @@ Citizen.CreateThread(function()
             if accountId then
                 local created = exports["caue-financials"]:createAccount(accountId, 4, v.id)
                 if created then
-                    local result = exports.ghmattimysql:executeSync([[
+                    local result = MySQL.update.await([[
                         UPDATE ??
                         SET bank = ?
                         WHERE id = ?

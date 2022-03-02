@@ -297,64 +297,9 @@ end
 
 
 
--- DNA
-
-RegisterNetEvent("evidence:addDnaSwab")
-AddEventHandler("evidence:addDnaSwab", function(dna)
-    TriggerEvent("DoLongHudText", "Resultado de DNA: " .. dna,1)
-end)
-
-RegisterNetEvent("CheckDNA")
-AddEventHandler("CheckDNA", function()
-    TriggerServerEvent("Evidence:checkDna")
-end)
-
-RegisterNetEvent("evidence:dnaSwab")
-AddEventHandler("evidence:dnaSwab", function(pArgs, pEntity, pContext)
-    TriggerServerEvent("police:dnaAsk", GetPlayerServerId(NetworkGetPlayerIndexFromPed(pEntity)))
-end)
-
-RegisterNetEvent("evidence:swabNotify")
-AddEventHandler("evidence:swabNotify", function()
-    TriggerEvent("DoLongHudText", "Cotonete de DNA utilizado.",1)
-end)
 
 
-function GetPlayers()
-    local players = {}
 
-    for i = 0, 255 do
-        if NetworkIsPlayerActive(i) then
-            players[#players+1]= i
-        end
-    end
-
-    return players
-end
-
-function GetClosestPlayer()
-    local players = GetPlayers()
-    local closestDistance = -1
-    local closestPlayer = -1
-    local ply = PlayerPedId()
-    local plyCoords = GetEntityCoords(ply, 0)
-
-    for index,value in ipairs(players) do
-        local target = GetPlayerPed(value)
-        if(target ~= ply) then
-            local targetCoords = GetEntityCoords(GetPlayerPed(value), 0)
-            local distance = #(vector3(targetCoords["x"], targetCoords["y"], targetCoords["z"]) - vector3(plyCoords["x"], plyCoords["y"], plyCoords["z"]))
-            if(closestDistance == -1 or closestDistance > distance) then
-                closestPlayer = value
-                closestDistance = distance
-            end
-        end
-    end
-
-    return closestPlayer, closestDistance
-end
-
--- this is the upside down world, be careful.
 
 function getVehicleInDirection(coordFrom, coordTo)
     local offset = 0

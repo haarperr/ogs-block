@@ -7,7 +7,7 @@
 RPC.register("caue-vehicles:addFakePlate", function(src, vid)
     local plate = randomPlate()
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE vehicles_metadata
         SET fakePlate = ?
         WHERE vid = ?
@@ -20,14 +20,14 @@ RPC.register("caue-vehicles:addFakePlate", function(src, vid)
 end)
 
 RPC.register("caue-vehicles:removeFakePlate", function(src, vid)
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE vehicles_metadata
         SET fakePlate = NULL
         WHERE vid = ?
     ]],
     { vid })
 
-    local plate = exports.ghmattimysql:scalarSync([[
+    local plate = MySQL.scalar.await([[
         SELECT plate
         FROM vehicles
         WHERE id = ?

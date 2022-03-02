@@ -29,7 +29,7 @@ function getItem(pClass, pInfo)
 end
 
 function getInventory(pInventory)
-    local inventory = exports.ghmattimysql:executeSync([[
+    local inventory = MySQL.query.await([[
         SELECT count(item_id) as amount, id, name, item_id, information, slot, dropped, creationDate
         FROM inventory
         WHERE name = ?

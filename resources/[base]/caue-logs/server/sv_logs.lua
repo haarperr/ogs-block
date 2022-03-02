@@ -90,16 +90,16 @@ LOGS = {
         ["FUNCTION"] = function(type, src, dbid)
             local ids = GetIds(src)
 
-            local char = exports.ghmattimysql:executeSync([[
+            local char = MySQL.single.await([[
                 SELECT first_name, last_name, gender, dob, phone
                 FROM characters
                 WHERE id = ?
             ]],
-            { dbid })[1]
+            { dbid })
 
-            local gender = "Homem"
+            local gender = "Male"
             if char["gender"] == 1 then
-                gender = "Mulher"
+                gender = "Female"
             end
 
             local embed = {
@@ -136,12 +136,12 @@ LOGS = {
         ["FUNCTION"] = function(type, src, dbid)
             local ids = GetIds(src)
 
-            local char = exports.ghmattimysql:executeSync([[
+            local char = MySQL.single.await([[
                 SELECT first_name, last_name
                 FROM characters
                 WHERE id = ?
             ]],
-            { dbid })[1]
+            { dbid })
 
             local embed = {
                 {
@@ -304,12 +304,12 @@ LOGS = {
 
             local ids = GetIds(src)
 
-            local tochar = exports.ghmattimysql:executeSync([[
+            local tochar = MySQL.single.await([[
                 SELECT hex, first_name, last_name
                 FROM characters
                 WHERE id = ?
             ]],
-            { to })[1]
+            { to })
 
             local groupName = exports["caue-groups"]:groupName(group)
 

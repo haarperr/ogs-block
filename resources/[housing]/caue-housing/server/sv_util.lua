@@ -21,7 +21,7 @@ RPC.register("caue-housing:canRent", function(src, pPropertyId)
         return false
     end
 
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT id
         FROM housing
         WHERE hid = ?
