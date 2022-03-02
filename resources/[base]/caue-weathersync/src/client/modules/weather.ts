@@ -19,7 +19,7 @@ onNet("insideSpawn", (inside: boolean) => {
 })
 
 export let currentWeather: WeatherProgression = {
-    weather: "EXTRASUNNY",
+    weather: "CLEAR",
     windSpeed: 0,
     windDir: 0,
     rainLevel: 0,
