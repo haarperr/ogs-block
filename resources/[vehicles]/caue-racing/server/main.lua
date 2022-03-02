@@ -72,7 +72,7 @@ end)
 ]]
 
 Citizen.CreateThread(function()
-    local races = exports.ghmattimysql:executeSync([[
+    local races = MySQL.query.await([[
         SELECT *
         FROM racing_races
     ]])

@@ -8,7 +8,7 @@ function generateAccountId(type)
     for i = 1, 100 do
         local accountId = tonumber(6 .. type .. math.random(100000, 999999))
 
-        local exist = exports.ghmattimysql:scalarSync([[
+        local exist = MySQL.scalar.await([[
             SELECT id
             FROM financials_accounts
             WHERE id = ?
@@ -26,13 +26,13 @@ function generateAccountId(type)
 end
 
 function createAccount(id, type, owner)
-    local result = exports.ghmattimysql:executeSync([[
+    local insertId = MySQL.insert.await([[
         INSERT INTO financials_accounts (id, type, owner)
         VALUES (?, ?, ?)
     ]],
     { id, type, owner })
 
-    if result and result["affectedRows"] == 1 then
+    if insertId and insertId ~= 0 then
         return true
     end
 
@@ -40,7 +40,7 @@ function createAccount(id, type, owner)
 end
 
 function accountExist(pAccountId)
-    local exist = exports.ghmattimysql:scalarSync([[
+    local exist = MySQL.scalar.await([[
         SELECT id
         FROM financials_accounts
         WHERE id = ?
@@ -78,14 +78,14 @@ AddEventHandler("SpawnEventsServer", function()
         if accountId then
             local created = createAccount(accountId, 1, cid)
             if created then
-                local result = exports.ghmattimysql:executeSync([[
+                local affectedRows = MySQL.update.await([[
                     UPDATE characters
                     SET bankid = ?
                     WHERE id = ?
                 ]],
                 { accountId, cid })
 
-                if result and result["affectedRows"] == 1 then
+                if affectedRows and affectedRows ~= 0 then
                     exports["caue-base"]:setChar(src, "bankid", accountId)
                     TriggerClientEvent("caue-base:setChar", src, "bankid", accountId)
                 end
@@ -112,7 +112,7 @@ RPC.register("caue-financials:getAccounts", function(src)
         groups = groups .. "," .. id
     end
 
-    local accounts = exports.ghmattimysql:executeSync([[
+    local accounts = MySQL.query.await([[
         SELECT
             a.id AS account_id,
             t.type AS account_type,

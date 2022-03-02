@@ -14,7 +14,7 @@ AddEventHandler("caue-death:characterKill", function(_src)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return end
 
-    exports.ghmattimysql:execute([[
+    MySQL.Async.update([[
         UPDATE characters
         SET deleted = 1
         WHERE id = ?

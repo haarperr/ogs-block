@@ -23,6 +23,7 @@ server_scripts {
 	'server/bridge/detector.js',
 	'server/bridge/*.lua',
 
+	"@oxmysql/lib/MySQL.lua",
 	'server/mysql/ghmattimysql.lua',
 	'server/mysql/disabledmysql.lua',
 	'server/mysql/oxmysql.lua',

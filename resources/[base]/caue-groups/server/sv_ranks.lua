@@ -7,22 +7,22 @@
 function rankInfos(group, rank)
     if not group or not rank then return {} end
 
-    local infos = exports.ghmattimysql:executeSync([[
+    local infos = MySQL.single.await([[
         SELECT *
         FROM ??
         WHERE ?? = ? AND ?? = ?
     ]],
     { "groups_ranks", "group", group, "rank", rank })
 
-    if not infos[1] then return {} end
+    if not infos then return {} end
 
-    return infos[1]
+    return infos
 end
 
 function rankAmount(group)
     if not group then return 0 end
 
-    local ranks = exports.ghmattimysql:executeSync([[
+    local ranks = MySQL.query.await([[
         SELECT ??
         FROM ??
         WHERE ?? = ?
@@ -71,19 +71,19 @@ function setRank(group, rank, cid, _src)
     end
 
     if rank < 1 and currentrank > 0 then
-        exports.ghmattimysql:executeSync([[
+        MySQL.query.await([[
             DELETE FROM ??
             WHERE ?? = ? AND ?? = ?
         ]],
         { "groups_members", "cid", cid, "group", group })
     elseif rank > 0 and currentrank == 0 then
-        exports.ghmattimysql:executeSync([[
+        MySQL.query.await([[
             INSERT INTO ?? (??, ??, ??, ??)
             VALUES (?, ?, ?, ?)
         ]],
         { "groups_members", "cid", "group", "rank", "giver", cid, group, rank, giver })
     elseif rank > 0 and currentrank > 0 then
-        exports.ghmattimysql:executeSync([[
+        MySQL.query.await([[
             UPDATE ??
             SET ?? = ?, ?? = ?
             WHERE ?? = ? AND ?? = ?
@@ -115,7 +115,7 @@ function getRank(group, _src, _cid)
         cid = exports["caue-base"]:getChar(src, "id")
     end
 
-    local rank = exports.ghmattimysql:scalarSync([[
+    local rank = MySQL.scalar.await([[
         SELECT ??
         FROM ??
         WHERE ?? = ? AND ?? = ?
@@ -147,7 +147,7 @@ RPC.register("caue-groups:setRank", function(src, group, rank, cid)
 end)
 
 RPC.register("caue-groups:ranks", function(src, group)
-    local ranks = exports.ghmattimysql:executeSync([[
+    local ranks = MySQL.query.await([[
         SELECT *
         FROM ??
         WHERE ?? = ?

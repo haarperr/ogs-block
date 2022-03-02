@@ -5,16 +5,15 @@ AddEventHandler("raid_clothes:list_outfits",function()
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return end
 
-    exports.ghmattimysql:execute([[
+    local outfits = MySQL.query.await([[
         SELECT name, slot
         FROM characters_outfits
         WHERE cid = ?
         ORDER BY slot
     ]],
-    { cid },
-    function(result)
-    	TriggerClientEvent("raid_clothes:ListOutfits", src, result)
-	end)
+    { cid })
+
+    TriggerClientEvent("raid_clothes:ListOutfits", src, outfits)
 end)
 
 RegisterServerEvent("raid_clothes:set_outfit")
@@ -38,30 +37,29 @@ AddEventHandler("raid_clothes:set_outfit", function(slot, name, data)
         end
     end
 
-    exports.ghmattimysql:scalar([[
+    local exist =  MySQL.scalar.await([[
         SELECT slot
         FROM characters_outfits
         WHERE cid = ? AND slot = ?
     ]],
-    { cid, slot },
-    function(result)
-        if not result then
-            exports.ghmattimysql:execute([[
-                INSERT INTO characters_outfits (cid, name, slot, model, drawables, props, drawtextures, proptextures, hairColor, fadeStyle, headBlend, headStructure, headOverlay)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ]],
-            { cid, name, slot, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay })
-        else
-            exports.ghmattimysql:execute([[
-                UPDATE characters_outfits
-                SET name = ?, model = ?, drawables = ?, props = ?, drawtextures = ?, proptextures = ?, hairColor = ?, fadeStyle = ?, headBlend = ?, headStructure = ?, headOverlay = ?
-                WHERE cid = ? AND slot = ?
-            ]],
-            { name, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay, cid, slot })
-        end
+    { cid, slot })
 
-        TriggerClientEvent("DoLongHudText", src, name .. " stored in slot " .. slot)
-	end)
+    if exist then
+        MySQL.insert.await([[
+            INSERT INTO characters_outfits (cid, name, slot, model, drawables, props, drawtextures, proptextures, hairColor, fadeStyle, headBlend, headStructure, headOverlay)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ]],
+        { cid, name, slot, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay })
+    else
+        MySQL.update.await([[
+            UPDATE characters_outfits
+            SET name = ?, model = ?, drawables = ?, props = ?, drawtextures = ?, proptextures = ?, hairColor = ?, fadeStyle = ?, headBlend = ?, headStructure = ?, headOverlay = ?
+            WHERE cid = ? AND slot = ?
+        ]],
+        { name, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay, cid, slot })
+    end
+
+    TriggerClientEvent("DoLongHudText", src, name .. " stored in slot " .. slot)
 end)
 
 RegisterServerEvent("raid_clothes:remove_outfit")
@@ -71,7 +69,7 @@ AddEventHandler("raid_clothes:remove_outfit", function(slot)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return end
 
-    exports.ghmattimysql:execute([[
+    MySQL.query.await([[
         DELETE FROM characters_outfits
         WHERE cid = ? AND slot = ?
     ]],
@@ -87,37 +85,40 @@ AddEventHandler("raid_clothes:get_outfit", function(slot)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return end
 
-    exports.ghmattimysql:execute([[
+    local clothes = MySQL.single.await([[
         SELECT *
         FROM characters_outfits
         WHERE cid = ? and slot = ?
     ]],
-    { cid, slot },
-    function(result)
-        if result[1] then
-            local data = {
-                model = result[1].model,
-                drawables = json.decode(result[1].drawables),
-                props = json.decode(result[1].props),
-                drawtextures = json.decode(result[1].drawtextures),
-                proptextures = json.decode(result[1].proptextures),
-                hairColor = json.decode(result[1].hairColor),
-                fadeStyle = result[1].fadeStyle,
-                headBlend = json.decode(result[1].headBlend),
-                headStructure = json.decode(result[1].headStructure),
-                headOverlay = json.decode(result[1].headOverlay),
-            }
+    { cid, slot })
 
-            TriggerClientEvent("caue-clothes:setClothes", src, data)
+    if clothes then
+        local data = {
+            model = clothes.model,
+            drawables = json.decode(clothes.drawables),
+            props = json.decode(clothes.props),
+            drawtextures = json.decode(clothes.drawtextures),
+            proptextures = json.decode(clothes.proptextures),
+            hairColor = json.decode(clothes.hairColor),
+            fadeStyle = clothes.fadeStyle,
+            headBlend = json.decode(clothes.headBlend),
+            headStructure = json.decode(clothes.headStructure),
+            headOverlay = json.decode(clothes.headOverlay),
+        }
 
-            exports.ghmattimysql:execute([[
-                UPDATE characters_clothes
-                SET model = ?, drawables = ?, props = ?, drawtextures = ?, proptextures = ?, hairColor = ?, headBlend = ?, headStructure = ?, headOverlay = ?
-                WHERE cid = ?
-            ]],
-            { result[1].model, result[1].drawables, result[1].props, result[1].drawtextures, result[1].proptextures, result[1].hairColor, result[1].headBlend, result[1].headStructure, result[1].headOverlay, cid })
-        else
-            TriggerClientEvent("DoLongHudText", src, "No outfit on slot " .. slot, 2)
-        end
-	end)
+        TriggerClientEvent("caue-clothes:setClothes", src, data)
+
+        MySQL.update([[
+            UPDATE characters_clothes
+            SET model = ?, drawables = ?, props = ?, drawtextures = ?, proptextures = ?, hairColor = ?, fadeStyle = ?, headBlend = ?, headStructure = ?, headOverlay = ?
+            WHERE cid = ?
+        ]],
+        { clothes.model, clothes.drawables, clothes.props, clothes.drawtextures, clothes.proptextures, clothes.hairColor, clothes.fadeStyle, clothes.headBlend, clothes.headStructure, clothes.headOverlay, cid })
+
+        Citizen.Wait(2000)
+
+        TriggerEvent("caue-clothes:getTattoos", src)
+    else
+        TriggerClientEvent("DoLongHudText", src, "No outfit on slot " .. slot, 2)
+    end
 end)

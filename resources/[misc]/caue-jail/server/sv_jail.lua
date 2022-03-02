@@ -4,14 +4,14 @@ RegisterNetEvent("caue-jail:sendToJail", function(pTarget, pTime)
     local cid = exports["caue-base"]:getChar(pTarget, "id")
     if not cid then return end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         UPDATE characters
         SET jail = ?
         WHERE id = ?
     ]],
     { pTime, cid })
 
-    if not result or result["affectedRows"] < 1 then return end
+    if not affectedRows or affectedRows < 1 then return end
 
     exports["caue-base"]:setChar(pTarget, "jail", pTime)
     TriggerClientEvent("caue-base:setChar", pTarget, "jail", pTime)
@@ -29,14 +29,14 @@ RegisterNetEvent("caue-jail:updateJailTime", function(pTime)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         UPDATE characters
         SET jail = ?
         WHERE id = ?
     ]],
     { pTime, cid })
 
-    if not result or result["affectedRows"] < 1 then return end
+    if not affectedRows or affectedRows < 1 then return end
 
     exports["caue-base"]:setChar(src, "jail", pTime)
     TriggerClientEvent("caue-base:setChar", src, "jail", pTime)
@@ -51,13 +51,13 @@ RegisterNetEvent("caue-jail:claimPossessions", function()
     local name = "ply-" .. cid
     local jail = "jail-" .. cid
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         DELETE FROM inventory
         WHERE name = ?
     ]],
     { jail })
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE inventory
         SET name = ?
         WHERE name = ?

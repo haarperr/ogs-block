@@ -16,7 +16,7 @@ local activeVehicles = {}
 ]]
 
 function getVehicle(id)
-    local vehicle = exports.ghmattimysql:executeSync([[
+    local vehicle = MySQL.query.await([[
         SELECT v1.id, v1.cid, v1.plate, v1.model, v1.type, v2.fuel, v2.body_damage, v2.engine_damage, v2.modifications, v2.fakePlate, v2.harness, v3.state, v3.garage, v3.coords, v4.price AS payment_price, v4.left AS payment_left, DATEDIFF(FROM_UNIXTIME(UNIX_TIMESTAMP()), FROM_UNIXTIME(v4.last)) AS payment_last
         FROM vehicles v1
         INNER JOIN vehicles_metadata v2 ON v2.vid = v1.id
@@ -52,14 +52,14 @@ function updateVehicle(id, type, var, data)
 
     if table == "" or _id == "" then return false end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         UPDATE ??
         SET ?? = ?
         WHERE ?? = ?
     ]],
     { table, var, data, _id, id })
 
-    if result["affectedRows"] ~= 1 then return false end
+    if not affectedRows or affectedRows < 1 then return false end
 
     return true
 end
@@ -85,7 +85,7 @@ function selectVehicle(id, type, var)
 
     if table == "" or _id == "" then return false end
 
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT ??
         FROM ??
         WHERE ?? = ?
@@ -106,7 +106,7 @@ function randomPlate()
             plate = plate .. string.sub(characterSet, rand, rand)
         end
 
-        local exist = exports.ghmattimysql:scalarSync([[
+        local exist = MySQL.scalar.await([[
             SELECT id
             FROM vehicles
             WHERE plate = ?
@@ -120,7 +120,7 @@ function randomPlate()
 end
 
 function getVehicleMetadata(vid, data)
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT ??
         FROM vehicles_metadata
         WHERE vid = ?
@@ -136,7 +136,7 @@ function payVehicle(vid, src)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return false end
 
-    local price = exports.ghmattimysql:scalarSync([[
+    local price = MySQL.scalar.await([[
         SELECT price
         FROM vehicles_payments
         WHERE vid = ?
@@ -152,7 +152,7 @@ function payVehicle(vid, src)
         return false
     end
 
-    local plate = exports.ghmattimysql:scalarSync([[SELECT plate FROM vehicles WHERE id = ?]],{vid})
+    local plate = MySQL.scalar.await([[SELECT plate FROM vehicles WHERE id = ?]],{vid})
 
     local comment = "Finance payment from vehicle " .. plate
     local success, message = exports["caue-financials"]:transaction(accountId, 2, price, comment, cid, 6)
@@ -161,14 +161,14 @@ function payVehicle(vid, src)
         return false
     end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         UPDATE vehicles_payments
         SET vehicles_payments.left = vehicles_payments.left - 1, vehicles_payments.last = vehicles_payments.last + 604800
         WHERE vid = ?
     ]],
     { vid })
 
-    if result["affectedRows"] ~= 1 then return false end
+    if not affectedRows or affectedRows < 1 then return false end
 
     return true
 end
@@ -187,15 +187,15 @@ function insertVehicle(src, model, type, price, financed, out, _cid)
 
     local plate = randomPlate()
 
-    local result = exports.ghmattimysql:executeSync([[
+    local insertId = MySQL.insert.await([[
         INSERT INTO vehicles (cid, plate, model, type)
         VALUES (?, ?, ?, ?)
     ]],
     { cid, plate, model, type })
 
-    if not result or not result["insertId"] or result["insertId"] < 1 then return false end
+    if not insertId or insertId == 0 then return false end
 
-    local vid = result["insertId"]
+    local vid = insertId
 
     local left = 0
     if financed then
@@ -207,7 +207,7 @@ function insertVehicle(src, model, type, price, financed, out, _cid)
         state = "Out"
     end
 
-    local result2 = exports.ghmattimysql:transactionSync({
+    local success = MySQL.transaction.await({
         {
             ["query"] = "INSERT INTO vehicles_garage (vid, state) VALUES (?, ?)",
             ["values"] = { vid, state },
@@ -222,8 +222,8 @@ function insertVehicle(src, model, type, price, financed, out, _cid)
         },
     })
 
-    if not result2 then
-        exports.ghmattimysql:executeSync([[
+    if not success then
+        MySQL.query.await([[
             DELETE FROM vehicles
             WHERE id = ?
         ]],
@@ -273,7 +273,7 @@ RPC.register("caue-vehicles:ownedVehiclesModels", function(src)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return end
 
-    local _vehicles = exports.ghmattimysql:executeSync([[
+    local _vehicles = MySQL.query.await([[
         SELECT model
         FROM vehicles
         WHERE cid = ?

@@ -5,17 +5,16 @@ AddEventHandler("SpawnEventsServer", function()
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return end
 
-    exports.ghmattimysql:scalar([[
+    local bones = MySQL.scalar.await([[
         SELECT bones
         FROM characters
         WHERE id = ?
     ]],
-    { cid },
-    function(result)
-        if result then
-            TriggerClientEvent("bones:client:updatefromDB", src, json.decode(result))
-        end
-    end)
+    { cid })
+
+    if bones then
+        TriggerClientEvent("bones:client:updatefromDB", src, json.decode(bones))
+    end
 end)
 
 RegisterNetEvent("bones:server:updateServer")
@@ -25,7 +24,7 @@ AddEventHandler("bones:server:updateServer", function(bones)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return end
 
-    exports.ghmattimysql:execute([[
+    MySQL.update.await([[
         UPDATE characters
         SET bones = ?
         WHERE id = ?

@@ -115,13 +115,13 @@ RPC.register("caue-housing:buy", function(src, pPropertyId, pTotal, pTax, pSelle
 
     exports["caue-financials"]:addTax("Propertys", pTax)
 
-    local result = exports.ghmattimysql:executeSync([[
+    local insertId = MySQL.insert.await([[
         INSERT INTO housing (hid, cid, information, objects, last_payment)
         VALUES (?, ?, ?, ?, UNIX_TIMESTAMP())
     ]],
     { pPropertyId, cid, json.encode(defaultInformations), "{}" })
 
-    if result["insertId"] == 0 then
+    if not insertId or insertId < 1 then
         return false, "Database insert eror"
     end
 
@@ -154,13 +154,13 @@ RPC.register("caue-housing:rent", function(src, pPropertyId, pTotal, pTax)
 
     exports["caue-financials"]:addTax("Propertys", pTax)
 
-    local result = exports.ghmattimysql:executeSync([[
+    local insertId = MySQL.insert.await([[
         INSERT INTO housing (hid, cid, information, objects, last_payment)
         VALUES (?, ?, ?, ?, UNIX_TIMESTAMP())
     ]],
     { pPropertyId, cid, json.encode(defaultInformations), "{}" })
 
-    if result["insertId"] == 0 then
+    if not insertId or insertId < 1 then
         return false, "Database insert eror"
     end
 
@@ -174,14 +174,14 @@ RPC.register("updateCurrentSelected", function(src, pPropertyId, pInformation, p
         pInformation["id"] = nil
     end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         UPDATE housing
         SET information = ?
         WHERE hid = ?
     ]],
     { json.encode(pInformation), pPropertyId })
 
-    if not result or result["affectedRows"] < 1 then
+    if not affectedRows or affectedRows < 1 then
         return false
     end
 
@@ -206,7 +206,7 @@ RPC.register("objects:getObjects", function(src, pName)
     data["name"] = pName
     data["objects"] = {}
 
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT objects
         FROM housing
         WHERE hid = ?
@@ -225,7 +225,7 @@ RPC.register("objects:saveObjects", function(src, pDataToSend)
     data["name"] = pDataToSend["name"]
     data["objects"] = pDataToSend["objects"]
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.update.await([[
         UPDATE housing
         SET objects = ?
         WHERE hid = ?
@@ -236,7 +236,7 @@ RPC.register("objects:saveObjects", function(src, pDataToSend)
 end)
 
 RPC.register("caue-housing:owned", function(src)
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT hid
         FROM housing
     ]])
@@ -257,7 +257,7 @@ end)
 ]]
 
 Citizen.CreateThread(function()
-    local houses = exports.ghmattimysql:executeSync([[
+    local houses = MySQL.query.await([[
         SELECT hid, information
         FROM housing
     ]])

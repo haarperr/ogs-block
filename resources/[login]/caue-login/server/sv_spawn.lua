@@ -21,7 +21,7 @@ AddEventHandler("caue-login:spawnCharacter", function()
         ["crash"] = vector4(0.0, 0.0, 0.0, 0.0),
     }
 
-    local groups = exports.ghmattimysql:executeSync([[
+    local groups = MySQL.query.await([[
         SELECT g1.group, g2.name, g2.spawn
         FROM groups_members g1
         INNER JOIN ?? g2 ON g2.group = g1.group
@@ -48,7 +48,7 @@ AddEventHandler("caue-login:spawnCharacter", function()
     end
 
     if exports["caue-base"]:getChar(src, "new") then
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE characters
             SET new = 0
             WHERE id = ?

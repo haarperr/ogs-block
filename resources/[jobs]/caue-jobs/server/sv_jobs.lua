@@ -17,7 +17,7 @@ AddEventHandler("caue-jobs:changeJob", function(job, _src)
     local currentjob = exports["caue-base"]:getChar(src, "job")
     if currentjob == job then return end
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE characters
         SET job = ?
         WHERE id = ?
@@ -48,7 +48,7 @@ AddEventHandler("caue-jobs:paycheck", function(log, amount, _src)
     exports["caue-financials"]:updateBalance(2, "+", amount - tax["tax"])
     exports["caue-financials"]:addTax("Income", tax["tax"])
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE characters
         SET paycheck = paycheck + ?
         WHERE id = ?
@@ -68,7 +68,7 @@ AddEventHandler("caue-jobs:paycheckPickup", function()
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return end
 
-    local paycheck = exports.ghmattimysql:scalarSync([[
+    local paycheck = MySQL.scalar.await([[
         SELECT paycheck
         FROM characters
         WHERE id = ?
@@ -83,7 +83,7 @@ AddEventHandler("caue-jobs:paycheckPickup", function()
             return
         end
 
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE characters
             SET paycheck = 0
             WHERE id = ?
@@ -128,7 +128,7 @@ end)
 ]]
 
 Citizen.CreateThread(function()
-    local _jobs = exports.ghmattimysql:executeSync([[
+    local _jobs = MySQL.query.await([[
         SELECT *
         FROM jobs
     ]])

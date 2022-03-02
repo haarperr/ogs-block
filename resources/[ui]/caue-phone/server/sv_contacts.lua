@@ -17,7 +17,7 @@ local function getContacts(_src, _cid)
 
     if not cid then return {} end
 
-    local contacts = exports.ghmattimysql:executeSync([[
+    local contacts = MySQL.query.await([[
         SELECT *
         FROM ??
         WHERE ?? = ?
@@ -30,7 +30,7 @@ end
 local function existContact(cid, number)
     if not cid or not number then return false end
 
-    local exist = exports.ghmattimysql:scalarSync([[
+    local exist = MySQL.scalar.await([[
         SELECT ??
         FROM ??
         WHERE ?? = ? AND ?? = ?
@@ -58,14 +58,14 @@ local function addContact(name, number, _src, _cid)
     local exist = existContact(cid, number)
 
     if exist then
-        local contacts = exports.ghmattimysql:executeSync([[
+        local contacts = MySQL.update.await([[
             UPDATE ??
             SET ?? = ?
             WHERE ?? = ? AND ?? = ?
         ]],
         { "phone_contacts", "name", name, "cid", cid, "number", number })
     else
-        local contacts = exports.ghmattimysql:executeSync([[
+        local contacts = MySQL.insert.await([[
             INSERT INTO ?? (??, ??, ??)
             VALUES (?, ?, ?)
         ]],
@@ -91,7 +91,7 @@ local function removeContact(name, number, _src, _cid)
     local exist = existContact(cid, number)
 
     if exist then
-        local contacts = exports.ghmattimysql:executeSync([[
+        local contacts = MySQL.update.await([[
             DELETE FROM ??
             WHERE ?? = ? AND ?? = ? AND ?? = ?
         ]],

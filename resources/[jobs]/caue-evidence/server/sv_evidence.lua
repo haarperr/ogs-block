@@ -19,7 +19,7 @@ local function generateDNA()
     for i = 1, 10 do
         local dna = GetRandomString(7)
 
-        local exist = exports.ghmattimysql:scalarSync([[
+        local exist = MySQL.scalar.await([[
             SELECT dna
             FROM characters
             WHERE dna = ?
@@ -40,7 +40,7 @@ RPC.register("caue-evidence:getDNA", function(src)
         return "ERROR"
     end
 
-    local dna = exports.ghmattimysql:scalarSync([[
+    local dna = MySQL.scalar.await([[
         SELECT dna
         FROM characters
         WHERE id = ?
@@ -50,7 +50,7 @@ RPC.register("caue-evidence:getDNA", function(src)
     if not dna then
         dna = generateDNA()
 
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE characters
             SET dna = ?
             WHERE id = ?

@@ -62,6 +62,9 @@ let customImageItems = [
     "resdessertitem",
     "resdrinkitem",
     "resalcoholitem",
+    "bentobox",
+    "spraycan",
+    "gallerygem",
 ];
 let customNameItems = [
     "custommiscitem",
@@ -83,6 +86,7 @@ let customNameItems = [
     "resdessertitem",
     "resdrinkitem",
     "resalcoholitem",
+    "gallerygem",
 ];
 let customNameItemsDescriptions = {
     "customfooditem": "(FM) ",
@@ -93,6 +97,7 @@ let customNameItemsDescriptions = {
     "customciggyitem": "(FM) ",
     "custombandageitem": "(FM) ",
     "book": "(B) ",
+    "gallerygem": "(G) ",
 };
 let customDescriptionItems = [
     "custommiscitem",
@@ -134,7 +139,7 @@ const foodCatMaps = {
     vegetables: 'Vegetables really improve your cardio.',
 }
 
-const ignoreMetaKeysInComparison = ["_remove_id", "_hideKeys", "_is_poisoned", "_foodEnhancements", "potency", "interval", "duration", "nonLethal"];
+const ignoreMetaKeysInComparison = ["_remove_id", "_hideKeys", "_is_poisoned", "_foodEnhancements", "potency", "interval", "duration", "nonLethal", "quality", "foodEnhancement", "_foodEnhancement"];
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -167,22 +172,19 @@ const isMetadataEqual = (obj1, obj2) => {
         return acc;
     }, {});
 
-    return deepEqual({
-        ...obj1,
-        ...removedKeys
-    }, {
-        ...obj2,
-        ...removedKeys
-    });
+    return deepEqual(
+        { ...obj1, ...removedKeys },
+        { ...obj2, ...removedKeys }
+    );
 }
 
 function getInvImage(item, info) {
     let imgSrc = `icons/${item.image}`;
     try {
         if (customImageItems.includes(item._name) && !!info) {
-            imgSrc = info._image_url || JSON.parse(info)._image_url;
+            imgSrc = info._image_url || JSON.parse(info)._image_url || imgSrc;
         }
-    } catch (err) {}
+    } catch (err) { }
     return imgSrc;
 }
 
@@ -201,7 +203,7 @@ function fallbackCopyTextToClipboard(text) {
 
     try {
         document.execCommand('copy');
-    } catch (err) {}
+    } catch (err) { }
 
     document.body.removeChild(textArea);
 }
@@ -252,7 +254,7 @@ $(document).ready(function () {
                 if (_lastInfo) {
                     fallbackCopyTextToClipboard(_lastInfo);
                 }
-            } catch (err) {}
+            } catch (err) { }
         }
 
         //TODO: Get the +generalInventory key?
@@ -401,9 +403,7 @@ $(document).ready(function () {
             document.getElementById('wrapmain').innerHTML = '';
             document.getElementById('wrapsecondary').innerHTML = '';
             $('#app').fadeIn();
-            $('#containers-wrapper').css({
-                display: "flex"
-            }).slideDown(400).style;
+            $('#containers-wrapper').css({ display: "flex" }).slideDown(400).style;
             // $(".wrapsecondary").css({ height: "93%" });
             $('#move-amount').val(0);
         } else if (item.response == 'closeGui') {
@@ -507,7 +507,7 @@ function UpdateQuality(data, penis) {
     let inventory = data.inventory;
 
     let divslot = 'secondaryslot' + data.slot;
-    if (inventory.indexOf('ply-') > -1) {
+    if (inventory.startsWith('ply-')) {
         divslot = 'playerslot' + data.slot;
     }
 
@@ -557,15 +557,15 @@ function UpdateQuality(data, penis) {
     let qualityHeight = quality;
 
     if (quality == 0) {
-        qualityText = 'Quebrado';
+        qualityText = 'Destroyed';
         qualityHeight = 100;
         itemMaxed = "class='destroyed'";
     } else if (quality < 5) {
-        qualityText = 'Quase quebrado';
+        qualityText = 'Almost Destroyed';
         qualityHeight = 100;
         itemMaxed = "class='destroyed'";
     } else if (quality < 10) {
-        qualityText = 'Deteriorando';
+        qualityText = 'Falling Apart';
         qualityHeight = 100;
         itemMaxed = "class='destroyed'";
     }
@@ -583,7 +583,7 @@ function UpdateQuality(data, penis) {
         if (meta.indexOf('{}') === 0) {
             meta = meta.substring(2).trim();
         }
-    } catch (e) {}
+    } catch (e) { }
 
     let htmlstring =
         '<div ' +
@@ -595,7 +595,8 @@ function UpdateQuality(data, penis) {
         "px;'></div> <div class='itemname'> " +
         name +
         " </div> <div class='information'>  " +
-        "<span class='item-qty'>" + itemcount + "x</span> <span class='item-weight'>" + weight.toFixed(2) + "</span> </div>" +
+        "<span class='item-qty'>" + itemcount + "x</span> <span class='item-weight'>" + weight.toFixed(2) + "</span> </div>"
+        +
         `<img src='${image}` +
         "' data-info='" +
         escape(info) +
@@ -668,9 +669,7 @@ function UseBar(itemid, text, amount) {
     newElement.innerHTML = htmlstring;
     p.prepend(newElement);
 
-    $('#UseBar').css({
-        display: "flex"
-    }).fadeIn(1000);
+    $('#UseBar').css({ display: "flex" }).fadeIn(1000);
 
     setTimeout(() => {
         $(newElement).fadeOut(500);
@@ -697,7 +696,7 @@ function ToggleBar(toggle, boundItems, boundItemsAmmo) {
             image = itemList[boundItems[1]].image;
             name = itemList[boundItems[1]].displayname;
 
-            if (boundItemsAmmo[1]) {
+            if (boundItemsAmmo[1] !== undefined) {
                 name = name + ' - (' + boundItemsAmmo[1] + ')';
             }
 
@@ -717,7 +716,7 @@ function ToggleBar(toggle, boundItems, boundItemsAmmo) {
                 image = itemList[boundItems[i]].image;
                 name = itemList[boundItems[i]].displayname;
 
-                if (boundItemsAmmo[i]) {
+                if (boundItemsAmmo[i] !== undefined) {
                     name = name + ' - (' + boundItemsAmmo[i] + ')';
                 }
 
@@ -736,9 +735,7 @@ function ToggleBar(toggle, boundItems, boundItemsAmmo) {
         }
         document.getElementById('ActionBar').innerHTML = htmlstring;
 
-        $('#ActionBar').css({
-            display: "flex"
-        }).fadeIn(500);
+        $('#ActionBar').css({ display: "flex" }).fadeIn(500);
     } else {
         $('#ActionBar').fadeOut(2000);
     }
@@ -759,6 +756,7 @@ function invStack(
     purchase,
     itemCosts,
     itemidsent,
+    metainformation,
     amountmoving,
     crafting,
     weapon,
@@ -774,6 +772,7 @@ function invStack(
         purchase,
         itemCosts,
         itemidsent,
+        metainformation,
         amountmoving,
         crafting,
         weapon,
@@ -792,6 +791,7 @@ function invMove(
     purchase,
     itemCosts,
     itemidsent,
+    metainformation,
     amountmoving,
     crafting,
     weapon,
@@ -805,6 +805,7 @@ function invMove(
         purchase,
         itemCosts,
         itemidsent,
+        metainformation,
         amountmoving,
         crafting,
         weapon,
@@ -885,7 +886,6 @@ let MyItemCount = 0;
 let StoreOwner = false;
 let PlayerStore = false;
 let StoreId = "0";
-
 // weights are done here, based on the string of the inventory name
 function DisplayInventoryMultiple(playerinventory, itemCount, invName, targetinventory, targetitemCount, targetinvName, cash, Owner, targetInvWeight = 0, targetInvSlots = 40, shopId) {
     secondaryWeight = 0;
@@ -991,7 +991,7 @@ function DisplayInventoryMultiple(playerinventory, itemCount, invName, targetinv
         displayName = 'Locked Compartment';
     } else if (targetinvName.indexOf('fisher-bucket-') > -1) {
         secondaryMaxWeight = 99.0;
-        slotLimitTarget = 10;
+        slotLimitTarget = 99;
         displayName = 'Fisher Bucket';
     } else if (targetinvName.indexOf('burgerjob_shelf') > -1 || targetinvName.startsWith('restaurants_shelf')) {
         secondaryMaxWeight = 300.0;
@@ -1114,6 +1114,10 @@ function DisplayInventoryMultiple(playerinventory, itemCount, invName, targetinv
         secondaryMaxWeight = 100.0;
         slotLimitTarget = 10;
         displayName = 'Bodybag';
+    } else if (targetinvName.startsWith('mobile-stash-fridge_')) {
+        secondaryMaxWeight = 10.0;
+        slotLimitTarget = 5;
+        displayName = 'Fridge';
     } else if (targetinvName.startsWith('mailbox')) {
         secondaryMaxWeight = 300.0;
         slotLimitTarget = 30;
@@ -1230,7 +1234,8 @@ function DisplayInventory(sqlInventory, itemCount, invName, main) {
     }
 
     for (i = 0; i < slotLimit + 1; i++) {
-        if (isEmpty(inventory[i])) {} else {
+        if (isEmpty(inventory[i])) {
+        } else {
             let slot = inventory[i].slot;
 
             let itemid = '' + inventory[i].itemid + '';
@@ -1260,7 +1265,7 @@ function DisplayInventory(sqlInventory, itemCount, invName, main) {
                     if (obj.hideInfo) {
                         meta = '';
                     }
-                } catch (err) {}
+                } catch (err) { }
 
                 let keysToFilter = [];
                 try {
@@ -1271,12 +1276,12 @@ function DisplayInventory(sqlInventory, itemCount, invName, main) {
                     if (obj._hideAllKeys) {
                         keysToFilter = Object.keys(obj);
                     }
-                } catch (err) {}
+                } catch (err) { }
 
                 try {
                     const obj = JSON.parse(meta);
                     const keys = Object.keys(obj);
-                    const newMeta = keys.filter((k) => k !== '_hideKeys' && !keysToFilter.includes(k) && obj[k])
+                    const newMeta = keys.filter((k) => k !== '_hideKeys' && !keysToFilter.includes(k) && obj[k] !== null && typeof obj[k] !== 'undefined')
                         .map((k) => {
                             if (timestampColumns[k]) {
                                 return `${timestampColumns[k]}: ${calculateTimeDiff(obj[k])}`
@@ -1327,15 +1332,15 @@ function DisplayInventory(sqlInventory, itemCount, invName, main) {
                 }
 
                 if (quality == 0) {
-                    qualityText = 'Quebrado';
+                    qualityText = 'Destroyed';
                     qualityWidth = 100;
                     itemMaxed = "class='destroyed'";
                 } else if (quality < 5) {
-                    qualityText = 'Quase quebrado';
+                    qualityText = 'Almost Destroyed';
                     qualityWidth = 100;
                     itemMaxed = "class='destroyed'";
                 } else if (quality < 10) {
-                    qualityText = 'Deteriorando';
+                    qualityText = 'Falling Apart';
                     qualityWidth = 100;
                     itemMaxed = "class='destroyed'";
                 }
@@ -1343,7 +1348,7 @@ function DisplayInventory(sqlInventory, itemCount, invName, main) {
                     if (meta.indexOf('{}') === 0) {
                         meta = meta.substring(2).trim();
                     }
-                } catch (e) {}
+                } catch (e) { }
                 let htmlstring =
                     '<div ' +
                     itemMaxed +
@@ -1354,8 +1359,8 @@ function DisplayInventory(sqlInventory, itemCount, invName, main) {
                     "%;'></div> <div class='itemname'> " +
                     name +
                     " </div> <div class='information'>  " +
-                    "<span class='item-qty'>" + itemcount + "x</span> <span class='item-weight'>" + weight.toFixed(2) + "</span></div>" +
-                    `<img src='${image}` +
+                    "<span class='item-qty'>" + itemcount + "x</span> <span class='item-weight'>" + weight.toFixed(2) + "</span></div>"
+                    + `<img src='${image}` +
                     "' data-inventory='" +
                     inventoryNumber +
                     "' data-quality='" +
@@ -1402,8 +1407,8 @@ function DisplayInventory(sqlInventory, itemCount, invName, main) {
                         "<div class='itemname itemnameShop'> " +
                         name +
                         " </div> <div class='information shopInformation'>  " +
-                        "<span class='item-qty'>" + (!stackable ? '1' : '') + " </span> <span class='item-weight'>" + weight.toFixed(2) + "</span> </div>" +
-                        `</div> <img src='${image}` +
+                        "<span class='item-qty'>" + (!stackable ? '1' : '') + " </span> <span class='item-weight'>" + weight.toFixed(2) + "</span> </div>"
+                        + `</div> <img src='${image}` +
                         "' data-inventory='" +
                         inventoryNumber +
                         "' data-creationDate='" +
@@ -1482,7 +1487,7 @@ function DisplayInventory(sqlInventory, itemCount, invName, main) {
                 }
 
                 if (TargetInventoryName.indexOf('Craft') > -1 && !main) {
-                    if (sqlInventory[i - 1].amount === undefined) {
+                    if (sqlInventory[i - 1] === undefined || sqlInventory[i - 1].amount === undefined) {
                         itemcount = 1;
                     } else {
                         itemcount = sqlInventory[i - 1].amount;
@@ -1525,8 +1530,8 @@ function DisplayInventory(sqlInventory, itemCount, invName, main) {
                         "'><div class='itemname'> " +
                         name +
                         " </div> <div class='information'> " +
-                        "<span class='item-qty'>" + itemcount + "x</span> <span class='item-weight'>" + weight.toFixed(2) + "</span>" +
-                        `</div> <img src='${image}` +
+                        "<span class='item-qty'>" + itemcount + "x</span> <span class='item-weight'>" + weight.toFixed(2) + "</span>"
+                        + `</div> <img src='${image}` +
                         "' data-inventory='" +
                         inventoryNumber +
                         "' data-creationDate='" +
@@ -1628,12 +1633,8 @@ function UpdateSetWeights(secondaryName) {
             `;
         }
 
-        $(".craftingSearch").css({
-            display: craft ? "flex" : "none"
-        });
-        $(".cashcontainer").css({
-            display: shop ? "block" : "none"
-        });
+        $(".craftingSearch").css({ display: craft ? "flex" : "none" });
+        $(".cashcontainer").css({ display: shop ? "block" : "none" });
 
 
         if (shop) {
@@ -1936,12 +1937,12 @@ function ErrorCheck(startingInventory, inventoryDropName, movementWeight) {
 
         if (startingInventory == 1) {
             if (movementWeight + secondaryWeight > secondaryMaxWeight) {
-                ErrorReason = 'Seu alvo é muito pesado.';
+                ErrorReason = 'Your target weight is too much.';
                 $('.weightcontainer').eq(1).shake();
             }
         } else {
             if (movementWeight + personalWeight > personalMaxWeight) {
-                ErrorReason = 'Está muito pesado.';
+                ErrorReason = 'The personal weight is too much.';
                 $('.weightcontainer').eq(0).shake();
             }
         }
@@ -2024,6 +2025,7 @@ function CompileStacks(
     purchase,
     itemCosts,
     itemidsent,
+    metainformation,
     moveAmount,
     arraySlot
 ) {
@@ -2050,6 +2052,7 @@ function CompileStacks(
             itemid: itemidsent,
             move: false,
             MyInvMove: targetInventory === PlayerInventoryName,
+            metadata: metainformation,
         }),
     );
 
@@ -2068,6 +2071,7 @@ function CompileStacks(
         purchase,
         itemCosts,
         itemidsent,
+        metainformation,
         moveAmount,
         crafting,
         isWeapon,
@@ -2108,6 +2112,7 @@ function MoveStack(targetSlot, originSlot, inv1, inv2, purchase, itemCosts, item
             itemid: itemidsent,
             move: true,
             MyInvMove: targetInventory === PlayerInventoryName,
+            metadata: metainformation,
         }),
     );
 
@@ -2172,6 +2177,7 @@ function SwapStacks(targetSlot, originSlot, inv1, inv2, itemid1, metainformation
             itemid: itemid,
             move: false,
             MyInvMove: targetInventory === PlayerInventoryName,
+            metadata: metainformation1,
         }),
     );
 
@@ -2394,16 +2400,16 @@ function AttemptDropInFilledSlot(slot) {
         [craftCheck, weightCheck, arraySlot] = CheckCraftFail(itemidsent, moveAmount);
 
         if (!craftCheck && !weightCheck && currentInventory == 2 && inventoryDropName == 'wrapmain') {
-            InventoryLog('Attempted to craft item with itemid: ' + itemidsent);
+            InventoryLog('[1] Attempted to craft item with itemid: ' + itemidsent);
             crafting = true;
             result = 'Success';
             result2 = 'Success';
         } else {
             if (craftCheck) {
-                result = 'Você não tem os materiais necessários!';
+                result = 'You dont have the required materials!';
             }
             if (weightCheck) {
-                result2 = 'Está muito pesado.';
+                result2 = 'The personal weight is too much.';
                 $('.weightcontainer').eq(0).shake();
             }
 
@@ -2435,18 +2441,20 @@ function AttemptDropInFilledSlot(slot) {
         (!StoreOwner && PlayerStore && inventoryDropName === 'wrapsecondary') ||
         (TargetInventoryName === 'Shop' && inventoryReturnItemDropName === 'wrapsecondary' && inventoryDropName === 'wrapmain' && !stacking)
     ) {
-        result = 'Você não pode deixar itens na loja!';
+        result = 'You can not drop items into the shop!';
     }
     if (
         (inventoryDropName === 'craftContainer' && TargetInventoryName.indexOf('Craft') > -1) ||
         (inventoryDropName == 'wrapmain' && inventoryReturnItemDropName === 'wrapsecondary' && TargetInventoryName.indexOf('Craft') > -1 && !stacking)
     ) {
-        result = 'Você não pode deixar itens na mesa de criação!';
+        result = 'You can not drop items into the craft table!';
     }
 
-    if ((TargetInventoryName.startsWith("container") || TargetInventoryName.startsWith("fisher-bucket")) && (
-            (inventoryReturnItemDropName == 'wrapmain' && inventoryDropName == 'wrapsecondary')) ||
-        (inventoryDropName == 'wrapmain' && inventoryReturnItemDropName == 'wrapsecondary')) {
+    if ((TargetInventoryName.startsWith("container") || TargetInventoryName.startsWith("fisher-bucket")) &&
+        (
+            ((inventoryReturnItemDropName == 'wrapmain' && inventoryDropName == 'wrapsecondary')) ||
+            (inventoryDropName == 'wrapmain' && inventoryReturnItemDropName == 'wrapsecondary')
+        )) {
         let sqlInventory = JSON.parse(MyInventory);
         let hasInventoryKey = false;
         for (let i = 0; i < parseInt(MyItemCount); i++) {
@@ -2461,7 +2469,7 @@ function AttemptDropInFilledSlot(slot) {
         }
 
         if (!TargetInventoryName.includes('dodo container') && (itemList[itemid1].weapon || itemList[itemid2].weapon)) {
-            result = "Não cabe no container.";
+            result = "Can't fit inside container.";
         }
 
         if (TargetInventoryName.split("-").length > 3) {
@@ -2479,7 +2487,7 @@ function AttemptDropInFilledSlot(slot) {
                 })
             }
             if (!hasItem1Key || !hasItem2Key) {
-                result = "Não é possível colocar isso aqui.";
+                result = "Can't place this here.";
             }
         }
     }
@@ -2537,23 +2545,23 @@ function AttemptDropInFilledSlot(slot) {
             if (TargetInventoryName == 'Shop' || (!StoreOwner && PlayerStore)) {
                 // InventoryLog("eh: PURCHASE")
                 if (purchaseCost > userCash && purchaseCost !== 0) {
-                    result = 'Você não pode pagar por isso.!';
-                    result2 = 'Você não pode pagar por isso.!';
+                    result = 'You cant afford this.!';
+                    result2 = 'You cant afford this.!';
                     InventoryLog('Error: ' + result);
                     EndDragError(slot);
                     return;
                 } else {
                     if (itemList[itemidsent].weapon && inventoryReturnItemDropName !== inventoryDropName) {
                         if (!exluded[itemidsent] && !userWeaponLicense) {
-                            result = 'Você não tem uma licença!';
-                            result2 = 'Você não tem uma licença!';
+                            result = 'You do not have a license.!';
+                            result2 = 'You do not have a license.!';
                             InventoryLog('Error: ' + result);
                             EndDragError(slot);
                             return;
                         }
 
                         if (!exluded[itemidsent] && brought && !isCop) {
-                            result = 'Você só pode comprar uma arma por dia!';
+                            result = 'You can only buy one gun a day!';
                             InventoryLog('Error: ' + result);
                             EndDragError(slot);
                             return;
@@ -2562,7 +2570,7 @@ function AttemptDropInFilledSlot(slot) {
 
                     if (currentInventory == 2 && inventoryDropName == 'wrapmain') {
                         userCash = userCash - purchaseCost;
-                        InventoryLog('Preço de compra: $' + purchaseCost + ' você tem $' + userCash + ' faltando.');
+                        InventoryLog('Purchase Cost: $' + purchaseCost + ' you have $' + userCash + ' left.');
                         purchase = true;
                     }
                 }
@@ -2594,6 +2602,7 @@ function AttemptDropInFilledSlot(slot) {
                     purchase,
                     purchaseCost,
                     itemidsent,
+                    itemmetadata1,
                     moveAmount,
                     arraySlot,
                 );
@@ -2611,6 +2620,7 @@ function AttemptDropInFilledSlot(slot) {
                     purchase,
                     purchaseCost,
                     itemidsent,
+                    itemmetadata1,
                     moveAmount,
                     arraySlot,
                 );
@@ -2629,16 +2639,18 @@ function AttemptDropInFilledSlot(slot) {
             }
         } else {
             if (inventoryDropName == 'Shop' || inventoryDropName.indexOf('Craft') > -1 || (!StoreOwner && PlayerStore)) {
-                result = 'Você não pode deixar itens na loja!';
+                result = 'You can not drop items into the shop!';
                 EndDragError(slot);
                 InventoryLog('Error: ' + result2 + ' | ' + result);
             } else if (
                 (
-                    (itemList[itemid1].insertTo && itemList[itemid1].insertTo.includes(itemid2)) ||
+                    (itemList[itemid1].insertTo && itemList[itemid1].insertTo.includes(itemid2))
+                    ||
                     (itemList[itemid2].insertFrom && itemList[itemid2].insertFrom.includes(itemid1))
-                ) &&
-                inventoryDropName === 'wrapmain' && inventoryDropName === inventoryReturnItemDropName
+                )
+                && inventoryDropName === 'wrapmain' && inventoryDropName === inventoryReturnItemDropName
             ) {
+
                 InsertItem(
                     parseInt(slot.replace(/\D/g, '')),
                     parseInt(draggingid.replace(/\D/g, '')),
@@ -2656,9 +2668,9 @@ function AttemptDropInFilledSlot(slot) {
                     inventoryDropName,
                     inventoryReturnItemDropName,
                     itemid1,
-                    metainformation1,
+                    itemmetadata1,
                     itemid2,
-                    metainformation2,
+                    itemmetadata2,
                 );
 
                 item.dataset.currentslot = parseInt(slot.replace(/\D/g, ''));
@@ -2746,7 +2758,7 @@ function DisplayInformation(slot) {
         } else {
             name = `${customNameItemsDescriptions[item.dataset.itemid] || ''}${name}`;
         }
-    } catch (err) {}
+    } catch (err) { }
 
     _lastInfo = metainformation;
 
@@ -2846,7 +2858,7 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
     purchase = false;
     crafting = false;
     let itemidsent = item.dataset.itemid;
-    let metainformation = item.dataset.metainformation;
+    let metainformation = unescape(item.dataset.info);
     let moveAmount = parseInt(document.getElementById('move-amount').value);
 
     let closeOnMove = false;
@@ -2890,16 +2902,16 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
         [craftCheck, weightCheck, arraySlot] = CheckCraftFail(itemidsent, moveAmount);
 
         if (!craftCheck && !weightCheck && Number(currentInventory) === 2 && inventoryDropName === 'wrapmain') {
-            InventoryLog('Attempted to craft item with itemid: ' + itemidsent);
+            InventoryLog('[2] Attempted to craft item with itemid: ' + itemidsent);
             crafting = true;
             result = 'Success';
         } else {
             let result2 = 'Success';
             if (craftCheck) {
-                result = 'Você não tem os materiais necessários!';
+                result = 'You dont have the required materials!';
             }
             if (weightCheck) {
-                result2 = 'Está muito pesado.';
+                result2 = 'The personal weight is too much.';
                 $('.weightcontainer').eq(0).shake();
             }
 
@@ -2912,23 +2924,23 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
     }
 
     if (isDropped && inventoryReturnItemDropName == 'wrapsecondary') {
-        result = 'Erro: não pode soltar um item descartado.';
+        result = 'Error: can not drop a dropped item';
     }
 
     if (
         (inventoryDropName == 'wrapsecondary' && TargetInventoryName == 'Shop') ||
         (inventoryDropName == 'wrapsecondary' && !StoreOwner && PlayerStore)
     ) {
-        result = 'Você não pode deixar itens na loja!';
+        result = 'You can not drop items into the shop!';
     }
     if (inventoryDropName === 'wrapsecondary' && TargetInventoryName.indexOf('Craft') > -1) {
-        result = 'Você não pode deixar itens na loja de craft!';
+        result = 'You can not drop items into the craft shop!';
     }
 
     if (inventoryDropName == 'wrapsecondary' && PlayerStore) {
         let isWeapon = itemList[itemidsent].weapon;
         if (isWeapon != undefined) {
-            result = 'Você não pode mover armas enquanto estiver na loja!';
+            result = 'You can not move weapons while in player stores!';
         }
     }
 
@@ -2947,7 +2959,7 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
         }
 
         if (!TargetInventoryName.includes('dodo container') && itemList[itemidsent].weapon) {
-            result = "Não cabe dentro.";
+            result = "Can't fit inside container.";
         }
 
         if (TargetInventoryName.split("-").length > 3) {
@@ -2963,17 +2975,13 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
                 })
             }
             if (!hasWhitelistedKey) {
-                result = "Não é possível colocar isso aqui.";
+                result = "Can't place this here.";
             }
         }
     }
 
     if (TargetInventoryName.startsWith('mailbox') && inventoryDropName == 'wrapsecondary') {
-        result = 'Não é possível colocar em caixas de correio.'
-    }
-
-    if (TargetInventoryName.startsWith('tcg_binder_') && inventoryDropName == 'wrapsecondary' && itemidsent != "tcgcard") {
-        result = 'Só é possível colocar cartas aqui.'
+        result = 'Cannot place into mailboxes.'
     }
 
     if (result == 'Success') {
@@ -2982,22 +2990,22 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
         if (TargetInventoryName == 'Shop' || (!StoreOwner && PlayerStore)) {
             //InventoryLog("eh: PURCHASE")
             if (purchaseCost > userCash && purchaseCost !== 0) {
-                result = 'Você não pode pagar por isso!';
+                result = 'You cant afford that!';
                 EndDragError(slot);
-                InventoryLog('Erro: ' + result);
+                InventoryLog('Error: ' + result);
                 //userCash = userCash - purchaseCost; unsure why we are taking money on not enough money taken
                 return;
             } else {
                 if (itemList[itemidsent].weapon && inventoryReturnItemDropName !== inventoryDropName) {
                     if (!exluded[itemidsent] && !userWeaponLicense) {
-                        result = 'Você não tem uma licença!';
+                        result = 'You do not have a license!';
                         InventoryLog('Error: ' + result);
                         EndDragError(slot);
                         return;
                     }
 
                     if (!exluded[itemidsent] && brought && !isCop) {
-                        result = 'Você só pode comprar uma arma por dia!';
+                        result = 'You can only buy one gun a day!';
                         InventoryLog('Error: ' + result);
                         EndDragError(slot);
                         return;
@@ -3006,7 +3014,7 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
 
                 if (currentInventory == 2 && inventoryDropName == 'wrapmain') {
                     userCash = userCash - purchaseCost;
-                    InventoryLog('Preço de custo: $' + purchaseCost + ' você tem $' + userCash + ' restantes.');
+                    InventoryLog('Purchase Cost: $' + purchaseCost + ' you have $' + userCash + ' left.');
                     purchase = true;
                 }
             }
@@ -3068,6 +3076,7 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
                     purchase,
                     purchaseCost,
                     itemidsent,
+                    metainformation,
                     moveAmount,
                     arraySlot,
                 );
@@ -3218,7 +3227,6 @@ function calculateTimeDiff(time) {
 
 //https://stackoverflow.com/questions/16994662/count-animation-from-number-a-to-b
 var timer = {}
-
 function animateValue(id, start, end, duration) {
     if (timer[id]) {
         clearInterval(timer[id])
@@ -3251,11 +3259,7 @@ jQuery.fn.shake = function (interval, distance, times) {
     var jTarget = $(this);
     jTarget.css('position', 'relative');
     for (var iter = 0; iter < times + 1; iter++) {
-        jTarget.animate({
-            left: iter % 2 == 0 ? distance : distance * -1
-        }, interval);
+        jTarget.animate({ left: iter % 2 == 0 ? distance : distance * -1 }, interval);
     }
-    return jTarget.animate({
-        left: 0
-    }, interval);
+    return jTarget.animate({ left: 0 }, interval);
 };

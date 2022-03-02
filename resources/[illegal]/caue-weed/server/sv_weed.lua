@@ -37,18 +37,18 @@ RPC.register("caue-weed:plantSeed", function(src, pCoords, pStrain)
     local pGender = 0
     local pTimestamp = os.time()
 
-    local result = exports.ghmattimysql:executeSync([[
+    local insertId = MySQL.insert.await([[
         INSERT INTO weed (gender, coords, strain, timestamp)
         VALUES (?, ?, ?, ?)
     ]],
     { pGender, json.encode(pCoords), json.encode(pStrain), pTimestamp })
 
-    if result["insertId"] == 0 then
+    if not insertId or insertId < 1 then
         return false
     end
 
     local data = {
-        id = result["insertId"],
+        id = insertId,
         gender = pGender,
         coords = pCoords,
         strain = pStrain,
@@ -73,14 +73,14 @@ RPC.register("caue-weed:addWater", function(src, pPlantId)
     local strain = plant["strain"]
     strain["water"] = strain["water"] + PlantConfig.WaterAdd
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         UPDATE weed
         SET strain = ?
         WHERE id = ?
     ]],
     { json.encode(strain), pPlantId })
 
-    if result["affectedRows"] ~= 1 then
+    if not affectedRows or affectedRows < 1 then
         return false
     end
 
@@ -108,14 +108,14 @@ RPC.register("caue-weed:addFertilizer", function(src, pPlantId, pType)
     local strain = plant["strain"]
     strain[pType] = strain[pType] + PlantConfig.FertilizerAdd
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         UPDATE weed
         SET strain = ?
         WHERE id = ?
     ]],
     { json.encode(strain), pPlantId })
 
-    if result["affectedRows"] ~= 1 then
+    if not affectedRows or affectedRows < 1 then
         return false
     end
 
@@ -140,14 +140,14 @@ RPC.register("caue-weed:addMaleSeed", function(src, pPlantId)
         return false
     end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         UPDATE weed
         SET gender = 1
         WHERE id = ?
     ]],
     { pPlantId })
 
-    if result["affectedRows"] ~= 1 then
+    if not affectedRows or affectedRows < 1 then
         return false
     end
 
@@ -172,13 +172,13 @@ RPC.register("caue-weed:removePlant", function(src, pPlantId, pFertilizer)
         return false
     end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         DELETE FROM weed
         WHERE id = ?
     ]],
     { pPlantId })
 
-    if result["affectedRows"] ~= 1 then
+    if not affectedRows or affectedRows < 1 then
         return false
     end
 
@@ -203,14 +203,14 @@ RPC.register("caue-weed:harvestPlant", function(src, pPlantId)
 
     local pTimestamp = os.time()
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         UPDATE weed
         SET last_harvest = ?
         WHERE id = ?
     ]],
     { pTimestamp, pPlantId })
 
-    if result["affectedRows"] ~= 1 then
+    if not affectedRows or affectedRows < 1 then
         return false
     end
 
@@ -229,13 +229,13 @@ RPC.register("caue-weed:harvestPlant", function(src, pPlantId)
         TriggerClientEvent("player:receiveItem", src, "weedq", 5)
     elseif data["gender"] == 1 then
         if PlantConfig.RemoveMaleOnHarvest then
-            local result = exports.ghmattimysql:executeSync([[
+            local affectedRows = MySQL.update.await([[
                 DELETE FROM weed
                 WHERE id = ?
             ]],
             { pPlantId })
 
-            if result["affectedRows"] ~= 1 then
+            if not affectedRows or affectedRows < 1 then
                 return false
             end
 
@@ -270,7 +270,7 @@ end)
 ]]
 
 Citizen.CreateThread(function()
-    local _plants = exports.ghmattimysql:executeSync([[
+    local _plants = MySQL.query.await([[
         SELECT *
         FROM weed
     ]])
@@ -286,7 +286,7 @@ Citizen.CreateThread(function()
     WeedPlants = plants
 
     while true do
-        local plants = exports.ghmattimysql:executeSync([[
+        local plants = MySQL.query.await([[
             SELECT *
             FROM weed
         ]])
@@ -295,13 +295,13 @@ Citizen.CreateThread(function()
 
         for i, v in ipairs(plants) do
             if (time - v.timestamp) >= (PlantConfig.LifeTime * 60) then
-                local result = exports.ghmattimysql:executeSync([[
+                local affectedRows = MySQL.update.await([[
                     DELETE FROM weed
                     WHERE id = ?
                 ]],
                 { v.id })
 
-                if result["affectedRows"] == 1 then
+                if affectedRows and affectedRows > 0 then
                     for i2, v2 in ipairs(WeedPlants) do
                         if v2.id == v.id then
                             WeedPlants[i2] = nil

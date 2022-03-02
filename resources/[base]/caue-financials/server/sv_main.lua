@@ -9,7 +9,7 @@ function getBalance(pAccountId)
         return 0
     end
 
-    local balance = exports.ghmattimysql:scalarSync([[
+    local balance = MySQL.scalar.await([[
         SELECT balance
         FROM financials_accounts
         WHERE id = ?
@@ -28,24 +28,24 @@ function updateBalance(pAccountId, pType, pAmount)
         return false
     end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         UPDATE financials_accounts
         SET balance = balance ]] .. pType .. [[ ?
         WHERE id = ?
     ]],
     { pAmount, pAccountId })
 
-    if result["changedRows"] ~= 1 then return false end
+    if not affectedRows or affectedRows == 0 then return false end
 
     return true
 end
 
 function transaction(pSenderAccount, pReceiverAccount, pAmount, pComment, pUser, pTransactionType)
     if not pSenderAccount or not pReceiverAccount or not pAmount or not pComment or not pUser or not pTransactionType then
-        return false, "Faltam informações"
+        return false, "Missing params"
     end
 
-    local success = exports.ghmattimysql:transactionSync({
+    local success = MySQL.transaction.await({
         {
             ["query"] = "UPDATE financials_accounts SET balance = balance - ? WHERE id = ?",
             ["values"] = { pAmount, pSenderAccount },
@@ -55,22 +55,30 @@ function transaction(pSenderAccount, pReceiverAccount, pAmount, pComment, pUser,
             ["values"] = { pAmount, pReceiverAccount },
         },
         {
-            ["query"] = "INSERT INTO financials_transactions (sender, receiver, amount, comment, user, type, uid) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            ["values"] = { pSenderAccount, pReceiverAccount, pAmount, pComment, pUser, pTransactionType, uuid() },
+            ["query"] = "INSERT INTO financials_transactions (sender, receiver, amount, comment, user, type, uid) VALUES (:sender, :receiver, :amount, :comment, :user, :type, :uid)",
+            ["values"] = {
+                sender = pSenderAccount,
+                receiver = pReceiverAccount,
+                amount = pAmount,
+                comment = pComment,
+                user = pUser,
+                type = pTransactionType,
+                uid = uuid()
+            },
         },
     })
 
     if not success then
-        return false, "Falha ao transferir $" .. pAmount
+        return false, "Failed in transfering $" .. pAmount
     end
 
-    return true, "Sucesso ao transferir $" .. pAmount
+    return true, "Success in transfering $" .. pAmount
 end
 
 function transactionLog(pSenderAccount, pReceiverAccount, pAmount, pComment, pUser, pTransactionType)
     local uid = uuid()
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.insert.await([[
         INSERT INTO financials_transactions (sender, receiver, amount, comment, user, type, uid)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     ]],
@@ -96,6 +104,6 @@ exports("transactionLog", transactionLog)
 
 ]]
 
-RPC.register("caue-financials:getBalance", function(src, pAccountId)
-    return getBalance(pAccountId)
+RPC.register("caue-financials:getBalance", function(src)
+    return getBalance(src)
 end)

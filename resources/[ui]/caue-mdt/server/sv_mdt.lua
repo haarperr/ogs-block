@@ -37,7 +37,7 @@ end
 RPC.register("caue-mdt:dashboardBulletin", function(src)
     local job = getJob(src)
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT b.id, b.title, b.description, b.time, CONCAT(c.first_name," ",c.last_name) AS author
         FROM mdt_bulletins b
         LEFT JOIN characters c ON c.id = b.cid
@@ -56,16 +56,16 @@ AddEventHandler("caue-mdt:newBulletin", function(title, info, time)
     local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
     local job = getJob(src)
 
-	local result = exports.ghmattimysql:executeSync([[
+	local insertId = MySQL.insert.await([[
         INSERT INTO mdt_bulletins (cid, title, description, job, time)
         VALUES (?, ?, ?, ?, ?)
     ]],
     { cid, title, info, job, time })
 
-    if not result["insertId"] or result["insertId"] < 1 then return end
+    if not insertId or insertId < 1 then return end
 
     local bulletin = {
-        id = result["insertId"],
+        id = insertId,
         title = title,
         info = info,
         time = time,
@@ -83,14 +83,14 @@ AddEventHandler("caue-mdt:deleteBulletin", function(id)
     local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
     local job = getJob(src)
 
-    local title = exports.ghmattimysql:scalarSync([[
+    local title = MySQL.scalar.await([[
         SELECT title
         FROM mdt_bulletins
         WHERE id = ?
     ]],
     { id })
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         DELETE FROM mdt_bulletins
         WHERE id = ?
     ]],
@@ -109,7 +109,7 @@ end)
 RPC.register("caue-mdt:dashboardMessages", function(src)
     local job = getJob(src)
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT m.message, m.time, CONCAT(c.first_name," ",c.last_name) AS author, c.gender, p.image
         FROM mdt_messages m
         LEFT JOIN characters c ON c.id = m.cid
@@ -133,7 +133,7 @@ AddEventHandler("caue-mdt:refreshDispatchMsgs", function()
 
     local job = getJob(src)
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT message, time, CONCAT(c.first_name," ",c.last_name) AS name, c.gender, p.image
         FROM mdt_messages m
         LEFT JOIN characters c ON c.id = m.cid
@@ -159,13 +159,13 @@ AddEventHandler("caue-mdt:sendMessage", function(message, time)
     local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
     local job = getJob(src)
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.insert.await([[
         INSERT INTO mdt_messages (cid, message, job, time)
         VALUES (?, ?, ?, ?)
     ]],
     { cid, message, job, time })
 
-    local image = exports.ghmattimysql:scalarSync([[
+    local image = MySQL.scalar.await([[
         SELECT image
         FROM mdt_profiles
         WHERE cid = ?
@@ -422,7 +422,7 @@ end)
 RPC.register("caue-mdt:getWarrants", function(src)
     local WarrantData = {}
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT *
         FROM mdt_incidents
     ]])
@@ -430,7 +430,7 @@ RPC.register("caue-mdt:getWarrants", function(src)
     for i, v in ipairs(result) do
         for i2, v2 in ipairs(json.decode(v.associated)) do
             if v2.warrant == true then
-                local name = exports.ghmattimysql:scalarSync([[
+                local name = MySQL.scalar.await([[
                     SELECT CONCAT(first_name," ",last_name)
                     FROM characters
                     WHERE id = ?
@@ -471,7 +471,7 @@ end
 
 RPC.register("caue-mdt:searchProfile", function(src, pName)
     local queryData = string.lower("%" .. pName .. "%")
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT c.id, c.first_name, c.last_name, c.gender, c.licenses, p.image, p.description
         FROM characters c
         LEFT JOIN mdt_profiles p ON p.cid = c.id
@@ -522,7 +522,7 @@ RPC.register("caue-mdt:searchProfile", function(src, pName)
 end)
 
 RPC.register("caue-mdt:getProfileData", function(src, pCid)
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT c.id, c.first_name, c.last_name, c.dob, c.phone, c.gender, c.job, c.licenses, p.dna, p.image, p.description, p.tags, p.gallery
         FROM characters c
         LEFT JOIN mdt_profiles p ON p.cid = c.id
@@ -530,14 +530,14 @@ RPC.register("caue-mdt:getProfileData", function(src, pCid)
     ]],
     { pCid })
 
-    local vehicles = exports.ghmattimysql:executeSync([[
+    local vehicles = MySQL.query.await([[
         SELECT plate, model
         FROM vehicles
         WHERE cid = ?
     ]],
     { pCid })
 
-    local houses = exports.ghmattimysql:executeSync([[
+    local houses = MySQL.query.await([[
         SELECT hid
         FROM housing
         WHERE cid = ?
@@ -553,7 +553,7 @@ RPC.register("caue-mdt:getProfileData", function(src, pCid)
         }
     end
 
-    local weapons = exports.ghmattimysql:executeSync([[
+    local weapons = MySQL.query.await([[
         SELECT serial
         FROM mdt_weapons
         WHERE cid = ?
@@ -564,7 +564,7 @@ RPC.register("caue-mdt:getProfileData", function(src, pCid)
         weapons[i] = v.serial
     end
 
-    local incidents = exports.ghmattimysql:executeSync([[
+    local incidents = MySQL.query.await([[
         SELECT associated
         FROM mdt_incidents
     ]])
@@ -670,7 +670,7 @@ AddEventHandler("caue-mdt:saveProfile", function(image, description, cid, fname,
     if not image then image = "" end
     if not description then description = "" end
 
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT id
         FROM mdt_profiles
         WHERE cid = ?
@@ -678,14 +678,14 @@ AddEventHandler("caue-mdt:saveProfile", function(image, description, cid, fname,
     { cid })
 
 	if result then
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE mdt_profiles
             SET image = ?, description = ?
             WHERE cid = ?
         ]],
         { image, description, cid })
 	else
-		exports.ghmattimysql:executeSync([[
+		MySQL.insert.await([[
             INSERT INTO mdt_profiles (cid, image, description, tags, gallery)
             VALUES (?, ?, ?, ?, ?)
         ]],
@@ -715,7 +715,7 @@ end)
 
 RegisterServerEvent("caue-mdt:newTag")
 AddEventHandler("caue-mdt:newTag", function(cid, tag)
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT tags
         FROM mdt_profiles
         WHERE cid = ?
@@ -727,7 +727,7 @@ AddEventHandler("caue-mdt:newTag", function(cid, tag)
 
         table.insert(tags, tag)
 
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE mdt_profiles
             SET tags = ?
             WHERE cid = ?
@@ -738,7 +738,7 @@ AddEventHandler("caue-mdt:newTag", function(cid, tag)
 
         table.insert(tags, tag)
 
-        exports.ghmattimysql:executeSync([[
+        MySQL.insert.await([[
             INSERT INTO mdt_profiles (cid, image, description, tags, gallery)
             VALUES (?, ?, ?, ?, ?)
         ]],
@@ -748,7 +748,7 @@ end)
 
 RegisterServerEvent("caue-mdt:removeProfileTag")
 AddEventHandler("caue-mdt:removeProfileTag", function(cid, tag)
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT tags
         FROM mdt_profiles
         WHERE cid = ?
@@ -764,7 +764,7 @@ AddEventHandler("caue-mdt:removeProfileTag", function(cid, tag)
             end
         end
 
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE mdt_profiles
             SET tags = ?
             WHERE cid = ?
@@ -775,7 +775,7 @@ end)
 
 RegisterServerEvent("caue-mdt:addGalleryImg")
 AddEventHandler("caue-mdt:addGalleryImg", function(cid, url)
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT gallery
         FROM mdt_profiles
         WHERE cid = ?
@@ -787,7 +787,7 @@ AddEventHandler("caue-mdt:addGalleryImg", function(cid, url)
 
         table.insert(gallery, url)
 
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE mdt_profiles
             SET gallery = ?
             WHERE cid = ?
@@ -798,7 +798,7 @@ AddEventHandler("caue-mdt:addGalleryImg", function(cid, url)
 
         table.insert(gallery, url)
 
-        exports.ghmattimysql:executeSync([[
+        MySQL.insert.await([[
             INSERT INTO mdt_profiles (cid, image, description, tags, gallery)
             VALUES (?, ?, ?, ?, ?)
         ]],
@@ -808,7 +808,7 @@ end)
 
 RegisterServerEvent("caue-mdt:removeGalleryImg")
 AddEventHandler("caue-mdt:removeGalleryImg", function(cid, url)
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT gallery
         FROM mdt_profiles
         WHERE cid = ?
@@ -824,7 +824,7 @@ AddEventHandler("caue-mdt:removeGalleryImg", function(cid, url)
             end
         end
 
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE mdt_profiles
             SET gallery = ?
             WHERE cid = ?
@@ -834,7 +834,7 @@ AddEventHandler("caue-mdt:removeGalleryImg", function(cid, url)
 end)
 
 RegisterNetEvent("caue-mdt:dnaEdit", function(cid, dna)
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT cid
         FROM mdt_profiles
         WHERE cid = ?
@@ -842,14 +842,14 @@ RegisterNetEvent("caue-mdt:dnaEdit", function(cid, dna)
     { cid })
 
     if result then
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE mdt_profiles
             SET dna = ?
             WHERE cid = ?
         ]],
         { dna, cid })
     else
-        exports.ghmattimysql:executeSync([[
+        MySQL.insert.await([[
             INSERT INTO mdt_profiles (cid, image, description, tags, gallery, dna)
             VALUES (?, ?, ?, ?, ?, ?)
         ]],
@@ -866,7 +866,7 @@ end)
 RPC.register("caue-mdt:getAllIncidents", function(src)
     local job = getJob(src)
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT i.id, i.title, i.time, i.job, CONCAT(c.first_name," ",c.last_name) AS author
         FROM mdt_incidents i
         LEFT JOIN characters c ON c.id = i.cid
@@ -880,7 +880,7 @@ end)
 RPC.register("caue-mdt:searchIncidents", function(src, pId)
     local job = getJob(src)
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT i.id, i.title, i.time, i.job, CONCAT(c.first_name," ",c.last_name) AS author
         FROM mdt_incidents i
         LEFT JOIN characters c ON c.id = i.cid
@@ -892,37 +892,37 @@ RPC.register("caue-mdt:searchIncidents", function(src, pId)
 end)
 
 RPC.register("caue-mdt:getIncidentData", function(src, pId)
-    local result = exports.ghmattimysql:executeSync([[
+    local incident = MySQL.single.await([[
         SELECT *
         FROM mdt_incidents
         WHERE id = ?
     ]],
     { tonumber(pId) })
 
-    result[1].tags = json.decode(result[1].tags)
-    result[1].officers = json.decode(result[1].officers)
-    result[1].civilians = json.decode(result[1].civilians)
-    result[1].evidence = json.decode(result[1].evidence)
-    result[1].charges = json.decode(result[1].associated.charges)
-    result[1].associated = json.decode(result[1].associated)
+    incident.tags = json.decode(incident.tags)
+    incident.officers = json.decode(incident.officers)
+    incident.civilians = json.decode(incident.civilians)
+    incident.evidence = json.decode(incident.evidence)
+    incident.charges = json.decode(incident.associated.charges)
+    incident.associated = json.decode(incident.associated)
 
-    for i, v in ipairs(result[1].associated) do
-        local name = exports.ghmattimysql:scalarSync([[
+    for i, v in ipairs(incident.associated) do
+        local name = MySQL.scalar.await([[
             SELECT CONCAT(first_name," ",last_name)
             FROM characters
             WHERE id = ?
         ]],
         { v.cid })
 
-        result[1].associated[i].name = name
+        incident.associated[i].name = name
     end
 
-    return result[1], result[1].associated
+    return incident, incident.associated
 end)
 
 RPC.register("caue-mdt:incidentSearchPerson", function(src, pName)
     local queryData = string.lower("%" .. pName .. "%")
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT c.id, c.first_name, c.last_name, c.gender, p.image
         FROM characters c
         LEFT JOIN mdt_profiles p ON p.cid = c.id
@@ -949,14 +949,14 @@ AddEventHandler("caue-mdt:saveIncident", function(data)
     local cid = exports["caue-base"]:getChar(src, "id")
 
     if data.ID ~= 0 then
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE mdt_incidents
             SET cid = ?, title = ?, details = ?, tags = ?, officers = ?, civilians = ?, evidence = ?, associated = ?, time = ?
             WHERE id = ?
         ]],
         { cid, data.title, data.information, json.encode(data.tags), json.encode(data.officers), json.encode(data.civilians), json.encode(data.evidence), json.encode(data.associated), data.time, data.ID })
     else
-        exports.ghmattimysql:executeSync([[
+        MySQL.insert.await([[
             INSERT INTO mdt_incidents (cid, title, details, tags, officers, civilians, evidence, associated, time)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ]],
@@ -970,7 +970,7 @@ AddEventHandler("caue-mdt:removeIncidentCriminal", function(cid, incident)
 
     local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
 
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT associated
         FROM mdt_incidents
         WHERE id = ?
@@ -982,7 +982,7 @@ AddEventHandler("caue-mdt:removeIncidentCriminal", function(cid, incident)
 
     for i, v in ipairs(result) do
         if v.cid == cid then
-            criminal_name = exports.ghmattimysql:scalarSync([[
+            criminal_name = MySQL.scalar.await([[
                 SELECT CONCAT(first_name," ",last_name)
                 FROM characters
                 WHERE id = ?
@@ -996,7 +996,7 @@ AddEventHandler("caue-mdt:removeIncidentCriminal", function(cid, incident)
     TriggerEvent("caue-mdt:newLog", name .. ", Removed a criminal from an incident, incident ID: " .. incident .. ", Criminal Citizen Id: " .. cid .. ", Name: " .. criminal_name, "police")
     TriggerEvent("caue-mdt:newLog", name .. ", Removed a criminal from an incident, incident ID: " .. incident .. ", Criminal Citizen Id: " .. cid .. ", Name: " .. criminal_name, "doj")
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE mdt_incidents
         SET associated = ?
         WHERE id = ?
@@ -1011,7 +1011,7 @@ AddEventHandler("caue-mdt:deleteIncident", function(pId, pTime)
     local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
     local job = getJob(src)
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         DELETE FROM mdt_incidents
         WHERE id = ?
     ]],
@@ -1031,7 +1031,7 @@ RPC.register("caue-mdt:searchReports", function(src, pData)
 
     local string = string.lower("%" .. pData .. "%")
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT r.id, r.title, r.type, r.time, CONCAT(c.first_name," ",c.last_name) AS author
         FROM mdt_reports r
         LEFT JOIN characters c ON c.id = r.cid
@@ -1043,19 +1043,19 @@ RPC.register("caue-mdt:searchReports", function(src, pData)
 end)
 
 RPC.register("caue-mdt:getReportData", function(src, pId)
-    local result = exports.ghmattimysql:executeSync([[
+    local report = MySQL.single.await([[
         SELECT *
         FROM mdt_reports
         WHERE id = ?
     ]],
     { pId })
 
-    result[1].tags = json.decode(result[1].tags)
-    result[1].gallery = json.decode(result[1].gallery)
-    result[1].officers = json.decode(result[1].officers)
-    result[1].civilians = json.decode(result[1].civilians)
+    report.tags = json.decode(report.tags)
+    report.gallery = json.decode(report.gallery)
+    report.officers = json.decode(report.officers)
+    report.civilians = json.decode(report.civilians)
 
-    return result[1]
+    return report
 end)
 
 RegisterNetEvent("caue-mdt:newReport", function(pData)
@@ -1068,7 +1068,7 @@ RegisterNetEvent("caue-mdt:newReport", function(pData)
     local job = getJob(src)
 
     if pData.existing then
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE mdt_reports
             SET cid = ?, title = ?, type = ?, detail = ?, tags = ?, gallery = ?, officers = ?, civilians = ?, time = ?
             WHERE id = ?
@@ -1077,15 +1077,15 @@ RegisterNetEvent("caue-mdt:newReport", function(pData)
 
         TriggerEvent("caue-mdt:newLog", "A report was updated by " .. name .. " with the title (" .. pData.title .. ") and ID (" .. pData.id .. ")", job, pData.time)
     else
-        local result = exports.ghmattimysql:executeSync([[
+        local insertId = MySQL.insert.await([[
             INSERT INTO mdt_reports (cid, title, type, detail, tags, gallery, officers, civilians, job, time)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ]],
         { cid, pData.title, pData.type, pData.detail, json.encode(pData.tags), json.encode(pData.gallery), json.encode(pData.officers), json.encode(pData.civilians), job, pData.time })
 
-        if result["insertId"] and result["insertId"] > 0 then
-            TriggerClientEvent("caue-mdt:reportComplete", src, result["insertId"])
-            TriggerEvent("caue-mdt:newLog", "A new report was created by " .. name .. " with the title (" .. pData.title .. ") and ID (" .. result["insertId"] .. ")", job, pData.time)
+        if insertId and insertId > 0 then
+            TriggerClientEvent("caue-mdt:reportComplete", src, insertId)
+            TriggerEvent("caue-mdt:newLog", "A new report was created by " .. name .. " with the title (" .. pData.title .. ") and ID (" .. insertId .. ")", job, pData.time)
         end
     end
 end)
@@ -1096,7 +1096,7 @@ RegisterNetEvent("caue-mdt:deleteReport", function(pId, pTime)
     local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
     local job = getJob(src)
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         DELETE FROM mdt_reports
         WHERE id = ?
     ]],
@@ -1116,7 +1116,7 @@ RPC.register("caue-mdt:searchBolos", function(src, pData)
 
     local string = string.lower("%" .. pData .. "%")
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT b.id, b.title, b.time, CONCAT(c.first_name," ",c.last_name) AS author
         FROM mdt_bolos b
         LEFT JOIN characters c ON c.id = b.cid
@@ -1128,18 +1128,18 @@ RPC.register("caue-mdt:searchBolos", function(src, pData)
 end)
 
 RPC.register("caue-mdt:getBoloData", function(src, pId)
-    local result = exports.ghmattimysql:executeSync([[
+    local bolo = MySQL.single.await([[
         SELECT id, title, plate, owner, individual, detail, tags, gallery, officers
         FROM mdt_bolos
         WHERE id = ?
     ]],
     { pId })
 
-    result[1].tags = json.decode(result[1].tags)
-    result[1].gallery = json.decode(result[1].gallery)
-    result[1].officers = json.decode(result[1].officers)
+    bolo.tags = json.decode(bolo.tags)
+    bolo.gallery = json.decode(bolo.gallery)
+    bolo.officers = json.decode(bolo.officers)
 
-    return result[1]
+    return bolo
 end)
 
 RegisterServerEvent("caue-mdt:newBolo", function(data)
@@ -1152,7 +1152,7 @@ RegisterServerEvent("caue-mdt:newBolo", function(data)
     local job = getJob(src)
 
     if data.id ~= nil and data.id ~= 0 then
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE mdt_bolos
             SET cid = ?, title = ?, plate = ?, owner = ?, individual = ?, detail = ?, tags = ?, gallery = ?, officers = ?, time = ?
             WHERE id = ?
@@ -1161,15 +1161,15 @@ RegisterServerEvent("caue-mdt:newBolo", function(data)
 
         TriggerEvent("caue-mdt:newLog", "A BOLO was updated by " .. name .. " with the title (" .. data.title .. ") and ID (" .. data.id .. ")", job, data.time)
     else
-        local result = exports.ghmattimysql:executeSync([[
+        local insertId = MySQL.insert.await([[
             INSERT INTO mdt_bolos (cid, title, plate, owner, individual, detail, tags, gallery, officers, job, time)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ]],
         { cid, data.title, data.plate, data.owner, data.individual, data.detail, json.encode(data.tags), json.encode(data.gallery), json.encode(data.officers), job, data.time})
 
-        if result["insertId"] and result["insertId"] > 0 then
-            TriggerClientEvent("caue-mdt:boloComplete", src, result["insertId"])
-            TriggerEvent("caue-mdt:newLog", "A new BOLO was created by " .. name .. " with the title (" .. data.title .. ") and ID (" .. result["insertId"] .. ")", job, data.time)
+        if insertId and insertId > 0 then
+            TriggerClientEvent("caue-mdt:boloComplete", src, insertId)
+            TriggerEvent("caue-mdt:newLog", "A new BOLO was created by " .. name .. " with the title (" .. data.title .. ") and ID (" .. insertId .. ")", job, data.time)
         end
     end
 end)
@@ -1180,7 +1180,7 @@ RegisterServerEvent("caue-mdt:deleteBolo", function(id)
     local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
     local job = getJob(src)
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         DELETE FROM mdt_bolos
         WHERE id = ?
     ]],
@@ -1198,7 +1198,7 @@ end)
 RPC.register("caue-mdt:searchVehicles", function(src, pPlate)
     local plate = string.lower("%" .. pPlate .. "%")
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT v.id, v.cid, v.plate, v.model, g.state, d.modifications, m.image, m.code5, m.stolen, CONCAT(c.first_name," ",c.last_name) AS owner
         FROM vehicles v
         LEFT JOIN vehicles_garage g ON g.vid = v.id
@@ -1241,7 +1241,7 @@ RPC.register("caue-mdt:searchVehicles", function(src, pPlate)
             end
         end
 
-        local bolo = exports.ghmattimysql:scalarSync([[
+        local bolo = MySQL.scalar.await([[
             SELECT id
             FROM mdt_bolos
             WHERE plate = ?
@@ -1260,7 +1260,7 @@ RPC.register("caue-mdt:searchVehicles", function(src, pPlate)
 end)
 
 RPC.register("caue-mdt:getVehicleData", function(src, pPlate)
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT v.id, v.cid, v.plate, v.model, g.state, d.modifications, m.notes, m.image, m.code5, m.stolen, CONCAT(c.first_name," ",c.last_name) AS owner
         FROM vehicles v
         LEFT JOIN vehicles_garage g ON g.vid = v.id
@@ -1301,7 +1301,7 @@ RPC.register("caue-mdt:getVehicleData", function(src, pPlate)
         end
     end
 
-    local bolo = exports.ghmattimysql:scalarSync([[
+    local bolo = MySQL.scalar.await([[
         SELECT id
         FROM mdt_bolos
         WHERE plate = ?
@@ -1324,7 +1324,7 @@ RegisterNetEvent("caue-mdt:saveVehicleInfo", function(dbid, plate, image, notes)
     if not image or imagev == "" then imageurl = "" end
 	if not notes or notes == "" then notes = "" end
 
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT id
         FROM mdt_vehicles
         WHERE plate = ?
@@ -1332,14 +1332,14 @@ RegisterNetEvent("caue-mdt:saveVehicleInfo", function(dbid, plate, image, notes)
     { plate })
 
     if result then
-		exports.ghmattimysql:executeSync([[
+		MySQL.update.await([[
             UPDATE mdt_vehicles
             SET notes = ?, image = ?
             WHERE plate = ?
         ]],
         { notes, image, plate })
 	else
-		exports.ghmattimysql:executeSync([[
+		MySQL.insert.await([[
             INSERT INTO mdt_vehicles (plate, notes, image)
             VALUES (?, ?, ?, ?, ?)
         ]],
@@ -1350,7 +1350,7 @@ end)
 RegisterNetEvent("caue-mdt:knownInformation", function(dbid, type, status, plate)
     local src = source
 
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT id
         FROM mdt_vehicles
         WHERE plate = ?
@@ -1358,14 +1358,14 @@ RegisterNetEvent("caue-mdt:knownInformation", function(dbid, type, status, plate
     { plate })
 
     if result then
-		exports.ghmattimysql:executeSync([[
+		MySQL.update.await([[
             UPDATE mdt_vehicles
             SET ?? = ?
             WHERE plate = ?
         ]],
         { type, status, plate })
 	else
-        exports.ghmattimysql:executeSync([[
+        MySQL.insert.await([[
             INSERT INTO mdt_vehicles (plate, notes, image, ??)
             VALUES (?, ?, ?, ?)
         ]],
@@ -1380,15 +1380,15 @@ end)
 ]]
 
 RPC.register("caue-mdt:searchWeapon", function(src, pData)
-    local querry = string.lower("%" .. pData .. "%")
+    local query = string.lower("%" .. pData .. "%")
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT w.id, w.cid, w.serial, w.image, CONCAT(c.first_name," ",c.last_name) AS owner
         FROM mdt_weapons w
         LEFT JOIN characters c ON c.id = w.cid
         WHERE LOWER(w.serial) LIKE ?
     ]],
-    { querry })
+    { query })
 
     for i, v in ipairs(result) do
         if v.image == nil or v.image == "" then
@@ -1400,7 +1400,7 @@ RPC.register("caue-mdt:searchWeapon", function(src, pData)
 end)
 
 RPC.register("caue-mdt:getWeaponData", function(src, pSerial)
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT w.id, w.serial, w.brand, w.type, w.notes, w.image, CONCAT(c.first_name," ",c.last_name) AS owner
         FROM mdt_weapons w
         LEFT JOIN characters c ON c.id = w.cid
@@ -1433,14 +1433,14 @@ RegisterNetEvent("caue-mdt:addWeapon", function(pCid, pSerial)
     local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
     local job = getJob(src)
 
-    local result = exports.ghmattimysql:executeSync([[
+    local insertId = MySQL.insert.await([[
         INSERT INTO mdt_weapons (cid, serial)
         VALUES (?, ?)
     ]],
     { pCid, pSerial })
 
-    if result["insertId"] and result["insertId"] > 0 then
-        TriggerEvent("caue-mdt:newLog", "A new Weapon was created by " .. name .. " with the serial (" .. pSerial .. ") and ID (" .. result["insertId"] .. ")", job)
+    if insertId and insertId > 0 then
+        TriggerEvent("caue-mdt:newLog", "A new Weapon was created by " .. name .. " with the serial (" .. pSerial .. ") and ID (" .. insertId .. ")", job)
     end
 end)
 
@@ -1450,7 +1450,7 @@ RegisterNetEvent("caue-mdt:saveWeapon", function(pSerial, pImage, pBrand, pType,
     local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
     local job = getJob(src)
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE mdt_weapons
         SET brand = ?, type = ?, notes = ?, image = ?
         WHERE serial = ?
@@ -1469,7 +1469,7 @@ end)
 RPC.register("caue-mdt:searchMissing", function(src, pData)
     local querry = string.lower("%" .. pData .. "%")
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT m.id, m.cid, m.last_seen, m.image, CONCAT(c.first_name," ",c.last_name) AS name
         FROM mdt_missing m
         LEFT JOIN characters c ON c.id = m.cid
@@ -1491,7 +1491,7 @@ RPC.register("caue-mdt:searchMissing", function(src, pData)
 end)
 
 RPC.register("caue-mdt:getMissingData", function(src, pId)
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT m.id, m.cid, m.last_seen, m.notes, m.image, m.date, CONCAT(c.first_name," ",c.last_name) AS name
         FROM mdt_missing m
         LEFT JOIN characters c ON c.id = m.cid
@@ -1520,14 +1520,14 @@ RegisterNetEvent("caue-mdt:missingCitizen", function(pCid, pTime)
     local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
     local job = getJob(src)
 
-    local result = exports.ghmattimysql:executeSync([[
+    local insertId = MySQL.insert.await([[
         INSERT INTO mdt_missing (cid, date)
         VALUES (?, ?)
     ]],
     { pCid, pTime })
 
-    if result["insertId"] and result["insertId"] > 0 then
-        TriggerEvent("caue-mdt:newLog", "A new Missing Citizen was created by " .. name .. " with the ID (" .. result["insertId"] .. ")", job)
+    if insertId and insertId > 0 then
+        TriggerEvent("caue-mdt:newLog", "A new Missing Citizen was created by " .. name .. " with the ID (" .. insertId .. ")", job)
     end
 end)
 
@@ -1537,7 +1537,7 @@ RegisterNetEvent("caue-mdt:saveMissing", function(pId, pLastSeen, pImage, pNotes
     local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
     local job = getJob(src)
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE mdt_missing
         SET last_seen = ?, image = ?, notes = ?
         WHERE id = ?
@@ -1553,7 +1553,7 @@ RegisterServerEvent("caue-mdt:deleteMissing", function(pId, pTime)
     local name = exports["caue-base"]:getChar(src, "first_name") .. " " .. exports["caue-base"]:getChar(src, "last_name")
     local job = getJob(src)
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         DELETE FROM mdt_missing
         WHERE id = ?
     ]],
@@ -1574,7 +1574,7 @@ AddEventHandler("caue-mdt:newLog", function(text, job, time)
         time = os.time() * 1000
     end
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.insert.await([[
         INSERT INTO mdt_logs (text, job, time)
         VALUES (?, ?, ?)
     ]],
@@ -1584,7 +1584,7 @@ end)
 RPC.register("caue-mdt:getAllLogs", function(src)
     local job = getJob(src)
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT *
         FROM mdt_logs
         WHERE job = ? OR job IS NULL
@@ -1605,7 +1605,7 @@ end)
 Citizen.CreateThread(function()
     Citizen.Wait(3000)
 
-    local _categorys = exports.ghmattimysql:executeSync([[
+    local _categorys = MySQL.query.await([[
         SELECT *
         FROM mdt_penalcode_categorys
     ]])
@@ -1614,7 +1614,7 @@ Citizen.CreateThread(function()
         penalCode[v.cid] = {}
         penalCodeCategorys[v.cid] = v.category
 
-        local _penalcode = exports.ghmattimysql:executeSync([[
+        local _penalcode = MySQL.query.await([[
             SELECT *
             FROM mdt_penalcode
             WHERE category = ?

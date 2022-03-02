@@ -7,7 +7,6 @@
 let usedSlots = [];
 let boundItems = {};
 let boundItemsInfo = {};
-let ammoTable = {};
 let boundItemsAmmo = {};
 let canOpen = true;
 let dropName = 'none';
@@ -188,16 +187,10 @@ function CacheBinds(sqlInventory) {
             boundItems[slot] = sqlInventory[i].item_id;
             boundItemsInfo[slot] = sqlInventory[i].information;
             if (!isNaN(boundItems[slot])) {
-                let ammoType = Citizen.invokeNative(
-                    '0x7FEAD38B326B9F74',
-                    PlayerPedId(),
-                    parseInt(boundItems[slot]),
-                    Citizen.returnResultAnyway(),
-                    Citizen.resultAsInteger(),
-                );
+                let metadata = JSON.parse(boundItemsInfo[slot])
 
-                if (ammoTable['' + ammoType + '']) {
-                    boundItemsAmmo[slot] = ammoTable['' + ammoType + ''].ammo;
+                if (metadata.ammo !== undefined) {
+                    boundItemsAmmo[slot] = metadata.ammo;
                 } else {
                     boundItemsAmmo[slot] = 0;
                 }
@@ -485,20 +478,13 @@ function ClearCache(sentIndexName) {
     }
 }
 
-function Rebind(slot, itemid) {
-    let Ped = PlayerPedId();
+function Rebind(slot, itemid, metadata) {
     boundItems[slot] = itemid;
     if (!isNaN(boundItems[slot])) {
-        let ammoType = Citizen.invokeNative(
-            '0x7FEAD38B326B9F74',
-            PlayerPedId(),
-            parseInt(boundItems[slot]),
-            Citizen.returnResultAnyway(),
-            Citizen.resultAsInteger(),
-        );
+        metadata = JSON.parse(metadata)
 
-        if (ammoTable['' + ammoType + '']) {
-            boundItemsAmmo[slot] = ammoTable['' + ammoType + ''].ammo;
+        if (metadata.ammo !== undefined) {
+            boundItemsAmmo[slot] = metadata.ammo;
         } else {
             boundItemsAmmo[slot] = 0;
         }
@@ -561,7 +547,7 @@ function findSlot(ItemIdToCheck, amount, nonStacking) {
     }
 
     if (foundslot == 0) {
-        emit('DoLongHudText', 'Falha ao entregar ' + ItemIdToCheck + ' porque você está cheio!', 2);
+        emit('DoLongHudText', 'Failed to give ' + ItemIdToCheck + ' because you were full!', 2);
     }
 
     return foundslot;
@@ -623,6 +609,10 @@ exports('setPlayerWeight', (cid, weight) => {
     }));
 })
 
+exports('getPlayerMaxWeight', () => {
+    return maxPlayerWeight
+});
+
 exports('itemListInfo', (item_id) => {
     return JSON.stringify(itemList[item_id]);
 });
@@ -639,6 +629,10 @@ exports('getItemListNames', () => {
 
     return itemListSend
 })
+
+exports('getFullItemList', () => {
+    return itemList;
+});
 
 /*
 
@@ -759,7 +753,7 @@ on('inventory-open-request', async () => {
 
         let lockStatus = GetVehicleDoorLockStatus(vehicleFound)
         if (lockStatus != 1 && lockStatus != 0 && lockStatus != 4 && distanceRear < 1.5) {
-            TriggerEvent('DoLongHudText', 'O veículo está trancado.', 2);
+            TriggerEvent('DoLongHudText', 'The vehicle is locked.', 2);
             CloseGui();
         } else {
             if (distanceRear > 1.5) {
@@ -768,7 +762,7 @@ on('inventory-open-request', async () => {
                 let licensePlate = GetVehicleNumberPlateText(vehicleFound);
                 if (licensePlate != null) {
                     if (vehModel === GetHashKey('npwheelchair')) {
-                        TriggerEvent('DoLongHudText', 'Isso é uma cadeira de rodas, burro.', 2);
+                        TriggerEvent('DoLongHudText', 'This is a wheelchair, dummy.', 2);
                     } else {
                         if (!IsThisModelABicycle(vehModel) && vehModel !== GetHashKey('trash2')) {
                             let carInvName = 'Trunk-' + licensePlate;
@@ -982,7 +976,7 @@ on('player:receiveItem', async (id, amount, generateInformation, itemdata, retur
 
     let combined = parseFloat(itemList[id].weight) * parseFloat(amount);
     if ((parseFloat(personalWeight) > maxPlayerWeight || parseFloat(personalWeight) + combined > maxPlayerWeight) && !devItem) {
-        emit('DoLongHudText', itemList[id].displayname + ' caiu no chão porque você está com sobrepeso.', 2);
+        emit('DoLongHudText', itemList[id].displayname + ' fell on the ground because you are overweight', 2);
         let droppedItem = {
             slot: 3,
             itemid: id,
@@ -1039,16 +1033,6 @@ on('CreateCraftOption', (id, add, craft) => {
     CreateCraftOption(id, add, craft);
 });
 
-RegisterNetEvent('caue-items:SetAmmo');
-on('caue-items:SetAmmo', (sentammoTable) => {
-    if (sentammoTable) {
-        ammoTable = sentammoTable;
-    }
-    if (MyInventory) {
-        CacheBinds(JSON.parse(MyInventory));
-    }
-});
-
 RegisterNetEvent('toggle-animation');
 on('toggle-animation', (toggleAnimation) => {
     let lPed = PlayerPedId();
@@ -1084,7 +1068,7 @@ on('closeInventoryGui', () => {
 RegisterNetEvent('watch-inventory');
 on('watch-inventory', (src,cash,name) => {
     watch = [src,name]
-    emit('chatMessage', 'SEARCH ', 2, "Jogador tem $ " + cash, 5000);
+    emit('chatMessage', 'SEARCH ', 2, "Player had cash in the amount of: " + cash, 5000);
 });
 
 RegisterNetEvent('caue-inventory:log');
@@ -1158,7 +1142,7 @@ RegisterNuiCallbackType('SlotJustUsed');
 on('__cfx_nui:SlotJustUsed', (data, cb) => {
     let target = data.targetslot;
     if (target < 5 && data.MyInvMove) {
-        Rebind(target, data.itemid);
+        Rebind(target, data.itemid, data.metadata);
     }
     if (data.move) {
         boundItems[data.origin] = undefined;

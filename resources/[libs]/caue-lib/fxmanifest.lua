@@ -2,13 +2,14 @@ fx_version "cerulean"
 games { "gta5" }
 
 shared_scripts {
-    "shared/*.*",
+    "shared/*",
 }
 
 server_scripts {
-    "server/*.*",
+    "@oxmysql/lib/MySQL.lua",
+    "server/*",
 }
 
 client_scripts {
-    "client/*.*",
+    "client/*",
 }

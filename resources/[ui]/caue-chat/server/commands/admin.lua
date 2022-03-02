@@ -175,3 +175,16 @@ Commands["po"] = {
         ["params"] = { "dev" },
     },
 }
+
+Commands["mysql"] = {
+    ["function"] = function(source, args)
+        TriggerClientEvent("oxmysql:openUi", source, args)
+    end,
+    ["suggestion"] = {
+        ["help"] = "check mysql data",
+    },
+    ["condition"] = {
+        ["type"] = "ADMIN",
+        ["params"] = { "dev" },
+    },
+}

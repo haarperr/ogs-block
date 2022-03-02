@@ -58,7 +58,7 @@ function getSMS(_src)
     local phone = exports["caue-base"]:getChar(src, "phone")
     if not phone then return {} end
 
-    local sms = exports.ghmattimysql:executeSync([[
+    local sms = MySQL.query.await([[
         SELECT id, sender, receiver, message, FROM_UNIXTIME(date) AS date
         FROM phone_sms
         WHERE receiver = ? OR sender = ?
@@ -82,7 +82,7 @@ function readSMS(sender, receiver, name, _phone, _src)
 
     if not phone then return {} end
 
-    local sms = exports.ghmattimysql:executeSync([[
+    local sms = MySQL.query.await([[
         SELECT id, sender, receiver, message, FROM_UNIXTIME(date) AS date
         FROM phone_sms
         WHERE ((sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?))
@@ -90,7 +90,7 @@ function readSMS(sender, receiver, name, _phone, _src)
     { sender, receiver, receiver, sender })
 
     if receiver == phone then
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE phone_sms
             SET seen = 1
             WHERE (sender = ? AND receiver = ?)
@@ -113,7 +113,7 @@ function sendSMS(number, message, _src)
         return false
     end
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.insert.await([[
         INSERT INTO phone_sms (sender, receiver, message, date)
         VALUES (?, ?, ?, UNIX_TIMESTAMP())
     ]],

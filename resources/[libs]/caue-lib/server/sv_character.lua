@@ -1,7 +1,7 @@
 function characterExist(cid)
     if not cid then return false end
 
-    local exist = exports.ghmattimysql:scalarSync([[
+    local exist = MySQL.scalar.await([[
         SELECT id
         FROM characters
         WHERE id = ?
@@ -16,7 +16,7 @@ end
 function getCharacter(cid, info)
     if not cid then return 0 end
 
-    local info = exports.ghmattimysql:scalarSync([[
+    local info = MySQL.scalar.await([[
         SELECT ??
         FROM characters
         WHERE id = ?

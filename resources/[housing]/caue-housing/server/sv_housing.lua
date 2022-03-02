@@ -19,7 +19,7 @@ function getCurrentOwned(src)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return {} end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT hid, DATEDIFF(FROM_UNIXTIME(UNIX_TIMESTAMP()), FROM_UNIXTIME(last_payment)) AS last_payment
         FROM housing
         WHERE cid = ?
@@ -46,7 +46,7 @@ function currentKeys(src)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return {} end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local result = MySQL.query.await([[
         SELECT k.hid, DATEDIFF(FROM_UNIXTIME(UNIX_TIMESTAMP()), FROM_UNIXTIME(h.last_payment)) AS last_payment
         FROM housing_keys k
         INNER JOIN housing h ON h.hid = k.hid
@@ -124,7 +124,7 @@ RPC.register("getCurrentSelected", function(src, pPropertyId)
 
     local finished = true
 
-    local _information = exports.ghmattimysql:scalarSync([[
+    local _information = MySQL.scalar.await([[
         SELECT information
         FROM housing
         WHERE hid = ?
@@ -158,7 +158,7 @@ RPC.register("getCurrentSelected", function(src, pPropertyId)
         currentHousingLocks[k] = false
     end
 
-    local _result = exports.ghmattimysql:scalarSync([[
+    local _result = MySQL.scalar.await([[
         SELECT id
         FROM housing
         WHERE hid = ? AND cid = ?
@@ -198,7 +198,7 @@ RPC.register("caue-phone:getHouseKeys", function(src, pHouseId)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return {} end
 
-    local keys = exports.ghmattimysql:executeSync([[
+    local keys = MySQL.query.await([[
         SELECT k.hid as house_id, k.cid AS player_cid, CONCAT(c.first_name," ",c.last_name) as player_name
         FROM housing_keys k
         INNER JOIN characters c ON c.id = k.cid
@@ -220,7 +220,7 @@ RPC.register("caue-phone:giveKey", function(src, pHouseId, pPlayerId)
     local playerCid = exports["caue-base"]:getChar(pPlayerId, "id")
     if not cid then return false, "ID não encontrado" end
 
-    local hasKey = exports.ghmattimysql:scalarSync([[
+    local hasKey = MySQL.scalar.await([[
         SELECT id
         FROM housing_keys
         WHERE hid = ? AND cid = ?
@@ -231,13 +231,13 @@ RPC.register("caue-phone:giveKey", function(src, pHouseId, pPlayerId)
         return false, "O player já possui a chave desta casa."
     end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local insertId = MySQL.insert.await([[
         INSERT INTO housing_keys (hid, cid)
         VALUES (?, ?)
     ]],
     { pHouseId, playerCid })
 
-    if result["insertId"] == 0 then
+    if not insertId or insertId < 1 then
         return false, "Database insert eror"
     end
 
@@ -251,13 +251,13 @@ RPC.register("caue-phone:removeKey", function(src, pHouseId, pPlayerId)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return false end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         DELETE FROM housing_keys
         WHERE hid = ? AND cid = ?
     ]],
     { pHouseId, pPlayerId })
 
-    if result and result["affectedRows"] > 0 then
+    if affectedRows and affectedRows > 0 then
         local pPlayerId = exports["caue-base"]:getSidWithCid(pPlayerId)
         if pPlayerId > 0 then
             TriggerClientEvent("caue-housing:refresh", pPlayerId)
@@ -295,14 +295,14 @@ RPC.register("caue-phone:payHouse", function(src, pHouseId)
 
     exports["caue-financials"]:addTax("Propertys", tax.tax)
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         UPDATE housing
         SET last_payment = last_payment + 604800
         WHERE hid = ?
     ]],
     { pHouseId })
 
-    if result["affectedRows"] ~= 1 then
+    if not affectedRows or affectedRows < 1 then
         return false, "affectedRows ~= 1"
     end
 
@@ -313,13 +313,13 @@ RPC.register("caue-phone:removeSharedKey", function(src, pHouseId)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return false end
 
-    local result = exports.ghmattimysql:executeSync([[
+    local affectedRows = MySQL.update.await([[
         DELETE FROM housing_keys
         WHERE hid = ? AND cid = ?
     ]],
     { pHouseId, cid })
 
-    if result and result["affectedRows"] > 0 then
+    if affectedRows and affectedRows > 0 then
         TriggerClientEvent("caue-housing:refresh", src)
         return true
     end

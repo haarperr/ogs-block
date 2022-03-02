@@ -11,21 +11,20 @@ function loadGroups(_src)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return end
 
-    exports.ghmattimysql:execute([[
+    local result = MySQL.query.await([[
         SELECT g1.group, g2.name, g1.rank
         FROM groups_members g1
         INNER JOIN ?? g2 ON g2.group = g1.group
         WHERE cid = ?
     ]],
-    { "groups", cid },
-    function(result)
-        for i, v in ipairs(result) do
-            result[i]["rankinfos"] = rankInfos(v["group"], v["rank"])
-        end
+    { "groups", cid })
 
-        exports["caue-base"]:setChar(src, "groups", result)
-        TriggerClientEvent("caue-base:setChar", src, "groups", result)
-    end)
+    for i, v in ipairs(result) do
+        result[i]["rankinfos"] = rankInfos(v["group"], v["rank"])
+    end
+
+    exports["caue-base"]:setChar(src, "groups", result)
+    TriggerClientEvent("caue-base:setChar", src, "groups", result)
 end
 
 function groupInformations(group)
@@ -33,7 +32,7 @@ function groupInformations(group)
 
     local bank = exports["caue-financials"]:getBalance(groupBank(group))
 
-    local members = exports.ghmattimysql:executeSync([[
+    local members = MySQL.query.await([[
         SELECT g1.cid, CONCAT(c1.first_name," ",c1.last_name) AS name, g1.rank, (IF(g1.giver IS NULL, "Desconhecido", CONCAT(c2.first_name," ",c2.last_name))) AS giver, g2.name AS rankname
         FROM groups_members g1
         INNER JOIN characters c1 ON c1.id = g1.cid
@@ -54,7 +53,7 @@ end
 function groupName(group)
     if not group then return "ERROR" end
 
-    local name = exports.ghmattimysql:scalarSync([[
+    local name = MySQL.scalar.await([[
         SELECT ??
         FROM ??
         WHERE ?? = ?
@@ -69,7 +68,7 @@ end
 function groupLog(group, type, text)
     if not group or not type or not text then return end
 
-    exports.ghmattimysql:execute([[
+    MySQL.insert([[
         INSERT INTO ?? (??, ??, ??, ??)
         VALUES (?, ?, ?, UNIX_TIMESTAMP())
     ]],
@@ -79,7 +78,7 @@ end
 function groupLogs(group)
     if not group then return {} end
 
-    local logs = exports.ghmattimysql:executeSync([[
+    local logs = MySQL.query.await([[
         SELECT ??, ??, FROM_UNIXTIME(??, "%d/%m/%y %H:%i:%s") AS ??
         FROM ??
         WHERE ?? = ?

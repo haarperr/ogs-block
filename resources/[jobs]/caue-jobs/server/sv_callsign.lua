@@ -8,7 +8,7 @@ function getCallsign(pSrc, pJob)
     local cid = exports["caue-base"]:getChar(pSrc, "id")
     if not cid then return end
 
-    local callSign = exports.ghmattimysql:scalarSync([[
+    local callSign = MySQL.scalar.await([[
         SELECT callsign
         FROM jobs_callsigns
         WHERE cid = ? AND job = ?
@@ -19,7 +19,7 @@ function getCallsign(pSrc, pJob)
 end
 
 function setCallsign(cid, job, callsign)
-    local exist = exports.ghmattimysql:scalarSync([[
+    local exist = MySQL.scalar.await([[
         SELECT id
         FROM jobs_callsigns
         WHERE cid = ? AND job = ?
@@ -27,26 +27,26 @@ function setCallsign(cid, job, callsign)
     { cid, job })
 
     if exist then
-        local result = exports.ghmattimysql:executeSync([[
+        local affectedRows = MySQL.update.await([[
             UPDATE jobs_callsigns
             SET callsign = ?
             WHERE id = ?
         ]],
         { callsign, exist })
 
-        if result["affectedRows"] ~= 1 then
+        if not affectedRows or affectedRows < 1 then
             return false, "Database update eror"
         end
 
         return true, "Callsign updated"
     else
-        local result = exports.ghmattimysql:executeSync([[
+        local insertId = MySQL.insert.await([[
             INSERT INTO jobs_callsigns (cid, job, callsign)
             VALUES (?, ?, ?)
         ]],
         { cid, job, callsign })
 
-        if result["insertId"] == 0 then
+        if not insertId or insertId < 1 then
             return false, "Database insert eror"
         end
 

@@ -4,13 +4,14 @@ games { "gta5" }
 shared_scripts {
     "@caue-lib/shared/sh_util.lua",
     "@caue-lib/shared/sh_ids.lua",
-    "shared/*.*",
+    "shared/*",
 }
 
 server_scripts {
-    "server/*.*",
+    "@oxmysql/lib/MySQL.lua",
+    "server/*",
 }
 
 client_scripts {
-    "client/*.*",
+    "client/*",
 }

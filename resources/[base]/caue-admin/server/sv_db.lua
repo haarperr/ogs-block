@@ -30,13 +30,14 @@ function Caue.Admin.SetRank(self, target, rank)
     local src = target:getVar("source")
     local hex = target:getVar("hexid")
 
-    exports.ghmattimysql:execute([[
+    local affectedRows = MySQL.update.await([[
         UPDATE users
         SET users.rank = ?
         WHERE hex = ?
     ]],
-    { rank, hex },
-    function()
+    { rank, hex })
+
+    if affectedRows and affectedRows ~= 0 then
         exports["caue-base"]:setUser(src, "rank", rank)
         TriggerClientEvent("caue-base:setVar", src, "rank", rank)
 
@@ -50,11 +51,11 @@ function Caue.Admin.SetRank(self, target, rank)
         for k, v in pairs(Caue._Admin.CurAdmins) do
             TriggerClientEvent("caue-admin:updateData", k, src, "rank", rank)
         end
-    end)
+    end
 end
 
 function Caue.Admin.IsBanned(self, hex)
-    local banned = exports.ghmattimysql:scalarSync([[
+    local banned =  MySQL.scalar.await([[
         SELECT time
         FROM users_bans
         WHERE hex = ?
@@ -68,14 +69,14 @@ function Caue.Admin.Ban(self, hex, time, reason)
     if not time then time = 0 end
 
     if Caue.Admin:IsBanned(hex) then
-        exports.ghmattimysql:execute([[
+        MySQL.update([[
             UPDATE users_bans
             SET time = ?, reason = ?
             WHERE hex = ?
         ]],
         { time, reason, hex })
     else
-        exports.ghmattimysql:execute([[
+        MySQL.update([[
             INSERT INTO users_bans (hex, time, reason)
             VALUES (?, ?, ?)
         ]],
@@ -84,7 +85,7 @@ function Caue.Admin.Ban(self, hex, time, reason)
 end
 
 function Caue.Admin.DB.Unban(self, hex)
-    exports.ghmattimysql:execute([[
+    MySQL.update([[
         DELETE FROM users_bans
         WHERE hex = ?
     ]],

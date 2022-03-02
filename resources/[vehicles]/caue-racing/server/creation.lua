@@ -14,16 +14,16 @@ AddEventHandler("caue-racing:recieveCreateData", function(pRaceName, pRaceType, 
     end
     distanceMap = math.ceil(distanceMap)
 
-    local result = exports.ghmattimysql:executeSync([[
+    local insertId = MySQL.insert.await([[
         INSERT INTO racing_races (name, creator, distance, type, thumbnail, checkpoints)
         VALUES (?, ?, ?, ?, ?, ?)
     ]],
     { pRaceName, aliases, distanceMap, pRaceType, pRaceThumbnail, json.encode(pCheckpoints) })
 
-    if not result["insertId"] or result["insertId"] < 1 then return end
+    if not insertId or insertId < 1 then return end
 
     formatRace({
-        id = result["insertId"],
+        id = insertId,
         name = pRaceName,
         creator = aliases,
         distance = distanceMap,
@@ -40,7 +40,7 @@ AddEventHandler("caue-racing:recieveCreateData", function(pRaceName, pRaceType, 
 end)
 
 RPC.register("caue-racing:isRaceNameTaken", function(src, pRaceName)
-    local result = exports.ghmattimysql:scalarSync([[
+    local result = MySQL.scalar.await([[
         SELECT id
         FROM racing_races
         WHERE name = ?

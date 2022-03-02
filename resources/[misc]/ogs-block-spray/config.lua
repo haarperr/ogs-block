@@ -11,8 +11,8 @@ MySQLFramework = {
     DISABLE_MYSQL = false,
 
     MYSQL_ASYNC = false,
-    GHMATTI_MYSQL = true,
-    OXMYSQL = false,
+    GHMATTI_MYSQL = false,
+    OXMYSQL = true,
 }
 
 -- If True, will use old non-additive rendering style

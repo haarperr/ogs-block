@@ -13,7 +13,7 @@ function getLicenses(src, cid, names)
 
     if not cid then return {} end
 
-    local _licenses = exports.ghmattimysql:scalarSync([[
+    local _licenses = MySQL.scalar.await([[
         SELECT licenses
         FROM characters
         WHERE id = ?
@@ -31,7 +31,7 @@ function getLicenses(src, cid, names)
     end
 
     if newLicense then
-        exports.ghmattimysql:executeSync([[
+        MySQL.update.await([[
             UPDATE characters
             SET licenses = ?
             WHERE id = ?
@@ -92,7 +92,7 @@ function updateLicense(src, license, status, cid)
         end
     end
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE characters
         SET licenses = ?
         WHERE id = ?

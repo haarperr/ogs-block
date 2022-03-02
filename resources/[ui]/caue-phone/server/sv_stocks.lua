@@ -5,7 +5,7 @@
 ]]
 
 local function checkExists(cid)
-    local exist = exports.ghmattimysql:scalarSync([[
+    local exist = MySQL.scalar.await([[
         SELECT ??
         FROM ??
         WHERE ?? = ?
@@ -13,7 +13,7 @@ local function checkExists(cid)
     { "cid", "stocks_characters", "cid", cid })
 
     if not exist then
-        exports.ghmattimysql:executeSync([[
+        MySQL.insert.await([[
             INSERT INTO ?? (??)
             VALUES (?)
         ]],
@@ -24,11 +24,17 @@ local function checkExists(cid)
 end
 
 local function stocksData()
-    local stocks = exports.ghmattimysql:executeSync([[
+    local stocks = MySQL.query.await([[
         SELECT *
         FROM ??
     ]],
     { "stocks" })
+
+    for i, v in ipairs(stocks) do
+        stocks[i]["value"] = tonumber(v["value"])
+        stocks[i]["change"] = tonumber(v["change"])
+        stocks[i]["amount"] = tonumber(v["amount"])
+    end
 
     return stocks
 end
@@ -36,22 +42,26 @@ end
 local function stockData(stock)
     if not stock then return false end
 
-    local _stock = exports.ghmattimysql:executeSync([[
+    local _stock = MySQL.single.await([[
         SELECT *
         FROM ??
         WHERE ?? = ?
     ]],
     { "stocks", "id", stock })
 
-    if not _stock[1] then return false end
+    if not _stock then return false end
 
-    return _stock[1]
+    _stock["value"] = tonumber(_stock["value"])
+    _stock["change"] = tonumber(_stock["change"])
+    _stock["amount"] = tonumber(_stock["amount"])
+
+    return _stock
 end
 
 local function stockUpdate(stock, info, value)
     if not stock or not info or not value then return false end
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE ??
         SET ?? = ?
         WHERE ?? = ?
@@ -74,17 +84,17 @@ local function getStocks(_src, _cid)
 
     if not cid then return {} end
 
-    local stocks = exports.ghmattimysql:executeSync([[
+    local stocks = MySQL.single.await([[
         SELECT *
         FROM ??
         WHERE ?? = ?
     ]],
     { "stocks_characters", "cid", cid })
 
-    if not stocks[1] then return {} end
+    if not stocks then return {} end
 
     local _stocks = {}
-    for k, v in pairs(stocks[1]) do
+    for k, v in pairs(stocks) do
         if k ~= "cid" then
             _stocks[k] = v
         end
@@ -134,7 +144,7 @@ local function buyStock(stock, amount, _src)
         return false
     end
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE ??
         SET ?? = ?? + ?
         WHERE ?? = ?
@@ -187,7 +197,7 @@ local function sellStock(stock, amount, _src)
         return false
     end
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE ??
         SET ?? = ?? - ?
         WHERE ?? = ?
@@ -232,7 +242,7 @@ local function transferStock(stock, amount, _cid, _src)
         return false
     end
 
-    local result = exports.ghmattimysql:transactionSync({
+    local success = MySQL.transaction.await({
         {
             ["query"] = [[UPDATE ?? SET ?? = ?? - ? WHERE ?? = ?]],
             ["values"] = { "stocks_characters", stock, stock, amount, "cid", cid },
@@ -243,7 +253,7 @@ local function transferStock(stock, amount, _cid, _src)
         },
     })
 
-    if not result then
+    if not success then
         TriggerClientEvent("caue-phone:notification", src, "fas fa-exclamation-circle", "Error", "Failed in transfer " .. amount .. " " .. stock .. " to ID: " .. _cid, 5000)
         return false
     end
@@ -292,31 +302,32 @@ local function StockUpdate()
 end
 
 local function checkLastStockUpdate()
-    exports.ghmattimysql:scalar([[
+    local last_update = MySQL.scalar.await([[
         SELECT ??
         FROM ??
         WHERE ?? = ?
     ]],
-    { "value", "variables", "name", "last_stock_update" },
-    function(result)
-        if result ~= nil then
-            local lastupdate = tonumber(result)
+    { "value", "variables", "name", "last_stock_update" })
+
+    if last_update ~= nil then
+        local lastupdate = tonumber(last_update)
             local curtime = os.time()
 
             if curtime > lastupdate then
                 local nextupdate = os.time() + (math.random(86400, 172800)) -- 1-2 days
-                exports.ghmattimysql:execute([[
+
+            local affectedRows = MySQL.update.await([[
                     UPDATE ??
                     SET ?? = ?
                     WHERE ?? = ?
                 ]],
-                { "variables", "value", nextupdate, "name", "last_stock_update" },
-                function()
+            { "variables", "value", nextupdate, "name", "last_stock_update" })
+
+            if affectedRows and affectedRows ~= 0 then
                     StockUpdate()
-                end)
             end
         end
-    end)
+    end
 end
 
 --[[

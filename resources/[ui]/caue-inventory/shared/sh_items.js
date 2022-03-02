@@ -2717,7 +2717,7 @@ itemList['watermelon'] = {
 
 itemList['foodingredient'] = {
   fullyDegrades: true,
-  decayrate: 0.01,
+  decayrate: 0.05,
   displayname: 'Ingredientes',
   price: 10,
   weight: 5,
@@ -2729,7 +2729,7 @@ itemList['foodingredient'] = {
 
 itemList['cheese'] = {
   fullyDegrades: true,
-  decayrate: 0.01,
+  decayrate: 0.05,
   displayname: 'Queijo',
   price: 1,
   weight: 1,
@@ -2741,7 +2741,7 @@ itemList['cheese'] = {
 
 itemList['lettuce'] = {
   fullyDegrades: true,
-  decayrate: 0.01,
+  decayrate: 0.05,
   displayname: 'Alface',
   price: 1,
   weight: 1,
@@ -2753,7 +2753,7 @@ itemList['lettuce'] = {
 
 itemList['freshmeat'] = {
   fullyDegrades: true,
-  decayrate: 0.01,
+  decayrate: 0.05,
   displayname: 'Carne fresca',
   craft: [[{ itemid: 'foodingredient', amount: 1 }]],
   price: 10,
@@ -2766,7 +2766,7 @@ itemList['freshmeat'] = {
 
 itemList['hfcs'] = {
   fullyDegrades: true,
-  decayrate: 0.01,
+  decayrate: 0.05,
   displayname: 'Charope de frutose',
   price: 1,
   weight: 1,
@@ -2778,7 +2778,7 @@ itemList['hfcs'] = {
 
 itemList['milk'] = {
   fullyDegrades: true,
-  decayrate: 0.01,
+  decayrate: 0.05,
   displayname: 'Leite',
   price: 1,
   weight: 1,
@@ -2790,7 +2790,7 @@ itemList['milk'] = {
 
 itemList['icecreamingred'] = {
   fullyDegrades: true,
-  decayrate: 0.01,
+  decayrate: 0.05,
   displayname: 'Sorvete',
   price: 1,
   weight: 1,

@@ -19,19 +19,6 @@ databaseFormat = {
 
 --[[
 
-    Functions
-
-]]
-
-local function checkExistenceClothes(cid, cb)
-    exports.ghmattimysql:execute("SELECT cid FROM character_clothes WHERE cid = @cid LIMIT 1;", {["cid"] = cid}, function(result)
-        local exists = result and result[1] and true or false
-        cb(exists)
-    end)
-end
-
---[[
-
     Events
 
 ]]
@@ -50,31 +37,30 @@ AddEventHandler("caue-clothes:getClothes", function(_src)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return end
 
-    exports.ghmattimysql:execute([[
+    local clothes = MySQL.single.await([[
         SELECT *
         FROM characters_clothes
         WHERE cid = ?
     ]],
-    { cid },
-    function(result)
-        if result[1] then
-            local data = {
-                model = result[1].model,
-                drawables = json.decode(result[1].drawables),
-                props = json.decode(result[1].props),
-                drawtextures = json.decode(result[1].drawtextures),
-                proptextures = json.decode(result[1].proptextures),
-                hairColor = json.decode(result[1].hairColor),
-                fadeStyle = result[1].fadeStyle,
-                headBlend = json.decode(result[1].headBlend),
-                headStructure = json.decode(result[1].headStructure),
-                headOverlay = json.decode(result[1].headOverlay),
-                tattoos = json.decode(result[1].tattoos),
-            }
+    { cid })
 
-            TriggerClientEvent("caue-clothes:setClothes", src, data)
-        end
-	end)
+    if clothes then
+        local data = {
+            model = clothes.model,
+            drawables = json.decode(clothes.drawables),
+            props = json.decode(clothes.props),
+            drawtextures = json.decode(clothes.drawtextures),
+            proptextures = json.decode(clothes.proptextures),
+            hairColor = json.decode(clothes.hairColor),
+            fadeStyle = clothes.fadeStyle,
+            headBlend = json.decode(clothes.headBlend),
+            headStructure = json.decode(clothes.headStructure),
+            headOverlay = json.decode(clothes.headOverlay),
+            tattoos = json.decode(clothes.tattoos),
+        }
+
+        TriggerClientEvent("caue-clothes:setClothes", src, data)
+    end
 end)
 
 RegisterServerEvent("caue-clothes:updateClothes")
@@ -102,28 +88,27 @@ AddEventHandler("caue-clothes:updateClothes",function(data, tats)
     if type(tats) ~= "table" then tats = {} end
     local tattoos = json.encode(tats)
 
-    exports.ghmattimysql:scalar([[
+    local exist = MySQL.scalar.await([[
         SELECT cid
         FROM characters_clothes
         WHERE cid = ?
     ]],
-    { cid },
-    function(result)
-        if not result then
-            exports.ghmattimysql:execute([[
-                INSERT INTO characters_clothes (cid, model, drawables, props, drawtextures, proptextures, hairColor, fadeStyle, headBlend, headStructure, headOverlay, tattoos)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ]],
-            { cid, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay, tattoos })
-        else
-            exports.ghmattimysql:execute([[
-                UPDATE characters_clothes
-                SET model = ?, drawables = ?, props = ?, drawtextures = ?, proptextures = ?, hairColor = ?, fadeStyle = ?, headBlend = ?, headStructure = ?, headOverlay = ?, tattoos = ?
-                WHERE cid = ?
-            ]],
-            { data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay, tattoos, cid })
-        end
-    end)
+    { cid })
+
+    if exist then
+        MySQL.update([[
+            UPDATE characters_clothes
+            SET model = ?, drawables = ?, props = ?, drawtextures = ?, proptextures = ?, hairColor = ?, fadeStyle = ?, headBlend = ?, headStructure = ?, headOverlay = ?, tattoos = ?
+            WHERE cid = ?
+        ]],
+        { data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay, tattoos, cid })
+    else
+        MySQL.insert([[
+            INSERT INTO characters_clothes (cid, model, drawables, props, drawtextures, proptextures, hairColor, fadeStyle, headBlend, headStructure, headOverlay, tattoos)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ]],
+        { cid, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay, tattoos })
+    end
 end)
 
 RegisterServerEvent("caue-clothes:getTattoos")
@@ -132,19 +117,18 @@ AddEventHandler("caue-clothes:getTattoos", function(_src)
 
     local cid = exports["caue-base"]:getChar(src, "id")
 
-    exports.ghmattimysql:scalar([[
+    local tattoos = MySQL.scalar.await([[
         SELECT tattoos
         FROM characters_clothes
         WHERE cid = ?
     ]],
-    { cid },
-    function(result)
-        if result then
-            TriggerClientEvent("raid_clothes:settattoos", src, json.decode(result))
-        else
-            TriggerClientEvent("raid_clothes:settattoos", src, {})
-        end
-    end)
+    { cid })
+
+    if tattoos then
+        TriggerClientEvent("raid_clothes:settattoos", src, json.decode(tattoos))
+    else
+        TriggerClientEvent("raid_clothes:settattoos", src, {})
+    end
 end)
 
 --[[

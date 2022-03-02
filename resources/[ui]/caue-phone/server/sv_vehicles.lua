@@ -29,7 +29,7 @@ RPC.register("caue-phone:getVehicles", function(src)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return {} end
 
-    local vehicles = exports.ghmattimysql:executeSync([[
+    local vehicles = MySQL.query.await([[
         SELECT v1.id, v1.plate, v1.model, v2.fuel, v2.body_damage, v2.engine_damage, v3.state, v3.garage, v3.coords, v4.price AS payment_price, v4.left AS payment_left, DATEDIFF(FROM_UNIXTIME(UNIX_TIMESTAMP()), FROM_UNIXTIME(v4.last)) AS payment_last
         FROM vehicles v1
         INNER JOIN vehicles_metadata v2 ON v2.vid = v1.id
@@ -61,7 +61,7 @@ RPC.register("caue-phone:payVehicle", function(src, identifier)
 end)
 
 RPC.register("caue-phone:carshopOutstandings", function(src, group)
-    local vehicles = exports.ghmattimysql:executeSync([[
+    local vehicles = MySQL.query.await([[
         SELECT v1.vid, v2.plate, v2.model, CONCAT(c1.first_name, c1.last_name) as name, c1.phone, v3.price AS payment_price, v3.left AS payment_left, DATEDIFF(FROM_UNIXTIME(UNIX_TIMESTAMP()), FROM_UNIXTIME(v3.last)) AS payment_last
         FROM carshop_logs v1
         INNER JOIN vehicles v2 ON v2.id = v1.vid

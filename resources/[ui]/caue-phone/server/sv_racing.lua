@@ -1,5 +1,5 @@
 RPC.register("caue-phone:racingAliasesSave", function(src, aliases)
-    local exist = exports.ghmattimysql:scalarSync([[
+    local exist = MySQL.scalar.await([[
         SELECT id
         FROM characters
         WHERE aliases = ?
@@ -15,7 +15,7 @@ RPC.register("caue-phone:racingAliasesSave", function(src, aliases)
     local cid = exports["caue-base"]:getChar(src, "id")
     if not cid then return false end
 
-    exports.ghmattimysql:executeSync([[
+    MySQL.update.await([[
         UPDATE characters
         SET aliases = ?
         WHERE id = ?
