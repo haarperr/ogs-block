@@ -260,7 +260,6 @@ onNet("server-inventory-open", async (pCoords, pCid, pSecondInventory, pTargetNa
 
             shopArray = JSON.stringify(shopArray);
 
-            pItemToDropArray = JSON.parse(pItemToDropArray);
             var shopAmount = pItemToDropArray.length;
 
             emitNet("inventory-open-target", src, [inventoryPlayer, 0, playerInventoryName, shopArray, shopAmount, pTargetName, 500, false]);
