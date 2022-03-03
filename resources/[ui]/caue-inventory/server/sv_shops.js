@@ -11,6 +11,7 @@ let shopList = {};
 
 // Convenience Store
 shopList["2"] = [
+    { item_id: "musicwalkman", amount: 50 },
     { item_id: "phonebox", amount: 50 },
     { item_id: "sandwich", amount: 50 },
     { item_id: "chocobar", amount: 50 },

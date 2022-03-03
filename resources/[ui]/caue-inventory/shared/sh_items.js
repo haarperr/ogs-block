@@ -3602,6 +3602,32 @@ itemList['custommiscitem'] = {
   deg: false,
 };
 
+itemList['musicwalkman'] = {
+  fullyDegrades: true,
+  decayrate: 1.0,
+  displayname: 'Walkman',
+  price: 100,
+  weight: 1,
+  nonStack: true,
+  model: '',
+  image: 'np_walkman.png',
+  information: '',
+  craft: [[
+    { itemid: 'genericelectronicpart', amount: 1 },
+  ]],
+}
+
+itemList['musictape'] = {
+  fullyDegrades: true,
+  decayrate: 1.0,
+  displayname: 'Fita de Música',
+  price: 1,
+  weight: 0,
+  nonStack: false,
+  model: '',
+  image: 'np_cassette.png',
+};
+
 /*
 
   MISC END

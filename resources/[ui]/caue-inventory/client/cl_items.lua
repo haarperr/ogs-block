@@ -156,6 +156,7 @@ function checkForItems()
         "civradio",
         "megaphone",
         "custommiscitem",
+        "musicwalkman",
     }
 
     for _, item in ipairs(items) do
