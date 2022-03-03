@@ -49,7 +49,7 @@ async function GenerateInformation(pSource, pCid, pItemID, pItemData) {
                         }
 
                         returnInfo = JSON.stringify({
-                            ["ID"]: player.toString(),
+                            ["ID"]: pCid,
                             ["Nome"]: result[0].first_name.replace(/[^\w\s]/gi, ''),
                             ["Sobrenome"]: result[0].last_name.replace(/[^\w\s]/gi, ''),
                             ["Sexo"]: gender,
