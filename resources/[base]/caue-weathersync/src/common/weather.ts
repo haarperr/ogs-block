@@ -68,15 +68,15 @@ export const temperatureRanges: { [key in Weather]: number[] } = {
 // MAKE SURE THIS IS SORTED FROM LOW TO HIGH
 export const transitions: Transitions = {
     "EXTRASUNNY": [
-        { to: "CLEAR", chance: 50 },
-        { to: "OVERCAST", chance: 50 },
+        { to: "CLEAR", chance: 90 },
+        { to: "OVERCAST", chance: 10 },
     ],
     "CLEAR": [
         { to: "FOGGY", chance: 10 },
         { to: "CLEAR", chance: 10 },
-        { to: "CLOUDS", chance: 25 },
-        { to: "SMOG", chance: 25 },
-        { to: "EXTRASUNNY", chance: 50 },
+        { to: "CLOUDS", chance: 10 },
+        { to: "SMOG", chance: 10 },
+        { to: "EXTRASUNNY", chance: 60 },
     ],
     "CLEARING": [
         { to: "FOGGY", chance: 10 },
