@@ -15,867 +15,1060 @@ local recentlysat = false
 
 Config = {}
 Config.Sitable = {
-  --Only verticalOffset works right now!
-  --all scenarios: pastebin.com/6mrYTdQv
+    --Only verticalOffset works right now!
+    --all scenarios: pastebin.com/6mrYTdQv
 
-  -- BENCH
+    -- BENCH
 
-  {
-      prop = "v_res_fa_chair01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_picnictable_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_picnictable_02",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ilev_m_dinechair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_club_stagechair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_bench_01a",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_bench_01b",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_bench_01c",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_bench_02",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_bench_03",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_bench_04",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_bench_05",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_bench_06",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_bench_05",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_bench_08",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_bench_09",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_bench_10",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_bench_11",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_fib_3b_bench",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_ld_bench01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_wait_bench_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  -- CHAIR
+    {
+        prop = "v_res_fa_chair01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_picnictable_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_picnictable_02",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ilev_m_dinechair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_club_stagechair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_bench_01a",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_bench_01b",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_bench_01c",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_bench_02",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_bench_03",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_bench_04",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_bench_05",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_bench_06",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_bench_05",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_bench_08",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_bench_09",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_bench_10",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_bench_11",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_fib_3b_bench",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_ld_bench01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_wait_bench_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    -- CHAIR
 
-  {
-      prop = "v_serv_ct_chair02",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -1.0,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "hei_prop_heist_off_chair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
+    {
+        prop = "v_serv_ct_chair02",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -1.0,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "hei_prop_heist_off_chair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "hei_prop_hei_skid_chair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_chair_01a",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_chair_01b",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_chair_02",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_chair_03",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_chair_04a",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_chair_04b",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_chair_05",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_chair_06",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_chair_05",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_chair_08",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_chair_09",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_chair_10",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_chateau_chair_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_clown_chair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_cs_office_chair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_direct_chair_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_direct_chair_02",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_gc_chair02",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -1.0,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_off_chair_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_off_chair_03",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_off_chair_04",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_off_chair_04b",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_off_chair_04_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_off_chair_05",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_old_deck_chair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_old_wood_chair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_rock_chair_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_skid_chair_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_skid_chair_02",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_skid_chair_03",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_sol_chair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_wheelchair_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_wheelchair_01_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "p_armchair_01_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "p_clb_officechair_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "p_dinechair_01_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "p_ilev_p_easychair_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "p_soloffchair_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "p_yacht_chair_01_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_club_officechair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_corp_bk_chair3",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = -0.1,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_corp_cd_chair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_corp_offchair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ilev_chair02_ped",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ilev_hd_chair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ilev_p_easychair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ret_gc_chair03",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -1.25,
+        forwardOffset = -0.05,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_ld_farm_chair01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_table_04_chr",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_table_05_chr",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_table_06_chr",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ilev_leath_chr",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_table_01_chr_a",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -1.0,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_table_01_chr_b",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_table_02_chr",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_table_03b_chr",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_table_03_chr",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_torture_ch_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.9,
+        forwardOffset = -0.05,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ilev_fh_dineeamesa",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ilev_fh_kitchenstool",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ilev_tort_stool",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ilev_fh_kitchenstool",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ilev_fh_kitchenstool",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ilev_fh_kitchenstool",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ilev_fh_kitchenstool",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    -- SEAT
+    {
+        prop = "hei_prop_yah_seat_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "hei_prop_yah_seat_02",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "hei_prop_yah_seat_03",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_waiting_seat_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_yacht_seat_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_yacht_seat_02",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_yacht_seat_03",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_hobo_seat_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.65,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    -- COUCH
+    {
+        prop = "prop_rub_couch01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "miss_rub_couch_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_ld_farm_couch01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_ld_farm_couch02",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_rub_couch02",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_rub_couch03",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_rub_couch04",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    -- SOFA
+    {
+        prop = "p_lev_sofa_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "p_res_sofa_l_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "p_v_med_p_sofa_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "p_yacht_sofa_01_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_ilev_m_sofa",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_res_tre_sofa_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_tre_sofa_mess_a_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_tre_sofa_mess_b_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "v_tre_sofa_mess_c_s",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    -- MISC
+    {
+        prop = "prop_roller_car_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "prop_roller_car_02",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "ex_prop_offchair_exec_04",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -1.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "ba_prop_battle_club_chair_01",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -1.1,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "ba_prop_int_glam_stool",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -0.3,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "np_town_hall_judge_chair",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        verticalOffset = -1.0,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "vw_prop_vw_offchair_02",
+        scenario = "PROP_HUMAN_SEAT_ARMCHAIR",
+        scenarioExit = "sit_exit_left",
+        verticalOffset = -0.5,
+        forwardOffset = 0.0,
+        leftOffset = 0.0,
+    },
+    {
+        prop = "vw_prop_casino_chair_01a",
+        scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+        scenarioExit = "sit_exit_left",
+        verticalOffset = -0.25,
+        forwardOffset = -0.1,
+        leftOffset = 0.0,
+        headingOffset = 0.0,
+    },
+    {
+      prop = "V_Res_MBchair",
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
       verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "hei_prop_hei_skid_chair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_chair_01a",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_chair_01b",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_chair_02",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_chair_03",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_chair_04a",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_chair_04b",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_chair_05",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_chair_06",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_chair_05",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_chair_08",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_chair_09",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_chair_10",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_chateau_chair_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_clown_chair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_cs_office_chair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_direct_chair_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_direct_chair_02",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_gc_chair02",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_off_chair_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_off_chair_03",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_off_chair_04",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_off_chair_04b",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_off_chair_04_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_off_chair_05",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_old_deck_chair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_old_wood_chair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_rock_chair_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_skid_chair_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_skid_chair_02",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_skid_chair_03",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_sol_chair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_wheelchair_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_wheelchair_01_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "p_armchair_01_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "p_clb_officechair_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "p_dinechair_01_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "p_ilev_p_easychair_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "p_soloffchair_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "p_yacht_chair_01_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_club_officechair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_corp_bk_chair3",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_corp_cd_chair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_corp_offchair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = -0.3,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ilev_chair02_ped",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ilev_hd_chair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ilev_p_easychair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ret_gc_chair03",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_ld_farm_chair01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_table_04_chr",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_table_05_chr",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_table_06_chr",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ilev_leath_chr",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_table_01_chr_a",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_table_01_chr_b",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_table_02_chr",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_table_03b_chr",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_table_03_chr",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_torture_ch_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ilev_fh_dineeamesa",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ilev_fh_kitchenstool",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ilev_tort_stool",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ilev_fh_kitchenstool",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ilev_fh_kitchenstool",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ilev_fh_kitchenstool",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ilev_fh_kitchenstool",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  -- SEAT
-  {
-      prop = "hei_prop_yah_seat_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "hei_prop_yah_seat_02",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "hei_prop_yah_seat_03",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_waiting_seat_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_yacht_seat_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_yacht_seat_02",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_yacht_seat_03",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_hobo_seat_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.65,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  -- COUCH
-  {
-      prop = "prop_rub_couch01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "miss_rub_couch_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_ld_farm_couch01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_ld_farm_couch02",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_rub_couch02",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_rub_couch03",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_rub_couch04",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  -- SOFA
-  {
-      prop = "p_lev_sofa_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "p_res_sofa_l_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "p_v_med_p_sofa_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "p_yacht_sofa_01_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_ilev_m_sofa",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_res_tre_sofa_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_tre_sofa_mess_a_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_tre_sofa_mess_b_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "v_tre_sofa_mess_c_s",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  -- MISC
-  {
-      prop = "prop_roller_car_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "prop_roller_car_02",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "ex_prop_offchair_exec_04",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -1.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "ba_prop_battle_club_chair_01",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -1.1,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "ba_prop_int_glam_stool",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -0.3,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "np_town_hall_judge_chair",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      verticalOffset = -1.0,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "vw_prop_vw_offchair_02",
-      scenario = "PROP_HUMAN_SEAT_ARMCHAIR",
-      scenarioExit = "sit_exit_left",
-      verticalOffset = -0.5,
-      forwardOffset = 0.0,
-      leftOffset = 0.0
-  },
-  {
-      prop = "vw_prop_casino_chair_01a",
-      scenario = "PROP_HUMAN_SEAT_BENCH",
-      scenarioExit = "sit_exit_left",
-      verticalOffset = -0.25,
       forwardOffset = -0.1,
       leftOffset = 0.0,
-      headingOffset = 0.0
-  }
+      headingOffset = 180.0,
+    },
+    {
+      prop = "V_Res_M_L_Chair1", -- dining room chairs winery
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      scenarioExit = "sit_exit_left",
+      verticalOffset = -0.5,
+      forwardOffset = -0.05,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = "V_Ret_Chair", -- upstairs office chairs winery
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -0.5,
+      forwardOffset = -0.05,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = "V_Ret_GC_Chair01", -- shitty chairs upstairs winery
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -0.7,
+      forwardOffset = -0.05,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = "ba_Prop_Battle_Club_Chair_02", -- big office chair winery
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -1.1,
+      forwardOffset = 0.0,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = "V_Res_M_ArmChair",
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -0.5,
+      forwardOffset = -0.05,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = -105886377,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -0.3,
+      forwardOffset = 0.1,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = 757888276,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -0.5,
+      forwardOffset = 0.1,
+      leftOffset = 0.0,
+      headingOffset = 0.0,
+    },
+    {
+      prop = -425962029,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -0.5,
+      forwardOffset = -0.25,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = 1630899471,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -0.5,
+      forwardOffset = 0.1,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = -523951410,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -0.5,
+      forwardOffset = 0.1,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = -1786424499,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -1.0,
+      forwardOffset = -0.1,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = -2065455377,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -1.0,
+      forwardOffset = 1.0,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = -992735415,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -1.2,
+      forwardOffset = 0.0,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = -1120527678,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -0.2,
+      forwardOffset = 0.0,
+      leftOffset = 0.0,
+      headingOffset = 90.0,
+    },
+    {
+      prop = "v_serv_ct_chair01",
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -1.0,
+      forwardOffset = 0.325,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = 520143535,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -1.0,
+      forwardOffset = 0.0,
+      leftOffset = 0.0,
+      headingOffset = 90.0,
+    },
+    {
+      prop = -1626066319,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -1.25,
+      forwardOffset = 0.0,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = -470815620,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -1.15,
+      forwardOffset = 0.0,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = `gr_prop_gr_chair02_ped`,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -1.0,
+      forwardOffset = 0.0,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = `bkr_prop_clubhouse_chair_01`,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -1.0,
+      forwardOffset = 0.0,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = "np_mp_h_din_chair_09",
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -0.5,
+      forwardOffset = 0.20,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = "prop_bar_stool_01",
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -0.2,
+      forwardOffset = 0.20,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
+    {
+      prop = -1278649385,
+      scenario = "PROP_HUMAN_SEAT_CHAIR_MP_PLAYER",
+      verticalOffset = -1.1,
+      forwardOffset = 0.0,
+      leftOffset = 0.0,
+      headingOffset = 180.0,
+    },
 }
 
 --[[
