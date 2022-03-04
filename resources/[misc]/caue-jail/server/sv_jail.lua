@@ -38,8 +38,8 @@ RegisterNetEvent("caue-jail:updateJailTime", function(pTime)
 
     if not affectedRows or affectedRows < 1 then return end
 
-    exports["caue-base"]:setChar(src, "jail", pTime)
-    TriggerClientEvent("caue-base:setChar", src, "jail", pTime)
+    exports["caue-base"]:setChar(src, "jail", tonumber(pTime))
+    TriggerClientEvent("caue-base:setChar", src, "jail", tonumber(pTime))
 end)
 
 RegisterNetEvent("caue-jail:claimPossessions", function()

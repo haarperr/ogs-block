@@ -300,7 +300,7 @@ AddEventHandler("caue-jail:begInJail", function(pSkip, pTime, pName, pCid, pDate
     FreezeEntityPosition(PlayerPedId(), false)
 
     jailed = true
-    lastMessage = GetGameTimer() + 300000
+    lastMessage = tonumber(GetCloudTimeAsInt()) + 300
 
     TriggerEvent("chatMessage", "DOC: " , { 33, 118, 255 }, "Você tem " .. exports["caue-base"]:getChar("jail") .. " meses restantes")
 end)
@@ -410,17 +410,22 @@ Citizen.CreateThread(function()
     while true do
         Citizen.Wait(60000)
 
-        local jailTime = exports["caue-base"]:getChar("jail")
-
         if jailed then
-            local newTime = jailTime - 1
-            if newTime > -1 then
-                TriggerServerEvent("caue-jail:updateJailTime", newTime)
-            end
+            local jailTime = exports["caue-base"]:getChar("jail")
+            if jailTime ~= nil and type(jailTime) == "number" then
+                local newTime = jailTime - 1
+                if newTime > -1 then
+                    TriggerServerEvent("caue-jail:updateJailTime", newTime)
+                else
+                    newTime = 0
+                end
 
-            if GetGameTimer() > lastMessage then
-                lastMessage = GetGameTimer() + 300000
-                TriggerEvent("chatMessage", "DOC: " , { 33, 118, 255 }, "Você tem " .. newTime > -1 and newTime or 0 .. " meses restantes")
+                local currentTime = tonumber(GetCloudTimeAsInt())
+
+                if currentTime > lastMessage then
+                    lastMessage = currentTime + 300
+                    TriggerEvent("chatMessage", "DOC: " , { 33, 118, 255 }, "Você tem " .. newTime .. " meses restantes")
+                end
             end
         end
     end
