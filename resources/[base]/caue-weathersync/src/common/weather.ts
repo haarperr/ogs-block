@@ -1,6 +1,6 @@
 import { Transitions, Weather } from "./types"
 
-export const timePerWeather = 20 * 60 // 20 minutes
+export const timePerWeather = 90 * 60 // 20 minutes
 export const preproducedTransitions = 6 // preproduce 6 weathers at a time
 export const overrideTime = 30 // 30 seconds to transition weather type
 
@@ -68,15 +68,15 @@ export const temperatureRanges: { [key in Weather]: number[] } = {
 // MAKE SURE THIS IS SORTED FROM LOW TO HIGH
 export const transitions: Transitions = {
     "EXTRASUNNY": [
-        { to: "CLEAR", chance: 90 },
-        { to: "OVERCAST", chance: 10 },
+        { to: "CLEAR", chance: 95 },
+        { to: "OVERCAST", chance: 5 },
     ],
     "CLEAR": [
-        { to: "FOGGY", chance: 10 },
-        { to: "CLEAR", chance: 10 },
-        { to: "CLOUDS", chance: 10 },
-        { to: "SMOG", chance: 10 },
-        { to: "EXTRASUNNY", chance: 60 },
+        { to: "FOGGY", chance: 5 },
+        { to: "CLEAR", chance: 5 },
+        { to: "CLOUDS", chance: 5 },
+        { to: "SMOG", chance: 5 },
+        { to: "EXTRASUNNY", chance: 80 },
     ],
     "CLEARING": [
         { to: "FOGGY", chance: 10 },
