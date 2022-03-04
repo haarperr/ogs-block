@@ -211,6 +211,7 @@ RPC.register("caue-weed:harvestPlant", function(src, pPlantId)
     { pTimestamp, pPlantId })
 
     if not affectedRows or affectedRows < 1 then
+        TriggerEvent("DoLongHudText", src, "ERROR: affectedRows == nil or affectedRows < 1", 2)
         return false
     end
 
@@ -229,13 +230,14 @@ RPC.register("caue-weed:harvestPlant", function(src, pPlantId)
         TriggerClientEvent("player:receiveItem", src, "weedq", 5)
     elseif data["gender"] == 1 then
         if PlantConfig.RemoveMaleOnHarvest then
-            local affectedRows = MySQL.update.await([[
+            local affectedRows2 = MySQL.update.await([[
                 DELETE FROM weed
                 WHERE id = ?
             ]],
             { pPlantId })
 
-            if not affectedRows or affectedRows < 1 then
+            if not affectedRows2 or affectedRows2 < 1 then
+                TriggerEvent("DoLongHudText", src, "ERROR: affectedRows2 == nil or affectedRows2 < 1", 2)
                 return false
             end
 
@@ -251,7 +253,7 @@ RPC.register("caue-weed:harvestPlant", function(src, pPlantId)
 
         local seedAmount = math.random(PlantConfig.SeedsFromMale[1], PlantConfig.SeedsFromMale[2])
         for i = 1, seedAmount do
-            local chance = math.random()
+            local chance = roundDecimals(math.random(), 2)
             if chance <= PlantConfig.MaleChance then
                 TriggerClientEvent("player:receiveItem", src, "maleseed", 1)
             else

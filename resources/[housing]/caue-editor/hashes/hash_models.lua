@@ -1,6 +1,14 @@
 MODELS_OBJECT = {
 
     UNSORTED_ONE = {
+        "vw_prop_casino_slot_01a",
+        "vw_prop_casino_slot_02a",
+        "vw_prop_casino_slot_03a",
+        "vw_prop_casino_slot_04a",
+        "vw_prop_casino_slot_05a",
+        "vw_prop_casino_slot_06a",
+        "vw_prop_casino_slot_07a",
+        "vw_prop_casino_slot_08a",
         "apa_mp_h_acc_artwalll_01",
         "apa_mp_h_acc_artwalll_02",
         "apa_mp_h_acc_artwalll_03",

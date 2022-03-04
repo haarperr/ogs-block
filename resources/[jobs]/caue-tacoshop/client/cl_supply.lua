@@ -14,7 +14,7 @@ local deliveryLocations = {
     { ["pos"] = vector4(1211.3, -1389.02, 35.38, 359.86), ["name"] = "El Burro Loja de Convêniencia" },
     { ["pos"] = vector4(1163.31, -314.24, 69.21, 14.01), ["name"] = "Mirror Park Loja de Convêniencia" },
     { ["pos"] = vector4(-531.54, -1221.2, 18.46, 163.39), ["name"] = "Little Seoul Loja de Convêniencia" },
-    { ["pos"] = vector4(-811.58, -736.9, 23.78, 355.61), ["name"] = "Out Dat Ghetto Studios (Little Seoul)" },
+    { ["pos"] = vector4(-820.59, -698.45, 28.07, 273.33), ["name"] = "Out Dat Ghetto Studios (Little Seoul)" },
 }
 
 --[[
