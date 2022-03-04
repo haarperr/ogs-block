@@ -35,13 +35,13 @@ AddEventHandler("caue-inventory:itemUsed", function(itemId, itemInfo, inventoryN
                 local genId = tostring(math.random(10000, 99999999))
                 local invId = "container-" .. genId .. "-evidence bag"
 
-                metaData = json.encode({
+                metaData = {
                     inventoryId = invId,
                     Nome = input["name"],
                     slots = 15,
                     weight = 15,
                     _hideKeys = {"inventoryId", "slots", "weight"},
-                })
+                }
 
                 TriggerEvent("inventory:updateItem", "pdevidencebag", slot, metaData)
             end
