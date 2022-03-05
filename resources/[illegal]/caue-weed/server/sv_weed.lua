@@ -168,7 +168,7 @@ RPC.register("caue-weed:harvestPlant", function(src, pPlantId)
     end
 
     weedPlants[pPlantId]["last_harvest"] = pTimestamp
-    TriggerClientEvent("caue-weed:trigger_zone", -1, 2, data)
+    TriggerClientEvent("caue-weed:trigger_zone", -1, 2, weedPlants[pPlantId])
 
     if weedPlants[pPlantId]["gender"] == 0 then
         TriggerClientEvent("player:receiveItem", src, "weedq", 5)
