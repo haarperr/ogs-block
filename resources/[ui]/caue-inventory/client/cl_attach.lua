@@ -41,7 +41,7 @@ local w = {
 	{ ["type"] = 1, "PK machine gun", ["id"] = "-1660422300", ["model"] = 'w_mg_mg', ["z"] = -0.15, ["rx"] = 0.0, ["ry"] = 180.0, ["rz"] = 0.0 },
 
 	-- Contraband
-	{ ["type"] = 2, "Weed Plant", ["id"] = "weedq", ["model"] = 'bkr_prop_weed_drying_02a', ["z"] = 0.3, ["rx"] = 0.0, ["ry"] = 90.0, ["rz"] = 0.0 },
+	--{ ["type"] = 2, "Weed Plant", ["id"] = "weedq", ["model"] = 'bkr_prop_weed_drying_02a', ["z"] = 0.3, ["rx"] = 0.0, ["ry"] = 90.0, ["rz"] = 0.0 },
 	--{ ["type"] = 2, "Weed Bag", ["id"] = "weedq", ["model"] = 'bkr_prop_weed_smallbag_01a', ["z"] = 0.1, ["rx"] = 95.0, ["ry"] = 90.0, ["rz"] = 0.0 },
 	{ ["type"] = 2, "Meth Bag", ["id"] = "1gmeta", ["model"] = 'bkr_prop_meth_smallbag_01a', ["z"] = 0.1, ["rx"] = 95.0, ["ry"] = 90.0, ["rz"] = 0.0 },
 	{ ["type"] = 2, "Coke Brick", ["id"] = "cocainebrick", ["model"] = 'bkr_prop_coke_cutblock_01', ["z"] = 0.05, ["rx"] = 95.0, ["ry"] = 90.0, ["rz"] = 0.0 },
