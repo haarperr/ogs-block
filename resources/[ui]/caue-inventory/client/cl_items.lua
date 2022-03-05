@@ -286,6 +286,7 @@ AddEventHandler("current-items", function(inv)
     clientInventory = inv
     checkForItems()
     checkForAttachItem()
+    TriggerEvent("AttachWeapons")
 end)
 
 RegisterNetEvent("RunUseItem")
@@ -355,6 +356,8 @@ AddEventHandler("RunUseItem", function(itemid, slot, inventoryName, isWeapon, pa
         justUsed = false
         retardCounter = 0
         lastCounter = 0
+        Wait(1500)
+        TriggerEvent("AttachWeapons")
         return
     end
 

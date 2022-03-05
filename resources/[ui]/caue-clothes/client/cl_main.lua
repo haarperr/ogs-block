@@ -432,6 +432,9 @@ function has_value (tab, val)
 end
 
 function EnableGUI(enable, menu, pPriceText, pPrice,disableDestroyCams)
+    -- tell things to block/enable props til we close this piece of poops.
+    TriggerEvent("attachedItems:block", enable)
+
     enabled = enable
     SetCustomNuiFocus(enable, enable)
     SendNUIMessage({

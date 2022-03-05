@@ -1,5 +1,9 @@
 RegisterNetEvent("raid_clothes:outfits")
 AddEventHandler("raid_clothes:outfits", function(pAction, pId, pName)
+    TriggerEvent("attachedItems:block", true)
+
+    Wait(50)
+
     if pAction == 1 then
         TriggerServerEvent("raid_clothes:set_outfit", pId, pName, GetCurrentPed())
     elseif pAction == 2 then
@@ -8,6 +12,8 @@ AddEventHandler("raid_clothes:outfits", function(pAction, pId, pName)
         TriggerEvent("item:deleteClothesDna")
         TriggerEvent("InteractSound_CL:PlayOnOne","Clothes1", 0.6)
         TriggerServerEvent("raid_clothes:get_outfit", pId)
+        Wait(500)
+        TriggerEvent("attachedItems:block", false)
     else
         TriggerServerEvent("raid_clothes:list_outfits")
     end
