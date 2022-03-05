@@ -92,7 +92,9 @@ exports("RegisterDensityReason", RegisterDensityReason)
 
 RegisterNetEvent("caue:peds:rogue:delete")
 AddEventHandler("caue:peds:rogue:delete", function(pNetId)
-  local entity = NetworkGetEntityFromNetworkId(pNetId)
+    if pNetId == nil or pNetId == 0  then return end
+
+    local entity = NetworkGetEntityFromNetworkId(pNetId)
 
     if DoesEntityExist(entity) then
         DeleteEntity(entity)
