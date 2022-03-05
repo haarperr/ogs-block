@@ -45,18 +45,18 @@ AddEventHandler("raid_clothes:set_outfit", function(slot, name, data)
     { cid, slot })
 
     if exist then
-        MySQL.insert.await([[
-            INSERT INTO characters_outfits (cid, name, slot, model, drawables, props, drawtextures, proptextures, hairColor, fadeStyle, headBlend, headStructure, headOverlay)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ]],
-        { cid, name, slot, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay })
-    else
         MySQL.update.await([[
             UPDATE characters_outfits
             SET name = ?, model = ?, drawables = ?, props = ?, drawtextures = ?, proptextures = ?, hairColor = ?, fadeStyle = ?, headBlend = ?, headStructure = ?, headOverlay = ?
             WHERE cid = ? AND slot = ?
         ]],
         { name, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay, cid, slot })
+    else
+        MySQL.insert.await([[
+            INSERT INTO characters_outfits (cid, name, slot, model, drawables, props, drawtextures, proptextures, hairColor, fadeStyle, headBlend, headStructure, headOverlay)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ]],
+        { cid, name, slot, data.model, data.drawables, data.props, data.drawtextures, data.proptextures, data.hairColor, data.fadeStyle, data.headBlend, data.headStructure, data.headOverlay })
     end
 
     TriggerClientEvent("DoLongHudText", src, name .. " stored in slot " .. slot)
