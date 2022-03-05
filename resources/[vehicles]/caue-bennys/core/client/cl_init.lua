@@ -54,6 +54,10 @@ Citizen.CreateThread(function()
         minZ=29.0,
         maxZ=35.0
     })
+    exports["caue-polyzone"]:AddBoxZone("bennys", vector3(-222.03, -1329.82, 30.89), 3.8, 7.0, {
+        minZ=29.89,
+        maxZ=33.49,
+    })
 
     -- -- Bridge
     -- exports["caue-polyzone"]:AddBoxZone("bennys", vector3(731.57, -1088.78, 22.17), 5.0, 11.2, {

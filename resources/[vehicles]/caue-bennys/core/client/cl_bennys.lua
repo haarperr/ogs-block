@@ -22,6 +22,11 @@ local bennysLocations = {
         heading = 320.0,
         access = "bennys"
     },
+    ["bennyspdm2"] = {
+        pos = vector3(-221.93, -1329.93, 30.29),
+        heading = 270.0,
+        access = "bennys"
+    },
     ["bennystuner"] = {
         pos = vector3(938.37, -970.82, 39.76),
         heading = 320.0,
