@@ -50,10 +50,10 @@ async function GenerateInformation(pSource, pCid, pItemID, pItemData) {
 
                         returnInfo = JSON.stringify({
                             ["ID"]: pCid,
-                            ["Nome"]: result[0].first_name.replace(/[^\w\s]/gi, ''),
-                            ["Sobrenome"]: result[0].last_name.replace(/[^\w\s]/gi, ''),
+                            ["Nome"]: exports["caue-base"].getChar(pSource, "first_name").replace(/[^\w\s]/gi, ''),
+                            ["Sobrenome"]: exports["caue-base"].getChar(pSource, "last_name").replace(/[^\w\s]/gi, ''),
                             ["Sexo"]: gender,
-                            ["Data de Nascimento"]: result[0].dob
+                            ["Data de Nascimento"]: exports["caue-base"].getChar(pSource, "dob")
                         })
 
                         return resolve(returnInfo);
