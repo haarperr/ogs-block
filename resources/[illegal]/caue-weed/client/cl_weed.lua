@@ -16,7 +16,7 @@ local inZone = false
 
 function addPlant(pPlant)
     exports["caue-polyzone"]:AddCircleZone("caue-weed:plant", pPlant.coords, 50, {
-        debugPoly = true,
+        --debugPoly = true,
         data = pPlant,
     })
 
