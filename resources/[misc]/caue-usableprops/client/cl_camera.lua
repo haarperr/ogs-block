@@ -7,8 +7,7 @@ local currentTime = "00:00"
 local camera = false
 local fov = (fov_max + fov_min) * 0.5
 
-RegisterNetEvent("caue-weathersync:currentTime")
-AddEventHandler("caue-weathersync:currentTime", function(hrs, mins)
+RegisterNetEvent("caue-weathersync:currentTime", function(hrs, mins)
   	if hrs < 10 then hrs = "0" .. hrs end
   	if mins < 10 then mins = "0" .. mins end
 
