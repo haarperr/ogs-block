@@ -13876,7 +13876,7 @@ var require_pool = __commonJS({
         }
       }
     }
-    var Pool = class extends EventEmitter {
+    var Pool2 = class extends EventEmitter {
       constructor(options) {
         super();
         this.config = options.config;
@@ -14031,7 +14031,7 @@ var require_pool = __commonJS({
         return mysql.escapeId(value, false);
       }
     };
-    module2.exports = Pool;
+    module2.exports = Pool2;
   }
 });
 
@@ -14060,7 +14060,7 @@ var require_pool_cluster = __commonJS({
   "node_modules/mysql2/lib/pool_cluster.js"(exports, module2) {
     "use strict";
     var process2 = require("process");
-    var Pool = require_pool();
+    var Pool2 = require_pool();
     var PoolConfig = require_pool_config();
     var Connection = require_connection();
     var EventEmitter = require("events").EventEmitter;
@@ -14183,7 +14183,7 @@ var require_pool_cluster = __commonJS({
           this._nodes[id] = {
             id,
             errorCount: 0,
-            pool: new Pool({ config: new PoolConfig(config) })
+            pool: new Pool2({ config: new PoolConfig(config) })
           };
           this._serviceableNodeIds.push(id);
           this._clearFindCaches();
@@ -14338,18 +14338,18 @@ var require_mysql2 = __commonJS({
     };
     exports.connect = exports.createConnection;
     exports.Connection = Connection;
-    var Pool = require_pool();
+    var Pool2 = require_pool();
     var PoolCluster = require_pool_cluster();
     exports.createPool = function(config) {
       const PoolConfig = require_pool_config();
-      return new Pool({ config: new PoolConfig(config) });
+      return new Pool2({ config: new PoolConfig(config) });
     };
     exports.createPoolCluster = function(config) {
       const PoolCluster2 = require_pool_cluster();
       return new PoolCluster2(config);
     };
     exports.createQuery = Connection.createQuery;
-    exports.Pool = Pool;
+    exports.Pool = Pool2;
     exports.PoolCluster = PoolCluster;
     exports.createServer = function(handler) {
       const Server = require_server();
@@ -21000,7 +21000,7 @@ var init_request = __esm({
           input = {};
         }
         if (parsedURL.username !== "" || parsedURL.password !== "") {
-          throw new TypeError(`${parsedURL} is an url with embedded credentails.`);
+          throw new TypeError(`${parsedURL} is an url with embedded credentials.`);
         }
         let method = init.method || input.method || "GET";
         method = method.toUpperCase();
@@ -21542,36 +21542,39 @@ var convertNamedPlaceholders = require_named_placeholders()();
 var parseArguments = (invokingResource, query, parameters, cb) => {
   if (typeof query !== "string")
     throw new Error(`Query expected a string but received ${typeof query} instead`);
-  const queryParams = query.match(/\?(?!\?)/g);
-  if (typeof parameters === "object" && !Array.isArray(parameters) && query.includes(":") || query.includes("@")) {
+  if (query.includes(":") && parameters && typeof parameters === "object" && !Array.isArray(parameters) || query.includes("@")) {
     const placeholders = convertNamedPlaceholders(query, parameters);
     query = placeholders[0];
     parameters = placeholders[1];
   }
   if (cb && typeof cb !== "function")
     cb = void 0;
-  if (parameters && typeof parameters === "function")
+  if (parameters && typeof parameters === "function") {
     cb = parameters;
-  if (parameters === null || parameters === void 0 || typeof parameters === "function")
+    parameters = [];
+  } else if (parameters === null || parameters === void 0)
     parameters = [];
   if (!Array.isArray(parameters)) {
     let arr = [];
     Object.entries(parameters).forEach((entry) => arr[parseInt(entry[0]) - 1] = entry[1]);
     parameters = arr;
-  } else if (queryParams !== null) {
-    if (parameters.length === 0) {
-      for (let i2 = 0; i2 < queryParams.length; i2++)
-        parameters[i2] = null;
-      return [query, parameters, cb];
-    }
-    const diff = queryParams.length - parameters.length;
-    if (diff > 0) {
-      for (let i2 = 0; i2 < diff; i2++)
-        parameters[queryParams.length + i2] = null;
-    } else if (diff < 0) {
-      throw new Error(`${invokingResource} was unable to execute a query!
-          Expected ${queryParams.length} parameters, but received ${parameters.length}.
-          ${`${query} ${JSON.stringify(parameters)}`}`);
+  } else {
+    const queryParams = query.match(/\?(?!\?)/g);
+    if (queryParams !== null) {
+      if (parameters.length === 0) {
+        for (let i2 = 0; i2 < queryParams.length; i2++)
+          parameters[i2] = null;
+        return [query, parameters, cb];
+      }
+      const diff = queryParams.length - parameters.length;
+      if (diff > 0) {
+        for (let i2 = 0; i2 < diff; i2++)
+          parameters[queryParams.length + i2] = null;
+      } else if (diff < 0) {
+        throw new Error(`${invokingResource} was unable to execute a query!
+        Expected ${queryParams.length} parameters, but received ${parameters.length}.
+        ${`${query} ${JSON.stringify(parameters)}`}`);
+      }
     }
   }
   return [query, parameters, cb];
@@ -21724,7 +21727,7 @@ var parseTransaction = (invokingResource, queries, parameters, cb) => {
 var transactionError = (queries, parameters) => `${queries.map((query) => `${query.query} ${JSON.stringify(query.params || [])}`).join("\n")}
 ${JSON.stringify(parameters)}`;
 var rawTransaction = async (invokingResource, queries, parameters, callback) => {
-  scheduleTick();
+  await scheduleTick();
   const { transactions, cb } = parseTransaction(invokingResource, queries, parameters, callback);
   const connection = await pool.getConnection();
   try {
@@ -21815,34 +21818,48 @@ var rawExecute = async (invokingResource, query, parameters, cb) => {
 
 // src/index.ts
 Promise.resolve().then(() => init_update());
-global.exports("query", (query, parameters, cb, invokingResource = GetInvokingResource()) => {
+var MySQL = {};
+MySQL.query = (query, parameters, cb, invokingResource = GetInvokingResource()) => {
   rawQuery(null, invokingResource, query, parameters, cb);
-});
-global.exports("query_async", (query, parameters, invokingResource = GetInvokingResource()) => rawQuery(null, invokingResource, query, parameters));
-global.exports("single", (query, parameters, cb, invokingResource = GetInvokingResource()) => {
+};
+MySQL.query_async = (query, parameters, invokingResource = GetInvokingResource()) => rawQuery(null, invokingResource, query, parameters);
+MySQL.single = (query, parameters, cb, invokingResource = GetInvokingResource()) => {
   rawQuery("single", invokingResource, query, parameters, cb);
-});
-global.exports("single_async", (query, parameters, invokingResource = GetInvokingResource()) => rawQuery("single", invokingResource, query, parameters));
-global.exports("scalar", (query, parameters, cb, invokingResource = GetInvokingResource()) => {
+};
+MySQL.single_async = (query, parameters, invokingResource = GetInvokingResource()) => rawQuery("single", invokingResource, query, parameters);
+MySQL.scalar = (query, parameters, cb, invokingResource = GetInvokingResource()) => {
   rawQuery("scalar", invokingResource, query, parameters, cb);
-});
-global.exports("scalar_async", (query, parameters, invokingResource = GetInvokingResource()) => rawQuery("scalar", invokingResource, query, parameters));
-global.exports("update", (query, parameters, cb, invokingResource = GetInvokingResource()) => {
+};
+MySQL.scalar_async = (query, parameters, invokingResource = GetInvokingResource()) => rawQuery("scalar", invokingResource, query, parameters);
+MySQL.update = (query, parameters, cb, invokingResource = GetInvokingResource()) => {
   rawQuery("update", invokingResource, query, parameters, cb);
-});
-global.exports("update_async", (query, parameters, invokingResource = GetInvokingResource()) => rawQuery("update", invokingResource, query, parameters));
-global.exports("insert", (query, parameters, cb, invokingResource = GetInvokingResource()) => {
+};
+MySQL.update_async = (query, parameters, invokingResource = GetInvokingResource()) => rawQuery("update", invokingResource, query, parameters);
+MySQL.insert = (query, parameters, cb, invokingResource = GetInvokingResource()) => {
   rawQuery("insert", invokingResource, query, parameters, cb);
-});
-global.exports("insert_async", (query, parameters, invokingResource = GetInvokingResource()) => rawQuery("insert", invokingResource, query, parameters));
-global.exports("transaction", (queries, parameters, cb, invokingResource = GetInvokingResource()) => {
+};
+MySQL.insert_async = (query, parameters, invokingResource = GetInvokingResource()) => rawQuery("insert", invokingResource, query, parameters);
+MySQL.transaction = (queries, parameters, cb, invokingResource = GetInvokingResource()) => {
   rawTransaction(invokingResource, queries, parameters, cb);
-});
-global.exports("transaction_async", (queries, parameters, invokingResource = GetInvokingResource()) => rawTransaction(invokingResource, queries, parameters));
-global.exports("prepare", (query, parameters, cb, invokingResource = GetInvokingResource()) => {
+};
+MySQL.transaction_async = (queries, parameters, invokingResource = GetInvokingResource()) => rawTransaction(invokingResource, queries, parameters);
+MySQL.prepare = (query, parameters, cb, invokingResource = GetInvokingResource()) => {
   rawExecute(invokingResource, query, parameters, cb);
-});
-global.exports("prepare_async", (query, parameters, invokingResource = GetInvokingResource()) => rawExecute(invokingResource, query, parameters));
+};
+MySQL.prepare_async = (query, parameters, invokingResource = GetInvokingResource()) => rawExecute(invokingResource, query, parameters);
+MySQL.execute = MySQL.query;
+MySQL.executeSync = MySQL.query_async;
+MySQL.fetch = MySQL.query;
+MySQL.fetchSync = MySQL.query_async;
+for (const key in MySQL) {
+  global.exports(key, MySQL[key]);
+  if (key.includes("_async")) {
+    const alias = `${key.slice(0, -6)}Sync`;
+    global.exports(alias, (query, parameters, invokingResource = GetInvokingResource()) => {
+      return MySQL[key](query, parameters, invokingResource);
+    });
+  }
+}
 /*! fetch-blob. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> */
 /*! formdata-polyfill. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> */
 /*! node-domexception. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> */
