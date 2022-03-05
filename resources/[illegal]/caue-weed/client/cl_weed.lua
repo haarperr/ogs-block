@@ -4,9 +4,8 @@
 
 ]]
 
-local WeedPlants = {}
-local ActivePlants = {}
-
+local weedPlants = {}
+local activeZones = {}
 local inZone = false
 
 --[[
@@ -14,6 +13,15 @@ local inZone = false
     Functions
 
 ]]
+
+function addPlant(pPlant)
+    exports["caue-polyzone"]:AddCircleZone("caue-weed:plant", pPlant.coords, 50, {
+        debugPoly = true,
+        data = pPlant,
+    })
+
+    weedPlants[pPlant.id] = pPlant
+end
 
 function createWeedStageAtCoords(pStage, pCoords)
     local model = PlantConfig.GrowthObjects[pStage].hash
@@ -24,15 +32,8 @@ function createWeedStageAtCoords(pStage, pCoords)
 
     local plantObject = CreateObject(model, pCoords.x, pCoords.y, pCoords.z + PlantConfig.GrowthObjects[pStage].zOffset, 0, 0, 0)
     FreezeEntityPosition(plantObject, true)
-    SetEntityHeading(plantObject, math.random(0, 360) + 0.0)
+    -- SetEntityHeading(plantObject, math.random(0, 360) + 0.0)
     return plantObject
-end
-
-function removeWeed(pPlantId)
-    if ActivePlants[pPlantId] then
-        DeleteObject(ActivePlants[pPlantId].object)
-        ActivePlants[pPlantId] = nil
-    end
 end
 
 function getStageFromPercent(pPercent)
@@ -49,22 +50,6 @@ function getPlantGrowthPercent(pPlant)
     return math.min((timeDiff / growthFactors) * 100, 100.0)
 end
 
-function getPlantId(pEntity)
-    for plantId,plant in pairs(ActivePlants) do
-        if plant.object == pEntity then
-            return plantId
-        end
-    end
-end
-
-function getPlantById(pPlantId)
-    for _,plant in pairs(WeedPlants) do
-        if plant.id == pPlantId then
-            return plant
-        end
-    end
-end
-
 function playPourAnimation()
     RequestAnimDict("weapon@w_sp_jerrycan")
     while (not HasAnimDictLoaded("weapon@w_sp_jerrycan")) do
@@ -74,7 +59,7 @@ function playPourAnimation()
 end
 
 function showPlantMenu(pPlantId)
-    local plant = getPlantById(pPlantId)
+    local plant = weedPlants[pPlantId]
     local growth = getPlantGrowthPercent(plant)
     local water = plant.strain.water * 100.0
     local myjob = exports["caue-base"]:getChar("job")
@@ -148,20 +133,33 @@ end
 
 AddEventHandler("onResourceStop", function(resource)
     if resource ~= GetCurrentResourceName() then return end
-    for idx,plant in pairs(ActivePlants) do
-        DeleteObject(plant.object)
+    for id, plant in pairs(activeZones) do
+        DeleteObject(plant)
     end
 end)
 
 AddEventHandler("caue-polyzone:enter", function(zone, data)
     if zone == "caue-weed:area" then
         inZone = true
+    elseif zone == "caue-weed:plant" then
+        if activeZones[data.id] == nil then
+            local plantGrowth = getPlantGrowthPercent(data)
+            local curStage = getStageFromPercent(plantGrowth)
+            local object = createWeedStageAtCoords(curStage, data.coords)
+            weedPlants[data.id].stage = curStage
+            activeZones[data.id] = object
+        end
     end
 end)
 
 AddEventHandler("caue-polyzone:exit", function(zone, data)
     if zone == "caue-weed:area" then
         inZone = false
+    elseif zone == "caue-weed:plant" then
+        if activeZones[data.id] ~= nil then
+            DeleteObject(activeZones[data.id])
+            activeZones[data.id] = nil
+        end
     end
 end)
 
@@ -197,56 +195,48 @@ AddEventHandler("caue-inventory:itemUsed", function(item)
     end
 end)
 
-RegisterNetEvent("caue-weed:trigger_zone")
-AddEventHandler("caue-weed:trigger_zone", function (type, pData)
-    --Update all plants
-    if type == 1 then
-        for _,plant in ipairs(WeedPlants) do
-            local keep = false
-            for _,newPlant in ipairs(pData) do
-                if plant.id == newPlant.id then
-                    keep = true
-                    break
-                end
-            end
-
-            if not keep then
-                removeWeed(plant.id)
-            end
-        end
-        WeedPlants = pData
-    end
-
+RegisterNetEvent("caue-weed:trigger_zone", function (type, pData)
     --New plant being added
-    if type == 2 then
-        WeedPlants[#WeedPlants+1] = pData
+    if type == 1 then
+        addPlant(pData)
     end
 
     --Plant being harvested/updated
-    if type == 3 then
-        for idx,plant in ipairs(WeedPlants) do
-            if plant.id == pData.id then
-                WeedPlants[idx] = pData
-                break
-            end
+    if type == 2 then
+        weedPlants[pData.id] = pData
+
+        if activeZones[pData.id] ~= nil then
+            local plantGrowth = getPlantGrowthPercent(pData)
+            local curStage = getStageFromPercent(plantGrowth)
+            local object = createWeedStageAtCoords(curStage, pData.coords)
+            DeleteObject(activeZones[pData.id])
+            activeZones[pData.id] = object
         end
     end
 
     --Plant being removed
-    if type == 4 then
-        for idx,plant in ipairs(WeedPlants) do
-            if plant.id == pData.id then
-                table.remove(WeedPlants, idx)
-                removeWeed(plant.id)
-                break
-            end
+    if type == 3 then
+        if activeZones[pData.id] ~= nil then
+            DeleteObject(activeZones[pData.id])
+            activeZones[pData.id] = nil
         end
+
+        weedPlants[pData.id] = nil
     end
 end)
 
 AddEventHandler("caue-weed:checkPlant", function(pContext, pEntity)
-    local plantId = getPlantId(pEntity)
+    local plantId = false
+
+    for id, plant in pairs(activeZones) do
+        if pEntity == plant then
+            plantId = id
+            break
+        end
+    end
+
     if not plantId then return end
+
     showPlantMenu(plantId)
 end)
 
@@ -302,19 +292,27 @@ AddEventHandler("caue-weed:removePlant", function (pParams)
     local finished = exports["caue-taskbar"]:taskBar(3000, "Removendo", false, true, false, false, nil, 5.0, PlayerPedId())
     ClearPedTasks(PlayerPedId())
     if finished == 100 then
-        local getFertilizer = getPlantGrowthPercent(getPlantById(pParams.id)) > 20.0
+        local getFertilizer = getPlantGrowthPercent(weedPlants[pParams.id]) > 20.0
         local success = RPC.execute("caue-weed:removePlant", pParams.id, getFertilizer)
         if not success then
-            print("[ERR]: Não consegue remover. pid:", pParams.id)
+            print("[ERRO]: Não consegue remover. pid:", pParams.id)
         end
     end
 end)
 
 AddEventHandler("caue-weed:pickPlant", function(pContext, pEntity)
-    local plantId = getPlantId(pEntity)
+    local plantId = false
+
+    for id, plant in pairs(activeZones) do
+        if pEntity == plant then
+            plantId = id
+            break
+        end
+    end
+
     if not plantId then return end
 
-    local plant = getPlantById(plantId)
+    local plant = weedPlants[plantId]
     if getPlantGrowthPercent(plant) < PlantConfig.HarvestPercent then
         TriggerEvent("DoLongHudText", "Esta planta ainda não esta pronta.", 2)
         return
@@ -378,40 +376,8 @@ Citizen.CreateThread(function()
 
     Citizen.Wait(1000)
 
-    RPC.execute("caue-weed:getPlants")
-
-    while true do
-        local plyCoords = GetEntityCoords(PlayerPedId())
-
-        if WeedPlants == nil then WeedPlants = {} end
-
-        for idx,plant in ipairs(WeedPlants) do
-            if idx % 100 == 0 then
-                Wait(0) --Process 100 per frame
-            end
-
-            --convert timestamp -> growth percent
-            local plantGrowth = getPlantGrowthPercent(plant)
-            if #(plyCoords - plant.coords) < (50.0 + plantGrowth) then
-                local curStage = getStageFromPercent(plantGrowth)
-                local isChanged = (ActivePlants[plant.id] and ActivePlants[plant.id].stage ~= curStage)
-
-                if isChanged then
-                    removeWeed(plant.id)
-                end
-
-                if not ActivePlants[plant.id] or isChanged then
-                    local weedPlant = createWeedStageAtCoords(curStage, plant.coords)
-                    ActivePlants[plant.id] = {
-                        object = weedPlant,
-                        stage = curStage
-                    }
-                end
-            else
-                removeWeed(plant.id)
-            end
-        end
-
-        Wait(inZone == true and 5000 or 10000)
+    local _plants = RPC.execute("caue-weed:getPlants")
+    for idx, plant in pairs(_plants) do
+        addPlant(plant)
     end
 end)

@@ -4,22 +4,7 @@
 
 ]]
 
-local WeedPlants = {}
-
---[[
-
-    Functions
-
-]]
-
-function getPlantById(pPlantId)
-    for _,plant in pairs(WeedPlants) do
-        if plant.id == pPlantId then
-            return plant
-        end
-    end
-    return nil
-end
+local weedPlants = {}
 
 --[[
 
@@ -28,9 +13,7 @@ end
 ]]
 
 RPC.register("caue-weed:getPlants", function(src)
-    TriggerClientEvent("caue-weed:trigger_zone", src, 1, WeedPlants)
-
-    return true
+    return weedPlants
 end)
 
 RPC.register("caue-weed:plantSeed", function(src, pCoords, pStrain)
@@ -56,15 +39,14 @@ RPC.register("caue-weed:plantSeed", function(src, pCoords, pStrain)
         last_harvest = 0
     }
 
-    table.insert(WeedPlants, data)
-
-    TriggerClientEvent("caue-weed:trigger_zone", -1, 2, data)
+    weedPlants[insertId] = data
+    TriggerClientEvent("caue-weed:trigger_zone", -1, 1, data)
 
     return true
 end)
 
 RPC.register("caue-weed:addWater", function(src, pPlantId)
-    local plant = getPlantById(pPlantId)
+    local plant = weedPlants[pPlantId]
 
     if plant == nil then
         return false
@@ -84,22 +66,14 @@ RPC.register("caue-weed:addWater", function(src, pPlantId)
         return false
     end
 
-    local data = {}
-    for idx,plant in ipairs(WeedPlants) do
-        if plant.id == pPlantId then
-            WeedPlants[idx]["strain"] = strain
-            data = WeedPlants[idx]
-            break
-        end
-    end
-
-    TriggerClientEvent("caue-weed:trigger_zone", -1, 3, data)
+    weedPlants[pPlantId]["strain"] = strain
+    TriggerClientEvent("caue-weed:trigger_zone", -1, 2, weedPlants[pPlantId])
 
     return true
 end)
 
 RPC.register("caue-weed:addFertilizer", function(src, pPlantId, pType)
-    local plant = getPlantById(pPlantId)
+    local plant = weedPlants[pPlantId]
 
     if plant == nil then
         return false
@@ -119,22 +93,14 @@ RPC.register("caue-weed:addFertilizer", function(src, pPlantId, pType)
         return false
     end
 
-    local data = {}
-    for idx,plant in ipairs(WeedPlants) do
-        if plant.id == pPlantId then
-            WeedPlants[idx]["strain"] = strain
-            data = WeedPlants[idx]
-            break
-        end
-    end
-
-    TriggerClientEvent("caue-weed:trigger_zone", -1, 3, data)
+    weedPlants[pPlantId]["strain"] = strain
+    TriggerClientEvent("caue-weed:trigger_zone", -1, 2, weedPlants[pPlantId])
 
     return true
 end)
 
 RPC.register("caue-weed:addMaleSeed", function(src, pPlantId)
-    local plant = getPlantById(pPlantId)
+    local plant = weedPlants[pPlantId]
 
     if plant == nil then
         return false
@@ -151,22 +117,14 @@ RPC.register("caue-weed:addMaleSeed", function(src, pPlantId)
         return false
     end
 
-    local data = {}
-    for idx,plant in ipairs(WeedPlants) do
-        if plant.id == pPlantId then
-            WeedPlants[idx]["gender"] = 1
-            data = WeedPlants[idx]
-            break
-        end
-    end
-
-    TriggerClientEvent("caue-weed:trigger_zone", -1, 3, data)
+    weedPlants[pPlantId]["gender"] = 1
+    TriggerClientEvent("caue-weed:trigger_zone", -1, 2, weedPlants[pPlantId])
 
     return true
 end)
 
 RPC.register("caue-weed:removePlant", function(src, pPlantId, pFertilizer)
-    local plant = getPlantById(pPlantId)
+    local plant = weedPlants[pPlantId]
 
     if plant == nil then
         return false
@@ -182,20 +140,14 @@ RPC.register("caue-weed:removePlant", function(src, pPlantId, pFertilizer)
         return false
     end
 
-    for idx,plant in ipairs(WeedPlants) do
-        if plant.id == pPlantId then
-            WeedPlants[idx] = nil
-            break
-        end
-    end
-
-    TriggerClientEvent("caue-weed:trigger_zone", -1, 4, { id = pPlantId })
+    weedPlants[pPlantId] = nil
+    TriggerClientEvent("caue-weed:trigger_zone", -1, 3, { id = pPlantId })
 
     return true
 end)
 
 RPC.register("caue-weed:harvestPlant", function(src, pPlantId)
-    local plant = getPlantById(pPlantId)
+    local plant = weedPlants[pPlantId]
 
     if plant == nil then
         return false
@@ -215,20 +167,12 @@ RPC.register("caue-weed:harvestPlant", function(src, pPlantId)
         return false
     end
 
-    local data = {}
-    for idx,plant in ipairs(WeedPlants) do
-        if plant.id == pPlantId then
-            WeedPlants[idx]["last_harvest"] = pTimestamp
-            data = WeedPlants[idx]
-            break
-        end
-    end
+    weedPlants[pPlantId]["last_harvest"] = pTimestamp
+    TriggerClientEvent("caue-weed:trigger_zone", -1, 2, data)
 
-    TriggerClientEvent("caue-weed:trigger_zone", -1, 3, data)
-
-    if data["gender"] == 0 then
+    if weedPlants[pPlantId]["gender"] == 0 then
         TriggerClientEvent("player:receiveItem", src, "weedq", 5)
-    elseif data["gender"] == 1 then
+    elseif weedPlants[pPlantId]["gender"] == 1 then
         if PlantConfig.RemoveMaleOnHarvest then
             local affectedRows2 = MySQL.update.await([[
                 DELETE FROM weed
@@ -241,14 +185,8 @@ RPC.register("caue-weed:harvestPlant", function(src, pPlantId)
                 return false
             end
 
-            for idx,plant in ipairs(WeedPlants) do
-                if plant.id == pPlantId then
-                    WeedPlants[idx] = nil
-                    break
-                end
-            end
-
-            TriggerClientEvent("caue-weed:trigger_zone", -1, 4, { id = pPlantId })
+            weedPlants[pPlantId] = nil
+            TriggerClientEvent("caue-weed:trigger_zone", -1, 3, { id = pPlantId })
         end
 
         local seedAmount = math.random(PlantConfig.SeedsFromMale[1], PlantConfig.SeedsFromMale[2])
@@ -272,45 +210,32 @@ end)
 ]]
 
 Citizen.CreateThread(function()
-    local _plants = MySQL.query.await([[
+    local plants = MySQL.query.await([[
         SELECT *
         FROM weed
     ]])
 
-    local plants = {}
-    for i, v in ipairs(_plants) do
-        v["coords"] = json.decode(v.coords)
-        v["strain"] = json.decode(v.strain)
-        v["coords"] = vector3(v["coords"]["x"], v["coords"]["y"], v["coords"]["z"])
-        table.insert(plants, v)
+    for idx, plant in ipairs(plants) do
+        plant["coords"] = json.decode(plant.coords)
+        plant["strain"] = json.decode(plant.strain)
+        plant["coords"] = vector3(plant["coords"]["x"], plant["coords"]["y"], plant["coords"]["z"])
+        weedPlants[plant.id] = plant
     end
 
-    WeedPlants = plants
-
     while true do
-        local plants = MySQL.query.await([[
-            SELECT *
-            FROM weed
-        ]])
-
         local time = os.time()
 
-        for i, v in ipairs(plants) do
-            if (time - v.timestamp) >= (PlantConfig.LifeTime * 60) then
+        for id, plant in pairs(weedPlants) do
+            if (time - plant.timestamp) >= (PlantConfig.LifeTime * 60) then
                 local affectedRows = MySQL.update.await([[
                     DELETE FROM weed
                     WHERE id = ?
                 ]],
-                { v.id })
+                { id })
 
                 if affectedRows and affectedRows > 0 then
-                    for i2, v2 in ipairs(WeedPlants) do
-                        if v2.id == v.id then
-                            WeedPlants[i2] = nil
-                        end
-                    end
-
-                    TriggerClientEvent("caue-weed:trigger_zone", -1, 4, v)
+                    weedPlants[id] = nil
+                    TriggerClientEvent("caue-weed:trigger_zone", -1, 3, plant)
                 end
             end
         end
