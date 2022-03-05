@@ -16,7 +16,7 @@ local meleeLimit = 4
 local disabled = false -- is only temp disable for clothing etc to prevent items everywhere
 
 local w = {
-	{ ["type"] = 2, "Weed Plant", ["id"] = "wetbud", ["model"] = 'bkr_prop_weed_drying_02a', ["z"] = 0.3, ["rx"] = 0.0, ["ry"] = 90.0, ["rz"] = 0.0 },
+	-- Guns
 	{ ["type"] = 1, "Rocket Launcher", ["id"] = "-1312131151", ["model"] = 'w_lr_rpg', ["z"] = -0.15, ["rx"] = 0.0, ["ry"] = 180.0, ["rz"] = 0.0 },
 	{ ["type"] = 1, "RPG", ["id"] = "rpgammo", ["model"] = 'w_lr_rpg_rocket', ["z"] = 0.35, ["rx"] = 90.0, ["ry"] = 90.0, ["rz"] = 0.0 },
 	{ ["type"] = 1, "Remington", ["id"] = "1432025498", ["model"] = 'w_sg_pumpshotgunmk2', ["z"] = 0.0, ["rx"] = 0.0, ["ry"] = 0.0, ["rz"] = 0.0 },
@@ -28,37 +28,37 @@ local w = {
 	{ ["type"] = 1, "Draco", ["id"] = "1649403952", ["model"] = 'w_ar_draco', ["z"] = 0.0, ["rx"] = 0.0, ["ry"] = 0.0, ["rz"] = 0.0 },
 	{ ["type"] = 1, "Sig MPX", ["id"] = "171789620", ["model"] = 'w_sb_mpx', ["z"] = 0.02, ["rx"] = 0.0, ["ry"] = 0.0, ["rz"] = 0.0 },
 	{ ["type"] = 1, "Hunting Rifle", ["id"] = "3648318199", ["model"] = 'w_sr_sniperrifle2', ["z"] = 0.0, ["rx"] = 0.0, ["ry"] = 0.0, ["rz"] = 0.0 },
-	{ ["type"] = 2, "Meth Bag", ["id"] = "methlabbatch", ["model"] = 'hei_prop_pill_bag_01', ["z"] = 0.05, ["rx"] = 0.0, ["ry"] = 90.0, ["rz"] = 0.0 },
-	{ ["type"] = 2, "Meth Bag", ["id"] = "methlabcured", ["model"] = 'bkr_prop_meth_smallbag_01a', ["z"] = 0.1, ["rx"] = 95.0, ["ry"] = 90.0, ["rz"] = 0.0 },
-	{ ["type"] = 2, "Coke Brick", ["id"] = "cocainebrick", ["model"] = 'bkr_prop_coke_cutblock_01', ["z"] = 0.05, ["rx"] = 95.0, ["ry"] = 90.0, ["rz"] = 0.0 },
-	{ ["type"] = 2, "Bank Bag", ["id"] = "inkedmoneybag", ["model"] = 'prop_money_bag_01', ["z"] = -0.4, ["rx"] = 0.0, ["ry"] = 90.0, ["rz"] = 0.0 },
 	{ ["type"] = 1, "Dragunov", ["id"] = "-90637530", ["model"] = 'w_sr_dragunov', ["z"] = 0.0, ["rx"] = 0.0, ["ry"] = 0.0, ["rz"] = 0.0 },
 	{ ["type"] = 1, "M14", ["id"] = "-1719357158", ["model"] = 'w_sr_m14', ["z"] = 0.0, ["rx"] = 0.0, ["ry"] = 0.0, ["rz"] = 0.0 },
-	{ ["type"] = 4, "Katana", ["id"] = "-1239161099", ["model"] = 'katana_sheath', ["z"] = 0.51, ["rx"] = 225.0, ["ry"] = 8.0, ["rz"] = 90.0 },
-	{ ["type"] = 4, "Katana", ["id"] = "1692590063", ["model"] = 'katana_sheath', ["z"] = 0.51, ["rx"] = 225.0, ["ry"] = 8.0, ["rz"] = 90.0 },
-	{ ["type"] = 4, "Katana", ["id"] = "cursedkatanaweapon", ["model"] = 'katana_sheath', ["z"] = 0.51, ["rx"] = 225.0, ["ry"] = 8.0, ["rz"] = 90.0 },
-	{ ["type"] = 3, "Machete", ["id"] = "3713923289", ["model"] = 'w_me_machette_lr', ["z"] = 0.4, ["rx"] = 5.0, ["ry"] = 45.0, ["rz"] = 0.0 },
-	{ ["type"] = 3, "Baseball", ["id"] = "-1024456158", ["model"] = 'p_cs_bbbat_01', ["z"] = 0.8, ["rx"] = 0.0, ["ry"] = -90.0, ["rz"] = 0.0 },
-
-
-	-- smg small
 	{ ["type"] = 1, "Gepard", ["id"] = "-1518444656", ["model"] = 'w_ar_gepard', ["z"] = 0.0, ["rx"] = 0.0, ["ry"] = 0.0, ["rz"] = 0.0 },
-
 	{ ["type"] = 1, "MAC-10", ["id"] = "-134995899", ["model"] = 'w_sb_microsmg3', ["z"] = 0.0, ["rx"] = 0.0, ["ry"] = 0.0, ["rz"] = 0.0 },
 	{ ["type"] = 1, "Uzi", ["id"] = "-942620673", ["model"] = 'w_sb_uzi', ["z"] = 0.0, ["rx"] = 0.0, ["ry"] = 0.0, ["rz"] = 0.0 },
 	{ ["type"] = 1, "MP5", ["id"] = "736523883", ["model"] = 'w_sb_mp5', ["z"] = 0.0, ["rx"] = 0.0, ["ry"] = 0.0, ["rz"] = 0.0 },
 	{ ["type"] = 1, "Skorpion", ["id"] = "-1472189665", ["model"] = 'w_sb_skorpion', ["z"] = 0.0, ["rx"] = 0.0, ["ry"] = 0.0, ["rz"] = 0.0 },
-
-	-- other
 	{ ["type"] = 1, "Groza", ["id"] = "-1357824103", ["model"] = 'w_ar_groza', ["z"] = 0.0, ["rx"] = 0.0, ["ry"] = 0.0, ["rz"] = 0.0 },
+	{ ["type"] = 1, "Homing Launcher", ["id"] = "1672152130", ["model"] = 'w_lr_homing', ["z"] = -0.15, ["rx"] = 0.0, ["ry"] = 180.0, ["rz"] = 0.0 },
+	{ ["type"] = 1, "Homing Launcher Ammo", ["id"] = "homingammo", ["model"] = 'w_lr_homing_rocket', ["z"] = 0.35, ["rx"] = 90.0, ["ry"] = 90.0, ["rz"] = 0.0 },
+	{ ["type"] = 1, "PK machine gun", ["id"] = "-1660422300", ["model"] = 'w_mg_mg', ["z"] = -0.15, ["rx"] = 0.0, ["ry"] = 180.0, ["rz"] = 0.0 },
+
+	-- Contraband
+	{ ["type"] = 2, "Weed Plant", ["id"] = "weedq", ["model"] = 'bkr_prop_weed_drying_02a', ["z"] = 0.3, ["rx"] = 0.0, ["ry"] = 90.0, ["rz"] = 0.0 },
+	--{ ["type"] = 2, "Weed Bag", ["id"] = "weedq", ["model"] = 'bkr_prop_weed_smallbag_01a', ["z"] = 0.1, ["rx"] = 95.0, ["ry"] = 90.0, ["rz"] = 0.0 },
+	{ ["type"] = 2, "Meth Bag", ["id"] = "1gmeta", ["model"] = 'bkr_prop_meth_smallbag_01a', ["z"] = 0.1, ["rx"] = 95.0, ["ry"] = 90.0, ["rz"] = 0.0 },
+	{ ["type"] = 2, "Coke Brick", ["id"] = "cocainebrick", ["model"] = 'bkr_prop_coke_cutblock_01', ["z"] = 0.05, ["rx"] = 95.0, ["ry"] = 90.0, ["rz"] = 0.0 },
+	{ ["type"] = 2, "Bank Bag", ["id"] = "inkedmoneybag", ["model"] = 'prop_money_bag_01', ["z"] = -0.4, ["rx"] = 0.0, ["ry"] = 90.0, ["rz"] = 0.0 },
+
+	-- Melee
+	{ ["type"] = 3, "Machete", ["id"] = "3713923289", ["model"] = 'w_me_machette_lr', ["z"] = 0.4, ["rx"] = 5.0, ["ry"] = 45.0, ["rz"] = 0.0 },
+	{ ["type"] = 3, "Baseball", ["id"] = "-1024456158", ["model"] = 'p_cs_bbbat_01', ["z"] = 0.8, ["rx"] = 0.0, ["ry"] = -90.0, ["rz"] = 0.0 },
+
+	-- Katana
+	{ ["type"] = 4, "Katana", ["id"] = "-1239161099", ["model"] = 'katana_sheath', ["z"] = 0.51, ["rx"] = 225.0, ["ry"] = 8.0, ["rz"] = 90.0 },
+	{ ["type"] = 4, "Katana", ["id"] = "1692590063", ["model"] = 'katana_sheath', ["z"] = 0.51, ["rx"] = 225.0, ["ry"] = 8.0, ["rz"] = 90.0 },
+	{ ["type"] = 4, "Katana", ["id"] = "cursedkatanaweapon", ["model"] = 'katana_sheath', ["z"] = 0.51, ["rx"] = 225.0, ["ry"] = 8.0, ["rz"] = 90.0 },
 
 	-- Snipers
 	{ ["type"] = 5, "AWM Sniper Rifle", ["id"] = "-1536150836", ["model"] = 'prop_gun_case_01', ["z"] = 0.0, ["rx"] = 182.0, ["ry"] = 147.0, ["rz"] = 82.0 },
 	{ ["type"] = 5, "M24 Sniper Rifle", ["id"] = "100416529", ["model"] = 'prop_gun_case_01', ["z"] = 0.0, ["rx"] = 182.0, ["ry"] = 147.0, ["rz"] = 82.0 },
-
-	{ ["type"] = 1, "Homing Launcher", ["id"] = "1672152130", ["model"] = 'w_lr_homing', ["z"] = -0.15, ["rx"] = 0.0, ["ry"] = 180.0, ["rz"] = 0.0 },
-	{ ["type"] = 1, "Homing Launcher Ammo", ["id"] = "homingammo", ["model"] = 'w_lr_homing_rocket', ["z"] = 0.35, ["rx"] = 90.0, ["ry"] = 90.0, ["rz"] = 0.0 },
-	{ ["type"] = 1, "PK machine gun", ["id"] = "-1660422300", ["model"] = 'w_mg_mg', ["z"] = -0.15, ["rx"] = 0.0, ["ry"] = 180.0, ["rz"] = 0.0 },
 
 	-- Duffel Bag
 	{ ["type"] = 6, "Duffel Bag", ["id"] = "heistduffelbag", ["model"] = "hei_p_m_bag_var22_arm_s", ["z"] = 0.51, ["rx"] = 90.0, ["ry"] = 270.0, ["rz"] = 90.0 },

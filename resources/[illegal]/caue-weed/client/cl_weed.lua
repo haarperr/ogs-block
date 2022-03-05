@@ -146,8 +146,10 @@ AddEventHandler("caue-polyzone:enter", function(zone, data)
             local plantGrowth = getPlantGrowthPercent(data)
             local curStage = getStageFromPercent(plantGrowth)
             local object = createWeedStageAtCoords(curStage, data.coords)
-            weedPlants[data.id].stage = curStage
-            activeZones[data.id] = object
+            if weedPlants[data.id] then
+                weedPlants[data.id]["stage"] = curStage
+                activeZones[data.id] = object
+            end
         end
     end
 end)
