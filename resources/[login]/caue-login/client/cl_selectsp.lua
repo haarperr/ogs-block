@@ -136,6 +136,23 @@ function Spawn.selectedSpawn(spawnInfo)
 
 				DoScreenFadeIn(2500)
 				TriggerEvent("housing:playerSpawned",spawnInfo)
+
+				Citizen.CreateThread(function()
+					local checkStart = GetCloudTimeAsInt() + 60
+					while true do
+						Citizen.Wait(500)
+
+						if exports["caue-base"]:getVar("dead") then
+							TriggerEvent("reviveFunction")
+							SetEntityHealth(PlayerPedId(), 200)
+						end
+
+						local currentTime = GetCloudTimeAsInt()
+						if currentTime > checkStart then
+							break
+						end
+					end
+				end)
 			end
 		end
  	end
