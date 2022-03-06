@@ -2,9 +2,7 @@ local PlayerCoords = {}
 
 RegisterNetEvent("caue:infinity:player:coords")
 AddEventHandler("caue:infinity:player:coords", function(coords)
-    if type(coords) == "table" then
-        PlayerCoords = coords
-    end
+    PlayerCoords = coords
 end)
 
 function GetPlayerCoords(serverID)

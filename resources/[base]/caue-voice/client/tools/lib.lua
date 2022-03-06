@@ -203,14 +203,27 @@ Citizen.CreateThread(function()
 
         if not isConnected then
             print("Trying to reconnect to Mumble")
-            
+
             RefreshConnection(true)
-            
+
             Citizen.Wait(2000)
-            
+
             if MumbleIsConnected() then
-                print("Mumble Reconected")
+                print("Mumble: Reconected")
             end
         end
+
+        local serverId = GetPlayerServerId(PlayerId())
+        local currentChannel = MumbleGetVoiceChannelFromServerId(serverId)
+
+        while (currentChannel == -1 or currentChannel == 0) do
+            currentChannel = MumbleGetVoiceChannelFromServerId(serverId)
+
+            NetworkSetVoiceChannel(CurrentVoiceChannel)
+
+            Citizen.Wait(100)
+        end
+
+        RefreshTargets()
     end
 end)

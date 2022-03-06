@@ -42,10 +42,10 @@ RegisterServerEvent("caue:infinity:player:ready")
 AddEventHandler("caue:infinity:player:ready", function()
     local src = source
 
-    local ped = GetPlayerPed(src)
-    local coords = GetEntityCoords(ped)
+    -- local ped = GetPlayerPed(src)
+    -- local coords = GetEntityCoords(ped)
 
-    PlayersCoords[src] = coords
+    -- PlayersCoords[src] = coords
 end)
 
 RegisterServerEvent("caue:infinity:entity:coords")
@@ -70,25 +70,15 @@ end)
 ]]
 
 Citizen.CreateThread(function()
-    local updated = false
-
     while true do
-        Citizen.Wait(500)
+        Citizen.Wait(250)
 
-        updated = false
-
-        for k, v in pairs(PlayersCoords) do
-            local ped = GetPlayerPed(k)
+        local players = GetPlayers()
+        for idx, player in ipairs(players) do
+            local ped = GetPlayerPed(player)
             local coords = GetEntityCoords(ped)
 
-            PlayersCoords[k] = coords
-
-            if not updated then
-                updated = true
-            end
-        end
-
-        if updated then
+            PlayersCoords[player] = coords
             TriggerClientEvent("caue:infinity:player:coords", -1, PlayersCoords)
         end
     end
