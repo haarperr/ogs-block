@@ -30,6 +30,8 @@ AddEventHandler("_chat:messageEntered", function(data)
         table.insert(args, word)
     end
 
+    if not args[1] then return end
+
     local cmd = string.lower(args[1])
     table.remove(args, 1)
 
