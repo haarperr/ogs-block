@@ -12,7 +12,7 @@ local pawnshoptime = false
 
 ]]
 
-AddEventHandler("caue-weathersync:currentTime", function(pHour, pMinute)
+RegisterNetEvent("caue-weathersync:currentTime", function(pHour, pMinute)
     if (pHour > 15 or pHour < 7) and not pawnshoptime then
 		TriggerServerEvent("caue-pawnshop:requestLocation")
 	elseif (pHour <= 15 and pHour >= 7) and pawnshoptime then

@@ -365,8 +365,7 @@ exports("isBeingRobbed", isBeingRobbed)
 
 ]]
 
-RegisterNetEvent("caue-weathersync:currentTime")
-AddEventHandler("caue-weathersync:currentTime", function(pHour, pMinute)
+RegisterNetEvent("caue-weathersync:currentTime", function(pHour, pMinute)
     if (pHour > 19 or pHour < 7) and daytime then
 		daytime = false
 	elseif (pHour <= 19 and pHour >= 7) and not daytime then
