@@ -71,7 +71,7 @@ end)
 
 Citizen.CreateThread(function()
     while true do
-        Citizen.Wait(250)
+        Citizen.Wait(750)
 
         local players = GetPlayers()
         for idx, player in ipairs(players) do
