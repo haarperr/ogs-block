@@ -2984,6 +2984,10 @@ function AttemptDropInEmptySlot(slot, isDropped, half) {
         result = 'Cannot place into mailboxes.'
     }
 
+    if (TargetInventoryName.startsWith('tcg_binder_') && inventoryDropName == 'wrapsecondary' && itemidsent != "tcgcard") {
+        result = 'Só é possível colocar cartas aqui.'
+    }
+
     if (result == 'Success') {
         let purchaseCost = parseInt(item.dataset.fwewef) * parseInt(moveAmount);
         //InventoryLog(item.dataset.fwewef + " | " + purchaseCost + " | " + moveAmount);
